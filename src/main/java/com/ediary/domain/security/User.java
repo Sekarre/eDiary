@@ -28,7 +28,6 @@ public class User implements UserDetails, CredentialsContainer {
     private String firstName;
     private String lastName;
     private String address;
-    private String phoneNumber;
 
     @Singular
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
