@@ -15,17 +15,17 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
 
     private String name;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private Set<User> users;
 
     @Singular
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
-    @JoinTable(name = "role_authority",
-            joinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")},
-            inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
+    @JoinTable(name = "Authority_has_Role",
+            joinColumns = {@JoinColumn(name = "Authority_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "Role_id", referencedColumnName = "id")})
     private Set<Authority> authorities;
 }

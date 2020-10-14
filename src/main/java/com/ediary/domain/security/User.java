@@ -1,5 +1,8 @@
 package com.ediary.domain.security;
 
+import com.ediary.domain.Address;
+import com.ediary.domain.Message;
+import com.ediary.domain.Notice;
 import lombok.*;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,7 +23,7 @@ public class User implements UserDetails, CredentialsContainer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
 
     private String username;
     private String password;
@@ -30,10 +33,24 @@ public class User implements UserDetails, CredentialsContainer {
 
     @Singular
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role",
-            joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
-            inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")})
+    @JoinTable(name = "Role_has_User",
+            joinColumns = {@JoinColumn(name = "User_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "Role_id", referencedColumnName = "id")})
     private Set<Role> roles;
+
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Address address;
+
+    @ManyToMany(mappedBy = "readers", fetch = FetchType.EAGER)
+    private Set<Message> readMessages;
+
+    @OneToMany(mappedBy = "senders", fetch = FetchType.EAGER)
+    private Set<Message> sendMessages;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private Set<Notice> notices;
+
 
     @Transient
     public Set<GrantedAuthority> getAuthorities() {
