@@ -21,4 +21,7 @@ public class Subject {
 
     @ManyToMany(mappedBy = "subjects", fetch = FetchType.EAGER)
     private Set<Teacher> teachers;
+
+    @OneToMany(mappedBy = "subject")
+    private Set<Lesson> lessons;
 }
