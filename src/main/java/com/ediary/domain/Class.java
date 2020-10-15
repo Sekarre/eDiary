@@ -17,6 +17,8 @@ public class Class {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String name;
+
     @OneToOne
     @JoinColumn(name = "studentCouncil_id")
     private StudentCouncil studentCouncil;
