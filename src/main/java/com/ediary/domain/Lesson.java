@@ -21,7 +21,7 @@ public class Lesson {
     private String name;
     private Date date;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "class_id")
     private Class schoolClass;
 

@@ -28,7 +28,7 @@ public class Event {
     @Enumerated(value = EnumType.STRING)
     private Type type;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "class_id")
     private Class schoolClass;
 

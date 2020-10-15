@@ -1,7 +1,5 @@
 package com.ediary.domain;
 
-import com.ediary.domain.security.Authority;
-import com.ediary.domain.security.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -26,7 +24,7 @@ public class Attendance {
     @Enumerated(value = EnumType.STRING)
     private Status status;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
 
