@@ -1,6 +1,7 @@
 package com.ediary.web.controllers;
 
 import com.ediary.domain.Attendance;
+import com.ediary.domain.Behavior;
 import com.ediary.domain.Grade;
 import com.ediary.services.StudentService;
 import com.ediary.services.SubjectService;
@@ -84,7 +85,7 @@ class StudentControllerTest {
     }
 
     @Test
-    void getAttendance() throws Exception {
+    void getAllAttendance() throws Exception {
 
         when(studentService.listAttendances(studentId)).thenReturn(Arrays.asList(Attendance.builder().id(1L).build()));
 
@@ -95,6 +96,23 @@ class StudentControllerTest {
 
         verify(studentService).listAttendances(studentId);
         assertEquals(1, studentService.listAttendances(studentId).size());
+    }
+
+    @Test
+    void getAllBehavior() throws Exception {
+
+        when(studentService.listBehaviors(studentId)).thenReturn(Arrays.asList(
+                Behavior.builder().id(1L).build(),
+                Behavior.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/students/" + studentId + "/behavior"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("behaviors"))
+                .andExpect(view().name("student/behaviors"));
+
+        verify(studentService, times(1)).listBehaviors(studentId);
+        assertEquals(2, studentService.listBehaviors(studentId).size());
     }
 
 

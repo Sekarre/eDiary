@@ -40,10 +40,16 @@ public class StudentController {
     }
 
     @GetMapping("/{studentId}/attendance")
-    public String getAttendance(@PathVariable Long studentId, Model model) {
+    public String getAllAttendance(@PathVariable Long studentId, Model model) {
 
         model.addAttribute("attendances", studentService.listAttendances(studentId));
         return "student/attendance";
     }
 
+    @GetMapping("/{studentId}/behavior")
+    public String getAllBehavior(@PathVariable Long studentId, Model model) {
+
+        model.addAttribute("behaviors", studentService.listBehaviors(studentId));
+        return "student/behaviors";
+    }
 }

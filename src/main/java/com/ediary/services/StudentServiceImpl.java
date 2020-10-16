@@ -5,6 +5,7 @@ import com.ediary.domain.Behavior;
 import com.ediary.domain.Event;
 import com.ediary.domain.Grade;
 import com.ediary.repositories.AttendanceRepository;
+import com.ediary.repositories.BehaviorRepository;
 import com.ediary.repositories.GradeRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +16,12 @@ public class StudentServiceImpl implements StudentService {
 
     private final GradeRepository gradeRepository;
     private final AttendanceRepository attendanceRepository;
+    private final BehaviorRepository behaviorRepository;
 
-    public StudentServiceImpl(GradeRepository gradeRepository, AttendanceRepository attendanceRepository) {
+    public StudentServiceImpl(GradeRepository gradeRepository, AttendanceRepository attendanceRepository, BehaviorRepository behaviorRepository) {
         this.gradeRepository = gradeRepository;
         this.attendanceRepository = attendanceRepository;
+        this.behaviorRepository = behaviorRepository;
     }
 
     @Override
@@ -38,7 +41,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Behavior> listBehaviors(Long studentId) {
-        return null;
+        return behaviorRepository.findAllByStudentId(studentId);
     }
 
     @Override
