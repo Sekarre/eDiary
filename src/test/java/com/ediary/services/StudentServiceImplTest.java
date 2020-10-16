@@ -19,8 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class StudentServiceImplTest {
 
     private final Long studentId = 1L;
-    private final Long gradeId = 2L;
-    private final String value = "3";
+
+    private final Long subjectId = 2L;
+
+    private final Long gradeId = 3L;
+    private final String value = "4";
 
     @Mock
     GradeRepository gradeRepository;
@@ -49,6 +52,17 @@ class StudentServiceImplTest {
         assertEquals(1, grades.size());
         assertEquals(gradeId, grades.get(0).getId());
         verify(gradeRepository, times(1)).findAllByStudentId(anyLong());
+    }
+
+    @Test
+    void listGradesBySubject() {
+        when(gradeRepository.findAllByStudentIdAndSubjectId(studentId, subjectId)).thenReturn(Arrays.asList(gradeReturned));
+
+        List<Grade> grades = studentService.listGrades(studentId, subjectId);
+
+        assertEquals(1, grades.size());
+        assertEquals(gradeId, grades.get(0).getId());
+        verify(gradeRepository, times(1)).findAllByStudentIdAndSubjectId(anyLong(), anyLong());
     }
 
     @Test

@@ -28,7 +28,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Grade> listGrades(Long studentId, Long subjectId) {
-        return null;
+        return gradeRepository.findAllByStudentIdAndSubjectId(studentId, subjectId);
     }
 
     @Override
