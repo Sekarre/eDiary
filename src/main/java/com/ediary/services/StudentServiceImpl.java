@@ -1,15 +1,12 @@
 package com.ediary.services;
 
-import com.ediary.domain.Attendance;
-import com.ediary.domain.Behavior;
-import com.ediary.domain.Event;
-import com.ediary.domain.Grade;
-import com.ediary.repositories.AttendanceRepository;
-import com.ediary.repositories.BehaviorRepository;
-import com.ediary.repositories.GradeRepository;
+import com.ediary.domain.*;
+import com.ediary.exceptions.NotFoundException;
+import com.ediary.repositories.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -17,11 +14,18 @@ public class StudentServiceImpl implements StudentService {
     private final GradeRepository gradeRepository;
     private final AttendanceRepository attendanceRepository;
     private final BehaviorRepository behaviorRepository;
+    private final EventRepository eventRepository;
+    private final StudentRepository studentRepository;
 
-    public StudentServiceImpl(GradeRepository gradeRepository, AttendanceRepository attendanceRepository, BehaviorRepository behaviorRepository) {
+    public StudentServiceImpl(GradeRepository gradeRepository, AttendanceRepository attendanceRepository,
+                              BehaviorRepository behaviorRepository, EventRepository eventRepository,
+                              StudentRepository studentRepository) {
+
         this.gradeRepository = gradeRepository;
         this.attendanceRepository = attendanceRepository;
         this.behaviorRepository = behaviorRepository;
+        this.eventRepository = eventRepository;
+        this.studentRepository = studentRepository;
     }
 
     @Override
@@ -46,6 +50,17 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Event> listEvents(Long studentId) {
-        return null;
+
+        Optional<Student> studentOptional = studentRepository.findById(studentId);
+
+        if(!studentOptional.isPresent()) {
+            throw new NotFoundException("Student Not Found.");
+        }
+
+        Student student = studentOptional.get();
+
+        List<Event> eventList = eventRepository.findAllBySchoolClassId(student.getSchoolClass().getId());
+
+        return eventList;
     }
 }

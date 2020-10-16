@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping("/students")
+@RequestMapping("/student")
 public class StudentController {
 
     private final StudentService studentService;
@@ -18,19 +18,19 @@ public class StudentController {
     }
 
 
-    @GetMapping("/{studentId}/grades")
+    @GetMapping("/{studentId}/grade")
     public String getAllGrades(@PathVariable Long studentId, Model model) {
 
         model.addAttribute("grades", studentService.listGrades(studentId));
         return "student/allGrades";
     }
 
-    @GetMapping("/{studentId}/grades/{gradeId}")
+    @GetMapping("/{studentId}/grade/{gradeId}")
     public String getGrade(){
         return null;
     }
 
-    @GetMapping("/{studentId}/grades/subject/{subjectId}")
+    @GetMapping("/{studentId}/grade/subject/{subjectId}")
     public String getAllGradesBySubject(@PathVariable Long studentId,
                                         @PathVariable Long subjectId, Model model) {
 
@@ -40,16 +40,23 @@ public class StudentController {
     }
 
     @GetMapping("/{studentId}/attendance")
-    public String getAllAttendance(@PathVariable Long studentId, Model model) {
+    public String getAllAttendances(@PathVariable Long studentId, Model model) {
 
         model.addAttribute("attendances", studentService.listAttendances(studentId));
-        return "student/attendance";
+        return "student/allAttendances";
     }
 
     @GetMapping("/{studentId}/behavior")
-    public String getAllBehavior(@PathVariable Long studentId, Model model) {
+    public String getAllBehaviors(@PathVariable Long studentId, Model model) {
 
         model.addAttribute("behaviors", studentService.listBehaviors(studentId));
-        return "student/behaviors";
+        return "student/allBehaviors";
+    }
+
+    @GetMapping("/{studentId}/event")
+    public String getAllEvents(@PathVariable Long studentId, Model model) {
+
+        model.addAttribute("events", studentService.listEvents(studentId));
+        return "student/allEvents";
     }
 }

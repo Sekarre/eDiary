@@ -2,6 +2,7 @@ package com.ediary.web.controllers;
 
 import com.ediary.domain.Attendance;
 import com.ediary.domain.Behavior;
+import com.ediary.domain.Event;
 import com.ediary.domain.Grade;
 import com.ediary.services.StudentService;
 import com.ediary.services.SubjectService;
@@ -51,7 +52,7 @@ class StudentControllerTest {
                 Grade.builder().id(2L).value("2").build()
         ));
 
-        mockMvc.perform(get("/students/" + studentId + "/grades"))
+        mockMvc.perform(get("/student/" + studentId + "/grade"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("grades"))
                 .andExpect(view().name("student/allGrades"));
@@ -70,7 +71,7 @@ class StudentControllerTest {
 
         when(subjectService.getNameById(subjectId)).thenReturn(subjectName);
 
-        mockMvc.perform(get("/students/" + studentId + "/grades/subject/" + subjectId))
+        mockMvc.perform(get("/student/" + studentId + "/grade/subject/" + subjectId))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("subjectName"))
                 .andExpect(model().attributeExists("grades"))
@@ -85,34 +86,51 @@ class StudentControllerTest {
     }
 
     @Test
-    void getAllAttendance() throws Exception {
+    void getAllAttendances() throws Exception {
 
         when(studentService.listAttendances(studentId)).thenReturn(Arrays.asList(Attendance.builder().id(1L).build()));
 
-        mockMvc.perform(get("/students/" + studentId + "/attendance"))
+        mockMvc.perform(get("/student/" + studentId + "/attendance"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("attendances"))
-                .andExpect(view().name("student/attendance"));
+                .andExpect(view().name("student/allAttendances"));
 
         verify(studentService).listAttendances(studentId);
         assertEquals(1, studentService.listAttendances(studentId).size());
     }
 
     @Test
-    void getAllBehavior() throws Exception {
+    void getAllBehaviors() throws Exception {
 
         when(studentService.listBehaviors(studentId)).thenReturn(Arrays.asList(
                 Behavior.builder().id(1L).build(),
                 Behavior.builder().id(2L).build()
         ));
 
-        mockMvc.perform(get("/students/" + studentId + "/behavior"))
+        mockMvc.perform(get("/student/" + studentId + "/behavior"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("behaviors"))
-                .andExpect(view().name("student/behaviors"));
+                .andExpect(view().name("student/allBehaviors"));
 
         verify(studentService, times(1)).listBehaviors(studentId);
         assertEquals(2, studentService.listBehaviors(studentId).size());
+    }
+
+    @Test
+    void getAllEvents() throws Exception {
+
+        when(studentService.listEvents(studentId)).thenReturn(Arrays.asList(
+                Event.builder().id(1L).build(),
+                Event.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/student/" + studentId + "/event"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("events"))
+                .andExpect(view().name("student/allEvents"));
+
+        verify(studentService, times(1)).listEvents(studentId);
+        assertEquals(2, studentService.listEvents(studentId).size());
     }
 
 
