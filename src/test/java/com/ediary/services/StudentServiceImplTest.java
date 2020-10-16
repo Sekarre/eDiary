@@ -16,28 +16,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StudentServiceImplTest {
 
-    private static Long studentId = 1L;
-    private static Long gradeId = 2L;
-    private static String value = "3";
+    private final Long studentId = 1L;
+    private final Long gradeId = 2L;
+    private final String value = "3";
 
     @Mock
     GradeRepository gradeRepository;
 
     StudentService studentService;
 
-    Grade returnGrade;
+    Grade gradeReturned;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
         studentService = new StudentServiceImpl(gradeRepository);
 
-        returnGrade = Grade.builder().id(gradeId).value(value).build();
+        gradeReturned = Grade.builder().id(gradeId).value(value).build();
     }
 
     @Test
     void listGrades() {
-        when(gradeRepository.findAllByStudentId(studentId)).thenReturn(Arrays.asList(returnGrade));
+        when(gradeRepository.findAllByStudentId(studentId)).thenReturn(Arrays.asList(gradeReturned));
 
         List<Grade> grades = studentService.listGrades(studentId);
 
