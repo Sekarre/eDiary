@@ -3,6 +3,7 @@ package com.ediary.domain.timetable;
 import com.ediary.domain.SchoolPeriod;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,5 +14,6 @@ import java.util.List;
 @Builder
 public class Timetable {
 
-    private HashMap<Day, List<SchoolPeriod>> schedule;
+    private List<Duration> durations;
+    private HashMap<Day, ArrayList<SchoolPeriod>> schedule;
 }
