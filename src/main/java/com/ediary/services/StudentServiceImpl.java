@@ -1,6 +1,7 @@
 package com.ediary.services;
 
 import com.ediary.domain.*;
+import com.ediary.domain.timetable.Timetable;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
 import org.springframework.stereotype.Service;
@@ -11,16 +12,19 @@ import java.util.Optional;
 @Service
 public class StudentServiceImpl implements StudentService {
 
+    private final TimetableService timetableService;
+
     private final GradeRepository gradeRepository;
     private final AttendanceRepository attendanceRepository;
     private final BehaviorRepository behaviorRepository;
     private final EventRepository eventRepository;
     private final StudentRepository studentRepository;
 
-    public StudentServiceImpl(GradeRepository gradeRepository, AttendanceRepository attendanceRepository,
-                              BehaviorRepository behaviorRepository, EventRepository eventRepository,
-                              StudentRepository studentRepository) {
+    public StudentServiceImpl(TimetableService timetableService, GradeRepository gradeRepository,
+                              AttendanceRepository attendanceRepository, BehaviorRepository behaviorRepository,
+                              EventRepository eventRepository, StudentRepository studentRepository) {
 
+        this.timetableService = timetableService;
         this.gradeRepository = gradeRepository;
         this.attendanceRepository = attendanceRepository;
         this.behaviorRepository = behaviorRepository;
@@ -63,4 +67,20 @@ public class StudentServiceImpl implements StudentService {
 
         return eventList;
     }
+
+    @Override
+    public Timetable getTimetableByStudentId(Long studentId) {
+
+        Optional<Student> studentOptional = studentRepository.findById(studentId);
+
+        if(!studentOptional.isPresent()) {
+            throw new NotFoundException("Student Not Found.");
+        }
+
+        Student student = studentOptional.get();
+
+        return timetableService.getTimetableByClassId(student.getSchoolClass().getId());
+    }
+
+
 }

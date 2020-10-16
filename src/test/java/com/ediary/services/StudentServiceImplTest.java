@@ -2,6 +2,7 @@ package com.ediary.services;
 
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
+import com.ediary.domain.timetable.Timetable;
 import com.ediary.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,9 @@ class StudentServiceImplTest {
     private final String value = "4";
 
     @Mock
+    TimetableService timetableService;
+
+    @Mock
     GradeRepository gradeRepository;
 
     @Mock
@@ -49,8 +53,8 @@ class StudentServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        studentService = new StudentServiceImpl(gradeRepository, attendanceRepository, behaviorRepository,
-                eventRepository, studentRepository);
+        studentService = new StudentServiceImpl(timetableService, gradeRepository, attendanceRepository,
+                behaviorRepository, eventRepository, studentRepository);
 
         gradeReturned = Grade.builder().id(gradeId).value(value).build();
     }
@@ -128,6 +132,27 @@ class StudentServiceImplTest {
         assertEquals(2L, events.get(1).getId());
         verify(studentRepository, times(1)).findById(studentId);
         verify(eventRepository, times(1)).findAllBySchoolClassId(classId);
+
+    }
+
+    @Test
+    void getTimetableByStudentId() {
+
+        when(studentRepository.findById(studentId)).thenReturn(Optional.of(
+                Student.builder().id(studentId).schoolClass(
+                        Class.builder().id(classId).build())
+                        .build()
+        ));
+
+        when(timetableService.getTimetableByClassId(classId)).thenReturn(Timetable.builder().build());
+
+        when(timetableService.getTimetableByClassId(studentId)).thenReturn(Timetable.builder().build());
+
+        Timetable timetable = studentService.getTimetableByStudentId(studentId);
+
+        assertNotNull(timetable);
+        verify(studentRepository, times(1)).findById(studentId);
+        verify(timetableService, times(1)).getTimetableByClassId(classId);
 
     }
 }

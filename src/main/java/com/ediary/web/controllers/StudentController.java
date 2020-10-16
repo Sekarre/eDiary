@@ -1,5 +1,6 @@
 package com.ediary.web.controllers;
 import com.ediary.services.SubjectService;
+import com.ediary.services.TimetableService;
 import org.springframework.ui.Model;
 import com.ediary.services.StudentService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +17,6 @@ public class StudentController {
         this.studentService = studentService;
         this.subjectService = subjectService;
     }
-
 
     @GetMapping("/{studentId}/grade")
     public String getAllGrades(@PathVariable Long studentId, Model model) {
@@ -58,5 +58,12 @@ public class StudentController {
 
         model.addAttribute("events", studentService.listEvents(studentId));
         return "student/allEvents";
+    }
+
+    @GetMapping("/{studentId}/timetable")
+    public String getTimetable(@PathVariable Long studentId, Model model){
+
+        model.addAttribute("timetable", studentService.getTimetableByStudentId(studentId));
+        return "student/timetable";
     }
 }

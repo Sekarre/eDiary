@@ -4,8 +4,10 @@ import com.ediary.domain.Attendance;
 import com.ediary.domain.Behavior;
 import com.ediary.domain.Event;
 import com.ediary.domain.Grade;
+import com.ediary.domain.timetable.Timetable;
 import com.ediary.services.StudentService;
 import com.ediary.services.SubjectService;
+import com.ediary.services.TimetableService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -131,6 +133,21 @@ class StudentControllerTest {
 
         verify(studentService, times(1)).listEvents(studentId);
         assertEquals(2, studentService.listEvents(studentId).size());
+    }
+
+    @Test
+    void getTimetable() throws Exception {
+
+        when(studentService.getTimetableByStudentId(studentId)).thenReturn(
+                Timetable.builder().build()
+        );
+
+        mockMvc.perform(get("/student/" + studentId + "/timetable"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("timetable"))
+                .andExpect(view().name("student/timetable"));
+
+        verify(studentService, times(1)).getTimetableByStudentId(studentId);
     }
 
 
