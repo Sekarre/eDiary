@@ -1,5 +1,6 @@
 package com.ediary.web.controllers;
 
+import com.ediary.domain.Attendance;
 import com.ediary.domain.Grade;
 import com.ediary.services.StudentService;
 import com.ediary.services.SubjectService;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class StudentControllerTest {
 
     private final Long studentId = 1L;
+
     private final Long subjectId = 2L;
     private final String subjectName = "Maths";
 
@@ -48,7 +50,7 @@ class StudentControllerTest {
                 Grade.builder().id(2L).value("2").build()
         ));
 
-        mockMvc.perform(get("/students/" + studentId))
+        mockMvc.perform(get("/students/" + studentId + "/grades"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("grades"))
                 .andExpect(view().name("student/allGrades"));
@@ -67,7 +69,7 @@ class StudentControllerTest {
 
         when(subjectService.getNameById(subjectId)).thenReturn(subjectName);
 
-        mockMvc.perform(get("/students/" + studentId + "/" + subjectId))
+        mockMvc.perform(get("/students/" + studentId + "/grades/subject/" + subjectId))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("subjectName"))
                 .andExpect(model().attributeExists("grades"))
@@ -80,4 +82,20 @@ class StudentControllerTest {
         assertEquals(subjectName, subjectService.getNameById(subjectId));
 
     }
+
+    @Test
+    void getAttendance() throws Exception {
+
+        when(studentService.listAttendances(studentId)).thenReturn(Arrays.asList(Attendance.builder().id(1L).build()));
+
+        mockMvc.perform(get("/students/" + studentId + "/attendance"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("attendances"))
+                .andExpect(view().name("student/attendance"));
+
+        verify(studentService).listAttendances(studentId);
+        assertEquals(1, studentService.listAttendances(studentId).size());
+    }
+
+
 }

@@ -18,14 +18,19 @@ public class StudentController {
     }
 
 
-    @GetMapping("/{studentId}")
+    @GetMapping("/{studentId}/grades")
     public String getAllGrades(@PathVariable Long studentId, Model model) {
 
         model.addAttribute("grades", studentService.listGrades(studentId));
         return "student/allGrades";
     }
 
-    @GetMapping("/{studentId}/{subjectId}")
+    @GetMapping("/{studentId}/grades/{gradeId}")
+    public String getGrade(){
+        return null;
+    }
+
+    @GetMapping("/{studentId}/grades/subject/{subjectId}")
     public String getAllGradesBySubject(@PathVariable Long studentId,
                                         @PathVariable Long subjectId, Model model) {
 
@@ -33,4 +38,12 @@ public class StudentController {
         model.addAttribute("grades", studentService.listGrades(studentId, subjectId));
         return "student/allGradesBySubject";
     }
+
+    @GetMapping("/{studentId}/attendance")
+    public String getAttendance(@PathVariable Long studentId, Model model) {
+
+        model.addAttribute("attendances", studentService.listAttendances(studentId));
+        return "student/attendance";
+    }
+
 }
