@@ -4,6 +4,7 @@ import com.ediary.domain.security.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Setter
