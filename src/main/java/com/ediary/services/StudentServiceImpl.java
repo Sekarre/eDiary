@@ -4,11 +4,13 @@ import com.ediary.domain.*;
 import com.ediary.domain.timetable.Timetable;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class StudentServiceImpl implements StudentService {
 
@@ -20,17 +22,6 @@ public class StudentServiceImpl implements StudentService {
     private final EventRepository eventRepository;
     private final StudentRepository studentRepository;
 
-    public StudentServiceImpl(TimetableService timetableService, GradeRepository gradeRepository,
-                              AttendanceRepository attendanceRepository, BehaviorRepository behaviorRepository,
-                              EventRepository eventRepository, StudentRepository studentRepository) {
-
-        this.timetableService = timetableService;
-        this.gradeRepository = gradeRepository;
-        this.attendanceRepository = attendanceRepository;
-        this.behaviorRepository = behaviorRepository;
-        this.eventRepository = eventRepository;
-        this.studentRepository = studentRepository;
-    }
 
     @Override
     public List<Grade> listGrades(Long studentId) {
