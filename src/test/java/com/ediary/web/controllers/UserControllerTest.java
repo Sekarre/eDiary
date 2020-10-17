@@ -1,6 +1,7 @@
 package com.ediary.web.controllers;
 
 import com.ediary.domain.Message;
+import com.ediary.domain.Notice;
 import com.ediary.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -91,5 +92,22 @@ class UserControllerTest {
                 .andExpect(view().name("redirect:student/sendMessages"));
 
         verify(userService).sendMessage(any());
+    }
+
+    @Test
+    void getAllNotices() throws Exception {
+        when(userService.listNotices()).thenReturn(Arrays.asList(
+                Notice.builder().id(1L).build(),
+                Notice.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/user/notice"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("notices"))
+                .andExpect(view().name("student/allNotices"));
+
+        verify(userService, times(1)).listNotices();
+        assertEquals(2, userService.listNotices().size());
+        assertEquals(2L, userService.listNotices().get(1).getId());
     }
 }

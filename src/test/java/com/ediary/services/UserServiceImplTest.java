@@ -1,6 +1,7 @@
 package com.ediary.services;
 
 import com.ediary.domain.Message;
+import com.ediary.domain.Notice;
 import com.ediary.domain.security.User;
 import com.ediary.repositories.security.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,13 +26,16 @@ class UserServiceImplTest {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    NoticeService noticeService;
+
     UserService userService;
 
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        userService = new UserServiceImpl(messageService, userRepository);
+        userService = new UserServiceImpl(messageService, userRepository, noticeService);
     }
 
     @Test
@@ -97,5 +101,20 @@ class UserServiceImplTest {
         Message message = userService.sendMessage(messageToSend);
 
         assertEquals(messageId, message.getId());
+    }
+
+    @Test
+    void listNotices() {
+        when(noticeService.listNotices()).thenReturn(Arrays.asList(
+                Notice.builder().id(1L).build(),
+                Notice.builder().id(2L).build()
+        ));
+
+        List<Notice> notices = userService.listNotices();
+
+        assertEquals(2, notices.size());
+        assertEquals(1L, notices.get(0).getId());
+        verify(noticeService, times(1)).listNotices();
+
     }
 }

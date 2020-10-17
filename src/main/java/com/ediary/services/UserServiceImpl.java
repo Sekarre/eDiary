@@ -1,6 +1,7 @@
 package com.ediary.services;
 
 import com.ediary.domain.Message;
+import com.ediary.domain.Notice;
 import com.ediary.domain.security.User;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.security.UserRepository;
@@ -16,6 +17,7 @@ public class UserServiceImpl implements UserService {
 
     private final MessageService messageService;
     private final UserRepository userRepository;
+    private final NoticeService noticeService;
 
     @Override
     public List<Message> listReadMessage(Long userId) {
@@ -44,6 +46,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Message sendMessage(Message message) {
         return messageService.saveMessage(message);
+    }
+
+    @Override
+    public List<Notice> listNotices() {
+        return noticeService.listNotices();
     }
 
     private User getUserById(Long userId) {

@@ -22,6 +22,7 @@ public class Notice {
     private String content;
     private Date date;
 
+    //author
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User user;

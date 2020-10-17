@@ -64,5 +64,12 @@ public class UserController {
         }
     }
 
+    @GetMapping("/notice")
+    public String getAllNotices(Model model) {
+
+        model.addAttribute("notices", userService.listNotices());
+        return "student/allNotices";
+    }
+
 
 }
