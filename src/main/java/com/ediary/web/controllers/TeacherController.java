@@ -29,4 +29,11 @@ public class TeacherController {
         });
     }
 
+    @GetMapping("/{teacherId}/event")
+    public String getAllEvents(@PathVariable Long teacherId, Model model) {
+
+        model.addAttribute("events", teacherService.listEvents(teacherId));
+        return "teacher/allEvents";
+    }
+
 }

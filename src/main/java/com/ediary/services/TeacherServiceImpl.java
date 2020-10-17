@@ -13,9 +13,10 @@ import java.util.Optional;
 @Service
 public class TeacherServiceImpl implements TeacherService {
 
-    private final NoticeService noticeService;
+    private final EventService eventService;
 
     private final TeacherRepository teacherRepository;
+
 
     @Override
     public Lesson saveLesson(Lesson lesson) {
@@ -109,7 +110,10 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<Event> listEvents(Long teacherId) {
-        return null;
+
+        Teacher teacher = getTeacherById(teacherId);
+
+        return eventService.listEventsByTeacher(teacher);
     }
 
     @Override

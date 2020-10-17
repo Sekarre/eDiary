@@ -46,13 +46,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<Event> listEvents(Long studentId) {
 
-        Optional<Student> studentOptional = studentRepository.findById(studentId);
-
-        if(!studentOptional.isPresent()) {
-            throw new NotFoundException("Student Not Found.");
-        }
-
-        Student student = studentOptional.get();
+        Student student = getStudentById(studentId);
 
         List<Event> eventList = eventRepository.findAllBySchoolClassId(student.getSchoolClass().getId());
 
@@ -62,15 +56,19 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Timetable getTimetableByStudentId(Long studentId) {
 
+        Student student = getStudentById(studentId);
+
+        return timetableService.getTimetableByClassId(student.getSchoolClass().getId());
+    }
+
+    private Student getStudentById(Long studentId) {
         Optional<Student> studentOptional = studentRepository.findById(studentId);
 
         if(!studentOptional.isPresent()) {
             throw new NotFoundException("Student Not Found.");
         }
 
-        Student student = studentOptional.get();
-
-        return timetableService.getTimetableByClassId(student.getSchoolClass().getId());
+        return studentOptional.get();
     }
 
 
