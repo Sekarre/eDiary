@@ -1,6 +1,7 @@
 package com.ediary.services;
 
 import com.ediary.domain.Notice;
+import com.ediary.domain.security.User;
 import com.ediary.repositories.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,5 +17,15 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public List<Notice> listNotices() {
         return noticeRepository.findAll();
+    }
+
+    @Override
+    public Notice initNewNotice(User user) {
+        return Notice.builder().user(user).build();
+    }
+
+    @Override
+    public Notice addNotice(Notice notice) {
+        return noticeRepository.save(notice);
     }
 }

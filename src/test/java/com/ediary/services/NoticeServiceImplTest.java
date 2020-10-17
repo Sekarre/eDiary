@@ -39,4 +39,19 @@ class NoticeServiceImplTest {
         assertEquals(1L, notices.get(0).getId());
         verify(noticeRepository, times(1)).findAll();
     }
+
+    @Test
+    void addNotice() {
+        Long noticeId = 3L;
+        Notice noticeToSave = Notice.builder().id(noticeId).build();
+
+        when(noticeRepository.save(noticeToSave)).thenReturn(
+                Notice.builder().id(noticeToSave.getId()).build()
+        );
+
+        Notice noticeSaved = noticeService.addNotice(noticeToSave);
+
+        assertEquals(noticeId, noticeSaved.getId());
+        verify(noticeRepository, times(1)).save(noticeToSave);
+    }
 }

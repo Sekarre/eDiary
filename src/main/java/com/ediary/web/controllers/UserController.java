@@ -1,6 +1,7 @@
 package com.ediary.web.controllers;
 
 import com.ediary.domain.Message;
+import com.ediary.domain.Notice;
 import com.ediary.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -36,21 +37,21 @@ public class UserController {
     public String getReadMessages(@PathVariable Long userId, Model model) {
 
         model.addAttribute("readMessages", userService.listReadMessage(userId));
-        return "student/readMessages";
+        return "user/readMessages";
     }
 
     @GetMapping("/{userId}/sendMessages")
     public String getSendMessages(@PathVariable Long userId, Model model) {
 
         model.addAttribute("sendMessages", userService.listSendMessage(userId));
-        return "student/sendMessages";
+        return "user/sendMessages";
     }
 
     @GetMapping("/{userId}/newMessages")
     public String newMessage(@PathVariable Long userId, Model model) {
 
         model.addAttribute("message", userService.initNewMessage(userId));
-        return "student/newMessages";
+        return "user/newMessages";
     }
 
     @PostMapping("/{userId}/newMessages")
@@ -60,7 +61,7 @@ public class UserController {
             return "/";
         } else {
             userService.sendMessage(message);
-            return "redirect:student/sendMessages";
+            return "redirect:user/sendMessages";
         }
     }
 
@@ -68,8 +69,27 @@ public class UserController {
     public String getAllNotices(Model model) {
 
         model.addAttribute("notices", userService.listNotices());
-        return "student/allNotices";
+        return "user/allNotices";
     }
+
+    @GetMapping("/{userId}/newNotice")
+    public String newNotice(@PathVariable Long userId, Model model) {
+
+        model.addAttribute("notice", userService.initNewNotice(userId));
+        return "user/newNotice";
+    }
+
+    @PostMapping("/{userId}/newNotice")
+    public String processNewNotice(@Valid @ModelAttribute Notice notice, BindingResult result) {
+        if (result.hasErrors()){
+            //TODO
+            return "/";
+        } else {
+            userService.addNotice(notice);
+            return "redirect:user/allNotices";
+        }
+    }
+
 
 
 }

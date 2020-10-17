@@ -117,4 +117,36 @@ class UserServiceImplTest {
         verify(noticeService, times(1)).listNotices();
 
     }
+    @Test
+    void initNewNotice() {
+        User user = User.builder().id(userId).build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        when(noticeService.initNewNotice(any())).thenReturn(
+                Notice.builder().user(user).build()
+        );
+
+        Notice notice = userService.initNewNotice(userId);
+
+        assertEquals(user, notice.getUser());
+        verify(noticeService, times(1)).initNewNotice(user);
+        verify(userRepository, times(1)).findById(userId);
+    }
+
+    @Test
+    public void addNotice() {
+        Long noticeId = 3L;
+        Notice noticeToAdd = Notice.builder().id(noticeId).build();
+
+        when(noticeService.addNotice(noticeToAdd)).thenReturn(
+                Notice.builder().id(noticeToAdd.getId()).build()
+        );
+
+        Notice notice = userService.addNotice(noticeToAdd);
+
+        assertEquals(noticeId, notice.getId());
+
+    }
+
 }

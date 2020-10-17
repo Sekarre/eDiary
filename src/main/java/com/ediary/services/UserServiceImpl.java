@@ -53,6 +53,19 @@ public class UserServiceImpl implements UserService {
         return noticeService.listNotices();
     }
 
+    @Override
+    public Notice initNewNotice(Long userId) {
+
+        User user = getUserById(userId);
+
+        return noticeService.initNewNotice(user);
+    }
+
+    @Override
+    public Notice addNotice(Notice notice) {
+        return noticeService.addNotice(notice);
+    }
+
     private User getUserById(Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
 

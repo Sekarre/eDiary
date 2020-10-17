@@ -48,7 +48,7 @@ class UserControllerTest {
         mockMvc.perform(get("/user/"+ userId +"/readMessages"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("readMessages"))
-                .andExpect(view().name("student/readMessages"));
+                .andExpect(view().name("user/readMessages"));
 
         verify(userService, times(1)).listReadMessage(userId);
         assertEquals(2, userService.listReadMessage(userId).size());
@@ -65,7 +65,7 @@ class UserControllerTest {
         mockMvc.perform(get("/user/"+ userId +"/sendMessages"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("sendMessages"))
-                .andExpect(view().name("student/sendMessages"));
+                .andExpect(view().name("user/sendMessages"));
 
         verify(userService, times(1)).listSendMessage(userId);
         assertEquals(2, userService.listSendMessage(userId).size());
@@ -78,7 +78,7 @@ class UserControllerTest {
         mockMvc.perform(get("/user/"+ userId +"/newMessages"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("message"))
-                .andExpect(view().name("student/newMessages"));
+                .andExpect(view().name("user/newMessages"));
 
         verify(userService, times(1)).initNewMessage(userId);
     }
@@ -89,7 +89,7 @@ class UserControllerTest {
 
         mockMvc.perform(post("/user/"+ userId +"/newMessages"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:student/sendMessages"));
+                .andExpect(view().name("redirect:user/sendMessages"));
 
         verify(userService).sendMessage(any());
     }
@@ -104,10 +104,33 @@ class UserControllerTest {
         mockMvc.perform(get("/user/notice"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("notices"))
-                .andExpect(view().name("student/allNotices"));
+                .andExpect(view().name("user/allNotices"));
 
         verify(userService, times(1)).listNotices();
         assertEquals(2, userService.listNotices().size());
         assertEquals(2L, userService.listNotices().get(1).getId());
+    }
+
+    @Test
+    void newNotice() throws Exception {
+        when(userService.initNewNotice(userId)).thenReturn(Notice.builder().build());
+
+        mockMvc.perform(get("/user/"+ userId +"/newNotice"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("notice"))
+                .andExpect(view().name("user/newNotice"));
+
+        verify(userService, times(1)).initNewNotice(userId);
+    }
+
+    @Test
+    void processNewNotice() throws Exception {
+        when(userService.addNotice(any())).thenReturn(Notice.builder().build());
+
+        mockMvc.perform(post("/user/"+ userId +"/newNotice"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:user/allNotices"));
+
+        verify(userService).addNotice(any());
     }
 }

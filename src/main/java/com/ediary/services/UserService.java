@@ -12,4 +12,7 @@ public interface UserService {
     Message initNewMessage(Long userId);
     Message sendMessage(Message message);
     List<Notice> listNotices();
+    Notice initNewNotice(Long userId);
+    Notice addNotice(Notice notice);
+
 }
