@@ -28,6 +28,20 @@ class EventServiceImplTest {
     }
 
     @Test
+    void listEventsBySchoolClass() {
+        when(eventRepository.findAllBySchoolClass(any())).thenReturn(Arrays.asList(
+                Event.builder().id(1L).build(),
+                Event.builder().id(2L).build()
+        ));
+
+        List<Event> events = eventService.listEventsBySchoolClass(any());
+
+        assertEquals(1L, events.get(0).getId());
+        assertEquals(2, events.size());
+        verify(eventRepository, times(1)).findAllBySchoolClass(any());
+    }
+
+    @Test
     void listEventsByTeacher() {
         when(eventRepository.findAllByTeacher(any())).thenReturn(Arrays.asList(
                 Event.builder().id(1L).build(),

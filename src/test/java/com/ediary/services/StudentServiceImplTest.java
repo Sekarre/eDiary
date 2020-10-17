@@ -32,6 +32,9 @@ class StudentServiceImplTest {
     TimetableService timetableService;
 
     @Mock
+    EventService eventService;
+
+    @Mock
     GradeRepository gradeRepository;
 
     @Mock
@@ -40,8 +43,6 @@ class StudentServiceImplTest {
     @Mock
     BehaviorRepository behaviorRepository;
 
-    @Mock
-    EventRepository eventRepository;
 
     @Mock
     StudentRepository studentRepository;
@@ -53,8 +54,8 @@ class StudentServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        studentService = new StudentServiceImpl(timetableService, gradeRepository, attendanceRepository,
-                behaviorRepository, eventRepository, studentRepository);
+        studentService = new StudentServiceImpl(timetableService,eventService, gradeRepository, attendanceRepository,
+                behaviorRepository, studentRepository);
 
         gradeReturned = Grade.builder().id(gradeId).value(value).build();
     }
@@ -115,12 +116,10 @@ class StudentServiceImplTest {
     void listEvents() {
 
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(
-                Student.builder().id(studentId).schoolClass(
-                            Class.builder().id(classId).build())
-                        .build()
-        ));
+                Student.builder().id(studentId).build()
+                ));
 
-        when(eventRepository.findAllBySchoolClassId(classId)).thenReturn(Arrays.asList(
+        when(eventService.listEventsBySchoolClass(any())).thenReturn(Arrays.asList(
                 Event.builder().id(1L).build(),
                 Event.builder().id(2L).build()
         ));
@@ -131,7 +130,7 @@ class StudentServiceImplTest {
         assertEquals(1L, events.get(0).getId());
         assertEquals(2L, events.get(1).getId());
         verify(studentRepository, times(1)).findById(studentId);
-        verify(eventRepository, times(1)).findAllBySchoolClassId(classId);
+        verify(eventService, times(1)).listEventsBySchoolClass(any());
 
     }
 

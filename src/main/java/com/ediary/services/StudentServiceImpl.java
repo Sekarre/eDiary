@@ -15,11 +15,11 @@ import java.util.Optional;
 public class StudentServiceImpl implements StudentService {
 
     private final TimetableService timetableService;
+    private final EventService eventService;
 
     private final GradeRepository gradeRepository;
     private final AttendanceRepository attendanceRepository;
     private final BehaviorRepository behaviorRepository;
-    private final EventRepository eventRepository;
     private final StudentRepository studentRepository;
 
 
@@ -48,9 +48,9 @@ public class StudentServiceImpl implements StudentService {
 
         Student student = getStudentById(studentId);
 
-        List<Event> eventList = eventRepository.findAllBySchoolClassId(student.getSchoolClass().getId());
+        List<Event> events= eventService.listEventsBySchoolClass(student.getSchoolClass());
 
-        return eventList;
+        return events;
     }
 
     @Override
