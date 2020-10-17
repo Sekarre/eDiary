@@ -19,27 +19,40 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Message> listReadMessage(Long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
 
-        if (!userOptional.isPresent()) {
-            throw new NotFoundException("User Not Found.");
-        }
-
-        User user = userOptional.get();
+        User user = getUserById(userId);
 
         return messageService.listReadMessageByUser(user);
     }
 
     @Override
     public List<Message> listSendMessage(Long userId) {
+
+        User user = getUserById(userId);
+
+        return messageService.listSendMessageByUser(user);
+    }
+
+    @Override
+    public Message initNewMessage(Long userId) {
+
+        User user = getUserById(userId);
+
+        return messageService.initNewMessageBySender(user);
+    }
+
+    @Override
+    public Message sendMessage(Message message) {
+        return messageService.saveMessage(message);
+    }
+
+    private User getUserById(Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
 
         if (!userOptional.isPresent()) {
             throw new NotFoundException("User Not Found.");
         }
 
-        User user = userOptional.get();
-
-        return messageService.listSendMessageByUser(user);
+        return userOptional.get();
     }
 }

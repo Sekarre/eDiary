@@ -24,4 +24,14 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository.findAllBySenders(user);
     }
 
+    @Override
+    public Message initNewMessageBySender(User user) {
+        return Message.builder().senders(user).build();
+    }
+
+    @Override
+    public Message saveMessage(Message message) {
+        return messageRepository.save(message);
+    }
+
 }

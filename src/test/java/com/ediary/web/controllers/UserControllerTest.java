@@ -13,6 +13,7 @@ import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -67,5 +68,28 @@ class UserControllerTest {
 
         verify(userService, times(1)).listSendMessage(userId);
         assertEquals(2, userService.listSendMessage(userId).size());
+    }
+
+    @Test
+    void newMessage() throws Exception {
+        when(userService.initNewMessage(userId)).thenReturn(Message.builder().build());
+
+        mockMvc.perform(get("/user/"+ userId +"/newMessages"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("message"))
+                .andExpect(view().name("student/newMessages"));
+
+        verify(userService, times(1)).initNewMessage(userId);
+    }
+
+    @Test
+    void processNewMessage() throws Exception {
+        when(userService.sendMessage(any())).thenReturn(Message.builder().build());
+
+        mockMvc.perform(post("/user/"+ userId +"/newMessages"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:student/sendMessages"));
+
+        verify(userService).sendMessage(any());
     }
 }

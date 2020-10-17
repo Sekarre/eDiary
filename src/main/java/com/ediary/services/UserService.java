@@ -8,4 +8,6 @@ public interface UserService {
 
     List<Message> listReadMessage(Long userId);
     List<Message> listSendMessage(Long userId);
+    Message initNewMessage(Long userId);
+    Message sendMessage(Message message);
 }

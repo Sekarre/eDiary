@@ -61,4 +61,17 @@ class MessageServiceImplTest {
         assertEquals(1L, messages.get(0).getId());
         verify(messageRepository, times(1)).findAllBySenders(user);
     }
+
+    @Test
+    void saveMessage() {
+        Long messageId = 1L;
+        Message messageToSave = Message.builder().id(messageId).build();
+
+        when(messageRepository.save(messageToSave)).thenReturn(messageToSave);
+
+        Message messageSaved = messageService.saveMessage(messageToSave);
+
+        assertEquals(messageSaved.getId(), messageSaved.getId());
+        verify(messageRepository, times(1)).save(messageToSave);
+    }
 }

@@ -41,7 +41,4 @@ public class Message {
     @JoinColumn(name = "user_id")
     private User senders;
 
-
-    //ManyToOne:    uzytkownik jako nadawca
-    //ManyToMany:   uzytkownik jako odbiorcy
 }

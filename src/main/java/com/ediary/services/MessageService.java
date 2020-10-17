@@ -9,4 +9,6 @@ public interface MessageService {
 
     List<Message> listReadMessageByUser(User user);
     List<Message> listSendMessageByUser(User user);
+    Message initNewMessageBySender(User user);
+    Message saveMessage(Message message);
 }

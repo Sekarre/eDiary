@@ -67,4 +67,35 @@ class UserServiceImplTest {
         verify(messageService, times(1)).listSendMessageByUser(any());
         verify(userRepository, times(1)).findById(userId);
     }
+
+    @Test
+    void initNewMessage() {
+        User user = User.builder().id(userId).build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        when(messageService.initNewMessageBySender(any())).thenReturn(
+                Message.builder().senders(user).build()
+        );
+
+        Message messages = userService.initNewMessage(userId);
+
+        assertEquals(user, messages.getSenders());
+        verify(messageService, times(1)).initNewMessageBySender(user);
+        verify(userRepository, times(1)).findById(userId);
+    }
+
+    @Test
+    void sendMessage() {
+        Long messageId = 1L;
+        Message messageToSend = Message.builder().id(messageId).build();
+
+        when(messageService.saveMessage(messageToSend)).thenReturn(
+                Message.builder().id(messageToSend.getId()).build()
+        );
+
+        Message message = userService.sendMessage(messageToSend);
+
+        assertEquals(messageId, message.getId());
+    }
 }
