@@ -7,7 +7,6 @@ import com.ediary.domain.Grade;
 import com.ediary.domain.timetable.Timetable;
 import com.ediary.services.StudentService;
 import com.ediary.services.SubjectService;
-import com.ediary.services.TimetableService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
