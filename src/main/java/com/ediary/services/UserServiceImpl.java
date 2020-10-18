@@ -4,6 +4,7 @@ import com.ediary.DTO.MessageDto;
 import com.ediary.DTO.NoticeDto;
 import com.ediary.converters.MessageDtoToMessage;
 import com.ediary.converters.MessageToMessageDto;
+import com.ediary.converters.NoticeDtoToNotice;
 import com.ediary.converters.NoticeToNoticeDto;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
@@ -29,6 +30,7 @@ public class UserServiceImpl implements UserService {
     private final MessageDtoToMessage messageDtoToMessage;
 
     private final NoticeToNoticeDto noticeToNoticeDto;
+    private final NoticeDtoToNotice noticeDtoToNotice;
 
     @Override
     public List<MessageDto> listReadMessage(Long userId) {
@@ -58,8 +60,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Message sendMessage(MessageDto messageDto) {
 
-        Message message = new Message();
-
         return messageService.saveMessage(messageDtoToMessage.convert(messageDto));
     }
 
@@ -69,16 +69,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Notice initNewNotice(Long userId) {
+    public NoticeDto initNewNotice(Long userId) {
 
         User user = getUserById(userId);
 
-        return noticeService.initNewNotice(user);
+        Notice notice = noticeService.initNewNotice(user);
+        return noticeToNoticeDto.convert(notice);
     }
 
     @Override
-    public Notice addNotice(Notice notice) {
-        return noticeService.addNotice(notice);
+    public Notice addNotice(NoticeDto noticeDto) {
+
+        return noticeService.addNotice(noticeDtoToNotice.convert(noticeDto));
     }
 
     private User getUserById(Long userId) {

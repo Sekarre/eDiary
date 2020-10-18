@@ -115,7 +115,7 @@ class UserControllerTest {
 
     @Test
     void newNotice() throws Exception {
-        when(userService.initNewNotice(userId)).thenReturn(Notice.builder().build());
+        when(userService.initNewNotice(userId)).thenReturn(NoticeDto.builder().build());
 
         mockMvc.perform(get("/user/"+ userId +"/newNotice"))
                 .andExpect(status().isOk())

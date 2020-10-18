@@ -14,7 +14,7 @@ public interface UserService {
     MessageDto initNewMessage(Long userId);
     Message sendMessage(MessageDto messageDto);
     List<NoticeDto> listNotices();
-    Notice initNewNotice(Long userId);
-    Notice addNotice(Notice notice);
+    NoticeDto initNewNotice(Long userId);
+    Notice addNotice(NoticeDto notice);
 
 }

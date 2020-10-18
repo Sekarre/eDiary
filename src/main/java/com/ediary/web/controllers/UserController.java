@@ -1,6 +1,7 @@
 package com.ediary.web.controllers;
 
 import com.ediary.DTO.MessageDto;
+import com.ediary.DTO.NoticeDto;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 import com.ediary.services.UserService;
@@ -81,7 +82,7 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/newNotice")
-    public String processNewNotice(@Valid @ModelAttribute Notice notice, BindingResult result) {
+    public String processNewNotice(@Valid @ModelAttribute NoticeDto notice, BindingResult result) {
         if (result.hasErrors()){
             //TODO
             return "/";

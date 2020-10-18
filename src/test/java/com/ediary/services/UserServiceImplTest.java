@@ -4,6 +4,7 @@ import com.ediary.DTO.MessageDto;
 import com.ediary.DTO.NoticeDto;
 import com.ediary.converters.MessageDtoToMessage;
 import com.ediary.converters.MessageToMessageDto;
+import com.ediary.converters.NoticeDtoToNotice;
 import com.ediary.converters.NoticeToNoticeDto;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
@@ -43,6 +44,9 @@ class UserServiceImplTest {
     @Mock
     NoticeToNoticeDto noticeToNoticeDto;
 
+    @Mock
+    NoticeDtoToNotice noticeDtoToNotice;
+
     UserService userService;
 
 
@@ -50,7 +54,7 @@ class UserServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         userService = new UserServiceImpl(messageService, userRepository, noticeService,
-                messageToMessageDto, messageDtoToMessage, noticeToNoticeDto);
+                messageToMessageDto, messageDtoToMessage, noticeToNoticeDto, noticeDtoToNotice);
     }
 
     @Test
@@ -161,31 +165,44 @@ class UserServiceImplTest {
     void initNewNotice() {
         User user = User.builder().id(userId).build();
 
+        Long noticeId = 8L;
+        Notice noticeToConvert = Notice.builder().id(noticeId).user(user).build();
+
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        when(noticeService.initNewNotice(any())).thenReturn(
-                Notice.builder().user(user).build()
+        when(noticeService.initNewNotice(any())).thenReturn(noticeToConvert);
+
+        when(noticeToNoticeDto.convert(noticeToConvert)).thenReturn(
+                NoticeDto.builder().id(noticeToConvert.getId()).authorId(noticeToConvert.getUser().getId()).build()
         );
 
-        Notice notice = userService.initNewNotice(userId);
+        NoticeDto noticeDto = userService.initNewNotice(userId);
 
-        assertEquals(user, notice.getUser());
+        assertEquals(user.getId(), noticeDto.getAuthorId());
+        assertEquals(noticeToConvert.getId(), noticeDto.getId());
         verify(noticeService, times(1)).initNewNotice(user);
         verify(userRepository, times(1)).findById(userId);
+        verify(noticeToNoticeDto, times(1)).convert(noticeToConvert);
     }
 
     @Test
     public void addNotice() {
         Long noticeId = 3L;
-        Notice noticeToAdd = Notice.builder().id(noticeId).build();
+        NoticeDto noticeToAdd = NoticeDto.builder().id(noticeId).build();
 
-        when(noticeService.addNotice(noticeToAdd)).thenReturn(
+        when(noticeDtoToNotice.convert(noticeToAdd)).thenReturn(
+                Notice.builder().id(noticeToAdd.getId()).build()
+        );
+
+        when(noticeService.addNotice(any())).thenReturn(
                 Notice.builder().id(noticeToAdd.getId()).build()
         );
 
         Notice notice = userService.addNotice(noticeToAdd);
 
         assertEquals(noticeId, notice.getId());
+        verify(noticeDtoToNotice, times(1)).convert(noticeToAdd);
+        verify(noticeService, times(1)).addNotice(any());
 
     }
 
