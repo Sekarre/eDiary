@@ -23,7 +23,7 @@ public class School {
     private String email;
     private String schoolOffice;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     private Address address;
 
 }

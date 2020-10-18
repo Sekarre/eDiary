@@ -37,7 +37,7 @@ public class Message {
     private Set<User> readers;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User senders;
 
