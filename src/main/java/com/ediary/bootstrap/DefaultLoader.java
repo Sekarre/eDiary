@@ -14,6 +14,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 @Slf4j
@@ -35,6 +36,10 @@ public class DefaultLoader implements CommandLineRunner {
     private final NoticeRepository noticeRepository;
     private final ClassRepository classRepository;
     private final SubjectRepository subjectRepository;
+    private final GradeRepository gradeRepository;
+    private final TopicRepository topicRepository;
+    private final LessonRepository lessonRepository;
+    private final BehaviorRepository behaviorRepository;
 
     private Long firstUserAsStudentId;
     private Long firstUserAsParentId;
@@ -62,10 +67,7 @@ public class DefaultLoader implements CommandLineRunner {
     private final String[] subjectNames = {"Matematyka", "Historia", "Informatyka", "Plastyka", "Muzyka",
             "Język angielski", "Wychowanie fizyczne", "Przyroda", "Biologia", "Technika"};
 
-    private int numberOfParents = parentNames.length;
-    private int numberOfStudents = studentNames.length;
-    private int numberOfTeachers = teacherNames.length;
-    private int numberOfClasses = classNames.length;
+    private final String[] topicNamesMath = {"Dodawanie", "Dzielenie", "Mnożenie", "Odejmowanie"};
 
 
     @Override
@@ -85,7 +87,10 @@ public class DefaultLoader implements CommandLineRunner {
         createNotices();
         createClasses();
         createSubjects();
-
+        createGrades();
+        createTopics();
+        createLessons();
+        createBehaviors();
     }
 
     private void createAddresses() {
@@ -175,7 +180,7 @@ public class DefaultLoader implements CommandLineRunner {
         long userAsStudentId = firstUserAsStudentId;
         long userAsParentId = firstUserAsParentId;
 
-        for (; userAsStudentId < firstUserAsStudentId + numberOfStudents; userAsStudentId++, userAsParentId++) {
+        for (; userAsStudentId < firstUserAsStudentId + studentNames.length; userAsStudentId++, userAsParentId++) {
             studentRepository.save(Student.builder()
                     .user(userRepository.findById(userAsStudentId).orElse(null))
                     .parent(createParent(userAsParentId))
@@ -198,7 +203,7 @@ public class DefaultLoader implements CommandLineRunner {
 
     private void createTeachers() {
 
-        for (long userAsTeacherId = firstUserAsTeacherId; userAsTeacherId < firstUserAsTeacherId + numberOfTeachers; userAsTeacherId++) {
+        for (long userAsTeacherId = firstUserAsTeacherId; userAsTeacherId < firstUserAsTeacherId + teacherNames.length; userAsTeacherId++) {
             teacherRepository.save(Teacher.builder()
                     .user(userRepository.findById(userAsTeacherId).orElse(null))
                     .build());
@@ -210,7 +215,7 @@ public class DefaultLoader implements CommandLineRunner {
 
 
     private void createParentCouncils() {
-        for(int i = 0; i < numberOfClasses; i++) {
+        for(int i = 0; i < classNames.length; i++) {
             parentCouncilRepository.save(ParentCouncil.builder()
                     .build());
         }
@@ -218,7 +223,7 @@ public class DefaultLoader implements CommandLineRunner {
 
 
     private void createStudentCouncils() {
-        for(int i = 0; i < numberOfClasses; i++) {
+        for(int i = 0; i < classNames.length; i++) {
             studentCouncilRepository.save(StudentCouncil.builder()
                     .build());
         }
@@ -262,7 +267,7 @@ public class DefaultLoader implements CommandLineRunner {
         };
 
 
-        for (int i = 0; i < numberOfStudents; i++) {
+        for (int i = 0; i < studentNames.length; i++) {
             attendanceRepository.save(Attendance.builder()
                     .student(studentRepository
                             .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[i], studentLastNames[i]).getId()))
@@ -343,7 +348,7 @@ public class DefaultLoader implements CommandLineRunner {
 
 
     private void createClasses() {
-        for (int i = 0; i < numberOfClasses; i++) {
+        for (int i = 0; i < classNames.length; i++) {
             classRepository.save(Class.builder()
                     .name(classNames[i])
                     .teacher(teacherRepository.findByUserId(userRepository
@@ -384,10 +389,121 @@ public class DefaultLoader implements CommandLineRunner {
     }
 
 
-    
+    private void createGrades() {
+
+        log.debug("Creating grades...");
+
+        //Grades for first subject -> Matematyka
+        int[][] gradesPerStudent = {
+                {2, 4, 6, 2, 4, 1, 2, 5, 3, 2},
+                {3, 3, 4, 5, 3, 2, 4, 6, 3, 1},
+                {5, 2, 5, 1, 5, 2, 5, 5},
+                {2, 4, 6, 2, 4, 1, 2, 4, 2, 4},
+                {4, 2, 1, 2, 4, 2, 1, 3, 3},
+                {6, 5, 6, 6, 5, 5, 5, 5},
+                {2, 3, 1, 2, 2, 2, 3, 4, 2, 2}
+        };
+
+        String[] descriptions = {"Kartkówka", "Kartkówka", "Sprawdzian", "Aktywność", "Aktywność",
+                "Kartkówka", "Sprawdzian", "Aktywność", "Aktywność", "Kartkówka"};
 
 
+        for (int i = 0; i < studentNames.length; i++) {
+            for (int j = 0; j < gradesPerStudent[i].length; j++) {
 
+                gradeRepository.save(Grade.builder()
+                        .value(gradesPerStudent[i][j] + "")
+                        .description(descriptions[j])
+                        .date(Date.valueOf(LocalDate.now()))
+                        .student(studentRepository.findByUserId(userRepository
+                                .findByFirstNameAndLastName(studentNames[i], studentLastNames[i]).getId()))
+                        .teacher(teacherRepository.findByUserId(userRepository
+                                .findByFirstNameAndLastName(
+                                        teacherNames[i % teacherNames.length],
+                                        teacherLastNames[i % teacherNames.length]).getId()))
+                        .subject(subjectRepository.findByName(subjectNames[0]))
+                        .build());
+            }
+        }
+
+        log.debug("Just a few more..");
+        createRandomGrades();
+        log.debug("Created grades: " + gradeRepository.count());
+    }
+
+    private void createRandomGrades() {
+
+        Random random = new Random(System.currentTimeMillis());
+        String[] descriptions = {"Kartkówka", "Sprawdzian", "Aktywność"};
+
+        for (int k = 0; k < subjectNames.length; k++) {
+            for (int i = 0; i < studentNames.length; i++) {
+                for (int j = 0; j < random.nextInt(5); j++) {
+                    gradeRepository.save(Grade.builder()
+                            .value((random.nextInt(5) + 1) + "")
+                            .description(descriptions[random.nextInt(3)])
+                            .date(Date.valueOf(LocalDate.now()))
+                            .student(studentRepository.findByUserId(userRepository
+                                    .findByFirstNameAndLastName(studentNames[i], studentLastNames[i]).getId()))
+                            .teacher(teacherRepository.findByUserId(userRepository
+                                    .findByFirstNameAndLastName(
+                                            teacherNames[i % teacherNames.length],
+                                            teacherLastNames[i % teacherNames.length]).getId()))
+                            .subject(subjectRepository.findByName(subjectNames[k]))
+                            .build());
+                }
+            }
+        }
+    }
+
+    /** Creating maths' topics **/
+    private void createTopics() {
+        String[] descriptions = {"Jak dodawać liczby", "Jak dzielić liczby", "Jak mnożyć liczby", "Jak odejmować liczby"};
+
+
+        for (int i = 0; i < topicNamesMath.length; i++) {
+            topicRepository.save(Topic.builder()
+                    .number((int) (topicRepository.count() + 1))
+                    .name(topicNamesMath[i])
+                    .description(descriptions[i])
+                    .subject(subjectRepository.findByName(subjectNames[0]))
+                    .build());
+        }
+    }
+
+    /** Creating maths' lessons **/
+    private void createLessons() {
+        String[] lessonNames = {"Dodawanie", "Dzielenie", "Mnożenie", "Odejmowanie"};
+
+        for (int i = 0; i < lessonNames.length; i++) {
+            lessonRepository.save(Lesson.builder()
+                    .name(lessonNames[i])
+                    .date(Date.valueOf(LocalDate.now()))
+                    .subject(subjectRepository.findByName(subjectNames[0]))
+                    .schoolClass(classRepository.findByName(classNames[0]))
+                    .topic(topicRepository.findByName(topicNamesMath[i]))
+                    .build());
+
+        }
+    }
+
+    /** Creating behavior : teacher -> id:2, student: id: 1-5 **/
+    private void createBehaviors() {
+        String[] content = {"", "złe zachowanie", "złe zachowanie", "złe zachowanie", "złe zachowanie", "", "", "złe zachowanie"};
+        boolean[] positive = {true, false, false, false, false, true, true, false};
+        int[] studentIndexes = {1, 2, 2, 2, 2, 4, 5, 3};
+
+        for (int i = 0; i < content.length; i++)
+        behaviorRepository.save(Behavior.builder()
+                .date(Date.valueOf(LocalDate.now()))
+                .content(content[i])
+                .positive(positive[i])
+                .teacher(teacherRepository.findByUserId(userRepository
+                        .findByFirstNameAndLastName(teacherNames[2], teacherLastNames[2]).getId()))
+                .student(studentRepository.findByUserId(userRepository
+                        .findByFirstNameAndLastName(studentNames[studentIndexes[i]], studentLastNames[studentIndexes[i]]).getId()))
+                .build());
+    }
 
 
 }
