@@ -1,5 +1,8 @@
 package com.ediary.services;
 
+import com.ediary.DTO.MessageDto;
+import com.ediary.converters.MessageDtoToMessage;
+import com.ediary.converters.MessageToMessageDto;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 import com.ediary.domain.security.User;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -19,33 +23,40 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final NoticeService noticeService;
 
+    private final MessageToMessageDto messageToMessageDto;
+    private final MessageDtoToMessage messageDtoToMessage;
+
     @Override
-    public List<Message> listReadMessage(Long userId) {
+    public List<MessageDto> listReadMessage(Long userId) {
 
         User user = getUserById(userId);
 
-        return messageService.listReadMessageByUser(user);
+        return messageService.listReadMessageByUser(user).stream().map(messageToMessageDto::convert).collect(Collectors.toList());
     }
 
     @Override
-    public List<Message> listSendMessage(Long userId) {
+    public List<MessageDto> listSendMessage(Long userId) {
 
         User user = getUserById(userId);
 
-        return messageService.listSendMessageByUser(user);
+        return messageService.listSendMessageByUser(user).stream().map(messageToMessageDto::convertWithReaders).collect(Collectors.toList());
     }
 
     @Override
-    public Message initNewMessage(Long userId) {
+    public MessageDto initNewMessage(Long userId) {
 
         User user = getUserById(userId);
 
-        return messageService.initNewMessageBySender(user);
+        Message message = messageService.initNewMessageBySender(user);
+        return messageToMessageDto.convert(message);
     }
 
     @Override
-    public Message sendMessage(Message message) {
-        return messageService.saveMessage(message);
+    public Message sendMessage(MessageDto messageDto) {
+
+        Message message = new Message();
+
+        return messageService.saveMessage(messageDtoToMessage.convert(messageDto));
     }
 
     @Override

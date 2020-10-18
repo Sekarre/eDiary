@@ -1,5 +1,6 @@
 package com.ediary.web.controllers;
 
+import com.ediary.DTO.MessageDto;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 import com.ediary.services.UserService;
@@ -41,8 +42,8 @@ class UserControllerTest {
     void getReadMessages() throws Exception {
 
         when(userService.listReadMessage(userId)).thenReturn(Arrays.asList(
-                Message.builder().id(1L).build(),
-                Message.builder().id(2L).build()
+                MessageDto.builder().id(1L).build(),
+                MessageDto.builder().id(2L).build()
         ));
 
         mockMvc.perform(get("/user/"+ userId +"/readMessages"))
@@ -58,8 +59,8 @@ class UserControllerTest {
     @Test
     void getSendMessages() throws Exception {
         when(userService.listSendMessage(userId)).thenReturn(Arrays.asList(
-                Message.builder().id(1L).build(),
-                Message.builder().id(2L).build()
+                MessageDto.builder().id(1L).build(),
+                MessageDto.builder().id(2L).build()
         ));
 
         mockMvc.perform(get("/user/"+ userId +"/sendMessages"))
@@ -73,7 +74,7 @@ class UserControllerTest {
 
     @Test
     void newMessage() throws Exception {
-        when(userService.initNewMessage(userId)).thenReturn(Message.builder().build());
+        when(userService.initNewMessage(userId)).thenReturn(MessageDto.builder().build());
 
         mockMvc.perform(get("/user/"+ userId +"/newMessages"))
                 .andExpect(status().isOk())
