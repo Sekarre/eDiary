@@ -1,6 +1,7 @@
 package com.ediary.bootstrap;
 
 import com.ediary.domain.*;
+import com.ediary.domain.Class;
 import com.ediary.domain.security.User;
 import com.ediary.repositories.*;
 import com.ediary.repositories.security.UserRepository;
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,14 +34,11 @@ public class DefaultLoader implements CommandLineRunner {
     private final MessageRepository messageRepository;
     private final NoticeRepository noticeRepository;
     private final ClassRepository classRepository;
+    private final SubjectRepository subjectRepository;
 
     private Long firstUserAsStudentId;
     private Long firstUserAsParentId;
     private Long firstUserAsTeacherId;
-    private Long firstStudentId;
-    private Long firstParentId;
-
-    private final int numberOfClasses = 3;
 
     private final String[] streetNames = {"Odrodzenia", "Jagiellońska", "Kaszubska", "Jana Pawła", "Borysza",
             "Wielkopolska", "Podhalańska", "Odrodzenia", "Borysza", "Mazowiecka",
@@ -56,9 +57,16 @@ public class DefaultLoader implements CommandLineRunner {
     private final String[] teacherNames = {"Czesław", "Rafał", "Maciej", "Magdalena", "Krzysztoł", "Katarzyna"};
     private final String[] teacherLastNames = {"Wójcik", "Marciniak", "Jankowski", "Kowalska", "Michalak", "Sikora"};
 
+    private final String[] classNames = {"1a", "1c", "1g"};
+
+    private final String[] subjectNames = {"Matematyka", "Historia", "Informatyka", "Plastyka", "Muzyka",
+            "Język angielski", "Wychowanie fizyczne", "Przyroda", "Biologia", "Technika"};
+
     private int numberOfParents = parentNames.length;
     private int numberOfStudents = studentNames.length;
     private int numberOfTeachers = teacherNames.length;
+    private int numberOfClasses = classNames.length;
+
 
     @Override
     public void run(String... args) {
@@ -71,10 +79,12 @@ public class DefaultLoader implements CommandLineRunner {
         createTeachers();
         createParentCouncils();
         createStudentCouncils();
-        createAttendances();
         createExtenuations();
+        createAttendances();
         createMessages();
         createNotices();
+        createClasses();
+        createSubjects();
 
     }
 
@@ -172,10 +182,6 @@ public class DefaultLoader implements CommandLineRunner {
                     .build());
         }
 
-
-        firstStudentId = studentRepository.findByUserId(firstUserAsStudentId).getId();
-        firstParentId = parentRepository.findByUserId(firstUserAsParentId).getId();
-
         log.debug("-------- Created students: " + studentRepository.count());
         log.debug("-------- Created parents: " + parentRepository.count());
 
@@ -222,18 +228,16 @@ public class DefaultLoader implements CommandLineRunner {
 
     private void createExtenuations() {
 
-        Long firstParentId = this.firstParentId;
-
-        //Extenuations -> Parent id = 8
         extenuationRepository.save(Extenuation.builder()
-                .parent(parentRepository.findById(firstParentId).orElse(null))
+                .parent(parentRepository
+                        .findByUserId(userRepository.findByFirstNameAndLastName(parentNames[0], parentLastNames[0]).getId()))
                 .status(Extenuation.Status.SENT)
                 .build());
 
 
-        ////Extenuations -> Parent id = 9
         extenuationRepository.save(Extenuation.builder()
-                .parent(parentRepository.findById(firstParentId + 1).orElse(null))
+                .parent(parentRepository
+                        .findByUserId(userRepository.findByFirstNameAndLastName(parentNames[1], parentLastNames[1]).getId()))
                 .status(Extenuation.Status.SENT)
                 .build());
 
@@ -244,9 +248,6 @@ public class DefaultLoader implements CommandLineRunner {
 
     //todo: lesson
     private void createAttendances() {
-
-        Long firstStudentId = this.firstStudentId;
-        int i = 0;
 
         //Attendances for each students
         Attendance.Status[] statuses = {
@@ -260,13 +261,42 @@ public class DefaultLoader implements CommandLineRunner {
                 Attendance.Status.PRESENT
         };
 
-        for(Long userAsStudentId = firstUserAsStudentId; userAsStudentId < firstUserAsParentId; userAsStudentId++, i++) {
+
+        for (int i = 0; i < numberOfStudents; i++) {
             attendanceRepository.save(Attendance.builder()
-                    .student(studentRepository.findById(firstStudentId++).orElse(null))
+                    .student(studentRepository
+                            .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[i], studentLastNames[i]).getId()))
                     .status(statuses[i])
                     .build());
 
         }
+
+        //todo: later
+        //Adding extenuation for 1th and 2nd student
+/*
+        Attendance attendance1 = attendanceRepository.findByStudent(studentRepository
+                .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId()));
+
+        attendance1.getExtenuations().add(extenuationRepository.findByParent(parentRepository
+                .findByUserId(userRepository.findByFirstNameAndLastName(parentNames[0], parentLastNames[0]).getId())
+        ));
+
+
+        log.debug(attendance1.getExtenuations().toString());
+        attendanceRepository.save(attendance1);
+
+
+
+        Attendance attendance2 = attendanceRepository.findByStudent(studentRepository
+                .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[1], studentLastNames[1]).getId()));
+
+        attendance2.getExtenuations().add(extenuationRepository.findByParent(parentRepository
+                .findByUserId(userRepository.findByFirstNameAndLastName(parentNames[1], parentLastNames[1]).getId())
+        ));
+
+        attendanceRepository.save(attendance2);
+
+*/
 
         log.debug("Created attendances: " + attendanceRepository.count());
     }
@@ -311,6 +341,50 @@ public class DefaultLoader implements CommandLineRunner {
 
     }
 
+
+    private void createClasses() {
+        for (int i = 0; i < numberOfClasses; i++) {
+            classRepository.save(Class.builder()
+                    .name(classNames[i])
+                    .teacher(teacherRepository.findByUserId(userRepository
+                            .findByFirstNameAndLastName(teacherNames[i], teacherLastNames[i]).getId()))
+                    .parentCouncil(parentCouncilRepository.findAll().get(i))
+                    .studentCouncil(studentCouncilRepository.findAll().get(i))
+                    .build());
+        }
+    }
+
+
+    private void createSubjects() {
+        //indexes of teachers associated with given subjects
+        int[] teacherSubjectIndexes = {0, 2, 0, 3, 4, 5, 2, 1, 1, 3};
+
+        for (int i = 0; i < subjectNames.length; i++) {
+            subjectRepository.save(Subject.builder()
+                    .name(subjectNames[i])
+                    .build());
+
+        }
+
+        //Adding teachers to subjects
+        List<Subject> savedSubjects = subjectRepository.findAll();
+
+        for (int i = 0; i < subjectNames.length; i++) {
+            savedSubjects.get(i).setTeachers(new HashSet<>(Set.of(
+                    teacherRepository.findByUserId(userRepository
+                            .findByFirstNameAndLastName(
+                                    teacherNames[teacherSubjectIndexes[i]],
+                                    teacherLastNames[teacherSubjectIndexes[i]]).getId())
+            )));
+        }
+
+
+        subjectRepository.saveAll(savedSubjects);
+
+    }
+
+
+    
 
 
 
