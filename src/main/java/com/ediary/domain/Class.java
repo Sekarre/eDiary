@@ -19,15 +19,15 @@ public class Class {
 
     private String name;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "studentCouncil_id")
     private StudentCouncil studentCouncil;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "parentCouncil_id")
     private ParentCouncil parentCouncil;
 

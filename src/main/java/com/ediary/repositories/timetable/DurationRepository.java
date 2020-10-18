@@ -8,4 +8,5 @@ import java.util.List;
 public interface DurationRepository extends JpaRepository<Duration, Long> {
 
     List<Duration> findAllByOrderByNumberAsc();
+    Duration findByNumber(int number);
 }

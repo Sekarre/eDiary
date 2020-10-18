@@ -3,15 +3,23 @@ package com.ediary.bootstrap;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
 import com.ediary.domain.security.User;
+import com.ediary.domain.timetable.Classroom;
+import com.ediary.domain.timetable.Day;
+import com.ediary.domain.timetable.Duration;
 import com.ediary.repositories.*;
 import com.ediary.repositories.security.UserRepository;
+import com.ediary.repositories.timetable.ClassroomRepository;
+import com.ediary.repositories.timetable.DayRepository;
+import com.ediary.repositories.timetable.DurationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -40,6 +48,13 @@ public class DefaultLoader implements CommandLineRunner {
     private final TopicRepository topicRepository;
     private final LessonRepository lessonRepository;
     private final BehaviorRepository behaviorRepository;
+    private final EventRepository eventRepository;
+    private final ReportRepository reportRepository;
+    private final StudentCardRepository studentCardRepository;
+    private final DayRepository dayRepository;
+    private final ClassroomRepository classroomRepository;
+    private final DurationRepository durationRepository;
+    private final SchoolPeriodRepository schoolPeriodRepository;
 
     private Long firstUserAsStudentId;
     private Long firstUserAsParentId;
@@ -86,11 +101,20 @@ public class DefaultLoader implements CommandLineRunner {
         createMessages();
         createNotices();
         createClasses();
+        addStudentsToClasses();
         createSubjects();
         createGrades();
         createTopics();
         createLessons();
         createBehaviors();
+        createEvents();
+        createReports();
+        createStudentCards();
+        createDays();
+        createClassrooms();
+        createDurations();
+
+        log.debug("-------------- Bootstrap is done --------------");
     }
 
     private void createAddresses() {
@@ -193,7 +217,6 @@ public class DefaultLoader implements CommandLineRunner {
     }
 
 
-    //todo: extenuation,
     private Parent createParent(Long userId) {
         return parentRepository.save(Parent.builder()
                 .user(userRepository.findById(userId).orElse(null))
@@ -357,6 +380,7 @@ public class DefaultLoader implements CommandLineRunner {
                     .studentCouncil(studentCouncilRepository.findAll().get(i))
                     .build());
         }
+
     }
 
 
@@ -395,12 +419,12 @@ public class DefaultLoader implements CommandLineRunner {
 
         //Grades for first subject -> Matematyka
         int[][] gradesPerStudent = {
-                {2, 4, 6, 2, 4, 1, 2, 5, 3, 2},
+                {2, 4, 6, 2, 4, 1, 2, 2},
                 {3, 3, 4, 5, 3, 2, 4, 6, 3, 1},
                 {5, 2, 5, 1, 5, 2, 5, 5},
-                {2, 4, 6, 2, 4, 1, 2, 4, 2, 4},
+                {2, 4, 4, 2, 4},
                 {4, 2, 1, 2, 4, 2, 1, 3, 3},
-                {6, 5, 6, 6, 5, 5, 5, 5},
+                {6, 5, 5, 5, 5},
                 {2, 3, 1, 2, 2, 2, 3, 4, 2, 2}
         };
 
@@ -426,8 +450,9 @@ public class DefaultLoader implements CommandLineRunner {
             }
         }
 
-        log.debug("Just a few more..");
-        createRandomGrades();
+        //Time consuming, comented by default, uncomment for more data
+//        log.debug("Just a few more..");
+//        createRandomGrades();
         log.debug("Created grades: " + gradeRepository.count());
     }
 
@@ -471,16 +496,17 @@ public class DefaultLoader implements CommandLineRunner {
         }
     }
 
-    /** Creating maths' lessons **/
+    /** Creating maths' lessons : class id: 0 **/
     private void createLessons() {
         String[] lessonNames = {"Dodawanie", "Dzielenie", "Mnożenie", "Odejmowanie"};
+        int[] schoolClassIndexes = {0, 0, 0, 0};
 
         for (int i = 0; i < lessonNames.length; i++) {
             lessonRepository.save(Lesson.builder()
                     .name(lessonNames[i])
                     .date(Date.valueOf(LocalDate.now()))
                     .subject(subjectRepository.findByName(subjectNames[0]))
-                    .schoolClass(classRepository.findByName(classNames[0]))
+                    .schoolClass(classRepository.findByName(classNames[schoolClassIndexes[i]]))
                     .topic(topicRepository.findByName(topicNamesMath[i]))
                     .build());
 
@@ -493,18 +519,133 @@ public class DefaultLoader implements CommandLineRunner {
         boolean[] positive = {true, false, false, false, false, true, true, false};
         int[] studentIndexes = {1, 2, 2, 2, 2, 4, 5, 3};
 
-        for (int i = 0; i < content.length; i++)
-        behaviorRepository.save(Behavior.builder()
-                .date(Date.valueOf(LocalDate.now()))
-                .content(content[i])
-                .positive(positive[i])
-                .teacher(teacherRepository.findByUserId(userRepository
-                        .findByFirstNameAndLastName(teacherNames[2], teacherLastNames[2]).getId()))
-                .student(studentRepository.findByUserId(userRepository
-                        .findByFirstNameAndLastName(studentNames[studentIndexes[i]], studentLastNames[studentIndexes[i]]).getId()))
-                .build());
+        for (int i = 0; i < content.length; i++) {
+            behaviorRepository.save(Behavior.builder()
+                    .date(Date.valueOf(LocalDate.now()))
+                    .content(content[i])
+                    .positive(positive[i])
+                    .teacher(teacherRepository.findByUserId(userRepository
+                            .findByFirstNameAndLastName(teacherNames[2], teacherLastNames[2]).getId()))
+                    .student(studentRepository.findByUserId(userRepository
+                            .findByFirstNameAndLastName(studentNames[studentIndexes[i]], studentLastNames[studentIndexes[i]]).getId()))
+                    .build());
+        }
     }
 
+    private void createEvents() {
+        Event.Type[] types = {Event.Type.EXAM, Event.Type.HOMEWORK, Event.Type.HOMEWORK, Event.Type.HOMEWORK, Event.Type.TEST};
+        String[] description = {"Sprawdzian z matematyki", "Praca domowa - ćwiczenia 1-3",
+                "Praca domowa - ćwiczenia 5-12", "Praca domowa ", "Test - operacje dodawania i odejmowania"};
+        int[] teachersIndexes = {0, 0, 0, 0, 0};
+        int[] schoolClassIndexes = {0, 0, 0, 0, 0};
+
+        for (int i = 0; i < types.length; i++) {
+            eventRepository.save(Event.builder()
+                    .type(types[i])
+                    .description(description[i])
+                    .createDate(Date.valueOf(LocalDate.now()))
+                    .date(Date.valueOf(LocalDate.now().plusDays(3)))
+                    .teacher(teacherRepository.findByUserId(userRepository
+                            .findByFirstNameAndLastName(
+                                    teacherNames[teachersIndexes[i]],
+                                    teacherLastNames[teachersIndexes[i]]).getId()))
+                    .schoolClass(classRepository.findByName(classNames[schoolClassIndexes[i]]))
+                    .build());
+        }
+    }
+
+    private void createReports() {
+        int headmasterIndex = 0;
+        int[] teacherIndexes = {2, 3, 5, 1, 4};
+
+        for (int i = 0; i < teacherIndexes.length; i++) {
+            reportRepository.save(Report.builder()
+                    .startPeriod(Date.valueOf(LocalDate.now()))
+                    .endPeriod(Date.valueOf(LocalDate.now().plusDays(10)))
+                    .content("to be added soon")
+                    .headmaster(teacherRepository.findByUserId(userRepository
+                            .findByFirstNameAndLastName(
+                                    teacherNames[headmasterIndex],
+                                    teacherLastNames[headmasterIndex]).getId()))
+                    .teacher(teacherRepository.findByUserId(userRepository
+                            .findByFirstNameAndLastName(
+                                    teacherNames[teacherIndexes[i]],
+                                    teacherLastNames[teacherIndexes[i]]).getId()))
+                    .build());
+
+        }
+    }
+
+    /**Adding students to classes : for now, just 1st class has students**/
+    private void addStudentsToClasses() {
+        for (int i = 0; i < studentNames.length; i++) {
+            Student student = studentRepository.findByUserId(userRepository
+                    .findByFirstNameAndLastName(studentNames[i], studentLastNames[i]).getId());
+
+            student.setSchoolClass(classRepository.findByName(classNames[0]));
+            studentRepository.save(student);
+        }
+    }
+
+
+    private void createStudentCards() {
+
+        for (int i = 0; i < studentNames.length; i++) {
+            Student student = studentRepository.findByUserId(userRepository
+                    .findByFirstNameAndLastName(studentNames[i], studentLastNames[i]).getId());
+
+            Teacher teacher = student.getSchoolClass().getTeacher();
+
+            studentCardRepository.save(StudentCard.builder()
+                    .date(Date.valueOf(LocalDate.now()))
+                    .content("to be added soon")
+                    .student(student)
+                    .teacher(teacher)
+                    .build());
+        }
+    }
+
+
+    private void createDays() {
+        String[] days = {"Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela"};
+
+        for (int i = 0; i < days.length; i++) {
+            dayRepository.save(Day.builder()
+                    .name(days[i])
+                    .number(i)
+                    .build());
+        }
+    }
+
+    private void createClassrooms() {
+        String[] classroomsName = {"Przyrodnicza", "Matematyczna", "Sala gimnastyczna", "Historyczna", "Geograficzna"};
+
+        for (int i = 0; i < classroomsName.length; i++) {
+            classroomRepository.save(Classroom.builder()
+                    .name(classroomsName[i])
+                    .number(i + "")
+                    .build());
+        }
+    }
+
+    private void createDurations() {
+        LocalTime startTime = LocalTime.now();
+        LocalTime endTime = LocalTime.now().plusMinutes(45L);
+
+        for (int i = 0; i < 10; i++) {
+            durationRepository.save(Duration.builder()
+                    .number(i)
+                    .startTime(Time.valueOf(startTime.plusMinutes(45L)))
+                    .endTime(Time.valueOf(endTime.plusMinutes(90L)))
+                    .build());
+        }
+    }
+
+
+    //to maybe do
+    private void createSchoolPeriod() {
+        //Meh for now
+    }
 
 }
 
