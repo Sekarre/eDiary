@@ -85,8 +85,8 @@ class ParentControllerTest {
     void getAllGradesBySubject() throws Exception {
 
         when(studentService.listGrades(studentId, subjectId)).thenReturn(Arrays.asList(
-                Grade.builder().id(1L).value("1").build(),
-                Grade.builder().id(2L).value("2").build()
+                GradeDto.builder().id(1L).value("1").build(),
+                GradeDto.builder().id(2L).value("2").build()
         ));
 
         when(subjectService.getNameById(subjectId)).thenReturn(subjectName);

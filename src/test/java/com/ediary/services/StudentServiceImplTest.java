@@ -82,11 +82,14 @@ class StudentServiceImplTest {
     void listGradesBySubject() {
         when(gradeRepository.findAllByStudentIdAndSubjectId(studentId, subjectId)).thenReturn(Arrays.asList(gradeReturned));
 
-        List<Grade> grades = studentService.listGrades(studentId, subjectId);
+        when(gradeToGradeDto.convert(gradeReturned)).thenReturn(GradeDto.builder().id(gradeReturned.getId()).build());
+
+        List<GradeDto> grades = studentService.listGrades(studentId, subjectId);
 
         assertEquals(1, grades.size());
         assertEquals(gradeId, grades.get(0).getId());
         verify(gradeRepository, times(1)).findAllByStudentIdAndSubjectId(anyLong(), anyLong());
+        verify(gradeToGradeDto, times(1)).convert(gradeReturned);
     }
 
     @Test

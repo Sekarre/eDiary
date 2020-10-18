@@ -37,8 +37,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Grade> listGrades(Long studentId, Long subjectId) {
-        return gradeRepository.findAllByStudentIdAndSubjectId(studentId, subjectId);
+    public List<GradeDto> listGrades(Long studentId, Long subjectId) {
+        return gradeRepository.findAllByStudentIdAndSubjectId(studentId, subjectId)
+                .stream()
+                .map(gradeToGradeDto::convert)
+                .collect(Collectors.toList());
     }
 
     @Override
