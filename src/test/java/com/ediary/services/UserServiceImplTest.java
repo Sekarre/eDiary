@@ -1,5 +1,8 @@
 package com.ediary.services;
 
+import com.ediary.DTO.MessageDto;
+import com.ediary.converters.MessageDtoToMessage;
+import com.ediary.converters.MessageToMessageDto;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 import com.ediary.domain.security.User;
@@ -29,13 +32,20 @@ class UserServiceImplTest {
     @Mock
     NoticeService noticeService;
 
+    @Mock
+    MessageToMessageDto messageToMessageDto;
+
+    @Mock
+    MessageDtoToMessage messageDtoToMessage;
+
     UserService userService;
 
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        userService = new UserServiceImpl(messageService, userRepository, noticeService);
+        userService = new UserServiceImpl(messageService, userRepository, noticeService,
+                messageToMessageDto, messageDtoToMessage);
     }
 
     @Test
@@ -47,12 +57,16 @@ class UserServiceImplTest {
                 Message.builder().id(2L).build()
         ));
 
-        List<Message> messages = userService.listReadMessage(userId);
+        when(messageToMessageDto.convert(any())).thenReturn(MessageDto.builder().id(1L).build());
 
-        assertEquals(2, messages.size());
-        assertEquals(1L, messages.get(0).getId());
+
+        List<MessageDto> messagesDto = userService.listReadMessage(userId);
+
+        assertEquals(2, messagesDto.size());
+        assertEquals(1L, messagesDto.get(0).getId());
         verify(messageService, times(1)).listReadMessageByUser(any());
         verify(userRepository, times(1)).findById(userId);
+        verify(messageToMessageDto, times(2)).convert(any());
     }
 
     @Test
@@ -64,43 +78,61 @@ class UserServiceImplTest {
                 Message.builder().id(2L).build()
         ));
 
-        List<Message> messages = userService.listSendMessage(userId);
+        when(messageToMessageDto.convertWithReaders(any())).thenReturn(MessageDto.builder().id(1L).build());
 
-        assertEquals(2, messages.size());
-        assertEquals(1L, messages.get(0).getId());
+        List<MessageDto> messagesDto = userService.listSendMessage(userId);
+
+        assertEquals(2, messagesDto.size());
+        assertEquals(1L, messagesDto.get(0).getId());
         verify(messageService, times(1)).listSendMessageByUser(any());
         verify(userRepository, times(1)).findById(userId);
+        verify(messageToMessageDto, times(2)).convertWithReaders(any());
     }
 
     @Test
     void initNewMessage() {
+
         User user = User.builder().id(userId).build();
+
+        Long messageId = 1L;
+        Message messageToConvert = Message.builder().id(messageId).senders(user).build();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         when(messageService.initNewMessageBySender(any())).thenReturn(
-                Message.builder().senders(user).build()
+                messageToConvert
         );
 
-        Message messages = userService.initNewMessage(userId);
+        when(messageToMessageDto.convert(messageToConvert)).thenReturn(
+                MessageDto.builder().id(messageId).sendersId(messageToConvert.getSenders().getId()).build());
 
-        assertEquals(user, messages.getSenders());
+        MessageDto messagesDto = userService.initNewMessage(userId);
+
+        assertEquals(user.getId(), messagesDto.getSendersId());
         verify(messageService, times(1)).initNewMessageBySender(user);
         verify(userRepository, times(1)).findById(userId);
+        verify(messageToMessageDto, times(1)).convert(messageToConvert);
     }
 
     @Test
     void sendMessage() {
         Long messageId = 1L;
-        Message messageToSend = Message.builder().id(messageId).build();
+        MessageDto messageDtoToSend = MessageDto.builder().id(messageId).build();
 
-        when(messageService.saveMessage(messageToSend)).thenReturn(
-                Message.builder().id(messageToSend.getId()).build()
+
+        when(messageDtoToMessage.convert(messageDtoToSend)).thenReturn(
+                Message.builder().id(messageDtoToSend.getId()).build()
         );
 
-        Message message = userService.sendMessage(messageToSend);
+        when(messageService.saveMessage(any())).thenReturn(
+                Message.builder().id(messageId).build()
+        );
 
-        assertEquals(messageId, message.getId());
+        Message messageSaved = userService.sendMessage(messageDtoToSend);
+
+        assertEquals(messageId, messageSaved.getId());
+        verify(messageDtoToMessage, times(1)).convert(any());
+        verify(messageService, times(1)).saveMessage(any());
     }
 
     @Test
