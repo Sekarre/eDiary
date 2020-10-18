@@ -1,8 +1,10 @@
 package com.ediary.services;
 
 import com.ediary.DTO.MessageDto;
+import com.ediary.DTO.NoticeDto;
 import com.ediary.converters.MessageDtoToMessage;
 import com.ediary.converters.MessageToMessageDto;
+import com.ediary.converters.NoticeToNoticeDto;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 import com.ediary.domain.security.User;
@@ -25,6 +27,8 @@ public class UserServiceImpl implements UserService {
 
     private final MessageToMessageDto messageToMessageDto;
     private final MessageDtoToMessage messageDtoToMessage;
+
+    private final NoticeToNoticeDto noticeToNoticeDto;
 
     @Override
     public List<MessageDto> listReadMessage(Long userId) {
@@ -60,8 +64,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Notice> listNotices() {
-        return noticeService.listNotices();
+    public List<NoticeDto> listNotices() {
+        return noticeService.listNotices().stream().map(noticeToNoticeDto::convert).collect(Collectors.toList());
     }
 
     @Override

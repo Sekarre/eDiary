@@ -1,6 +1,7 @@
 package com.ediary.web.controllers;
 
 import com.ediary.DTO.MessageDto;
+import com.ediary.DTO.NoticeDto;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 import com.ediary.services.UserService;
@@ -98,8 +99,8 @@ class UserControllerTest {
     @Test
     void getAllNotices() throws Exception {
         when(userService.listNotices()).thenReturn(Arrays.asList(
-                Notice.builder().id(1L).build(),
-                Notice.builder().id(2L).build()
+                NoticeDto.builder().id(1L).build(),
+                NoticeDto.builder().id(2L).build()
         ));
 
         mockMvc.perform(get("/user/notice"))

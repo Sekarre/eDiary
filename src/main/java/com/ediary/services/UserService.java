@@ -1,6 +1,7 @@
 package com.ediary.services;
 
 import com.ediary.DTO.MessageDto;
+import com.ediary.DTO.NoticeDto;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 
@@ -12,7 +13,7 @@ public interface UserService {
     List<MessageDto> listSendMessage(Long userId);
     MessageDto initNewMessage(Long userId);
     Message sendMessage(MessageDto messageDto);
-    List<Notice> listNotices();
+    List<NoticeDto> listNotices();
     Notice initNewNotice(Long userId);
     Notice addNotice(Notice notice);
 

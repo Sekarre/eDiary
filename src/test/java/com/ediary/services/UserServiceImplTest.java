@@ -1,8 +1,10 @@
 package com.ediary.services;
 
 import com.ediary.DTO.MessageDto;
+import com.ediary.DTO.NoticeDto;
 import com.ediary.converters.MessageDtoToMessage;
 import com.ediary.converters.MessageToMessageDto;
+import com.ediary.converters.NoticeToNoticeDto;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 import com.ediary.domain.security.User;
@@ -38,6 +40,9 @@ class UserServiceImplTest {
     @Mock
     MessageDtoToMessage messageDtoToMessage;
 
+    @Mock
+    NoticeToNoticeDto noticeToNoticeDto;
+
     UserService userService;
 
 
@@ -45,7 +50,7 @@ class UserServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         userService = new UserServiceImpl(messageService, userRepository, noticeService,
-                messageToMessageDto, messageDtoToMessage);
+                messageToMessageDto, messageDtoToMessage, noticeToNoticeDto);
     }
 
     @Test
@@ -142,11 +147,14 @@ class UserServiceImplTest {
                 Notice.builder().id(2L).build()
         ));
 
-        List<Notice> notices = userService.listNotices();
+        when(noticeToNoticeDto.convert(any())).thenReturn(NoticeDto.builder().id(4L).build());
 
-        assertEquals(2, notices.size());
-        assertEquals(1L, notices.get(0).getId());
+        List<NoticeDto> noticesDto = userService.listNotices();
+
+        assertEquals(2, noticesDto.size());
+        assertEquals(4L, noticesDto.get(0).getId());
         verify(noticeService, times(1)).listNotices();
+        verify(noticeToNoticeDto, times(2)).convert(any());
 
     }
     @Test
