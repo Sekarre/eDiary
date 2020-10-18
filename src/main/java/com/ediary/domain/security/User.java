@@ -39,7 +39,7 @@ public class User implements UserDetails, CredentialsContainer {
     private Set<Role> roles;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     private Address address;
 
     @ManyToMany(mappedBy = "readers", fetch = FetchType.EAGER)

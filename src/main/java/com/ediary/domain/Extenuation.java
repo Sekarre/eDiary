@@ -24,7 +24,7 @@ public class Extenuation {
     @Enumerated(value = EnumType.STRING)
     private Status status;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "parent_id")
     private Parent parent;
 
