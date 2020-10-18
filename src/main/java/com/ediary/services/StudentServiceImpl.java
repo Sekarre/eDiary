@@ -1,5 +1,7 @@
 package com.ediary.services;
 
+import com.ediary.DTO.GradeDto;
+import com.ediary.converters.GradeToGradeDto;
 import com.ediary.domain.*;
 import com.ediary.domain.timetable.Timetable;
 import com.ediary.exceptions.NotFoundException;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -22,10 +25,15 @@ public class StudentServiceImpl implements StudentService {
     private final BehaviorRepository behaviorRepository;
     private final StudentRepository studentRepository;
 
+    private final GradeToGradeDto gradeToGradeDto;
+
 
     @Override
-    public List<Grade> listGrades(Long studentId) {
-        return gradeRepository.findAllByStudentId(studentId);
+    public List<GradeDto> listGrades(Long studentId) {
+        return gradeRepository.findAllByStudentId(studentId)
+                .stream()
+                .map(gradeToGradeDto::convert)
+                .collect(Collectors.toList());
     }
 
     @Override

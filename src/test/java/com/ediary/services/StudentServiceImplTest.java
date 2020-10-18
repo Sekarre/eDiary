@@ -1,5 +1,7 @@
 package com.ediary.services;
 
+import com.ediary.DTO.GradeDto;
+import com.ediary.converters.GradeToGradeDto;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
 import com.ediary.domain.timetable.Timetable;
@@ -43,9 +45,11 @@ class StudentServiceImplTest {
     @Mock
     BehaviorRepository behaviorRepository;
 
-
     @Mock
     StudentRepository studentRepository;
+
+    @Mock
+    GradeToGradeDto gradeToGradeDto;
 
     StudentService studentService;
 
@@ -55,7 +59,7 @@ class StudentServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         studentService = new StudentServiceImpl(timetableService,eventService, gradeRepository, attendanceRepository,
-                behaviorRepository, studentRepository);
+                behaviorRepository, studentRepository, gradeToGradeDto);
 
         gradeReturned = Grade.builder().id(gradeId).value(value).build();
     }
@@ -64,11 +68,14 @@ class StudentServiceImplTest {
     void listGrades() {
         when(gradeRepository.findAllByStudentId(studentId)).thenReturn(Arrays.asList(gradeReturned));
 
-        List<Grade> grades = studentService.listGrades(studentId);
+        when(gradeToGradeDto.convert(gradeReturned)).thenReturn(GradeDto.builder().id(gradeReturned.getId()).build());
+
+        List<GradeDto> grades = studentService.listGrades(studentId);
 
         assertEquals(1, grades.size());
         assertEquals(gradeId, grades.get(0).getId());
         verify(gradeRepository, times(1)).findAllByStudentId(anyLong());
+        verify(gradeToGradeDto, times(1)).convert(gradeReturned);
     }
 
     @Test
