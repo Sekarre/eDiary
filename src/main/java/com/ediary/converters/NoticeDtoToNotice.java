@@ -1,7 +1,7 @@
 package com.ediary.converters;
 
-import com.ediary.DTO.MessageDto;
-import com.ediary.domain.Message;
+import com.ediary.DTO.NoticeDto;
+import com.ediary.domain.Notice;
 import com.ediary.domain.security.User;
 import com.ediary.repositories.security.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,32 +14,31 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
-public class MessageDtoToMessage implements Converter<MessageDto, Message> {
+public class NoticeDtoToNotice implements Converter<NoticeDto, Notice> {
 
     private final UserRepository userRepository;
-
 
     @Synchronized
     @Nullable
     @Override
-    public Message convert(MessageDto source) {
+    public Notice convert(NoticeDto source) {
 
         if(source == null){
             return null;
         }
 
-        final Message message = new Message();
+        final Notice notice = new Notice();
+        notice.setId(source.getId());
+        notice.setTitle(source.getTitle());
+        notice.setContent(source.getContent());
+        notice.setDate(source.getDate());
 
-        message.setId(source.getId());
-        message.setTitle(source.getTitle());
-        message.setStatus(source.getStatus());
-
-        Optional<User> userOptional = userRepository.findById(source.getSendersId());
+        //author
+        Optional<User> userOptional = userRepository.findById(source.getAuthorId());
         if(userOptional.isPresent()) {
-            message.setSenders(userOptional.get());
+            notice.setUser(userOptional.get());
         }
 
-
-        return message;
+        return notice;
     }
 }
