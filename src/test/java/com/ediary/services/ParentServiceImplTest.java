@@ -1,5 +1,9 @@
 package com.ediary.services;
 
+import com.ediary.DTO.AttendanceDto;
+import com.ediary.DTO.StudentDto;
+import com.ediary.converters.AttendanceDtoToAttendance;
+import com.ediary.converters.StudentToStudentDto;
 import com.ediary.domain.Attendance;
 import com.ediary.domain.Parent;
 import com.ediary.domain.Student;
@@ -29,13 +33,20 @@ class ParentServiceImplTest {
     @Mock
     ParentRepository parentRepository;
 
+    @Mock
+    StudentToStudentDto studentToStudentDto;
+
+    @Mock
+    AttendanceDtoToAttendance attendanceDtoToAttendance;
+
     ParentService parentService;
 
     @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        parentService = new ParentServiceImpl(studentRepository, attendanceRepository, parentRepository);
+        parentService = new ParentServiceImpl(studentRepository, attendanceRepository, parentRepository,
+                studentToStudentDto, attendanceDtoToAttendance);
     }
 
 
@@ -54,26 +65,33 @@ class ParentServiceImplTest {
 
         when(studentRepository.findAllByParentId(anyLong())).thenReturn(Collections.singletonList(student));
         when(parentRepository.findById(parentId)).thenReturn(Optional.of(parent));
+        when(studentToStudentDto.convertForParent(student)).thenReturn(StudentDto.builder().id(student.getId()).build());
 
-        List<Student> returnedStudents = parentService.listStudents(parentId);
+        List<StudentDto> returnedStudents = parentService.listStudents(parentId);
 
         assertNotNull(returnedStudents);
-        assertTrue(parent.getStudents().contains(returnedStudents.get(0)));
+        assertEquals(student.getId(), returnedStudents.get(0).getId());
         verify(studentRepository, times(1)).findAllByParentId(parentId);
+        verify(studentToStudentDto, times(1)).convertForParent(student);
     }
 
     @Test
     void saveAttendance() {
-        Attendance attendance = Attendance.builder()
+        AttendanceDto attendanceToSave = AttendanceDto.builder()
                 .id(1L)
                 .build();
 
-        when(attendanceRepository.save(any())).thenReturn(attendance);
+        Attendance attendanceSaved = Attendance.builder().id(1L).build();
 
-        Attendance returnedAttendance = parentService.saveAttendance(attendance);
+        when(attendanceDtoToAttendance.convert(attendanceToSave)).thenReturn(attendanceSaved);
+        when(attendanceRepository.save(attendanceSaved)).thenReturn(attendanceSaved);
+
+        Attendance returnedAttendance = parentService.saveAttendance(attendanceToSave);
 
         assertNotNull(returnedAttendance);
-        verify(attendanceRepository, times(1)).save(attendance);
+        assertEquals(attendanceToSave.getId(), returnedAttendance.getId());
+        verify(attendanceRepository, times(1)).save(any());
+        verify(attendanceDtoToAttendance, times(1)).convert(attendanceToSave);
     }
 
 }

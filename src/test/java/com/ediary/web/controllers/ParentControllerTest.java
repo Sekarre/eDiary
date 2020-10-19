@@ -1,9 +1,6 @@
 package com.ediary.web.controllers;
 
-import com.ediary.DTO.AttendanceDto;
-import com.ediary.DTO.BehaviorDto;
-import com.ediary.DTO.EventDto;
-import com.ediary.DTO.GradeDto;
+import com.ediary.DTO.*;
 import com.ediary.domain.*;
 import com.ediary.domain.timetable.Timetable;
 import com.ediary.services.ParentService;
@@ -59,7 +56,7 @@ class ParentControllerTest {
     void getAllStudents() throws Exception {
 
         when(parentService.listStudents(parentId)).thenReturn(
-          Collections.singletonList(Student.builder().id(parentId).build())
+          Collections.singletonList(StudentDto.builder().id(parentId).build())
         );
 
         mockMvc.perform(get("/parent/" + parentId + "/students"))

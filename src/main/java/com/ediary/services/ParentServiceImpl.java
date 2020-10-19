@@ -1,5 +1,9 @@
 package com.ediary.services;
 
+import com.ediary.DTO.AttendanceDto;
+import com.ediary.DTO.StudentDto;
+import com.ediary.converters.AttendanceDtoToAttendance;
+import com.ediary.converters.StudentToStudentDto;
 import com.ediary.domain.Attendance;
 import com.ediary.domain.Parent;
 import com.ediary.domain.Student;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -23,8 +28,11 @@ public class ParentServiceImpl implements ParentService {
     private final AttendanceRepository attendanceRepository;
     private final ParentRepository parentRepository;
 
+    private final StudentToStudentDto studentToStudentDto;
+    private final AttendanceDtoToAttendance attendanceDtoToAttendance;
+
     @Override
-    public List<Student> listStudents(Long parentId) {
+    public List<StudentDto> listStudents(Long parentId) {
 
         Optional<Parent> parentOptional = parentRepository.findById(parentId);
 
@@ -35,11 +43,16 @@ public class ParentServiceImpl implements ParentService {
         Parent parent = parentOptional.get();
 
 
-        return studentRepository.findAllByParentId(parent.getId());
+        return studentRepository.findAllByParentId(parent.getId())
+                .stream()
+                .map(studentToStudentDto::convertForParent)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Attendance saveAttendance(Attendance attendance) {
-        return attendanceRepository.save(attendance);
+    public Attendance saveAttendance(AttendanceDto attendance) {
+
+        Attendance attendanceToSave = attendanceDtoToAttendance.convert(attendance);
+        return attendanceRepository.save(attendanceToSave);
     }
 }
