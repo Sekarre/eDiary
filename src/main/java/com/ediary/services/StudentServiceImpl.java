@@ -2,9 +2,11 @@ package com.ediary.services;
 
 import com.ediary.DTO.AttendanceDto;
 import com.ediary.DTO.BehaviorDto;
+import com.ediary.DTO.EventDto;
 import com.ediary.DTO.GradeDto;
 import com.ediary.converters.AttendanceToAttendanceDto;
 import com.ediary.converters.BehaviorToBehaviorDto;
+import com.ediary.converters.EventToEventDto;
 import com.ediary.converters.GradeToGradeDto;
 import com.ediary.domain.*;
 import com.ediary.domain.timetable.Timetable;
@@ -32,6 +34,7 @@ public class StudentServiceImpl implements StudentService {
     private final GradeToGradeDto gradeToGradeDto;
     private final AttendanceToAttendanceDto attendanceToAttendanceDto;
     private final BehaviorToBehaviorDto behaviorToBehaviorDto;
+    private final EventToEventDto eventToEventDto;
 
 
     @Override
@@ -67,13 +70,14 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Event> listEvents(Long studentId) {
+    public List<EventDto> listEvents(Long studentId) {
 
         Student student = getStudentById(studentId);
 
-        List<Event> events= eventService.listEventsBySchoolClass(student.getSchoolClass());
-
-        return events;
+        return eventService.listEventsBySchoolClass(student.getSchoolClass())
+                .stream()
+                .map(eventToEventDto::convert)
+                .collect(Collectors.toList());
     }
 
     @Override

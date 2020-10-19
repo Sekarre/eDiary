@@ -2,6 +2,7 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.AttendanceDto;
 import com.ediary.DTO.BehaviorDto;
+import com.ediary.DTO.EventDto;
 import com.ediary.DTO.GradeDto;
 import com.ediary.domain.*;
 import com.ediary.domain.timetable.Timetable;
@@ -142,8 +143,8 @@ class ParentControllerTest {
     void getAllEvents() throws Exception {
 
         when(studentService.listEvents(studentId)).thenReturn(Arrays.asList(
-                Event.builder().id(1L).build(),
-                Event.builder().id(2L).build()
+                EventDto.builder().id(1L).build(),
+                EventDto.builder().id(2L).build()
         ));
 
         mockMvc.perform(get("/parent/" + parentId + "/" + studentId + "/event"))

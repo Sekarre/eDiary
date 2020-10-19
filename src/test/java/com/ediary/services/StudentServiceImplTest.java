@@ -2,9 +2,11 @@ package com.ediary.services;
 
 import com.ediary.DTO.AttendanceDto;
 import com.ediary.DTO.BehaviorDto;
+import com.ediary.DTO.EventDto;
 import com.ediary.DTO.GradeDto;
 import com.ediary.converters.AttendanceToAttendanceDto;
 import com.ediary.converters.BehaviorToBehaviorDto;
+import com.ediary.converters.EventToEventDto;
 import com.ediary.converters.GradeToGradeDto;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
@@ -61,6 +63,9 @@ class StudentServiceImplTest {
     @Mock
     BehaviorToBehaviorDto behaviorToBehaviorDto;
 
+    @Mock
+    EventToEventDto eventToEventDto;
+
     StudentService studentService;
 
     Grade gradeReturned;
@@ -69,7 +74,8 @@ class StudentServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         studentService = new StudentServiceImpl(timetableService,eventService, gradeRepository, attendanceRepository,
-                behaviorRepository, studentRepository, gradeToGradeDto, attendanceToAttendanceDto, behaviorToBehaviorDto);
+                behaviorRepository, studentRepository, gradeToGradeDto, attendanceToAttendanceDto,
+                behaviorToBehaviorDto, eventToEventDto);
 
         gradeReturned = Grade.builder().id(gradeId).value(value).build();
     }
@@ -148,13 +154,15 @@ class StudentServiceImplTest {
                 Event.builder().id(2L).build()
         ));
 
-        List<Event> events = studentService.listEvents(studentId);
+        when(eventToEventDto.convert(any())).thenReturn(EventDto.builder().id(3L).build());
+
+        List<EventDto> events = studentService.listEvents(studentId);
 
         assertEquals(2, events.size());
-        assertEquals(1L, events.get(0).getId());
-        assertEquals(2L, events.get(1).getId());
+        assertEquals(3L, events.get(1).getId());
         verify(studentRepository, times(1)).findById(studentId);
         verify(eventService, times(1)).listEventsBySchoolClass(any());
+        verify(eventToEventDto, times(2)).convert(any());
 
     }
 
