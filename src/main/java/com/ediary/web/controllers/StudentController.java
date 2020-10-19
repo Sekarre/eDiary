@@ -5,9 +5,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import com.ediary.services.StudentService;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.beans.PropertyEditorSupport;
+import java.time.LocalDate;
 
 
 @RequiredArgsConstructor
@@ -17,7 +22,19 @@ public class StudentController {
 
     private final StudentService studentService;
     private final SubjectService subjectService;
-    
+
+
+    @InitBinder
+    public void dataBinder(WebDataBinder dataBinder){
+        dataBinder.setDisallowedFields("id");
+
+        dataBinder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport(){
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                setValue(LocalDate.parse(text));
+            }
+        });
+    }
 
     @GetMapping("/{studentId}/grade")
     public String getAllGrades(@PathVariable Long studentId, Model model) {
