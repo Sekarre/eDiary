@@ -1,5 +1,6 @@
 package com.ediary.web.controllers;
 
+import com.ediary.DTO.EventDto;
 import com.ediary.domain.Event;
 import com.ediary.domain.Notice;
 import com.ediary.services.TeacherService;
@@ -39,8 +40,8 @@ class TeacherControllerTest {
     void getAllEvents() throws Exception {
 
         when(teacherService.listEvents(teacherId)).thenReturn(Arrays.asList(
-                Event.builder().id(1L).build(),
-                Event.builder().id(2L).build()
+                EventDto.builder().id(1L).build(),
+                EventDto.builder().id(2L).build()
         ));
 
         mockMvc.perform(get("/teacher/" + teacherId + "/event"))

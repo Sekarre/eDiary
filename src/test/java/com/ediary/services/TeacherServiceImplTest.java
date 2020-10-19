@@ -1,5 +1,7 @@
 package com.ediary.services;
 
+import com.ediary.DTO.EventDto;
+import com.ediary.converters.EventToEventDto;
 import com.ediary.domain.Event;
 import com.ediary.domain.Teacher;
 import com.ediary.repositories.TeacherRepository;
@@ -25,12 +27,15 @@ class TeacherServiceImplTest {
     @Mock
     TeacherRepository teacherRepository;
 
+    @Mock
+    EventToEventDto eventToEventDto;
+
     TeacherService teacherService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        teacherService = new TeacherServiceImpl(eventService, teacherRepository);
+        teacherService = new TeacherServiceImpl(eventService, teacherRepository, eventToEventDto);
     }
 
     @Test
@@ -38,17 +43,20 @@ class TeacherServiceImplTest {
         Teacher teacher = Teacher.builder().id(1L).build();
         when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
 
+        when(eventToEventDto.convert(any())).thenReturn(EventDto.builder().id(3L).build());
+
         when(eventService.listEventsByTeacher(teacher)).thenReturn(Arrays.asList(
                 Event.builder().id(1L).build(),
                 Event.builder().id(2L).build()
         ));
 
-        List<Event> events = teacherService.listEvents(teacherId);
+        List<EventDto> events = teacherService.listEvents(teacherId);
 
         assertEquals(2, events.size());
-        assertEquals(1L, events.get(0).getId());
+        assertEquals(3L, events.get(0).getId());
         verify(teacherRepository, times(1)).findById(teacherId);
         verify(eventService, times(1)).listEventsByTeacher(teacher);
+        verify(eventToEventDto, times(2)).convert(any());
 
     }
 }

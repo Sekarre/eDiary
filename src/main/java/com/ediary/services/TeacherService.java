@@ -1,5 +1,6 @@
 package com.ediary.services;
 
+import com.ediary.DTO.EventDto;
 import com.ediary.domain.*;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public interface TeacherService {
 
     Event saveEvent(Event event);
     Boolean deleteEvent(Long eventId);
-    List<Event> listEvents(Long teacherId);
+    List<EventDto> listEvents(Long teacherId);
 
     Behavior saveBehavior(Behavior behavior);
     List<Behavior> listBehaviors(Long teacherId, Long studentId);

@@ -1,5 +1,7 @@
 package com.ediary.services;
 
+import com.ediary.DTO.EventDto;
+import com.ediary.converters.EventToEventDto;
 import com.ediary.domain.*;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.TeacherRepository;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -16,6 +19,8 @@ public class TeacherServiceImpl implements TeacherService {
     private final EventService eventService;
 
     private final TeacherRepository teacherRepository;
+
+    private final EventToEventDto eventToEventDto;
 
 
     @Override
@@ -109,11 +114,14 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Event> listEvents(Long teacherId) {
+    public List<EventDto> listEvents(Long teacherId) {
 
         Teacher teacher = getTeacherById(teacherId);
 
-        return eventService.listEventsByTeacher(teacher);
+        return eventService.listEventsByTeacher(teacher)
+                .stream()
+                .map(eventToEventDto::convert)
+                .collect(Collectors.toList());
     }
 
     @Override
