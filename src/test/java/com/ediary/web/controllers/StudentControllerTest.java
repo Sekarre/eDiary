@@ -1,6 +1,7 @@
 package com.ediary.web.controllers;
 
 import com.ediary.DTO.AttendanceDto;
+import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.GradeDto;
 import com.ediary.domain.Attendance;
 import com.ediary.domain.Behavior;
@@ -106,8 +107,8 @@ class StudentControllerTest {
     void getAllBehaviors() throws Exception {
 
         when(studentService.listBehaviors(studentId)).thenReturn(Arrays.asList(
-                Behavior.builder().id(1L).build(),
-                Behavior.builder().id(2L).build()
+                BehaviorDto.builder().id(1L).build(),
+                BehaviorDto.builder().id(2L).build()
         ));
 
         mockMvc.perform(get("/student/" + studentId + "/behavior"))

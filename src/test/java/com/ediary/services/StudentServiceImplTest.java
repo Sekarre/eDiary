@@ -1,8 +1,10 @@
 package com.ediary.services;
 
 import com.ediary.DTO.AttendanceDto;
+import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.GradeDto;
 import com.ediary.converters.AttendanceToAttendanceDto;
+import com.ediary.converters.BehaviorToBehaviorDto;
 import com.ediary.converters.GradeToGradeDto;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
@@ -56,6 +58,9 @@ class StudentServiceImplTest {
     @Mock
     AttendanceToAttendanceDto attendanceToAttendanceDto;
 
+    @Mock
+    BehaviorToBehaviorDto behaviorToBehaviorDto;
+
     StudentService studentService;
 
     Grade gradeReturned;
@@ -64,7 +69,7 @@ class StudentServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         studentService = new StudentServiceImpl(timetableService,eventService, gradeRepository, attendanceRepository,
-                behaviorRepository, studentRepository, gradeToGradeDto, attendanceToAttendanceDto);
+                behaviorRepository, studentRepository, gradeToGradeDto, attendanceToAttendanceDto, behaviorToBehaviorDto);
 
         gradeReturned = Grade.builder().id(gradeId).value(value).build();
     }
@@ -121,12 +126,14 @@ class StudentServiceImplTest {
                 Behavior.builder().id(2L).build()
         ));
 
-        List<Behavior> behaviors = studentService.listBehaviors(studentId);
+        when(behaviorToBehaviorDto.convert(any())).thenReturn(BehaviorDto.builder().id(3L).build());
+
+        List<BehaviorDto> behaviors = studentService.listBehaviors(studentId);
 
         assertEquals(2, behaviors.size());
-        assertEquals(1L, behaviors.get(0).getId());
-        assertEquals(2L, behaviors.get(1).getId());
+        assertEquals(3L, behaviors.get(0).getId());
         verify(behaviorRepository, times(1)).findAllByStudentId(anyLong());
+        verify(behaviorToBehaviorDto, times(2)).convert(any());
     }
 
     @Test
