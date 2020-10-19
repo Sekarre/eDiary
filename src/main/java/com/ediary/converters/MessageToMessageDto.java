@@ -48,7 +48,7 @@ public class MessageToMessageDto implements Converter<Message, MessageDto> {
         final MessageDto messageDTO = new MessageDto();
         messageDTO.setId(source.getId());
         messageDTO.setTitle(source.getTitle());
-        messageDTO.setTitle(source.getTitle());
+        messageDTO.setContent(source.getContent());
         messageDTO.setStatus(source.getStatus());
 
         //Senders
@@ -57,6 +57,7 @@ public class MessageToMessageDto implements Converter<Message, MessageDto> {
                 source.getSenders().getFirstName() + " " + source.getSenders().getLastName()
         );
 
+        //Readers
         messageDTO.setReadersId(source.getReaders().stream().map(User::getId).collect(Collectors.toList()));
         messageDTO.setReadersName(
                 source.getReaders().stream().map(user -> {
