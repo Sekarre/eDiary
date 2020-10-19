@@ -13,6 +13,7 @@ public class GradeDto {
 
     private Long id;
     private String value;
+    private Integer weight;
     private String description;
     private Date date;
 

@@ -17,9 +17,10 @@ public class Grade {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    String value;
-    String description;
-    Date date;
+    private String value;
+    private Integer weight;
+    private String description;
+    private Date date;
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "teacher_id")

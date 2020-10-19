@@ -22,6 +22,7 @@ public class GradeToGradeDto implements Converter<Grade, GradeDto> {
         final GradeDto gradeDto = new GradeDto();
         gradeDto.setId(source.getId());
         gradeDto.setValue(source.getValue());
+        gradeDto.setWeight(source.getWeight());
         gradeDto.setDescription(source.getDescription());
         gradeDto.setDate(source.getDate());
         

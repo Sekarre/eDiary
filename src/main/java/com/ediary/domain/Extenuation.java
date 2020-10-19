@@ -21,6 +21,8 @@ public class Extenuation {
         SENT, ACCEPT, REJECT
     }
 
+    private String description;
+
     @Enumerated(value = EnumType.STRING)
     private Status status;
 
