@@ -25,7 +25,11 @@ public class SubjectDtoToSubject implements Converter<SubjectDto, Subject> {
     @Override
     public Subject convert(SubjectDto source) {
 
-        Subject subject = new Subject();
+        if(source == null){
+            return null;
+        }
+
+        final Subject subject = new Subject();
 
         subject.setId(source.getId());
         subject.setName(source.getName());

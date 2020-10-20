@@ -15,35 +15,39 @@ import java.util.stream.Collectors;
 public class SubjectToSubjectDto implements Converter<Subject, SubjectDto> {
 
 
-    @Nullable
     @Synchronized
+    @Nullable
     @Override
     public SubjectDto convert(Subject source) {
 
-        SubjectDto subjectDto = new SubjectDto();
+        if (source == null) {
+            return null;
+        }
+
+        final SubjectDto subjectDto = new SubjectDto();
 
         subjectDto.setId(source.getId());
         subjectDto.setName(source.getName());
 
         //Teachers
-        subjectDto.setTeachersName(source.getTeachers().stream()
-                .map(Teacher::getUser)
-                .map(user -> user.getFirstName() + " " + user.getLastName())
-                .collect(Collectors.toList()));
+            subjectDto.setTeachersName(source.getTeachers().stream()
+                    .map(Teacher::getUser)
+                    .map(user -> user.getFirstName() + " " + user.getLastName())
+                    .collect(Collectors.toList()));
 
-        subjectDto.setTeachersId(source.getTeachers().stream()
-                .map(Teacher::getId)
-                .collect(Collectors.toList()));
-
+            subjectDto.setTeachersId(source.getTeachers().stream()
+                    .map(Teacher::getId)
+                    .collect(Collectors.toList()));
 
         //Lessons
-        subjectDto.setLessonsName(source.getLessons().stream()
-                .map(Lesson::getName)
-                .collect(Collectors.toList()));
+            subjectDto.setLessonsName(source.getLessons().stream()
+                    .map(Lesson::getName)
+                    .collect(Collectors.toList()));
 
-        subjectDto.setLessonsId(source.getLessons().stream()
-                .map(Lesson::getId)
-                .collect(Collectors.toList()));
+            subjectDto.setLessonsId(source.getLessons().stream()
+                    .map(Lesson::getId)
+                    .collect(Collectors.toList()));
+
 
         return subjectDto;
     }

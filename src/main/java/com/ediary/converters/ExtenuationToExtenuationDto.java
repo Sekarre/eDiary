@@ -20,6 +20,10 @@ public class ExtenuationToExtenuationDto implements Converter<Extenuation, Exten
     @Override
     public ExtenuationDto convert(Extenuation source) {
 
+        if(source == null){
+            return null;
+        }
+
         final ExtenuationDto extenuationDto = new ExtenuationDto();
 
         extenuationDto.setId(source.getId());
