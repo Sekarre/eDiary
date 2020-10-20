@@ -1,7 +1,9 @@
 package com.ediary.services;
 
+import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.EventDto;
 import com.ediary.domain.*;
+import com.ediary.domain.Class;
 
 import java.util.List;
 
@@ -34,4 +36,6 @@ public interface TeacherService {
 
     Behavior saveBehavior(Behavior behavior);
     List<Behavior> listBehaviors(Long teacherId, Long studentId);
+
+    List<ClassDto> listAllClasses();
 }

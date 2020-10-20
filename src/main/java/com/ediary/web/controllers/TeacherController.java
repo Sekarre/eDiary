@@ -36,4 +36,11 @@ public class TeacherController {
         return "teacher/allEvents";
     }
 
+    @GetMapping("{teacherId}/classes")
+    public String getAllClasses(@PathVariable Long teacherId, Model model) {
+
+        model.addAttribute("classes", teacherService.listAllClasses());
+
+        return "teacher/allClasses";
+    }
 }

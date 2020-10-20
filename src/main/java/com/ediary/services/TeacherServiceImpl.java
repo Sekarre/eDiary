@@ -1,9 +1,13 @@
 package com.ediary.services;
 
+import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.EventDto;
+import com.ediary.converters.ClassToClassDto;
 import com.ediary.converters.EventToEventDto;
 import com.ediary.domain.*;
+import com.ediary.domain.Class;
 import com.ediary.exceptions.NotFoundException;
+import com.ediary.repositories.ClassRepository;
 import com.ediary.repositories.TeacherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,8 +23,10 @@ public class TeacherServiceImpl implements TeacherService {
     private final EventService eventService;
 
     private final TeacherRepository teacherRepository;
+    private final ClassRepository classRepository;
 
     private final EventToEventDto eventToEventDto;
+    private final ClassToClassDto classToClassDto;
 
 
     @Override
@@ -134,6 +140,13 @@ public class TeacherServiceImpl implements TeacherService {
         return null;
     }
 
+    @Override
+    public List<ClassDto> listAllClasses() {
+        return classRepository.findAll().stream()
+                .map(classToClassDto::convert)
+                .collect(Collectors.toList());
+    }
+
 
     private Teacher getTeacherById(Long teacherId) {
         Optional<Teacher> teacherOptional = teacherRepository.findById(teacherId);
@@ -144,4 +157,5 @@ public class TeacherServiceImpl implements TeacherService {
 
         return teacherOptional.get();
     }
+
 }

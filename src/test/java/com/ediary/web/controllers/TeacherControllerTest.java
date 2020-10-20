@@ -1,5 +1,6 @@
 package com.ediary.web.controllers;
 
+import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.EventDto;
 import com.ediary.domain.Event;
 import com.ediary.domain.Notice;
@@ -51,6 +52,25 @@ class TeacherControllerTest {
 
         verify(teacherService, times(1)).listEvents(teacherId);
         assertEquals(2, teacherService.listEvents(teacherId).size());
+    }
+
+
+    @Test
+    void getAllClasses() throws Exception {
+
+        when(teacherService.listAllClasses()).thenReturn(Arrays.asList(
+                ClassDto.builder().id(1L).build(),
+                ClassDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/classes"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("classes"))
+                .andExpect(view().name("teacher/allClasses"));
+
+
+        verify(teacherService, times(1)).listAllClasses();
+        assertEquals(2, teacherService.listAllClasses().size());
     }
 
 }
