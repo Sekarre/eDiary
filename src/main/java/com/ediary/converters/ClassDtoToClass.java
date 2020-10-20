@@ -35,11 +35,23 @@ public class ClassDtoToClass implements Converter<ClassDto, Class> {
         final Class schoolClass = new Class();
         schoolClass.setId(source.getId());
         schoolClass.setName(source.getName());
+
+        //Student Council
         schoolClass.setStudentCouncil(studentCouncilRepository.findById(source.getParentCouncilId()).orElse(null));
+
+        //Teacher
         schoolClass.setTeacher(teacherRepository.findByUserId(source.getTeacherId()));
+
+        //Parent Council
         schoolClass.setParentCouncil(parentCouncilRepository.findById(source.getParentCouncilId()).orElse(null));
+
+        //Students
         schoolClass.setStudents(new HashSet<>(studentRepository.findAllById(source.getStudentsId())));
+
+        //Events
         schoolClass.setEvents(new HashSet<>(eventRepository.findAllById(source.getEventsId())));
+
+        //School Periods
         schoolClass.setSchoolPeriods(new HashSet<>(schoolPeriodRepository.findAllById(source.getSchoolPeriodsId())));
 
         return schoolClass;
