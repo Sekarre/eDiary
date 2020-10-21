@@ -153,6 +153,19 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public EventDto updatePutEvent(EventDto eventDto) {
+        Event event = eventDtoToEvent.convert(eventDto);
+        Event savedEvent = eventRepository.save(event);
+
+        return eventToEventDto.convert(savedEvent);
+    }
+
+    @Override
+    public EventDto updatePatchEvent(EventDto eventDto) {
+        return null;
+    }
+
+    @Override
     public Behavior saveBehavior(Behavior behavior) {
         return null;
     }

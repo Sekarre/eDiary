@@ -174,4 +174,23 @@ class TeacherServiceImplTest {
         verify(classRepository, times(1)).findAll();
         verify(classToClassDto, times(2)).convert(any());
     }
+
+    @Test
+    void updatePutEvent() {
+        Long eventToUpdateId = 1L;
+        String eventToUpdateDesc = "before";
+        EventDto eventToUpdate = EventDto.builder().id(eventToUpdateId).description(eventToUpdateDesc).build();
+
+        Long eventUpdatedId = 1L;
+        String eventUpdatedDesc = "after";
+        EventDto eventUpdated = EventDto.builder().id(eventUpdatedId).description(eventUpdatedDesc).build();
+
+        when(eventDtoToEvent.convert(eventToUpdate)).thenReturn(Event.builder().id(eventUpdatedId).build());
+        when(eventRepository.save(any())).thenReturn(Event.builder().build());
+
+        EventDto eventDto = teacherService.updatePutEvent(any());
+
+        verify(eventDtoToEvent, times(1)).convert(any());
+        verify(eventRepository, times(1)).save(any());
+    }
 }

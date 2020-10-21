@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -70,7 +71,9 @@ class TeacherControllerTest {
     void processNewEvent() throws Exception {
         when(teacherService.saveEvent(any())).thenReturn(Event.builder().build());
 
-        mockMvc.perform(post("/teacher/" + teacherId + "/event/new"))
+        mockMvc.perform(post("/teacher/" + teacherId + "/event/new")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(AbstractAsJsonControllerTest.asJsonString(EventDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/newEvent"));
 
@@ -86,6 +89,22 @@ class TeacherControllerTest {
                 .andExpect(view().name("/" + teacherId + "/event"));
 
         verify(teacherService, times(1)).deleteEvent(teacherId, eventId);
+    }
+
+    @Test
+    void updatePutEvent() throws Exception {
+        Long eventId = 2L;
+        EventDto eventDto = EventDto.builder().id(eventId).build();
+
+        when(teacherService.updatePutEvent(any())).thenReturn(EventDto.builder().id(eventId).build());
+
+        mockMvc.perform(put("/teacher/" + teacherId + "/event/update")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(AbstractAsJsonControllerTest.asJsonString(eventDto)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/" + teacherId + "/event/" + eventId));
+
+        verify(teacherService, times(1)).updatePutEvent(any());
     }
 
     @Test

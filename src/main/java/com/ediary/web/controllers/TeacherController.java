@@ -1,6 +1,7 @@
 package com.ediary.web.controllers;
 
 import com.ediary.DTO.EventDto;
+import com.ediary.domain.Event;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,11 @@ public class TeacherController {
         return "/teacher/allEvents";
     }
 
+    @GetMapping("/{teacherId}/event/{eventId}")
+    public String getEvent() {
+        return "";
+    }
+
     @GetMapping("/{teacherId}/event/new")
     public String newEvent(@PathVariable Long teacherId, Model model) {
 
@@ -48,7 +54,7 @@ public class TeacherController {
     }
 
     @PostMapping("/{teacherId}/event/new")
-    public String processNewEvent(@Valid @ModelAttribute EventDto eventDto, BindingResult result) {
+    public String processNewEvent(@Valid @RequestBody EventDto eventDto, BindingResult result) {
         if (result.hasErrors()){
             //TODO
             return "/";
@@ -64,6 +70,18 @@ public class TeacherController {
 
         teacherService.deleteEvent(teacherId, eventId);
         return "/" + teacherId + "/event";
+    }
+
+    @PutMapping("/{teacherId}/event/update")
+    public String updatePutEvent(@PathVariable Long teacherId,
+                                 @Valid @RequestBody EventDto eventDto, BindingResult result) {
+        if (result.hasErrors()){
+            //TODO
+            return "/";
+        } else {
+            EventDto event = teacherService.updatePutEvent(eventDto);
+            return "/" + teacherId + "/event/" + event.getId();
+        }
     }
 
     @GetMapping("/{teacherId}/classes")
