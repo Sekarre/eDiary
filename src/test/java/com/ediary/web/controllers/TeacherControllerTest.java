@@ -108,6 +108,22 @@ class TeacherControllerTest {
     }
 
     @Test
+    void updatePatchEvent() throws Exception {
+        Long eventId = 2L;
+        EventDto eventDto = EventDto.builder().id(eventId).build();
+
+        when(teacherService.updatePatchEvent(any())).thenReturn(EventDto.builder().id(eventId).build());
+
+        mockMvc.perform(patch("/teacher/" + teacherId + "/event/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(eventDto)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/" + teacherId + "/event/" + eventId));
+
+        verify(teacherService, times(1)).updatePatchEvent((any()));
+    }
+
+    @Test
     void getAllClasses() throws Exception {
 
         when(teacherService.listAllClasses()).thenReturn(Arrays.asList(

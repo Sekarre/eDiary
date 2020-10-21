@@ -83,6 +83,17 @@ public class TeacherController {
             return "/" + teacherId + "/event/" + event.getId();
         }
     }
+    @PatchMapping("/{teacherId}/event/update")
+    public String updatePatchEvent(@PathVariable Long teacherId,
+                                 @Valid @RequestBody EventDto eventDto, BindingResult result) {
+        if (result.hasErrors()){
+            //TODO
+            return "/";
+        } else {
+            EventDto event = teacherService.updatePatchEvent(eventDto);
+            return "/" + teacherId + "/event/" + event.getId();
+        }
+    }
 
     @GetMapping("/{teacherId}/classes")
     public String getAllClasses(@PathVariable Long teacherId, Model model) {

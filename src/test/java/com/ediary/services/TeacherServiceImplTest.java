@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -190,6 +191,43 @@ class TeacherServiceImplTest {
 
         EventDto eventDto = teacherService.updatePutEvent(any());
 
+        verify(eventDtoToEvent, times(1)).convert(any());
+        verify(eventRepository, times(1)).save(any());
+    }
+
+    @Test
+    void updatePatchEvent() {
+        EventDto event = EventDto.builder()
+                .id(1L)
+                .description("first desc")
+                .date(new Date(1, 2, 3))
+                .type(Event.Type.EXAM)
+                .build();
+
+        EventDto eventToUpdate = EventDto.builder()
+                .description("second desc")
+                .date(new Date(4, 4, 4))
+                .build();
+
+        Event eventDB = Event.builder().build();
+        Event savedEvent = Event.builder().build();
+
+        when(eventRepository.findById(eventToUpdate.getId())).thenReturn(Optional.of(eventDB));
+        when(eventToEventDto.convert(eventDB)).thenReturn(event);
+
+        when(eventRepository.save(any())).thenReturn(savedEvent);
+        when(eventToEventDto.convert(savedEvent)).thenReturn(event);
+
+       EventDto eventDto = teacherService.updatePatchEvent(eventToUpdate);
+
+        assertEquals(eventDto.getId(), event.getId());
+        assertEquals(eventDto.getDescription(), eventToUpdate.getDescription());
+        assertEquals(eventDto.getDate(), eventToUpdate.getDate());
+
+        assertNotEquals(eventDto.getType(), eventToUpdate.getType());
+
+        verify(eventRepository, times(1)).findById(eventToUpdate.getId());
+        verify(eventToEventDto, times(2)).convert(any());
         verify(eventDtoToEvent, times(1)).convert(any());
         verify(eventRepository, times(1)).save(any());
     }

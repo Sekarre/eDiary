@@ -161,8 +161,34 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public EventDto updatePatchEvent(EventDto eventDto) {
-        return null;
+    public EventDto updatePatchEvent(EventDto eventUpdated) {
+
+        Optional<Event> eventOptional = eventRepository.findById(eventUpdated.getId());
+        if (!eventOptional.isPresent()){
+            throw new NotFoundException("Event Not Found.");
+        }
+
+        EventDto event = eventToEventDto.convert(eventOptional.get());
+
+        if (eventUpdated.getDescription() != null) {
+            event.setDescription(eventUpdated.getDescription());
+        }
+
+        if (eventUpdated.getCreateDate() != null) {
+            event.setCreateDate(eventUpdated.getCreateDate());
+        }
+
+        if (eventUpdated.getDate() != null) {
+            event.setDate(eventUpdated.getDate());
+        }
+
+        if (eventUpdated.getType() != null) {
+            event.setType(eventUpdated.getType());
+        }
+
+        Event savedEvent = eventRepository.save(eventDtoToEvent.convert(event));
+
+        return eventToEventDto.convert(savedEvent);
     }
 
     @Override
