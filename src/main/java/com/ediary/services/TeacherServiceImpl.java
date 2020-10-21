@@ -3,18 +3,17 @@ package com.ediary.services;
 import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.EventDto;
+import com.ediary.DTO.LessonDto;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.exceptions.NotFoundException;
-import com.ediary.repositories.BehaviorRepository;
-import com.ediary.repositories.ClassRepository;
-import com.ediary.repositories.EventRepository;
-import com.ediary.repositories.TeacherRepository;
+import com.ediary.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -27,12 +26,14 @@ public class TeacherServiceImpl implements TeacherService {
     private final ClassRepository classRepository;
     private final EventRepository eventRepository;
     private final BehaviorRepository behaviorRepository;
+    private final LessonRepository lessonRepository;
 
     private final EventToEventDto eventToEventDto;
     private final EventDtoToEvent eventDtoToEvent;
     private final ClassToClassDto classToClassDto;
     private final BehaviorToBehaviorDto behaviorToBehaviorDto;
     private final BehaviorDtoToBehavior behaviorDtoToBehavior;
+    private final LessonToLessonDto lessonToLessonDto;
 
 
     @Override
@@ -46,12 +47,18 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Lesson> listLessons(Long teacherId, Long subjectId) {
-        return null;
+    public List<LessonDto> listLessons(Long teacherId, Long subjectId) {
+
+        Teacher teacher = getTeacherById(teacherId);
+
+        return lessonRepository.findAllBySchoolClassId(teacher.getSchoolClasses().getId())
+                .stream()
+                .map(lessonToLessonDto::convert)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Lesson> listLessons(Long teacherId) {
+    public List<LessonDto> listLessons(Long teacherId) {
         return null;
     }
 

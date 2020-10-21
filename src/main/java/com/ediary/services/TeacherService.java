@@ -3,6 +3,7 @@ package com.ediary.services;
 import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.EventDto;
+import com.ediary.DTO.LessonDto;
 import com.ediary.domain.*;
 
 import java.util.List;
@@ -11,8 +12,8 @@ public interface TeacherService {
 
     Lesson saveLesson(Lesson lesson);
     Boolean deleteLesson(Long lessonId);
-    List<Lesson> listLessons(Long teacherId, Long subjectId);
-    List<Lesson> listLessons(Long teacherId);
+    List<LessonDto> listLessons(Long teacherId, Long subjectId);
+    List<LessonDto> listLessons(Long teacherId);
 
     Topic saveTopic(Topic topic);
     Boolean deleteTopic(Long topicId);

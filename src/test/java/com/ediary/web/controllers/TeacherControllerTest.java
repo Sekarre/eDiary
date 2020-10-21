@@ -3,6 +3,7 @@ package com.ediary.web.controllers;
 import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.EventDto;
+import com.ediary.DTO.LessonDto;
 import com.ediary.domain.Behavior;
 import com.ediary.domain.Event;
 import com.ediary.domain.Notice;
@@ -242,6 +243,26 @@ class TeacherControllerTest {
                 .andExpect(view().name("/" + teacherId + "/behavior/" + behaviorId));
 
         verify(teacherService, times(1)).updatePatchBehavior(any());
+    }
+
+    @Test
+    void getAllLessonsBySubject() throws Exception {
+
+        Long subjectId = 1L;
+
+        when(teacherService.listLessons(anyLong(), anyLong())).thenReturn(Arrays.asList(
+                LessonDto.builder().id(1L).build(),
+                LessonDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/subject/" + subjectId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("lessons"))
+                .andExpect(view().name("/teacher/subject/lessons"));
+
+
+        verify(teacherService, times(1)).listLessons(1L, 1L);
+        assertEquals(2, teacherService.listLessons(1L, 1L).size());
     }
 
 }
