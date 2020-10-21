@@ -233,6 +233,22 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public Boolean deleteBehavior(Long teacherId, Long behaviorId) {
+        Optional<Behavior> behaviorOptional = behaviorRepository.findById(behaviorId);
+        if(!behaviorOptional.isPresent()) {
+            return false;
+        }
+        Behavior behavior = behaviorOptional.get();
+
+        if (behavior.getTeacher().getId() != teacherId) {
+            return false;
+        } else {
+            behaviorRepository.delete(behavior);
+            return true;
+        }
+    }
+
+    @Override
     public List<ClassDto> listAllClasses() {
         return classRepository.findAll().stream()
                 .map(classToClassDto::convert)

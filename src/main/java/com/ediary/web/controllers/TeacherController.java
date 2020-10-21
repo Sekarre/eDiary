@@ -130,4 +130,12 @@ public class TeacherController {
         }
     }
 
+    @DeleteMapping("/{teacherId}/behavior/{behaviorId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public String deleteBehavior(@PathVariable Long teacherId, @PathVariable Long behaviorId) {
+
+        teacherService.deleteBehavior(teacherId, behaviorId);
+        return "/" + teacherId + "/behavior";
+    }
+
 }

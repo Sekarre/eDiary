@@ -201,4 +201,15 @@ class TeacherControllerTest {
         verify(teacherService, times(1)).saveBehavior(any());
     }
 
+    @Test
+    void deleteBehavior() throws Exception {
+        Long behaviorId = 3L;
+
+        mockMvc.perform(delete("/teacher/" + teacherId + "/behavior/" + behaviorId))
+                .andExpect(status().isNoContent())
+                .andExpect(view().name("/" + teacherId + "/behavior"));
+
+        verify(teacherService, times(1)).deleteBehavior(teacherId, behaviorId);
+    }
+
 }

@@ -175,7 +175,6 @@ class TeacherServiceImplTest {
         verify(eventRepository, times(0)).delete(any());
     }
 
-
     @Test
     void listAllClasses() {
 
@@ -299,5 +298,52 @@ class TeacherServiceImplTest {
         verify(teacherRepository, times(1)).findById(teacherId);
         verify(behaviorToBehaviorDto, times(1)).convert(any());
     }
+
+    @Test
+    void deleteBehavior() {
+        Teacher teacher = Teacher.builder().id(teacherId).build();
+
+        Long behaviorId = 2L;
+        Behavior behavior = Behavior.builder().id(behaviorId).teacher(teacher).build();
+
+        when(behaviorRepository.findById(behaviorId)).thenReturn(Optional.of(behavior));
+
+        Boolean deleteStatus = teacherService.deleteBehavior(teacherId,behaviorId);
+
+        assertTrue(deleteStatus);
+        verify(behaviorRepository, times(1)).findById(behaviorId);
+        verify(behaviorRepository, times(1)).delete(any());
+    }
+
+    @Test
+    void deleteBehaviorNotOwner() {
+        Teacher teacher = Teacher.builder().id(teacherId).build();
+
+        Long behaviorId = 2L;
+        Behavior behavior = Behavior.builder().id(behaviorId).teacher(Teacher.builder().id(teacherId + 1).build()).build();
+
+        when(behaviorRepository.findById(behaviorId)).thenReturn(Optional.of(behavior));
+
+        Boolean deleteStatus = teacherService.deleteBehavior(teacherId,behaviorId);
+
+        assertFalse(deleteStatus);
+        verify(behaviorRepository, times(1)).findById(behaviorId);
+        verify(behaviorRepository, times(0)).delete(any());
+    }
+
+    @Test
+    void deleteBehaviorNotFound() {
+
+        Long behaviorId = 2L;
+
+        when(behaviorRepository.findById(behaviorId)).thenReturn(Optional.empty());
+
+        Boolean deleteStatus = teacherService.deleteBehavior(teacherId,behaviorId);
+
+        assertFalse(deleteStatus);
+        verify(behaviorRepository, times(1)).findById(behaviorId);
+        verify(behaviorRepository, times(0)).delete(any());
+    }
+
 
 }
