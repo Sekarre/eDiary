@@ -17,6 +17,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class TeacherControllerTest {
@@ -52,6 +53,29 @@ class TeacherControllerTest {
 
         verify(teacherService, times(1)).listEvents(teacherId);
         assertEquals(2, teacherService.listEvents(teacherId).size());
+    }
+
+    @Test
+    void newEvent() throws Exception {
+        when(teacherService.initNewEvent(teacherId)).thenReturn(EventDto.builder().build());
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/event/new"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("event"))
+                .andExpect(view().name("teacher/newEvent"));
+
+        verify(teacherService, times(1)).initNewEvent(teacherId);
+    }
+
+    @Test
+    void processNewEvent() throws Exception {
+        when(teacherService.saveEvent(any())).thenReturn(Event.builder().build());
+
+        mockMvc.perform(post("/teacher/" + teacherId + "/event/new"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:teacher/newEvent"));
+
+        verify(teacherService, times(1)).saveEvent(any());
     }
 
 
