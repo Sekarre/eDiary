@@ -78,8 +78,23 @@ class TeacherServiceImplTest {
         verify(teacherRepository, times(1)).findById(teacherId);
         verify(eventService, times(1)).listEventsByTeacher(teacher);
         verify(eventToEventDto, times(2)).convert(any());
-
     }
+
+    @Test
+    void getEvent() {
+        Long eventId = 3L;
+        Event eventDB = Event.builder().id(eventId).build();
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(eventDB));
+        when(eventToEventDto.convert(eventDB)).thenReturn(EventDto.builder().id(eventDB.getId()).build());
+
+        EventDto event = teacherService.getEvent(eventId);
+
+        assertEquals(eventId, event.getId());
+        verify(eventRepository, times(1)).findById(eventId);
+        verify(eventToEventDto, times(1)).convert(any());
+    }
+
     @Test
     void saveEvent() {
         Long eventId = 4L;
@@ -94,8 +109,6 @@ class TeacherServiceImplTest {
         assertEquals(eventId, savedEvent.getId());
         verify(eventDtoToEvent, times(1)).convert(eventToSave);
         verify(eventRepository, times(1)).save(any());
-
-
     }
 
     @Test

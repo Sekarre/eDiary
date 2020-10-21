@@ -1,7 +1,6 @@
 package com.ediary.web.controllers;
 
 import com.ediary.DTO.EventDto;
-import com.ediary.domain.Event;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,8 +41,10 @@ public class TeacherController {
     }
 
     @GetMapping("/{teacherId}/event/{eventId}")
-    public String getEvent() {
-        return "";
+    public String getEvent(@PathVariable Long teacherId, @PathVariable Long eventId, Model model) {
+
+        model.addAttribute("event", teacherService.getEvent(eventId));
+        return "/teacher/event";
     }
 
     @GetMapping("/{teacherId}/event/new")

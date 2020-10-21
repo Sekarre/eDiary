@@ -6,7 +6,6 @@ import com.ediary.converters.ClassToClassDto;
 import com.ediary.converters.EventDtoToEvent;
 import com.ediary.converters.EventToEventDto;
 import com.ediary.domain.*;
-import com.ediary.domain.Class;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.ClassRepository;
 import com.ediary.repositories.EventRepository;
@@ -189,6 +188,16 @@ public class TeacherServiceImpl implements TeacherService {
         Event savedEvent = eventRepository.save(eventDtoToEvent.convert(event));
 
         return eventToEventDto.convert(savedEvent);
+    }
+
+    @Override
+    public EventDto getEvent(Long eventId) {
+        Optional<Event> eventOptional = eventRepository.findById(eventId);
+        if (!eventOptional.isPresent()) {
+            throw new NotFoundException("Event Not Found.");
+        }
+
+        return eventToEventDto.convert(eventOptional.get());
     }
 
     @Override

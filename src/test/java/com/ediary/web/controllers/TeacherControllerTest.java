@@ -56,6 +56,21 @@ class TeacherControllerTest {
     }
 
     @Test
+    void getEvent() throws Exception {
+
+        Long eventId = 2L;
+
+        when(teacherService.getEvent(eventId)).thenReturn(EventDto.builder().build());
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/event/" + eventId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("event"))
+                .andExpect(view().name("/teacher/event"));
+
+        verify(teacherService, times(1)).getEvent(eventId);
+    }
+
+    @Test
     void newEvent() throws Exception {
         when(teacherService.initNewEvent(teacherId)).thenReturn(EventDto.builder().build());
 
