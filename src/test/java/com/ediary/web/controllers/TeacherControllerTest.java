@@ -1,12 +1,10 @@
 package com.ediary.web.controllers;
 
-import com.ediary.DTO.BehaviorDto;
-import com.ediary.DTO.ClassDto;
-import com.ediary.DTO.EventDto;
-import com.ediary.DTO.LessonDto;
+import com.ediary.DTO.*;
 import com.ediary.domain.Behavior;
 import com.ediary.domain.Event;
 import com.ediary.domain.Notice;
+import com.ediary.domain.Teacher;
 import com.ediary.services.TeacherService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -246,6 +244,26 @@ class TeacherControllerTest {
     }
 
     @Test
+    void getAllSubjects() throws Exception {
+
+        Long teacherId = 1L;
+
+        when(teacherService.listSubjects(anyLong())).thenReturn(Arrays.asList(
+                SubjectDto.builder().id(1L).build(),
+                SubjectDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("subjects"))
+                .andExpect(view().name("/teacher/lesson/subject"));
+
+
+        verify(teacherService, times(1)).listSubjects(teacherId);
+        assertEquals(2, teacherService.listSubjects(teacherId).size());
+    }
+
+    @Test
     void getAllLessonsBySubject() throws Exception {
 
         Long subjectId = 1L;
@@ -255,10 +273,10 @@ class TeacherControllerTest {
                 LessonDto.builder().id(2L).build()
         ));
 
-        mockMvc.perform(get("/teacher/" + teacherId + "/subject/" + subjectId))
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("lessons"))
-                .andExpect(view().name("/teacher/subject/lessons"));
+                .andExpect(view().name("/teacher/lesson/subject/allLessons"));
 
 
         verify(teacherService, times(1)).listLessons(1L, 1L);

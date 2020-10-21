@@ -1,9 +1,6 @@
 package com.ediary.services;
 
-import com.ediary.DTO.BehaviorDto;
-import com.ediary.DTO.ClassDto;
-import com.ediary.DTO.EventDto;
-import com.ediary.DTO.LessonDto;
+import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.exceptions.NotFoundException;
@@ -27,6 +24,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final EventRepository eventRepository;
     private final BehaviorRepository behaviorRepository;
     private final LessonRepository lessonRepository;
+    private final SubjectRepository subjectRepository;
 
     private final EventToEventDto eventToEventDto;
     private final EventDtoToEvent eventDtoToEvent;
@@ -34,6 +32,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final BehaviorToBehaviorDto behaviorToBehaviorDto;
     private final BehaviorDtoToBehavior behaviorDtoToBehavior;
     private final LessonToLessonDto lessonToLessonDto;
+    private final SubjectToSubjectDto subjectToSubjectDto;
 
 
     @Override
@@ -88,8 +87,13 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Subject> listSubjects(Long teacherId) {
-        return null;
+    public List<SubjectDto> listSubjects(Long teacherId) {
+
+        Teacher teacher = getTeacherById(teacherId);
+
+        return subjectRepository.findAllByTeachers(teacher).stream()
+                .map(subjectToSubjectDto::convert)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -165,12 +165,22 @@ public class TeacherController {
         }
     }
 
-    @GetMapping("/{teacherId}/subject/{subjectId}")
+
+    @GetMapping("/{teacherId}/lesson/subject")
+    public String getAllSubjects(@PathVariable Long teacherId, Model model) {
+
+        model.addAttribute("subjects", teacherService.listSubjects(teacherId));
+
+        return "/teacher/lesson/subject";
+    }
+
+
+    @GetMapping("/{teacherId}/lesson/subject/{subjectId}")
     public String getAllLessonsBySubject(@PathVariable Long teacherId, @PathVariable Long subjectId,  Model model) {
 
         model.addAttribute("lessons", teacherService.listLessons(teacherId, subjectId));
 
-        return "/teacher/subject/lessons";
+        return "/teacher/lesson/subject/allLessons";
     }
 
 }
