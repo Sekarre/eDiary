@@ -345,5 +345,27 @@ class TeacherServiceImplTest {
         verify(behaviorRepository, times(0)).delete(any());
     }
 
+    @Test
+    void updatePutBehavior() {
+        Long behaviorToUpdateId = 1L;
+        String behaviorToUpdateContent = "before";
+        BehaviorDto behaviorToUpdate = BehaviorDto.builder()
+                .id(behaviorToUpdateId).content(behaviorToUpdateContent).build();
+
+        Long behaviorUpdatedId = 1L;
+        String behaviorUpdatedContent = "after";
+        BehaviorDto behaviorUpdated = BehaviorDto.builder()
+                .id(behaviorUpdatedId).content(behaviorUpdatedContent).build();
+
+        when(behaviorDtoToBehavior.convert(behaviorToUpdate)).thenReturn(
+                Behavior.builder().id(behaviorUpdatedId).build());
+        when(behaviorRepository.save(any())).thenReturn(Behavior.builder().build());
+
+        BehaviorDto behavior = teacherService.updatePutBehavior(behaviorToUpdate);
+
+        verify(behaviorDtoToBehavior, times(1)).convert(any());
+        verify(behaviorRepository, times(1)).save(any());
+    }
+
 
 }

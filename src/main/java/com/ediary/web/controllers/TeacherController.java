@@ -84,9 +84,10 @@ public class TeacherController {
             return "/" + teacherId + "/event/" + event.getId();
         }
     }
+
     @PatchMapping("/{teacherId}/event/update")
     public String updatePatchEvent(@PathVariable Long teacherId,
-                                 @Valid @RequestBody EventDto eventDto, BindingResult result) {
+                                   @Valid @RequestBody EventDto eventDto, BindingResult result) {
         if (result.hasErrors()){
             //TODO
             return "/";
@@ -136,6 +137,18 @@ public class TeacherController {
 
         teacherService.deleteBehavior(teacherId, behaviorId);
         return "/" + teacherId + "/behavior";
+    }
+
+    @PutMapping("/{teacherId}/behavior/update")
+    public String updatePutBehavior(@PathVariable Long teacherId,
+                                    @Valid @RequestBody BehaviorDto behaviorDto, BindingResult result) {
+        if (result.hasErrors()){
+            //TODO
+            return "/";
+        } else {
+            BehaviorDto behavior = teacherService.updatePutBehavior(behaviorDto);
+            return "/" + teacherId + "/behavior/" + behavior.getId();
+        }
     }
 
 }

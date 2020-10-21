@@ -249,6 +249,14 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public BehaviorDto updatePutBehavior(BehaviorDto behaviorDto) {
+        Behavior behavior = behaviorDtoToBehavior.convert(behaviorDto);
+        Behavior savedBehavior = behaviorRepository.save(behavior);
+
+        return behaviorToBehaviorDto.convert(savedBehavior);
+    }
+
+    @Override
     public List<ClassDto> listAllClasses() {
         return classRepository.findAll().stream()
                 .map(classToClassDto::convert)

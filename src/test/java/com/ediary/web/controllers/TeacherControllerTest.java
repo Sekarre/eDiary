@@ -212,4 +212,20 @@ class TeacherControllerTest {
         verify(teacherService, times(1)).deleteBehavior(teacherId, behaviorId);
     }
 
+    @Test
+    void updatePutBehavior() throws Exception {
+        Long behaviorId = 2L;
+        BehaviorDto behaviorDto = BehaviorDto.builder().id(behaviorId).build();
+
+        when(teacherService.updatePutBehavior(any())).thenReturn(BehaviorDto.builder().id(behaviorId).build());
+
+        mockMvc.perform(put("/teacher/" + teacherId + "/behavior/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(behaviorDto)))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/" + teacherId + "/behavior/" + behaviorId));
+
+        verify(teacherService, times(1)).updatePutBehavior(any());
+    }
+
 }

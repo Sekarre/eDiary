@@ -43,6 +43,7 @@ public interface TeacherService {
     List<BehaviorDto> listBehaviors(Long teacherId, Long studentId);
     BehaviorDto initNewBehavior(Long teacherId);
     Boolean deleteBehavior(Long teacherId, Long behaviorId);
+    BehaviorDto updatePutBehavior(BehaviorDto behaviorDto);
 
 
     List<ClassDto> listAllClasses();
