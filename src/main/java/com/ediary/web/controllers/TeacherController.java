@@ -147,6 +147,20 @@ public class TeacherController {
             return "/";
         } else {
             BehaviorDto behavior = teacherService.updatePutBehavior(behaviorDto);
+            //TODO zalezy od widoku
+            return "/" + teacherId + "/behavior/" + behavior.getId();
+        }
+    }
+
+    @PatchMapping("/{teacherId}/behavior/update")
+    public String updatePatchBehavior(@PathVariable Long teacherId,
+                                   @Valid @RequestBody BehaviorDto behaviorDto, BindingResult result) {
+        if (result.hasErrors()){
+            //TODO
+            return "/";
+        } else {
+            BehaviorDto behavior = teacherService.updatePatchBehavior(behaviorDto);
+            //TODO zalezy od widoku
             return "/" + teacherId + "/behavior/" + behavior.getId();
         }
     }

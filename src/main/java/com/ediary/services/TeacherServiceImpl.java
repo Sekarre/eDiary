@@ -257,6 +257,32 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public BehaviorDto updatePatchBehavior(BehaviorDto behaviorUpdated) {
+        Optional<Behavior> behaviorOptional = behaviorRepository.findById(behaviorUpdated.getId());
+        if (!behaviorOptional.isPresent()){
+            throw new NotFoundException("Behavior Not Found.");
+        }
+
+        BehaviorDto behavior = behaviorToBehaviorDto.convert(behaviorOptional.get());
+
+        if (behaviorUpdated.getDate() != null) {
+            behavior.setDate(behaviorUpdated.getDate());
+        }
+
+        if (behaviorUpdated.getContent() != null) {
+            behavior.setContent(behaviorUpdated.getContent());
+        }
+
+        if (behaviorUpdated.isPositive() == !behavior.isPositive()) {
+            behavior.setPositive(behaviorUpdated.isPositive());
+        }
+
+        Behavior savedBehavior = behaviorRepository.save(behaviorDtoToBehavior.convert(behavior));
+
+        return behaviorToBehaviorDto.convert(savedBehavior);
+    }
+
+    @Override
     public List<ClassDto> listAllClasses() {
         return classRepository.findAll().stream()
                 .map(classToClassDto::convert)

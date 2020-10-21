@@ -367,5 +367,39 @@ class TeacherServiceImplTest {
         verify(behaviorRepository, times(1)).save(any());
     }
 
+    @Test
+    void updatePatchBehavior() {
+
+        BehaviorDto behavior = BehaviorDto.builder()
+                .id(1L)
+                .content("first")
+                .date(new Date(1, 2, 3))
+                .positive(true)
+                .build();
+
+        BehaviorDto behaviorToUpdate = BehaviorDto.builder()
+                .content("second")
+                .build();
+
+        Behavior behaviorDB = Behavior.builder().build();
+        Behavior savedBehavior = Behavior.builder().build();
+
+        when(behaviorRepository.findById(behaviorToUpdate.getId())).thenReturn(Optional.of(behaviorDB));
+        when(behaviorToBehaviorDto.convert(behaviorDB)).thenReturn(behavior);
+
+        when(behaviorRepository.save(any())).thenReturn(savedBehavior);
+        when(behaviorToBehaviorDto.convert(savedBehavior)).thenReturn(behavior);
+
+        BehaviorDto behaviorDto = teacherService.updatePatchBehavior(behaviorToUpdate);
+
+        assertEquals(behaviorDto.getId(), behavior.getId());
+        assertEquals(behaviorDto.getContent(), behaviorToUpdate.getContent());
+
+        verify(behaviorRepository, times(1)).findById(behaviorToUpdate.getId());
+        verify(behaviorToBehaviorDto, times(2)).convert(any());
+        verify(behaviorDtoToBehavior, times(1)).convert(any());
+        verify(behaviorRepository, times(1)).save(any());
+    }
+
 
 }
