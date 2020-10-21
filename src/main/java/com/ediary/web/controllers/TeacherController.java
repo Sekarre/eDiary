@@ -1,5 +1,6 @@
 package com.ediary.web.controllers;
 
+import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.EventDto;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,6 @@ public class TeacherController {
             }
         });
     }
-
     @GetMapping("/{teacherId}/event")
     public String getAllEvents(@PathVariable Long teacherId, Model model) {
 
@@ -61,7 +61,7 @@ public class TeacherController {
             return "/";
         } else {
             teacherService.saveEvent(eventDto);
-            return "redirect:/teacher/newEvent";
+            return "redirect:/teacher/event";
         }
     }
 
@@ -110,6 +110,24 @@ public class TeacherController {
 
         model.addAttribute("behaviors", teacherService.listBehaviors(teacherId));
         return "/teacher/behavior";
+    }
+
+    @GetMapping("/{teacherId}/behavior/new")
+    public String newBehavior(@PathVariable Long teacherId, Model model) {
+
+        model.addAttribute("behavior", teacherService.initNewBehavior(teacherId));
+        return "/teacher/newBehavior";
+    }
+
+    @PostMapping("/{teacherId}/behavior/new")
+    public String processNewBehavior(@Valid @RequestBody BehaviorDto behaviorDto, BindingResult result) {
+        if (result.hasErrors()){
+            //TODO
+            return "/";
+        } else {
+            teacherService.saveBehavior(behaviorDto);
+            return "redirect:/teacher/behavior";
+        }
     }
 
 }

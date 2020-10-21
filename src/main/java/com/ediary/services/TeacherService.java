@@ -38,9 +38,11 @@ public interface TeacherService {
     EventDto updatePatchEvent(EventDto eventDto);
     EventDto getEvent(Long eventId);
 
-    Behavior saveBehavior(Behavior behavior);
+    Behavior saveBehavior(BehaviorDto behaviorDto);
     List<BehaviorDto> listBehaviors(Long teacherId);
     List<BehaviorDto> listBehaviors(Long teacherId, Long studentId);
+    BehaviorDto initNewBehavior(Long teacherId);
+
 
     List<ClassDto> listAllClasses();
 }

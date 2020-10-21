@@ -3,10 +3,7 @@ package com.ediary.services;
 import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.EventDto;
-import com.ediary.converters.BehaviorToBehaviorDto;
-import com.ediary.converters.ClassToClassDto;
-import com.ediary.converters.EventDtoToEvent;
-import com.ediary.converters.EventToEventDto;
+import com.ediary.converters.*;
 import com.ediary.domain.Behavior;
 import com.ediary.domain.Class;
 import com.ediary.domain.Event;
@@ -37,27 +34,23 @@ class TeacherServiceImplTest {
 
     @Mock
     ClassRepository classRepository;
-
     @Mock
     EventRepository eventRepository;
-
     @Mock
     TeacherRepository teacherRepository;
-
     @Mock
     BehaviorRepository behaviorRepository;
 
     @Mock
     EventToEventDto eventToEventDto;
-
     @Mock
     EventDtoToEvent eventDtoToEvent;
-
     @Mock
     ClassToClassDto classToClassDto;
-
     @Mock
     BehaviorToBehaviorDto behaviorToBehaviorDto;
+    @Mock
+    BehaviorDtoToBehavior behaviorDtoToBehavior;
 
 
     TeacherService teacherService;
@@ -66,7 +59,8 @@ class TeacherServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         teacherService = new TeacherServiceImpl(eventService, teacherRepository, classRepository, eventRepository,
-                behaviorRepository, eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto);
+                behaviorRepository, eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto,
+                behaviorDtoToBehavior);
     }
 
     @Test
@@ -256,6 +250,22 @@ class TeacherServiceImplTest {
     }
 
     @Test
+    void saveBehavior() {
+        Long behaviorId = 4L;
+        BehaviorDto behaviorToSave = BehaviorDto.builder().id(behaviorId).build();
+        Behavior behaviorReturned = Behavior.builder().id(behaviorId).build();
+
+        when(behaviorDtoToBehavior.convert(behaviorToSave)).thenReturn(Behavior.builder().id(behaviorToSave.getId()).build());
+        when(behaviorRepository.save(any())).thenReturn(behaviorReturned);
+
+        Behavior behavior = teacherService.saveBehavior(behaviorToSave);
+
+        assertEquals(behaviorId, behavior.getId());
+        verify(behaviorDtoToBehavior, times(1)).convert(behaviorToSave);
+        verify(behaviorRepository, times(1)).save(any());
+    }
+
+    @Test
     void listBehaviorsByTeacher() {
         Teacher teacher = Teacher.builder().id(1L).build();
         when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
@@ -275,4 +285,19 @@ class TeacherServiceImplTest {
         verify(behaviorRepository, times(1)).findAllByTeacher(teacher);
         verify(behaviorToBehaviorDto, times(2)).convert(any());
     }
+
+    @Test
+    void initNewBehavior() {
+        Teacher teacher = Teacher.builder().id(1L).build();
+        when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
+
+        when(behaviorToBehaviorDto.convert(any())).thenReturn(BehaviorDto.builder().id(2L).build());
+
+        BehaviorDto behavior = teacherService.initNewBehavior(teacherId);
+
+        assertEquals(2L, behavior.getId());
+        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(behaviorToBehaviorDto, times(1)).convert(any());
+    }
+
 }

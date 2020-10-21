@@ -3,6 +3,7 @@ package com.ediary.web.controllers;
 import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.EventDto;
+import com.ediary.domain.Behavior;
 import com.ediary.domain.Event;
 import com.ediary.domain.Notice;
 import com.ediary.services.TeacherService;
@@ -91,7 +92,7 @@ class TeacherControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(AbstractAsJsonControllerTest.asJsonString(EventDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/newEvent"));
+                .andExpect(view().name("redirect:/teacher/event"));
 
         verify(teacherService, times(1)).saveEvent(any());
     }
@@ -173,6 +174,31 @@ class TeacherControllerTest {
 
         verify(teacherService, times(1)).listBehaviors(teacherId);
         assertEquals(2, teacherService.listBehaviors(teacherId).size());
+    }
+
+    @Test
+    void newBehavior() throws Exception {
+        when(teacherService.initNewBehavior(teacherId)).thenReturn(BehaviorDto.builder().build());
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/behavior/new"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("behavior"))
+                .andExpect(view().name("/teacher/newBehavior"));
+
+        verify(teacherService, times(1)).initNewBehavior(teacherId);
+    }
+
+    @Test
+    void processNewBehavior() throws Exception {
+        when(teacherService.saveBehavior(any())).thenReturn(Behavior.builder().build());
+
+        mockMvc.perform(post("/teacher/" + teacherId + "/behavior/new")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(BehaviorDto.builder().build())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/behavior"));
+
+        verify(teacherService, times(1)).saveBehavior(any());
     }
 
 }

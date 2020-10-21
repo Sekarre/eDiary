@@ -3,10 +3,7 @@ package com.ediary.services;
 import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.EventDto;
-import com.ediary.converters.BehaviorToBehaviorDto;
-import com.ediary.converters.ClassToClassDto;
-import com.ediary.converters.EventDtoToEvent;
-import com.ediary.converters.EventToEventDto;
+import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.BehaviorRepository;
@@ -35,6 +32,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final EventDtoToEvent eventDtoToEvent;
     private final ClassToClassDto classToClassDto;
     private final BehaviorToBehaviorDto behaviorToBehaviorDto;
+    private final BehaviorDtoToBehavior behaviorDtoToBehavior;
 
 
     @Override
@@ -206,8 +204,8 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Behavior saveBehavior(Behavior behavior) {
-        return null;
+    public Behavior saveBehavior(BehaviorDto behaviorDto) {
+        return behaviorRepository.save(behaviorDtoToBehavior.convert(behaviorDto));
     }
 
     @Override
@@ -224,6 +222,14 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<BehaviorDto> listBehaviors(Long teacherId, Long studentId) {
         return null;
+    }
+
+    @Override
+    public BehaviorDto initNewBehavior(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+        Behavior behavior = Behavior.builder().teacher(teacher).build();
+
+        return behaviorToBehaviorDto.convert(behavior);
     }
 
     @Override
