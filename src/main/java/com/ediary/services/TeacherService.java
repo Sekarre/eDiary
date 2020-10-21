@@ -1,5 +1,6 @@
 package com.ediary.services;
 
+import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.EventDto;
 import com.ediary.domain.*;
@@ -38,7 +39,8 @@ public interface TeacherService {
     EventDto getEvent(Long eventId);
 
     Behavior saveBehavior(Behavior behavior);
-    List<Behavior> listBehaviors(Long teacherId, Long studentId);
+    List<BehaviorDto> listBehaviors(Long teacherId);
+    List<BehaviorDto> listBehaviors(Long teacherId, Long studentId);
 
     List<ClassDto> listAllClasses();
 }

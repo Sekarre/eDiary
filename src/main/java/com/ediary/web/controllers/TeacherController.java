@@ -103,4 +103,13 @@ public class TeacherController {
 
         return "/teacher/allClasses";
     }
+
+
+    @GetMapping("/{teacherId}/behavior")
+    public String getAllBehaviorsByTeacher(@PathVariable Long teacherId, Model model) {
+
+        model.addAttribute("behaviors", teacherService.listBehaviors(teacherId));
+        return "/teacher/behavior";
+    }
+
 }

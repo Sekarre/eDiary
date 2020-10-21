@@ -1,13 +1,17 @@
 package com.ediary.services;
 
+import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.EventDto;
+import com.ediary.converters.BehaviorToBehaviorDto;
 import com.ediary.converters.ClassToClassDto;
 import com.ediary.converters.EventDtoToEvent;
 import com.ediary.converters.EventToEventDto;
+import com.ediary.domain.Behavior;
 import com.ediary.domain.Class;
 import com.ediary.domain.Event;
 import com.ediary.domain.Teacher;
+import com.ediary.repositories.BehaviorRepository;
 import com.ediary.repositories.ClassRepository;
 import com.ediary.repositories.EventRepository;
 import com.ediary.repositories.TeacherRepository;
@@ -41,6 +45,9 @@ class TeacherServiceImplTest {
     TeacherRepository teacherRepository;
 
     @Mock
+    BehaviorRepository behaviorRepository;
+
+    @Mock
     EventToEventDto eventToEventDto;
 
     @Mock
@@ -49,6 +56,9 @@ class TeacherServiceImplTest {
     @Mock
     ClassToClassDto classToClassDto;
 
+    @Mock
+    BehaviorToBehaviorDto behaviorToBehaviorDto;
+
 
     TeacherService teacherService;
 
@@ -56,7 +66,7 @@ class TeacherServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         teacherService = new TeacherServiceImpl(eventService, teacherRepository, classRepository, eventRepository,
-                eventToEventDto, eventDtoToEvent, classToClassDto);
+                behaviorRepository, eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto);
     }
 
     @Test
@@ -243,5 +253,26 @@ class TeacherServiceImplTest {
         verify(eventToEventDto, times(2)).convert(any());
         verify(eventDtoToEvent, times(1)).convert(any());
         verify(eventRepository, times(1)).save(any());
+    }
+
+    @Test
+    void listBehaviorsByTeacher() {
+        Teacher teacher = Teacher.builder().id(1L).build();
+        when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
+
+        when(behaviorRepository.findAllByTeacher(teacher)).thenReturn(Arrays.asList(
+                Behavior.builder().id(1L).teacher(teacher).build(),
+                Behavior.builder().id(2L).teacher(teacher).build()
+        ));
+
+        when(behaviorToBehaviorDto.convert(any(Behavior.class))).thenReturn(BehaviorDto.builder().id(2L).build());
+
+        List<BehaviorDto> behaviors = teacherService.listBehaviors(teacherId);
+
+        assertEquals(2, behaviors.size());
+        assertEquals(2L, behaviors.get(1).getId());
+        verify(teacherRepository,times(1)).findById(teacherId);
+        verify(behaviorRepository, times(1)).findAllByTeacher(teacher);
+        verify(behaviorToBehaviorDto, times(2)).convert(any());
     }
 }

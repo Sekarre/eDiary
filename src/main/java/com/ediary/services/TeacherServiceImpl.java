@@ -1,12 +1,15 @@
 package com.ediary.services;
 
+import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.EventDto;
+import com.ediary.converters.BehaviorToBehaviorDto;
 import com.ediary.converters.ClassToClassDto;
 import com.ediary.converters.EventDtoToEvent;
 import com.ediary.converters.EventToEventDto;
 import com.ediary.domain.*;
 import com.ediary.exceptions.NotFoundException;
+import com.ediary.repositories.BehaviorRepository;
 import com.ediary.repositories.ClassRepository;
 import com.ediary.repositories.EventRepository;
 import com.ediary.repositories.TeacherRepository;
@@ -26,10 +29,12 @@ public class TeacherServiceImpl implements TeacherService {
     private final TeacherRepository teacherRepository;
     private final ClassRepository classRepository;
     private final EventRepository eventRepository;
+    private final BehaviorRepository behaviorRepository;
 
     private final EventToEventDto eventToEventDto;
     private final EventDtoToEvent eventDtoToEvent;
     private final ClassToClassDto classToClassDto;
+    private final BehaviorToBehaviorDto behaviorToBehaviorDto;
 
 
     @Override
@@ -206,7 +211,18 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Behavior> listBehaviors(Long teacherId, Long studentId) {
+    public List<BehaviorDto> listBehaviors(Long teacherId) {
+
+        Teacher teacher = getTeacherById(teacherId);
+
+        return behaviorRepository.findAllByTeacher(teacher)
+                .stream()
+                .map(behaviorToBehaviorDto::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BehaviorDto> listBehaviors(Long teacherId, Long studentId) {
         return null;
     }
 
