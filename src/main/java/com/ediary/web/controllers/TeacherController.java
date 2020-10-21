@@ -3,6 +3,7 @@ package com.ediary.web.controllers;
 import com.ediary.DTO.EventDto;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,14 +37,14 @@ public class TeacherController {
     public String getAllEvents(@PathVariable Long teacherId, Model model) {
 
         model.addAttribute("events", teacherService.listEvents(teacherId));
-        return "teacher/allEvents";
+        return "/teacher/allEvents";
     }
 
     @GetMapping("/{teacherId}/event/new")
     public String newEvent(@PathVariable Long teacherId, Model model) {
 
         model.addAttribute("event", teacherService.initNewEvent(teacherId));
-        return "teacher/newEvent";
+        return "/teacher/newEvent";
     }
 
     @PostMapping("/{teacherId}/event/new")
@@ -53,8 +54,16 @@ public class TeacherController {
             return "/";
         } else {
             teacherService.saveEvent(eventDto);
-            return "redirect:teacher/newEvent";
+            return "redirect:/teacher/newEvent";
         }
+    }
+
+    @DeleteMapping("/{teacherId}/event/{eventId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public String deleteEvent(@PathVariable Long teacherId, @PathVariable Long eventId) {
+
+        teacherService.deleteEvent(teacherId, eventId);
+        return "/" + teacherId + "/event";
     }
 
     @GetMapping("/{teacherId}/classes")
@@ -62,6 +71,6 @@ public class TeacherController {
 
         model.addAttribute("classes", teacherService.listAllClasses());
 
-        return "teacher/allClasses";
+        return "/teacher/allClasses";
     }
 }

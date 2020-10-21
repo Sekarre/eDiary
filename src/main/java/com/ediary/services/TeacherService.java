@@ -32,7 +32,7 @@ public interface TeacherService {
 
     Event saveEvent(EventDto eventDto);
     EventDto initNewEvent(Long teacherId);
-    Boolean deleteEvent(Long eventId);
+    Boolean deleteEvent(Long teacherId, Long eventId);
     List<EventDto> listEvents(Long teacherId);
 
     Behavior saveBehavior(Behavior behavior);

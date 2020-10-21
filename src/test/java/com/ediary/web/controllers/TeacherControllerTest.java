@@ -16,8 +16,7 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class TeacherControllerTest {
@@ -49,7 +48,7 @@ class TeacherControllerTest {
         mockMvc.perform(get("/teacher/" + teacherId + "/event"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("events"))
-                .andExpect(view().name("teacher/allEvents"));
+                .andExpect(view().name("/teacher/allEvents"));
 
         verify(teacherService, times(1)).listEvents(teacherId);
         assertEquals(2, teacherService.listEvents(teacherId).size());
@@ -62,7 +61,7 @@ class TeacherControllerTest {
         mockMvc.perform(get("/teacher/" + teacherId + "/event/new"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("event"))
-                .andExpect(view().name("teacher/newEvent"));
+                .andExpect(view().name("/teacher/newEvent"));
 
         verify(teacherService, times(1)).initNewEvent(teacherId);
     }
@@ -73,11 +72,21 @@ class TeacherControllerTest {
 
         mockMvc.perform(post("/teacher/" + teacherId + "/event/new"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:teacher/newEvent"));
+                .andExpect(view().name("redirect:/teacher/newEvent"));
 
         verify(teacherService, times(1)).saveEvent(any());
     }
 
+    @Test
+    void deleteEvent() throws Exception {
+        Long eventId = 3L;
+
+        mockMvc.perform(delete("/teacher/" + teacherId + "/event/" + eventId))
+                .andExpect(status().isNoContent())
+                .andExpect(view().name("/" + teacherId + "/event"));
+
+        verify(teacherService, times(1)).deleteEvent(teacherId, eventId);
+    }
 
     @Test
     void getAllClasses() throws Exception {
@@ -90,7 +99,7 @@ class TeacherControllerTest {
         mockMvc.perform(get("/teacher/" + teacherId + "/classes"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("classes"))
-                .andExpect(view().name("teacher/allClasses"));
+                .andExpect(view().name("/teacher/allClasses"));
 
 
         verify(teacherService, times(1)).listAllClasses();

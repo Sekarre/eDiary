@@ -111,6 +111,52 @@ class TeacherServiceImplTest {
         verify(eventToEventDto, times(1)).convert(any());
     }
 
+    @Test
+    void deleteEvent() {
+        Teacher teacher = Teacher.builder().id(teacherId).build();
+
+        Long eventId = 2L;
+        Event event = Event.builder().id(eventId).teacher(teacher).build();
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+
+        Boolean deleteStatus = teacherService.deleteEvent(teacherId, eventId);
+
+        assertTrue(deleteStatus);
+        verify(eventRepository, times(1)).findById(eventId);
+        verify(eventRepository, times(1)).delete(any());
+    }
+
+    @Test
+    void deleteEventNotOwner() {
+        Teacher teacher = Teacher.builder().id(teacherId).build();
+
+        Long eventId = 2L;
+        Event event = Event.builder().id(eventId).teacher(Teacher.builder().id(teacherId + 1).build()).build();
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+
+        Boolean deleteStatus = teacherService.deleteEvent(teacherId, eventId);
+
+        assertFalse(deleteStatus);
+        verify(eventRepository, times(1)).findById(eventId);
+        verify(eventRepository, times(0)).delete(any());
+    }
+
+    @Test
+    void deleteEventNotFound() {
+
+        Long eventId = 2L;
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
+
+        Boolean deleteStatus = teacherService.deleteEvent(teacherId, eventId);
+
+        assertFalse(deleteStatus);
+        verify(eventRepository, times(1)).findById(eventId);
+        verify(eventRepository, times(0)).delete(any());
+    }
+
 
     @Test
     void listAllClasses() {

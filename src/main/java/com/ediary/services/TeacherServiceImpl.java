@@ -126,8 +126,19 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Boolean deleteEvent(Long eventId) {
-        return null;
+    public Boolean deleteEvent(Long teacherId, Long eventId) {
+        Optional<Event> optionalEvent = eventRepository.findById(eventId);
+        if(!optionalEvent.isPresent()) {
+            return false;
+        }
+        Event event = optionalEvent.get();
+
+        if (event.getTeacher().getId() != teacherId) {
+            return false;
+        } else {
+            eventRepository.delete(event);
+            return true;
+        }
     }
 
     @Override
