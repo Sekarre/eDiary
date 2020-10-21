@@ -59,20 +59,51 @@ public class DefaultLoader implements CommandLineRunner {
     private Long firstUserAsStudentId;
     private Long firstUserAsParentId;
     private Long firstUserAsTeacherId;
+    private final int classSize = 15;
 
     private final String[] streetNames = {"Odrodzenia", "Jagiellońska", "Kaszubska", "Jana Pawła", "Borysza",
             "Wielkopolska", "Podhalańska", "Odrodzenia", "Borysza", "Mazowiecka",
-            "Kujawska", "Mazowiecka", "Wolności", "Wysoka", "Borysza"};
+            "Kujawska", "Mazowiecka", "Wolności", "Wysoka", "Borysza",
+            "Kameralna", "Opolska", "Boczna", "Boczna", "Kasztanowa",
+            "Barwna", "Nurkowa", "Basenowa", "Stokrotki", "Biała",
+            "Pawia", "Celna", "Kozia", "Kameralna", "Wolności",
+            "Opolska"
+
+    };
 
     private final String[] phoneNumber = {"502571821", "515556095", "505735402", "575120854", "455558291",
             "785152102", "735592154", "509124854", "571943111", "710430235",
-            "509570183", "730852128", "515152532", "593561943", "920153853"};
+            "509570183", "730852128", "515152532", "593561943", "920153853",
+            "699921194", "609521531", "521042153", "681251023", "501545145",
+            "795550352", "535555325", "605555033", "885552452", "535555657",
+            "695555751", "735552429", "665556237", "455550134", "455559076",
+            "521531995"
 
-    private final String[] studentNames = {"Dagmara", "Daniel", "Alicja", "Olgierd", "Kamil", "Olga", "Michał"};
-    private final String[] studentLastNames = {"Lis", "Mazur", "Skrzeczkowska", "Szymczak", "Kubiak", "Woźniak", "Kalinowski"};
+    };
 
-    private final String[] parentNames = {"Marian", "Ludwik", "Konrad", "Amir", "Irena", "Rafał", "Jan"};
-    private final String[] parentLastNames = {"Lis", "Mazur", "Skrzeczkowski", "Szymczak", "Kubiak", "Woźniak", "Kalinowski"};
+    private final String[] studentNames = {"Dagmara", "Daniel", "Alicja", "Olgierd", "Kamil",
+            "Olga", "Michał", "Piotr", "Adrian", "Adam",
+            "Dominika", "Kinga", "Weronika", "Daniel", "Damian",
+            "Natalia", "Konrad", "Aleksandra", "Aneta", "Mateusz"
+
+    };
+    private final String[] studentLastNames = {"Lis", "Mazur", "Skrzeczkowska", "Szymczak", "Kubiak",
+            "Woźniak", "Kalinowski", "Michalak", "Kołodziej", "Baran",
+            "Mróz", "Włodarczyk", "Kaczmarek", "Kowalski", "Zawadzki",
+            "Nowak", "Kubiak", "Mazurek", "Kaźmierczuk", "Głowacka"
+    };
+
+    private final String[] parentNames = {"Marian", "Ludwik", "Konrad", "Amir", "Irena",
+            "Rafał", "Jan", "Barbara", "Agnieszka", "Wanda",
+            "Krystyna", "Jakub", "Józef", "Izabela", "Zuzanna",
+            "Oskar", "Rafał", "Diana", "Liliana", "Błażej"
+    };
+
+    private final String[] parentLastNames = {"Lis", "Mazur", "Skrzeczkowski", "Szymczak", "Kubiak",
+            "Woźniak", "Kalinowski", "Michalak", "Kołodziej", "Baran",
+            "Mróz", "Włodarczyk", "Kaczmarek", "Kowalska", "Zawadzka",
+            "Nowak", "Kubiak", "Mazurek", "Kaźmierczuk", "Głowacki"
+    };
 
     private final String[] teacherNames = {"Czesław", "Rafał", "Maciej", "Magdalena", "Krzysztoł", "Katarzyna"};
     private final String[] teacherLastNames = {"Wójcik", "Marciniak", "Jankowski", "Kowalska", "Michalak", "Sikora"};
@@ -103,7 +134,8 @@ public class DefaultLoader implements CommandLineRunner {
         createClasses();
         addStudentsToClasses();
         createSubjects();
-        createGrades();
+//        Uncomment for grades (takes time)
+//        createGrades();
         createTopics();
         createLessons();
         createBehaviors();
@@ -113,6 +145,8 @@ public class DefaultLoader implements CommandLineRunner {
         createDays();
         createClassrooms();
         createDurations();
+//        Uncomment for school periods
+//        createSchoolPeriods();
 
         log.debug("-------------- Bootstrap is done --------------");
     }
@@ -178,7 +212,7 @@ public class DefaultLoader implements CommandLineRunner {
         }
 
         //Teachers
-        addressId = addressRepository.findByStreetAndPhoneNumber(streetNames[8], phoneNumber[8]).getId();
+        addressId = addressRepository.findByStreetAndPhoneNumber(streetNames[21], phoneNumber[21]).getId();
         for (int i = 0; i < teacherNames.length; i++) {
             userRepository.save(User.builder()
                     .firstName(teacherNames[i])
@@ -277,54 +311,54 @@ public class DefaultLoader implements CommandLineRunner {
     //todo: lesson
     private void createAttendances() {
 
-        //Attendances for each students
-        Attendance.Status[] statuses = {
-                Attendance.Status.ABSENT,
-                Attendance.Status.ABSENT,
-                Attendance.Status.PRESENT,
-                Attendance.Status.LATE,
-                Attendance.Status.PRESENT,
-                Attendance.Status.EXCUSED,
-                Attendance.Status.ABSENT,
-                Attendance.Status.PRESENT
+        //Attendances for 1st class students
+        Attendance.Status[] statuses1stClass = {
+                Attendance.Status.ABSENT, Attendance.Status.ABSENT, Attendance.Status.PRESENT, Attendance.Status.LATE,
+                Attendance.Status.PRESENT, Attendance.Status.EXCUSED, Attendance.Status.ABSENT, Attendance.Status.PRESENT,
+                Attendance.Status.PRESENT, Attendance.Status.PRESENT, Attendance.Status.PRESENT, Attendance.Status.LATE,
+                Attendance.Status.PRESENT, Attendance.Status.LATE, Attendance.Status.PRESENT, Attendance.Status.PRESENT,
+                Attendance.Status.PRESENT, Attendance.Status.PRESENT, Attendance.Status.PRESENT, Attendance.Status.LATE
         };
 
 
-        for (int i = 0; i < studentNames.length; i++) {
+        for (int i = 0; (i < (i + classSize) && i < studentNames.length); i++) {
             attendanceRepository.save(Attendance.builder()
                     .student(studentRepository
                             .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[i], studentLastNames[i]).getId()))
-                    .status(statuses[i])
+                    .status(statuses1stClass[i])
                     .build());
 
         }
 
-        //todo: later
-        //Adding extenuation for 1th and 2nd student
-/*
+
+        //Each student in 2nd class is present
+        Attendance.Status statuses2ndClass = Attendance.Status.PRESENT;
+
+        for (int i = classSize; (i < (i + classSize) && i < studentNames.length) ; i++) {
+            attendanceRepository.save(Attendance.builder()
+                    .student(studentRepository
+                            .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[i], studentLastNames[i]).getId()))
+                    .status(statuses2ndClass)
+                    .build());
+
+        }
+
+
         Attendance attendance1 = attendanceRepository.findByStudent(studentRepository
                 .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId()));
 
-        attendance1.getExtenuations().add(extenuationRepository.findByParent(parentRepository
-                .findByUserId(userRepository.findByFirstNameAndLastName(parentNames[0], parentLastNames[0]).getId())
-        ));
 
+        Set<Extenuation> a = attendance1.getExtenuations();
+        a.add(extenuationRepository.findByParent(parentRepository
+                .findByUserId(userRepository.findByFirstNameAndLastName(parentNames[0], parentLastNames[0]).getId())));
 
+        extenuationRepository.saveAll(a);
+
+        attendance1 = attendanceRepository.findByStudent(studentRepository
+                .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId()));
         log.debug(attendance1.getExtenuations().toString());
-        attendanceRepository.save(attendance1);
 
 
-
-        Attendance attendance2 = attendanceRepository.findByStudent(studentRepository
-                .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[1], studentLastNames[1]).getId()));
-
-        attendance2.getExtenuations().add(extenuationRepository.findByParent(parentRepository
-                .findByUserId(userRepository.findByFirstNameAndLastName(parentNames[1], parentLastNames[1]).getId())
-        ));
-
-        attendanceRepository.save(attendance2);
-
-*/
 
         log.debug("Created attendances: " + attendanceRepository.count());
     }
@@ -425,14 +459,22 @@ public class DefaultLoader implements CommandLineRunner {
                 {2, 4, 4, 2, 4},
                 {4, 2, 1, 2, 4, 2, 1, 3, 3},
                 {6, 5, 5, 5, 5},
-                {2, 3, 1, 2, 2, 2, 3, 4, 2, 2}
+                {2, 5, 2, 5, 1, 2, 2},
+                {5, 6, 5, 4, 4, 5, 6},
+                {2, 4, 5, 3, 2, 3, 2},
+                {4, 4, 4, 4, 3, 4, 6},
+                {2, 3, 3, 4, 2, 3},
+                {5, 5, 5, 5, 6, 5, 6},
+                {1, 2, 2},
+                {3, 4, 4, 4, 3, 5, 4},
+                {1, 5, 3, 3},
         };
 
         String[] descriptions = {"Kartkówka", "Kartkówka", "Sprawdzian", "Aktywność", "Aktywność",
                 "Kartkówka", "Sprawdzian", "Aktywność", "Aktywność", "Kartkówka"};
 
 
-        for (int i = 0; i < studentNames.length; i++) {
+        for (int i = 0; i < classSize; i++) {
             for (int j = 0; j < gradesPerStudent[i].length; j++) {
 
                 gradeRepository.save(Grade.builder()
@@ -450,7 +492,7 @@ public class DefaultLoader implements CommandLineRunner {
             }
         }
 
-        //Time consuming, comented by default, uncomment for more data
+        //Time consuming, commented by default, uncomment for more data
 //        log.debug("Just a few more..");
 //        createRandomGrades();
         log.debug("Created grades: " + gradeRepository.count());
@@ -576,15 +618,26 @@ public class DefaultLoader implements CommandLineRunner {
         }
     }
 
-    /**Adding students to classes : for now, just 1st class has students**/
     private void addStudentsToClasses() {
-        for (int i = 0; i < studentNames.length; i++) {
+
+        //Adding 20 students to 1st class
+        for (int i = 0; (i < (i + classSize) && i < studentNames.length) ; i++) {
             Student student = studentRepository.findByUserId(userRepository
                     .findByFirstNameAndLastName(studentNames[i], studentLastNames[i]).getId());
 
             student.setSchoolClass(classRepository.findByName(classNames[0]));
             studentRepository.save(student);
+         }
+
+        //Adding rest of students to 2nd class
+        for (int i = classSize; (i < (i + classSize) && i < studentNames.length) ; i++) {
+            Student student = studentRepository.findByUserId(userRepository
+                    .findByFirstNameAndLastName(studentNames[i], studentLastNames[i]).getId());
+
+            student.setSchoolClass(classRepository.findByName(classNames[1]));
+            studentRepository.save(student);
         }
+
     }
 
 
@@ -632,7 +685,7 @@ public class DefaultLoader implements CommandLineRunner {
         LocalTime startTime = LocalTime.now();
         LocalTime endTime = LocalTime.now().plusMinutes(45L);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 8; i++) {
             durationRepository.save(Duration.builder()
                     .number(i)
                     .startTime(Time.valueOf(startTime.plusMinutes(45L)))
@@ -642,9 +695,43 @@ public class DefaultLoader implements CommandLineRunner {
     }
 
 
-    //to maybe do
-    private void createSchoolPeriod() {
-        //Meh for now
+    /**Creating school periods for 1st class**/
+    private void createSchoolPeriods() {
+        int numberOfDays = 5;
+        int[][] durationNumbers = {
+                {1,3,5},
+                {1,2,3,4,5,6},
+                {1,2,3,4,5},
+                {1,2,3},
+                {1,3,4}
+        };
+
+        String[][] subjects = {
+                {subjectNames[0], subjectNames[1], subjectNames[3]},
+                {subjectNames[0], subjectNames[1], subjectNames[3], subjectNames[3], subjectNames[5], subjectNames[2], subjectNames[5]},
+                {subjectNames[4], subjectNames[8], subjectNames[1], subjectNames[2], subjectNames[0]},
+                {subjectNames[0], subjectNames[3], subjectNames[5]},
+                {subjectNames[0], subjectNames[1], subjectNames[7]}
+        };
+
+        String schoolClass = classRepository.findAll().get(0).getName();
+
+
+        for (int i = 0; i < numberOfDays; i++) {
+            for (int j = 0; j < durationNumbers[i].length; j++)
+            schoolPeriodRepository.save(SchoolPeriod.builder()
+                    .descripton("")
+                    .day(dayRepository.findByNumber(i))
+                    .duration(durationRepository.findByNumber(durationNumbers[i][j]))
+                    .subject(subjectRepository.findByName(subjects[i][j]))
+                    //todo: add rep method
+                    .teacher(null)
+                    .classroom(classroomRepository.findByNumber(i +""))
+                    .schoolClass(classRepository.findByName(schoolClass))
+                    .build());
+        }
+
+        log.debug("Created school periods: " + schoolPeriodRepository.count());
     }
 
 }
