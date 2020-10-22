@@ -30,7 +30,7 @@ public class Teacher {
     private Set<Subject> subjects;
 
     @OneToOne(mappedBy = "teacher", fetch = FetchType.EAGER)
-    private Class schoolClasses;
+    private Class schoolClass;
 
     @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
     private Set<Grade> grades;
