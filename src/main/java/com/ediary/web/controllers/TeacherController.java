@@ -166,6 +166,25 @@ public class TeacherController {
     }
 
 
+
+    @GetMapping("/{teacherId}/grade/subject")
+    public String getAllSubjectsGrade(@PathVariable Long teacherId, Model model) {
+
+        model.addAttribute("subjects", teacherService.listSubjects(teacherId));
+
+        return "teacher/grade/subject";
+    }
+
+
+    @GetMapping("/{teacherId}/grade/subject/{subjectId}")
+    public String getAllGradesBySubject(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
+
+        model.addAttribute("grades", teacherService.listGradesBySubject(teacherId, subjectId));
+
+        return "/teacher/grade/allGrades";
+    }
+
+
     @GetMapping("/{teacherId}/lesson/subject")
     public String getAllSubjects(@PathVariable Long teacherId, Model model) {
 

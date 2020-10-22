@@ -28,6 +28,8 @@ public interface TeacherService {
     List<Grade> listClassGrades(Long teacherId, Long schoolClassId);
     List<Grade> listStudentGrades(Long teacherId, Long studentId);
 
+    List<GradeDto> listGradesBySubject(Long teacherId, Long subjectId);
+
     Event saveEvent(EventDto eventDto);
     EventDto initNewEvent(Long teacherId);
     Boolean deleteEvent(Long teacherId, Long eventId);

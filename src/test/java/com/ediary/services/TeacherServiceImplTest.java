@@ -35,6 +35,8 @@ class TeacherServiceImplTest {
     LessonRepository lessonRepository;
     @Mock
     SubjectRepository subjectRepository;
+    @Mock
+    GradeRepository gradeRepository;
 
     @Mock
     EventToEventDto eventToEventDto;
@@ -50,6 +52,8 @@ class TeacherServiceImplTest {
     LessonToLessonDto lessonToLessonDto;
     @Mock
     SubjectToSubjectDto subjectToSubjectDto;
+    @Mock
+    GradeToGradeDto gradeToGradeDto;
 
     TeacherService teacherService;
 
@@ -57,8 +61,8 @@ class TeacherServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         teacherService = new TeacherServiceImpl(eventService, teacherRepository, classRepository, eventRepository,
-                behaviorRepository, lessonRepository, subjectRepository, eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto,
-                behaviorDtoToBehavior, lessonToLessonDto, subjectToSubjectDto);
+                behaviorRepository, lessonRepository, subjectRepository, gradeRepository, eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto,
+                behaviorDtoToBehavior, lessonToLessonDto, subjectToSubjectDto, gradeToGradeDto);
     }
 
     @Test
@@ -461,6 +465,32 @@ class TeacherServiceImplTest {
         verify(teacherRepository, times(1)).findById(teacherId);
         verify(subjectRepository, times(1)).findAllByTeachers(teacher);
         verify(subjectToSubjectDto, times(2)).convert(any());
+    }
+
+    @Test
+    void listGradesBySubject() {
+        Long teacherId = 1L;
+        Long subjectId = 1L;
+
+        Teacher teacher = Teacher.builder()
+                .id(teacherId)
+                .build();
+
+        when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
+        when(subjectRepository.findById(subjectId)).thenReturn(Optional.of(Subject.builder().id(subjectId).build()));
+        when(gradeToGradeDto.convert(any())).thenReturn(GradeDto.builder().id(1L).build());
+        when(gradeRepository.findAllBySubjectIdAndTeacherId(subjectId, teacherId)).thenReturn(Arrays.asList(
+                Grade.builder().id(1L).teacher(teacher).build(),
+                Grade.builder().id(2L).teacher(teacher).build()
+        ));
+
+        List<GradeDto> grades = teacherService.listGradesBySubject(teacherId, subjectId);
+
+        assertEquals(2, grades.size());
+        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(gradeRepository, times(1)).findAllBySubjectIdAndTeacherId(subjectId, teacherId);
+        verify(gradeToGradeDto, times(2)).convert(any());
+
     }
 
 }

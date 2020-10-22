@@ -1,10 +1,7 @@
 package com.ediary.web.controllers;
 
 import com.ediary.DTO.*;
-import com.ediary.domain.Behavior;
-import com.ediary.domain.Event;
-import com.ediary.domain.Notice;
-import com.ediary.domain.Teacher;
+import com.ediary.domain.*;
 import com.ediary.services.TeacherService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -281,6 +278,25 @@ class TeacherControllerTest {
 
         verify(teacherService, times(1)).listLessons(1L, 1L);
         assertEquals(2, teacherService.listLessons(1L, 1L).size());
+    }
+
+    @Test
+    void getAllGradesBySubject() throws Exception {
+        Long subjectId = 1L;
+
+        when(teacherService.listGradesBySubject(anyLong(), anyLong())).thenReturn(Arrays.asList(
+                GradeDto.builder().id(1L).build(),
+                GradeDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/grade/subject/" + subjectId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("grades"))
+                .andExpect(view().name("/teacher/grade/allGrades"));
+
+
+        verify(teacherService, times(1)).listGradesBySubject(1L, 1L);
+        assertEquals(2, teacherService.listGradesBySubject(1L, 1L).size());
     }
 
 }

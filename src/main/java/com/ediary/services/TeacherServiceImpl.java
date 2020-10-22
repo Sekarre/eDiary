@@ -23,6 +23,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final BehaviorRepository behaviorRepository;
     private final LessonRepository lessonRepository;
     private final SubjectRepository subjectRepository;
+    private final GradeRepository gradeRepository;
 
     private final EventToEventDto eventToEventDto;
     private final EventDtoToEvent eventDtoToEvent;
@@ -31,6 +32,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final BehaviorDtoToBehavior behaviorDtoToBehavior;
     private final LessonToLessonDto lessonToLessonDto;
     private final SubjectToSubjectDto subjectToSubjectDto;
+    private final GradeToGradeDto gradeToGradeDto;
 
 
     @Override
@@ -131,6 +133,24 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<Grade> listStudentGrades(Long teacherId, Long studentId) {
         return null;
+    }
+
+    @Override
+    public List<GradeDto> listGradesBySubject(Long teacherId, Long subjectId) {
+
+        Teacher teacher = getTeacherById(teacherId);
+
+        Subject subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new NotFoundException("Subject not found"));
+
+        try {
+            return gradeRepository.findAllBySubjectIdAndTeacherId(subject.getId(), teacher.getId()).stream()
+                    .map(gradeToGradeDto::convert)
+                    .sorted(Comparator.comparingLong(GradeDto::getId))
+                    .collect(Collectors.toList());
+        } catch (NullPointerException ex) {
+            return null;
+        }
     }
 
     @Override
