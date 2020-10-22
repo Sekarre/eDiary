@@ -1,10 +1,8 @@
 package com.ediary.converters;
 
 import com.ediary.DTO.ClassDto;
+import com.ediary.domain.*;
 import com.ediary.domain.Class;
-import com.ediary.domain.Event;
-import com.ediary.domain.SchoolPeriod;
-import com.ediary.domain.Student;
 import lombok.Synchronized;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
@@ -58,6 +56,11 @@ public class ClassToClassDto implements Converter<Class, ClassDto> {
         //School Periods
         classDto.setSchoolPeriodsId(source.getSchoolPeriods().stream()
                 .map(SchoolPeriod::getId)
+                .collect(Collectors.toList()));
+
+        //Lessons
+        classDto.setLessonsId(source.getLessons().stream()
+                .map(Lesson::getId)
                 .collect(Collectors.toList()));
 
 

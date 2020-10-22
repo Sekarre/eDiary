@@ -22,6 +22,7 @@ public class ClassDtoToClass implements Converter<ClassDto, Class> {
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
     private final SchoolPeriodRepository schoolPeriodRepository;
+    private final LessonRepository lessonRepository;
 
     @Override
     @Nullable
@@ -53,6 +54,9 @@ public class ClassDtoToClass implements Converter<ClassDto, Class> {
 
         //School Periods
         schoolClass.setSchoolPeriods(new HashSet<>(schoolPeriodRepository.findAllById(source.getSchoolPeriodsId())));
+
+        //Lessons
+        schoolClass.setLessons(new HashSet<>(lessonRepository.findAllById(source.getLessonsId())));
 
         return schoolClass;
     }

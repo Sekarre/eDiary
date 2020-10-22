@@ -27,4 +27,6 @@ public class ClassDto {
     private List<Long> eventsId;
 
     private List<Long> schoolPeriodsId;
+
+    private List<Long> lessonsId;
 }

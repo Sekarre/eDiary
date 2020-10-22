@@ -10,10 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -403,33 +401,33 @@ class TeacherServiceImplTest {
 
     @Test
     void listLessonsWithSubjectId() {
-        Long classId = 2L;
+        Long subjectId = 2L;
 
-        Class schoolClass = Class.builder()
-                .id(classId)
+        Subject subject = Subject.builder()
+                .id(subjectId)
                 .build();
 
         Teacher teacher = Teacher.builder()
                 .id(1L)
-                .schoolClasses(schoolClass)
+                .subject(subject)
                 .build();
 
         when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
 
-        when(lessonToLessonDto.convert(any())).thenReturn(LessonDto.builder().id(1L).classId(classId).build());
+        when(lessonToLessonDto.convert(any())).thenReturn(LessonDto.builder().id(1L).subjectId(subjectId).build());
 
-        when(lessonRepository.findAllBySchoolClassId(classId)).thenReturn(Arrays.asList(
-                Lesson.builder().id(1L).schoolClass(schoolClass).build(),
-                Lesson.builder().id(2L).schoolClass(schoolClass).build()
+        when(lessonRepository.findAllBySubjectId(subjectId)).thenReturn(Arrays.asList(
+                Lesson.builder().id(1L).subject(subject).build(),
+                Lesson.builder().id(2L).subject(subject).build()
         ));
 
         List<LessonDto> lessons = teacherService.listLessons(teacherId, 2L);
 
         assertEquals(2, lessons.size());
         assertEquals(1L, lessons.get(0).getId());
-        assertEquals(teacher.getSchoolClasses().getId(), lessons.get(0).getClassId());
+        assertEquals(new ArrayList<>(teacher.getSubjects()).get(0).getId(), lessons.get(0).getSubjectId());
         verify(teacherRepository, times(1)).findById(teacherId);
-        verify(lessonRepository, times(1)).findAllBySchoolClassId(classId);
+        verify(lessonRepository, times(1)).findAllBySubjectId(subjectId);
         verify(lessonToLessonDto, times(2)).convert(any());
     }
 

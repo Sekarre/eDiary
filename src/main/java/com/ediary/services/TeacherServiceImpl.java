@@ -8,9 +8,7 @@ import com.ediary.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -48,10 +46,19 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<LessonDto> listLessons(Long teacherId, Long subjectId) {
 
+        Set<Long> subjectIds = new HashSet<>();
+        List<Lesson> lessons = new ArrayList<>();
+
         Teacher teacher = getTeacherById(teacherId);
 
-        return lessonRepository.findAllBySchoolClassId(teacher.getSchoolClasses().getId())
-                .stream()
+        teacher.getSubjects().forEach(e -> subjectIds.add(e.getId()));
+
+        subjectIds.forEach(
+                id -> lessons.addAll(lessonRepository.findAllBySubjectId(id))
+        );
+
+
+        return lessons.stream()
                 .map(lessonToLessonDto::convert)
                 .collect(Collectors.toList());
     }
@@ -141,7 +148,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public Boolean deleteEvent(Long teacherId, Long eventId) {
         Optional<Event> optionalEvent = eventRepository.findById(eventId);
-        if(!optionalEvent.isPresent()) {
+        if (!optionalEvent.isPresent()) {
             return false;
         }
         Event event = optionalEvent.get();
@@ -177,7 +184,7 @@ public class TeacherServiceImpl implements TeacherService {
     public EventDto updatePatchEvent(EventDto eventUpdated) {
 
         Optional<Event> eventOptional = eventRepository.findById(eventUpdated.getId());
-        if (!eventOptional.isPresent()){
+        if (!eventOptional.isPresent()) {
             throw new NotFoundException("Event Not Found.");
         }
 
@@ -246,7 +253,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public Boolean deleteBehavior(Long teacherId, Long behaviorId) {
         Optional<Behavior> behaviorOptional = behaviorRepository.findById(behaviorId);
-        if(!behaviorOptional.isPresent()) {
+        if (!behaviorOptional.isPresent()) {
             return false;
         }
         Behavior behavior = behaviorOptional.get();
@@ -270,7 +277,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public BehaviorDto updatePatchBehavior(BehaviorDto behaviorUpdated) {
         Optional<Behavior> behaviorOptional = behaviorRepository.findById(behaviorUpdated.getId());
-        if (!behaviorOptional.isPresent()){
+        if (!behaviorOptional.isPresent()) {
             throw new NotFoundException("Behavior Not Found.");
         }
 
