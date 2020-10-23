@@ -30,14 +30,14 @@ public class SubjectToSubjectDto implements Converter<Subject, SubjectDto> {
         subjectDto.setName(source.getName());
 
         //Teachers
-            subjectDto.setTeachersName(source.getTeachers().stream()
-                    .map(Teacher::getUser)
-                    .map(user -> user.getFirstName() + " " + user.getLastName())
-                    .collect(Collectors.toList()));
+            subjectDto.setTeacherName(source.getTeacher().getUser().getFirstName()
+                    + " " + source.getTeacher().getUser().getLastName());
 
-            subjectDto.setTeachersId(source.getTeachers().stream()
-                    .map(Teacher::getId)
-                    .collect(Collectors.toList()));
+            subjectDto.setTeacherId(source.getTeacher().getId());
+
+        //Class
+        subjectDto.setClassName(source.getSchoolClass().getName());
+        subjectDto.setClassId(source.getSchoolClass().getId());
 
         //Lessons
             subjectDto.setLessonsName(source.getLessons().stream()

@@ -90,7 +90,7 @@ public class TeacherServiceImpl implements TeacherService {
         Teacher teacher = getTeacherById(teacherId);
         Subject subject = getSubjectById(subjectId);
 
-        if (subject.getTeachers().contains(teacher)) {
+        if (subject.getTeacher().getId() == teacher.getId()) {
             return subjectToSubjectDto.convert(subject);
         } else {
             throw new NoAccessException("Teacher -> Subject");
@@ -112,7 +112,7 @@ public class TeacherServiceImpl implements TeacherService {
 
         Teacher teacher = getTeacherById(teacherId);
 
-        return subjectRepository.findAllByTeachers(teacher).stream()
+        return subjectRepository.findAllByTeacher(teacher).stream()
                 .map(subjectToSubjectDto::convert)
                 .collect(Collectors.toList());
     }

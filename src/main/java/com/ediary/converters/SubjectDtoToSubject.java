@@ -1,7 +1,10 @@
 package com.ediary.converters;
 
 import com.ediary.DTO.SubjectDto;
+import com.ediary.domain.Class;
 import com.ediary.domain.Subject;
+import com.ediary.domain.Teacher;
+import com.ediary.repositories.ClassRepository;
 import com.ediary.repositories.LessonRepository;
 import com.ediary.repositories.TeacherRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +14,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -19,6 +23,7 @@ public class SubjectDtoToSubject implements Converter<SubjectDto, Subject> {
 
     private final TeacherRepository teacherRepository;
     private final LessonRepository lessonRepository;
+    private final ClassRepository classRepository;
 
     @Nullable
     @Synchronized
@@ -35,7 +40,17 @@ public class SubjectDtoToSubject implements Converter<SubjectDto, Subject> {
         subject.setName(source.getName());
 
         //Teachers
-        subject.setTeachers(new HashSet<>(teacherRepository.findAllById(source.getTeachersId())));
+        Optional<Teacher> teacherOptional = teacherRepository.findById(source.getTeacherId());
+        if (teacherOptional.isPresent()) {
+            subject.setTeacher(teacherOptional.get());
+        }
+
+        //Class
+        Optional<Class> classOptional = classRepository.findById(source.getClassId());
+        if (classOptional.isPresent()) {
+            subject.setSchoolClass(classOptional.get());
+        }
+
 
         //Lessons
         subject.setLessons(new HashSet<>(lessonRepository.findAllById(source.getLessonsId())));

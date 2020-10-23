@@ -41,5 +41,8 @@ public class Class {
     private Set<SchoolPeriod> schoolPeriods;
 
     @OneToMany(mappedBy = "schoolClass", fetch = FetchType.EAGER)
+    private Set<Subject> subjects;
+
+    @OneToMany(mappedBy = "schoolClass", fetch = FetchType.EAGER)
     private Set<Lesson> lessons;
 }

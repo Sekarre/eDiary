@@ -14,8 +14,11 @@ public class SubjectDto {
     private Long id;
     private String name;
 
-    private List<String> teachersName;
-    private List<Long> teachersId;
+    private String teacherName;
+    private Long teacherId;
+
+    private String className;
+    private Long classId;
 
     private List<String> lessonsName;
     private List<Long> lessonsId;

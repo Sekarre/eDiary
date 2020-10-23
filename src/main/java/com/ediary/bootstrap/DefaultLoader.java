@@ -442,12 +442,12 @@ public class DefaultLoader implements CommandLineRunner {
         List<Subject> savedSubjects = subjectRepository.findAll();
 
         for (int i = 0; i < subjectNames.length; i++) {
-            savedSubjects.get(i).setTeachers(new HashSet<>(Set.of(
+            savedSubjects.get(i).setTeacher(
                     teacherRepository.findByUserId(userRepository
                             .findByFirstNameAndLastName(
                                     teacherNames[teacherSubjectIndexes[i]],
                                     teacherLastNames[teacherSubjectIndexes[i]]).getId())
-            )));
+            );
         }
 
 

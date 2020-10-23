@@ -415,7 +415,7 @@ class TeacherServiceImplTest {
 
         Teacher teacher = Teacher.builder()
                 .id(1L)
-                .subject(subject)
+                .subjects(Collections.singleton(subject))
                 .build();
 
         when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
@@ -448,14 +448,13 @@ class TeacherServiceImplTest {
 
         Teacher teacher = Teacher.builder()
                 .id(1L)
-                .subject(subject)
                 .build();
 
         when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
 
         when(subjectToSubjectDto.convert(any())).thenReturn(SubjectDto.builder().id(1L).build());
 
-        when(subjectRepository.findAllByTeachers(teacher)).thenReturn(Arrays.asList(
+        when(subjectRepository.findAllByTeacher(teacher)).thenReturn(Arrays.asList(
                 Subject.builder().id(1L).teacher(teacher).build(),
                 Subject.builder().id(2L).teacher(teacher).build()
         ));
@@ -465,7 +464,7 @@ class TeacherServiceImplTest {
         assertEquals(2, subjects.size());
         assertEquals(1L, subjects.get(0).getId());
         verify(teacherRepository, times(1)).findById(teacherId);
-        verify(subjectRepository, times(1)).findAllByTeachers(teacher);
+        verify(subjectRepository, times(1)).findAllByTeacher(teacher);
         verify(subjectToSubjectDto, times(2)).convert(any());
     }
 

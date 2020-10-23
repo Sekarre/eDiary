@@ -19,12 +19,13 @@ public class Subject {
 
     private String name;
 
-    @Singular
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(name = "Teacher_has_Subject",
-            joinColumns = {@JoinColumn(name = "Subject_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "Teacher_id", referencedColumnName = "id")})
-    private Set<Teacher> teachers;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
+
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    private Class schoolClass;
 
     @OneToMany(mappedBy = "subject")
     private Set<Lesson> lessons;

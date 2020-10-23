@@ -22,18 +22,15 @@ public class Teacher {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Singular
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(name = "Teacher_has_Subject",
-            joinColumns = {@JoinColumn(name = "Teacher_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "Subject_id", referencedColumnName = "id")})
-    private Set<Subject> subjects;
 
     @OneToOne(mappedBy = "teacher", fetch = FetchType.EAGER)
     private Class schoolClass;
 
     @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
     private Set<Grade> grades;
+
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
+    private Set<Subject> subjects;
 
     @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
     private Set<Event> events;
