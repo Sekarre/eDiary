@@ -240,6 +240,44 @@ class TeacherControllerTest {
         verify(teacherService, times(1)).updatePatchBehavior(any());
     }
 
+
+    @Test
+    void getAllGradesBySubject() throws Exception {
+        Long subjectId = 1L;
+
+        when(teacherService.listGradesBySubject(anyLong(), anyLong())).thenReturn(Arrays.asList(
+                GradeDto.builder().id(1L).build(),
+                GradeDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/grade/subject/" + subjectId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("grades"))
+                .andExpect(view().name("/teacher/grade/allGrades"));
+
+
+        verify(teacherService, times(1)).listGradesBySubject(1L, 1L);
+        assertEquals(2, teacherService.listGradesBySubject(1L, 1L).size());
+    }
+
+    @Test
+    void updatePutGrade() throws Exception {
+        Long gradeId = 1L;
+        Long subjectId = 1L;
+        GradeDto gradeDto = GradeDto.builder().id(gradeId).build();
+
+        when(teacherService.updatePutGrade(any())).thenReturn(gradeDto);
+
+        mockMvc.perform(put("/teacher/" + teacherId + "/grade/subject/" + subjectId + "/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(gradeDto)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId));
+
+        verify(teacherService, times(1)).updatePutGrade(any());
+    }
+
+
     @Test
     void getAllSubjects() throws Exception {
 
@@ -280,23 +318,5 @@ class TeacherControllerTest {
         assertEquals(2, teacherService.listLessons(1L, 1L).size());
     }
 
-    @Test
-    void getAllGradesBySubject() throws Exception {
-        Long subjectId = 1L;
-
-        when(teacherService.listGradesBySubject(anyLong(), anyLong())).thenReturn(Arrays.asList(
-                GradeDto.builder().id(1L).build(),
-                GradeDto.builder().id(2L).build()
-        ));
-
-        mockMvc.perform(get("/teacher/" + teacherId + "/grade/subject/" + subjectId))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("grades"))
-                .andExpect(view().name("/teacher/grade/allGrades"));
-
-
-        verify(teacherService, times(1)).listGradesBySubject(1L, 1L);
-        assertEquals(2, teacherService.listGradesBySubject(1L, 1L).size());
-    }
 
 }

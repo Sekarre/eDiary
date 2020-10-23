@@ -54,6 +54,8 @@ class TeacherServiceImplTest {
     SubjectToSubjectDto subjectToSubjectDto;
     @Mock
     GradeToGradeDto gradeToGradeDto;
+    @Mock
+    GradeDtoToGrade gradeDtoToGrade;
 
     TeacherService teacherService;
 
@@ -62,7 +64,7 @@ class TeacherServiceImplTest {
         MockitoAnnotations.initMocks(this);
         teacherService = new TeacherServiceImpl(eventService, teacherRepository, classRepository, eventRepository,
                 behaviorRepository, lessonRepository, subjectRepository, gradeRepository, eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto,
-                behaviorDtoToBehavior, lessonToLessonDto, subjectToSubjectDto, gradeToGradeDto);
+                behaviorDtoToBehavior, lessonToLessonDto, subjectToSubjectDto, gradeToGradeDto, gradeDtoToGrade);
     }
 
     @Test
@@ -425,7 +427,7 @@ class TeacherServiceImplTest {
                 Lesson.builder().id(2L).subject(subject).build()
         ));
 
-        List<LessonDto> lessons = teacherService.listLessons(teacherId, 2L);
+        List<LessonDto> lessons = teacherService.listLessons(teacherId, subjectId);
 
         assertEquals(2, lessons.size());
         assertEquals(1L, lessons.get(0).getId());
@@ -491,6 +493,31 @@ class TeacherServiceImplTest {
         verify(gradeRepository, times(1)).findAllBySubjectIdAndTeacherId(subjectId, teacherId);
         verify(gradeToGradeDto, times(2)).convert(any());
 
+    }
+
+    @Test
+    void updatePutGrade() {
+
+        Long gradeId = 1L;
+        String description = "description";
+        String updatedDescription = "updated description";
+
+        GradeDto grade = GradeDto.builder()
+                .id(gradeId).description(description).build();
+
+        Grade updatedGrade = Grade.builder()
+                .id(gradeId).description(updatedDescription).build();
+
+        when(gradeDtoToGrade.convert(any())).thenReturn(updatedGrade);
+        when(gradeToGradeDto.convert(any())).thenReturn(GradeDto.builder().id(gradeId).description(updatedDescription).build());
+        when(gradeRepository.save(any())).thenReturn(Grade.builder().build());
+
+        GradeDto gradeDto = teacherService.updatePutGrade(grade);
+
+
+        assertEquals(gradeDto.getDescription(), updatedGrade.getDescription());
+        verify(gradeDtoToGrade, times(1)).convert(any());
+        verify(gradeRepository, times(1)).save(any());
     }
 
 }

@@ -2,6 +2,7 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.EventDto;
+import com.ediary.DTO.GradeDto;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -182,6 +183,22 @@ public class TeacherController {
         model.addAttribute("grades", teacherService.listGradesBySubject(teacherId, subjectId));
 
         return "/teacher/grade/allGrades";
+    }
+
+
+    @PutMapping("/{teacherId}/grade/subject/{subjectId}/update")
+    public String updatePutGrade(@PathVariable Long teacherId,
+                                 @PathVariable Long subjectId,
+                                 @Valid @RequestBody GradeDto gradeDto,
+                                 BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo:
+            return "";
+        } else {
+            teacherService.updatePutGrade(gradeDto);
+            return "redirect:/teacher/" + teacherId +"/grade/subject/" + subjectId;
+        }
     }
 
 

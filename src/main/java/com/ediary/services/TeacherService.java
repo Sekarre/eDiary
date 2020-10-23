@@ -23,12 +23,15 @@ public interface TeacherService {
     Attendance saveAttendance(Attendance attendance);
     List<Attendance> listAttendances(Long teacherId, Long lessonId);
 
-    Grade saveGrade(Grade grade);
-    Boolean deleteGrade(Long gradeId);
+    Grade saveClassGrade(Grade grade);
+    Boolean deleteClassGrade(Long gradeId);
     List<Grade> listClassGrades(Long teacherId, Long schoolClassId);
     List<Grade> listStudentGrades(Long teacherId, Long studentId);
 
     List<GradeDto> listGradesBySubject(Long teacherId, Long subjectId);
+    GradeDto updatePutGrade(GradeDto gradeDto);
+    GradeDto updatePatchGrade(GradeDto gradeDto);
+
 
     Event saveEvent(EventDto eventDto);
     EventDto initNewEvent(Long teacherId);

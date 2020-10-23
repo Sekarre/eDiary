@@ -33,6 +33,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final LessonToLessonDto lessonToLessonDto;
     private final SubjectToSubjectDto subjectToSubjectDto;
     private final GradeToGradeDto gradeToGradeDto;
+    private final GradeDtoToGrade gradeDtoToGrade;
 
 
     @Override
@@ -45,22 +46,20 @@ public class TeacherServiceImpl implements TeacherService {
         return null;
     }
 
+
     @Override
     public List<LessonDto> listLessons(Long teacherId, Long subjectId) {
 
-        Set<Long> subjectIds = new HashSet<>();
-        List<Lesson> lessons = new ArrayList<>();
-
         Teacher teacher = getTeacherById(teacherId);
 
-        teacher.getSubjects().forEach(e -> subjectIds.add(e.getId()));
+        Subject teacherSubject = teacher.getSubjects().stream()
+                .filter(subject -> subject.getId().equals(subjectId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No such subject for teacher"));
 
-        subjectIds.forEach(
-                id -> lessons.addAll(lessonRepository.findAllBySubjectId(id))
-        );
 
-
-        return lessons.stream()
+        return new ArrayList<>(lessonRepository.findAllBySubjectId(teacherSubject.getId()))
+                .stream()
                 .map(lessonToLessonDto::convert)
                 .collect(Collectors.toList());
     }
@@ -116,12 +115,12 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Grade saveGrade(Grade grade) {
+    public Grade saveClassGrade(Grade grade) {
         return null;
     }
 
     @Override
-    public Boolean deleteGrade(Long gradeId) {
+    public Boolean deleteClassGrade(Long gradeId) {
         return null;
     }
 
@@ -151,6 +150,22 @@ public class TeacherServiceImpl implements TeacherService {
         } catch (NullPointerException ex) {
             return null;
         }
+    }
+
+    @Override
+    public GradeDto updatePutGrade(GradeDto gradeDto) {
+        Grade grade = gradeDtoToGrade.convert(gradeDto);
+
+        if (grade != null) {
+            return gradeToGradeDto.convert(gradeRepository.save(grade));
+        }
+
+        return null;
+    }
+
+    @Override
+    public GradeDto updatePatchGrade(GradeDto gradeDto) {
+        return null;
     }
 
     @Override
