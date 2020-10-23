@@ -572,4 +572,52 @@ class TeacherServiceImplTest {
         verify(gradeRepository, times(1)).delete(any());
     }
 
+    @Test
+    void saveGrade() {
+        Grade grade = Grade.builder()
+                .id(1L)
+                .build();
+
+        GradeDto gradeDto = GradeDto.builder().id(1L).build();
+
+        when(gradeRepository.save(any())).thenReturn(grade);
+        when(gradeDtoToGrade.convert(any())).thenReturn(grade);
+
+        Grade savedGrade = teacherService.saveGrade(gradeDto);
+
+        assertNotNull(savedGrade);
+        verify(gradeRepository, times(1)).save(grade);
+
+    }
+
+    @Test
+    void initNewGrade() {
+        Long teacherId = 1L;
+        Long subjectId = 1L;
+
+        Grade grade = Grade.builder()
+                .teacher(Teacher.builder().id(teacherId).build())
+                .subject(Subject.builder().id(subjectId).build())
+                .build();
+
+        GradeDto gradeDto = GradeDto.builder()
+                .teacherId(1L)
+                .subjectId(1L)
+                .build();
+
+        when(teacherRepository.findById(any())).thenReturn(Optional.ofNullable(Teacher.builder().id(teacherId).build()));
+        when(subjectRepository.findById(any())).thenReturn(Optional.ofNullable(Subject.builder().id(subjectId).build()));
+        when(gradeToGradeDto.convert(any())).thenReturn(gradeDto);
+
+        GradeDto genGrade = teacherService.initNewGrade(teacherId, subjectId);
+
+        assertNotNull(genGrade);
+        assertEquals(grade.getTeacher().getId(), gradeDto.getTeacherId());
+        assertEquals(grade.getSubject().getId(), gradeDto.getSubjectId());
+        verify(teacherRepository, times(1)).findById(any());
+        verify(subjectRepository, times(1)).findById(any());
+
+    }
+
+
 }

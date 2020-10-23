@@ -261,6 +261,35 @@ class TeacherControllerTest {
     }
 
     @Test
+    void newGrade() throws Exception {
+        Long subjectId = 1L;
+
+        when(teacherService.initNewGrade(teacherId, subjectId)).thenReturn(GradeDto.builder().build());
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/grade/subject/" + subjectId + "/new"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("grade"))
+                .andExpect(view().name("/teacher/grade/newGrade"));
+
+        verify(teacherService, times(1)).initNewGrade(teacherId, subjectId);
+    }
+
+    @Test
+    void processNewGrade() throws Exception {
+        Long subjectId = 1L;
+
+        when(teacherService.saveGrade(any())).thenReturn(Grade.builder().build());
+
+        mockMvc.perform(post("/teacher/" + teacherId + "/grade/subject/" + subjectId + "/new")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(BehaviorDto.builder().build())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId));
+
+        verify(teacherService, times(1)).saveGrade(any());
+    }
+
+    @Test
     void deleteGrade() throws Exception {
         Long subjectId = 1L;
         Long gradeId = 1L;

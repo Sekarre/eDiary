@@ -139,8 +139,7 @@ public class TeacherServiceImpl implements TeacherService {
 
         Teacher teacher = getTeacherById(teacherId);
 
-        Subject subject = subjectRepository.findById(subjectId)
-                .orElseThrow(() -> new NotFoundException("Subject not found"));
+        Subject subject = getSubjectById(subjectId);
 
         try {
             return gradeRepository.findAllBySubjectIdAndTeacherId(subject.getId(), teacher.getId()).stream()
@@ -199,6 +198,21 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         return false;
+    }
+
+    @Override
+    public Grade saveGrade(GradeDto grade) {
+            return gradeRepository.save(gradeDtoToGrade.convert(grade));
+    }
+
+    @Override
+    public GradeDto initNewGrade(Long teacherId, Long subjectId) {
+        Grade grade = Grade.builder()
+                .teacher(getTeacherById(teacherId))
+                .subject(getSubjectById(subjectId))
+                .build();
+
+        return gradeToGradeDto.convert(grade);
     }
 
     @Override
@@ -384,6 +398,11 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         return teacherOptional.get();
+    }
+
+    private Subject getSubjectById(Long subjectId) {
+        return subjectRepository
+                .findById(subjectId).orElseThrow(() -> new NotFoundException("Subject not found"));
     }
 
 }

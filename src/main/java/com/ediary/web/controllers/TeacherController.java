@@ -6,6 +6,7 @@ import com.ediary.DTO.GradeDto;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -185,6 +186,27 @@ public class TeacherController {
         return "/teacher/grade/allGrades";
     }
 
+    //todo: url mapping
+    @GetMapping("/{teacherId}/grade/subject/{subjectId}/new")
+    public String newGrade(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
+
+        model.addAttribute("grade", teacherService.initNewGrade(teacherId, subjectId));
+        return "/teacher/grade/newGrade";
+    }
+
+    @PostMapping("/{teacherId}/grade/subject/{subjectId}/new")
+    public String processNewGrade(@PathVariable Long teacherId,
+                                  @PathVariable Long subjectId,
+                                  @Valid @RequestBody GradeDto gradeDto, BindingResult result) {
+        if (result.hasErrors()){
+            //todo: add view path
+            return "/";
+        } else {
+            teacherService.saveGrade(gradeDto);
+            return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
+        }
+    }
+
     @DeleteMapping("/{teacherId}/grade/subject/{subjectId}/{gradeId}")
     public String deleteGrade(@PathVariable Long teacherId,
                               @PathVariable Long subjectId, @PathVariable Long gradeId) {
@@ -221,8 +243,6 @@ public class TeacherController {
             return "redirect:/teacher/" + teacherId +"/grade/subject/" + subjectId;
         }
     }
-
-
 
 
     @GetMapping("/{teacherId}/lesson/subject")
