@@ -261,6 +261,18 @@ class TeacherControllerTest {
     }
 
     @Test
+    void deleteGrade() throws Exception {
+        Long subjectId = 1L;
+        Long gradeId = 1L;
+
+        mockMvc.perform(delete("/teacher/" + teacherId + "/grade/subject/" + subjectId + "/" + gradeId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId));
+
+        verify(teacherService, times(1)).deleteGrade(teacherId, subjectId, gradeId);
+    }
+
+    @Test
     void updatePutGrade() throws Exception {
         Long gradeId = 1L;
         Long subjectId = 1L;

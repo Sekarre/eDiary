@@ -185,6 +185,14 @@ public class TeacherController {
         return "/teacher/grade/allGrades";
     }
 
+    @DeleteMapping("/{teacherId}/grade/subject/{subjectId}/{gradeId}")
+    public String deleteGrade(@PathVariable Long teacherId,
+                              @PathVariable Long subjectId, @PathVariable Long gradeId) {
+
+        teacherService.deleteGrade(teacherId, subjectId, gradeId);
+        return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
+    }
+
 
     @PutMapping("/{teacherId}/grade/subject/{subjectId}/update")
     public String updatePutGrade(@PathVariable Long teacherId,

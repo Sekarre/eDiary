@@ -551,4 +551,25 @@ class TeacherServiceImplTest {
         verify(gradeRepository, times(1)).save(any());
     }
 
+    @Test
+    void deleteGrade() {
+        Long teacherId = 1L;
+        Long subjectId = 1L;
+        Long gradeId = 1L;
+
+        Grade gradeToDelete = Grade.builder()
+                .id(gradeId)
+                .subject(Subject.builder().id(subjectId).build())
+                .teacher(Teacher.builder().id(teacherId).build())
+                .build();
+
+        when(gradeRepository.findById(any())).thenReturn(Optional.ofNullable(gradeToDelete));
+
+        Boolean result = teacherService.deleteGrade(teacherId, subjectId, gradeId);
+
+        assertTrue(result);
+        verify(gradeRepository, times(1)).findById(gradeId);
+        verify(gradeRepository, times(1)).delete(any());
+    }
+
 }

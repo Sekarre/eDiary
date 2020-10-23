@@ -31,6 +31,7 @@ public interface TeacherService {
     List<GradeDto> listGradesBySubject(Long teacherId, Long subjectId);
     GradeDto updatePutGrade(GradeDto gradeDto);
     GradeDto updatePatchGrade(GradeDto gradeDto);
+    Boolean deleteGrade(Long teacherId, Long subjectId, Long gradeId);
 
 
     Event saveEvent(EventDto eventDto);

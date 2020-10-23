@@ -186,6 +186,22 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public Boolean deleteGrade(Long teacherId, Long subjectId, Long gradeId) {
+        Grade grade = gradeRepository.findById(gradeId).orElse(null);
+
+        if (grade == null) {
+            return false;
+        }
+
+        if ((grade.getTeacher().getId().equals(teacherId) && grade.getSubject().getId().equals(subjectId))) {
+            gradeRepository.delete(grade);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public Event saveEvent(EventDto eventDto) {
         return eventRepository.save(eventDtoToEvent.convert(eventDto));
     }
