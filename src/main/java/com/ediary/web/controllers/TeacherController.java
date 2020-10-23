@@ -4,6 +4,7 @@ import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.EventDto;
 import com.ediary.DTO.GradeDto;
 import com.ediary.DTO.SubjectDto;
+import com.ediary.domain.Subject;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -301,6 +302,19 @@ public class TeacherController {
 
         teacherService.deleteSubject(teacherId, subjectId);
         return "redirect:/teacher/" + teacherId + "/subject";
+    }
+
+    @PutMapping("/{teacherId}/subject/update")
+    public String updatePutSubject(@PathVariable Long teacherId,
+                                   @Valid @RequestBody SubjectDto subjectDto, BindingResult result) {
+        if (result.hasErrors()){
+            //TODO
+            return "/";
+        } else {
+            Subject subject = teacherService.saveOrUpdateSubject(subjectDto);
+            //TODO zalezy od widoku
+            return "redirect:/teacher/" + teacherId + "/subject";
+        }
     }
 
 
