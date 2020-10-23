@@ -262,4 +262,18 @@ public class TeacherController {
         return "/teacher/lesson/subject/allLessons";
     }
 
+    @GetMapping("/{teacherId}/subject")
+    public String getSubjects(@PathVariable Long teacherId, Model model) {
+
+        model.addAttribute("subjects", teacherService.listSubjects(teacherId));
+        return "/teacher/subject";
+    }
+
+    @GetMapping("/{teacherId}/subject/{subjectId}")
+    public String getSubject(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
+
+        model.addAttribute("subject", teacherService.getSubjectById(teacherId, subjectId));
+        return "/teacher/subject/" + subjectId;
+    }
+
 }

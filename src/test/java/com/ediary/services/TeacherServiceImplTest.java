@@ -619,5 +619,24 @@ class TeacherServiceImplTest {
 
     }
 
+    @Test
+    void getSubjectById() {
+        Long subjectId = 2l;
+
+        Teacher teacher = Teacher.builder().id(teacherId).build();
+        Subject subject = Subject.builder().id(subjectId).teacher(teacher).build();
+
+        when(teacherRepository.findById(any())).thenReturn(Optional.of(teacher));
+        when(subjectRepository.findById(any())).thenReturn(Optional.of(subject));
+        when(subjectToSubjectDto.convert(subject)).thenReturn(SubjectDto.builder().id(subject.getId()).build());
+
+        SubjectDto subjectDto = teacherService.getSubjectById(teacherId, subjectId);
+
+        assertEquals(subjectDto.getId(), subjectId);
+        verify(subjectToSubjectDto, times(1)).convert(any());
+        verify(teacherRepository, times(1)).findById(any());
+        verify(subjectRepository, times(1)).findById(any());
+    }
+
 
 }

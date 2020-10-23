@@ -3,6 +3,7 @@ package com.ediary.services;
 import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
+import com.ediary.exceptions.NoAccessException;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
 import lombok.RequiredArgsConstructor;
@@ -82,6 +83,18 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<Topic> listTopics(Long teacherId, Long subjectId) {
         return null;
+    }
+
+    @Override
+    public SubjectDto getSubjectById(Long teacherId, Long subjectId) {
+        Teacher teacher = getTeacherById(teacherId);
+        Subject subject = getSubjectById(subjectId);
+
+        if (subject.getTeachers().contains(teacher)) {
+            return subjectToSubjectDto.convert(subject);
+        } else {
+            throw new NoAccessException("Teacher -> Subject");
+        }
     }
 
     @Override

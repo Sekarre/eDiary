@@ -376,5 +376,37 @@ class TeacherControllerTest {
         assertEquals(2, teacherService.listLessons(1L, 1L).size());
     }
 
+    @Test
+    void getSubjects() throws Exception {
+
+        when(teacherService.listSubjects(teacherId)).thenReturn(Arrays.asList(
+            SubjectDto.builder().id(1L).build(),
+            SubjectDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/subject"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("subjects"))
+                .andExpect(view().name("/teacher/subject"));
+
+        verify(teacherService, times(1)).listSubjects(teacherId);
+        assertEquals(2, teacherService.listSubjects(teacherId).size());
+    }
+
+    @Test
+    void getSubject() throws Exception {
+
+        Long subjectId = 2L;
+
+        when(teacherService.getSubjectById(teacherId, subjectId)).thenReturn(SubjectDto.builder().id(subjectId).build());
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/subject/" + subjectId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("subject"))
+                .andExpect(view().name("/teacher/subject/" + subjectId));
+
+        verify(teacherService, times(1)).getSubjectById(teacherId, subjectId);
+    }
+
 
 }
