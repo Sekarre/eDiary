@@ -7,6 +7,7 @@ import com.ediary.domain.Teacher;
 import com.ediary.repositories.ClassRepository;
 import com.ediary.repositories.LessonRepository;
 import com.ediary.repositories.TeacherRepository;
+import com.ediary.repositories.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import org.springframework.core.convert.converter.Converter;
@@ -24,6 +25,7 @@ public class SubjectDtoToSubject implements Converter<SubjectDto, Subject> {
     private final TeacherRepository teacherRepository;
     private final LessonRepository lessonRepository;
     private final ClassRepository classRepository;
+    private final TopicRepository topicRepository;
 
     @Nullable
     @Synchronized
@@ -54,6 +56,9 @@ public class SubjectDtoToSubject implements Converter<SubjectDto, Subject> {
 
         //Lessons
         subject.setLessons(new HashSet<>(lessonRepository.findAllById(source.getLessonsId())));
+
+        //Topic
+        subject.setTopics(new HashSet<>(topicRepository.findAllById(source.getTopicsId())));
 
         return subject;
     }

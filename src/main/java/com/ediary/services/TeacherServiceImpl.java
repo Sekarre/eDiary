@@ -136,6 +136,28 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public SubjectDto updatePatchSubject(SubjectDto subjectUpdated) {
+        Optional<Subject> subjectOptional = subjectRepository.findById(subjectUpdated.getId());
+        if (!subjectOptional.isPresent()) {
+            throw new NotFoundException("Subject Not Found.");
+        }
+
+        SubjectDto subject = subjectToSubjectDto.convert(subjectOptional.get());
+
+        if (subjectUpdated.getName() != null) {
+            subject.setName(subjectUpdated.getName());
+        }
+
+        if (subjectUpdated.getClassId() != subject.getClassId()) {
+            subject.setClassId(subjectUpdated.getClassId());
+        }
+
+        Subject savedSubject = subjectRepository.save(subjectDtoToSubject.convert(subject));
+
+        return subjectToSubjectDto.convert(savedSubject);
+    }
+
+    @Override
     public Attendance saveAttendance(Attendance attendance) {
         return null;
     }

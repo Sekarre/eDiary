@@ -21,6 +21,7 @@ public interface TeacherService {
     Boolean deleteSubject(Long teacherId, Long subjectId);
     List<SubjectDto> listSubjects(Long teacherId);
     SubjectDto initNewSubject(Long teacherId);
+    SubjectDto updatePatchSubject(SubjectDto subjectUpdated);
 
     Attendance saveAttendance(Attendance attendance);
     List<Attendance> listAttendances(Long teacherId, Long lessonId);

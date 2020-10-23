@@ -462,4 +462,19 @@ class TeacherControllerTest {
         verify(teacherService, times(1)).saveOrUpdateSubject(any());
     }
 
+    @Test
+    void updatePatchSubject() throws Exception {
+        Long subjectId = 3L;
+
+        when(teacherService.saveOrUpdateSubject(any())).thenReturn(Subject.builder().build());
+
+        mockMvc.perform(patch("/teacher/" + teacherId + "/subject/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(SubjectDto.builder().build())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject"));
+
+        verify(teacherService, times(1)).saveOrUpdateSubject(any());
+    }
+
 }

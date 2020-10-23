@@ -317,6 +317,20 @@ public class TeacherController {
         }
     }
 
+    @PatchMapping("/{teacherId}/subject/update")
+    public String updatePatchSubject(@PathVariable Long teacherId,
+                                     @Valid @RequestBody SubjectDto subjectDto,
+                                     BindingResult result) {
+        if (result.hasErrors()){
+            //TODO
+            return "/";
+        } else {
+            Subject subject = teacherService.saveOrUpdateSubject(subjectDto);
+            //TODO zalezy od widoku
+            return "redirect:/teacher/" + teacherId + "/subject";
+        }
+    }
+
 
 
 }

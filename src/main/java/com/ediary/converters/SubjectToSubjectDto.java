@@ -4,6 +4,7 @@ import com.ediary.DTO.SubjectDto;
 import com.ediary.domain.Lesson;
 import com.ediary.domain.Subject;
 import com.ediary.domain.Teacher;
+import com.ediary.domain.Topic;
 import lombok.Synchronized;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
@@ -47,6 +48,16 @@ public class SubjectToSubjectDto implements Converter<Subject, SubjectDto> {
             subjectDto.setLessonsId(source.getLessons().stream()
                     .map(Lesson::getId)
                     .collect(Collectors.toList()));
+
+        //Topic
+        subjectDto.setTopicsName(source.getTopics().stream()
+                .map(Topic::getName)
+                .collect(Collectors.toList()));
+
+        subjectDto.setTopicsId(source.getTopics().stream()
+                .map(Topic::getId)
+                .collect(Collectors.toList()));
+
 
 
         return subjectDto;

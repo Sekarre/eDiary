@@ -23,4 +23,7 @@ public class SubjectDto {
     private List<String> lessonsName;
     private List<Long> lessonsId;
 
+    private List<String> topicsName;
+    private List<Long> topicsId;
+
 }

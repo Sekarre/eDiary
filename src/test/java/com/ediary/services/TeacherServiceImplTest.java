@@ -503,6 +503,39 @@ class TeacherServiceImplTest {
         verify(subjectToSubjectDto, times(1)).convert(any());
 
     }
+
+    @Test
+    void updatePatchSubject() {
+
+        SubjectDto subject = SubjectDto.builder()
+                .id(1L)
+                .name("first")
+                .build();
+
+        SubjectDto subjectToUpdate = SubjectDto.builder()
+                .name("second")
+                .build();
+
+        Subject subjectDB = Subject.builder().build();
+        Subject savedSubject = Subject.builder().build();
+
+        when(subjectRepository.findById(subjectToUpdate.getId())).thenReturn(Optional.of(subjectDB));
+        when(subjectToSubjectDto.convert(subjectDB)).thenReturn(subject);
+
+        when(subjectRepository.save(any())).thenReturn(savedSubject);
+        when(subjectToSubjectDto.convert(savedSubject)).thenReturn(subject);
+
+        SubjectDto subjectDto = teacherService.updatePatchSubject(subjectToUpdate);
+
+        assertEquals(subjectDto.getId(), subject.getId());
+        assertEquals(subjectDto.getName(), subjectToUpdate.getName());
+
+        verify(subjectRepository, times(1)).findById(subjectToUpdate.getId());
+        verify(subjectToSubjectDto, times(2)).convert(any());
+        verify(subjectDtoToSubject, times(1)).convert(any());
+        verify(subjectRepository, times(1)).save(any());
+    }
+
     @Test
     void saveOrUpdateSubject() {
         Long subjectId = 3L;
