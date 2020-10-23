@@ -202,8 +202,8 @@ class TeacherControllerTest {
         Long behaviorId = 3L;
 
         mockMvc.perform(delete("/teacher/" + teacherId + "/behavior/" + behaviorId))
-                .andExpect(status().isNoContent())
-                .andExpect(view().name("/" + teacherId + "/behavior"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/behavior"));
 
         verify(teacherService, times(1)).deleteBehavior(teacherId, behaviorId);
     }
@@ -431,10 +431,20 @@ class TeacherControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(SubjectDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/" + teacherId + "/subject"));
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject"));
 
         verify(teacherService, times(1)).saveOrUpdateSubject(any());
     }
 
+    @Test
+    void deleteSubject() throws Exception {
+        Long subjectId = 3L;
+
+        mockMvc.perform(delete("/teacher/" + teacherId + "/subject/" + subjectId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject"));
+
+        verify(teacherService, times(1)).deleteSubject(teacherId, subjectId);
+    }
 
 }

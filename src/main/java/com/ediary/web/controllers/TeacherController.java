@@ -135,11 +135,10 @@ public class TeacherController {
     }
 
     @DeleteMapping("/{teacherId}/behavior/{behaviorId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public String deleteBehavior(@PathVariable Long teacherId, @PathVariable Long behaviorId) {
 
         teacherService.deleteBehavior(teacherId, behaviorId);
-        return "/" + teacherId + "/behavior";
+        return "redirect:/teacher/" + teacherId + "/behavior";
     }
 
     @PutMapping("/{teacherId}/behavior/update")
@@ -293,8 +292,15 @@ public class TeacherController {
             return "/";
         } else {
             teacherService.saveOrUpdateSubject(subject);
-            return "redirect:/" + teacherId + "/subject";
+            return "redirect:/teacher/" + teacherId + "/subject";
         }
+    }
+
+    @DeleteMapping("/{teacherId}/subject/{subjectId}")
+    public String deleteSubject(@PathVariable Long teacherId, @PathVariable Long subjectId) {
+
+        teacherService.deleteSubject(teacherId, subjectId);
+        return "redirect:/teacher/" + teacherId + "/subject";
     }
 
 

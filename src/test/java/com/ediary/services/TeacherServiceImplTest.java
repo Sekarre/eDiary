@@ -520,6 +520,52 @@ class TeacherServiceImplTest {
     }
 
     @Test
+    void deleteSubject() {
+        Teacher teacher = Teacher.builder().id(teacherId).build();
+
+        Long subjectId = 2L;
+        Subject subject = Subject.builder().id(subjectId).teacher(teacher).build();
+
+        when(subjectRepository.findById(subjectId)).thenReturn(Optional.of(subject));
+
+        Boolean deleteStatus = teacherService.deleteSubject(teacherId,subjectId);
+
+        assertTrue(deleteStatus);
+        verify(subjectRepository, times(1)).findById(subjectId);
+        verify(subjectRepository, times(1)).delete(any());
+    }
+
+    @Test
+    void deleteSubjectNotOwner() {
+        Teacher teacher = Teacher.builder().id(teacherId).build();
+
+        Long subjectId = 2L;
+        Subject subject = Subject.builder().id(subjectId).teacher(Teacher.builder().id(teacherId + 1L).build()).build();
+
+        when(subjectRepository.findById(subjectId)).thenReturn(Optional.of(subject));
+
+        Boolean deleteStatus = teacherService.deleteSubject(teacherId,subjectId);
+
+        assertFalse(deleteStatus);
+        verify(subjectRepository, times(1)).findById(subjectId);
+        verify(subjectRepository, times(0)).delete(any());
+    }
+
+    @Test
+    void deleteSubjectNotFound() {
+
+        Long subjectId = 2L;
+
+        when(subjectRepository.findById(subjectId)).thenReturn(Optional.empty());
+
+        Boolean deleteStatus = teacherService.deleteSubject(teacherId,subjectId);
+
+        assertFalse(deleteStatus);
+        verify(subjectRepository, times(1)).findById(subjectId);
+        verify(subjectRepository, times(0)).delete(any());
+    }
+
+    @Test
     void listGradesBySubject() {
         Long teacherId = 1L;
         Long subjectId = 1L;

@@ -104,8 +104,19 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Boolean deleteSubject(Long subjectId) {
-        return null;
+    public Boolean deleteSubject(Long teacherId, Long subjectId) {
+        Optional<Subject> subjectOptional = subjectRepository.findById(subjectId);
+        if (!subjectOptional.isPresent()) {
+            return false;
+        }
+        Subject subject = subjectOptional.get();
+
+        if (subject.getTeacher().getId() != teacherId) {
+            return false;
+        } else {
+            subjectRepository.delete(subject);
+            return true;
+        }
     }
 
     @Override
