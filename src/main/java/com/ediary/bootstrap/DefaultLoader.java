@@ -11,9 +11,11 @@ import com.ediary.repositories.security.UserRepository;
 import com.ediary.repositories.timetable.ClassroomRepository;
 import com.ediary.repositories.timetable.DayRepository;
 import com.ediary.repositories.timetable.DurationRepository;
+import com.ediary.security.SfgPasswordEncoderFactories;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
@@ -55,6 +57,8 @@ public class DefaultLoader implements CommandLineRunner {
     private final ClassroomRepository classroomRepository;
     private final DurationRepository durationRepository;
     private final SchoolPeriodRepository schoolPeriodRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     private Long firstUserAsStudentId;
     private Long firstUserAsParentId;
@@ -185,6 +189,10 @@ public class DefaultLoader implements CommandLineRunner {
 
     private void createUsers() {
 
+        userRepository.save(User.builder()
+                .username("user")
+                .password(passwordEncoder.encode("user")).build());
+
         //todo: username, password (with encoder)
 
         //Students
@@ -217,8 +225,8 @@ public class DefaultLoader implements CommandLineRunner {
             userRepository.save(User.builder()
                     .firstName(teacherNames[i])
                     .lastName(teacherLastNames[i])
-                    .username("")
-                    .password("")
+                    .username(teacherNames[i])
+                    .password(passwordEncoder.encode(teacherLastNames[i]))
                     .address(addressRepository.findById(addressId++).orElse(null))
                     .build());
         }
@@ -371,16 +379,17 @@ public class DefaultLoader implements CommandLineRunner {
         String[] messageContens = {"To jest testowa wiadomość", "Dzień dobry wiadomość", "Kolejna wiadomość testowa"};
         Message.Status[] statuses = {Message.Status.SENT, Message.Status.READ, Message.Status.SENT};
 
+        for (int j = 0; j < 10; j++) {
+            for (int i = 0; i < senderIndexes.length; i++) {
 
-        for (int i = 0; i < senderIndexes.length; i++) {
-
-            messageRepository.save(Message.builder()
-                    .title(messageTitles[i])
-                    .content(messageContens[i])
-                    .status(statuses[i])
-                    .senders(userRepository.findByFirstNameAndLastName(teacherNames[senderIndexes[i]], teacherLastNames[senderIndexes[i]]))
-                    .reader(userRepository.findByFirstNameAndLastName(teacherNames[readerIndexes[i]], teacherLastNames[readerIndexes[i]]))
-                    .build());
+                messageRepository.save(Message.builder()
+                        .title(messageTitles[i])
+                        .content(messageContens[i])
+                        .status(statuses[i])
+                        .senders(userRepository.findByFirstNameAndLastName(teacherNames[senderIndexes[i]], teacherLastNames[senderIndexes[i]]))
+                        .reader(userRepository.findByFirstNameAndLastName(teacherNames[readerIndexes[i]], teacherLastNames[readerIndexes[i]]))
+                        .build());
+            }
         }
     }
 

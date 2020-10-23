@@ -2,8 +2,6 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.MessageDto;
 import com.ediary.DTO.NoticeDto;
-import com.ediary.domain.Message;
-import com.ediary.domain.Notice;
 import com.ediary.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
