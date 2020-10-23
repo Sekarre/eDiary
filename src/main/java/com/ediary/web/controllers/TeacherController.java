@@ -3,6 +3,7 @@ package com.ediary.web.controllers;
 import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.EventDto;
 import com.ediary.DTO.GradeDto;
+import com.ediary.DTO.SubjectDto;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -275,5 +276,27 @@ public class TeacherController {
         model.addAttribute("subject", teacherService.getSubjectById(teacherId, subjectId));
         return "/teacher/subject/" + subjectId;
     }
+
+    @GetMapping("/{teacherId}/subject/new")
+    public String newSubject(@PathVariable Long teacherId, Model model) {
+
+        model.addAttribute("subject", teacherService.initNewSubject(teacherId));
+        return "/teacher/subject/new";
+    }
+
+    @PostMapping("/{teacherId}/subject/new")
+    public String processNewSubject(@PathVariable Long teacherId,
+                                    @Valid @RequestBody SubjectDto subject,
+                                    BindingResult result) {
+        if (result.hasErrors()){
+            //TODO
+            return "/";
+        } else {
+            teacherService.saveOrUpdateSubject(subject);
+            return "redirect:/" + teacherId + "/subject";
+        }
+    }
+
+
 
 }

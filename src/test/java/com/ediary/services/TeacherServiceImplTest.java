@@ -53,6 +53,8 @@ class TeacherServiceImplTest {
     @Mock
     SubjectToSubjectDto subjectToSubjectDto;
     @Mock
+    SubjectDtoToSubject subjectDtoToSubject;
+    @Mock
     GradeToGradeDto gradeToGradeDto;
     @Mock
     GradeDtoToGrade gradeDtoToGrade;
@@ -64,7 +66,7 @@ class TeacherServiceImplTest {
         MockitoAnnotations.initMocks(this);
         teacherService = new TeacherServiceImpl(eventService, teacherRepository, classRepository, eventRepository,
                 behaviorRepository, lessonRepository, subjectRepository, gradeRepository, eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto,
-                behaviorDtoToBehavior, lessonToLessonDto, subjectToSubjectDto, gradeToGradeDto, gradeDtoToGrade);
+                behaviorDtoToBehavior, lessonToLessonDto, subjectToSubjectDto, subjectDtoToSubject, gradeToGradeDto, gradeDtoToGrade);
     }
 
     @Test
@@ -469,6 +471,55 @@ class TeacherServiceImplTest {
     }
 
     @Test
+    void getSubjectById() {
+        Long subjectId = 2l;
+
+        Teacher teacher = Teacher.builder().id(teacherId).build();
+        Subject subject = Subject.builder().id(subjectId).teacher(teacher).build();
+
+        when(teacherRepository.findById(any())).thenReturn(Optional.of(teacher));
+        when(subjectRepository.findById(any())).thenReturn(Optional.of(subject));
+        when(subjectToSubjectDto.convert(subject)).thenReturn(SubjectDto.builder().id(subject.getId()).build());
+
+        SubjectDto subjectDto = teacherService.getSubjectById(teacherId, subjectId);
+
+        assertEquals(subjectDto.getId(), subjectId);
+        verify(subjectToSubjectDto, times(1)).convert(any());
+        verify(teacherRepository, times(1)).findById(any());
+        verify(subjectRepository, times(1)).findById(any());
+    }
+
+    @Test
+    void initNewSubject() {
+        Teacher teacher = Teacher.builder().id(1L).build();
+
+        when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
+        when(subjectToSubjectDto.convert(any())).thenReturn(SubjectDto.builder().teacherId(teacherId).build());
+
+        SubjectDto subject = teacherService.initNewSubject(teacherId);
+
+        assertEquals(subject.getTeacherId(), teacher.getId());
+        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(subjectToSubjectDto, times(1)).convert(any());
+
+    }
+    @Test
+    void saveOrUpdateSubject() {
+        Long subjectId = 3L;
+        SubjectDto subjecToSave = SubjectDto.builder().id(subjectId).build();
+        Subject subjectReturned = Subject.builder().id(subjectId).build();
+
+        when(subjectDtoToSubject.convert(subjecToSave)).thenReturn(Subject.builder().id(subjectId).build());
+        when(subjectRepository.save(any())).thenReturn(subjectReturned);
+
+        Subject subject = teacherService.saveOrUpdateSubject(subjecToSave);
+
+        assertEquals(subject.getId(), subjecToSave.getId());
+        verify(subjectDtoToSubject, times(1)).convert(subjecToSave);
+        verify(subjectRepository, times(1)).save(any());
+    }
+
+    @Test
     void listGradesBySubject() {
         Long teacherId = 1L;
         Long subjectId = 1L;
@@ -618,24 +669,6 @@ class TeacherServiceImplTest {
 
     }
 
-    @Test
-    void getSubjectById() {
-        Long subjectId = 2l;
-
-        Teacher teacher = Teacher.builder().id(teacherId).build();
-        Subject subject = Subject.builder().id(subjectId).teacher(teacher).build();
-
-        when(teacherRepository.findById(any())).thenReturn(Optional.of(teacher));
-        when(subjectRepository.findById(any())).thenReturn(Optional.of(subject));
-        when(subjectToSubjectDto.convert(subject)).thenReturn(SubjectDto.builder().id(subject.getId()).build());
-
-        SubjectDto subjectDto = teacherService.getSubjectById(teacherId, subjectId);
-
-        assertEquals(subjectDto.getId(), subjectId);
-        verify(subjectToSubjectDto, times(1)).convert(any());
-        verify(teacherRepository, times(1)).findById(any());
-        verify(subjectRepository, times(1)).findById(any());
-    }
 
 
 }

@@ -408,5 +408,33 @@ class TeacherControllerTest {
         verify(teacherService, times(1)).getSubjectById(teacherId, subjectId);
     }
 
+    @Test
+    void initNewSubject() throws Exception {
+
+        Long subjectId = 2L;
+
+        when(teacherService.initNewSubject(teacherId)).thenReturn(SubjectDto.builder().id(subjectId).build());
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/subject/new"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("subject"))
+                .andExpect(view().name("/teacher/subject/new"));
+
+        verify(teacherService, times(1)).initNewSubject(teacherId);
+    }
+
+    @Test
+    void processNewSubject() throws Exception {
+        when(teacherService.saveOrUpdateSubject(any())).thenReturn(Subject.builder().build());
+
+        mockMvc.perform(post("/teacher/" + teacherId + "/subject/new")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(SubjectDto.builder().build())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/" + teacherId + "/subject"));
+
+        verify(teacherService, times(1)).saveOrUpdateSubject(any());
+    }
+
 
 }

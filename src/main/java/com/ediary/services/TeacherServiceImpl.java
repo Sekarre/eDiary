@@ -33,6 +33,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final BehaviorDtoToBehavior behaviorDtoToBehavior;
     private final LessonToLessonDto lessonToLessonDto;
     private final SubjectToSubjectDto subjectToSubjectDto;
+    private final SubjectDtoToSubject subjectDtoToSubject;
     private final GradeToGradeDto gradeToGradeDto;
     private final GradeDtoToGrade gradeDtoToGrade;
 
@@ -98,8 +99,8 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Subject saveSubject(Subject subject) {
-        return null;
+    public Subject saveOrUpdateSubject(SubjectDto subject) {
+        return subjectRepository.save(subjectDtoToSubject.convert(subject));
     }
 
     @Override
@@ -115,6 +116,12 @@ public class TeacherServiceImpl implements TeacherService {
         return subjectRepository.findAllByTeacher(teacher).stream()
                 .map(subjectToSubjectDto::convert)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public SubjectDto initNewSubject(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+        return subjectToSubjectDto.convert(Subject.builder().teacher(teacher).build());
     }
 
     @Override
