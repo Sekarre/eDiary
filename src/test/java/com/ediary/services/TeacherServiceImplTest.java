@@ -520,4 +520,35 @@ class TeacherServiceImplTest {
         verify(gradeRepository, times(1)).save(any());
     }
 
+    @Test
+    void updatePatchGrade() {
+        Long gradeId = 1L;
+        String description = "description";
+        String updatedDescription = "updated description";
+
+        GradeDto gradeDto = GradeDto.builder()
+                .id(gradeId).description(description)
+                .build();
+
+        GradeDto updatedGradeDto = GradeDto.builder()
+                .id(gradeId).description(updatedDescription)
+                .value("2").weight(5)
+                .build();
+
+        Grade grade = Grade.builder()
+                .id(gradeId).description(updatedDescription).build();
+
+        when(gradeDtoToGrade.convert(any())).thenReturn(grade);
+        when(gradeToGradeDto.convert(any())).thenReturn(updatedGradeDto);
+        when(gradeRepository.save(any())).thenReturn(Grade.builder().build());
+        when(gradeRepository.findById(gradeId)).thenReturn(Optional.ofNullable(Grade.builder().build()));
+
+        GradeDto savedGrade = teacherService.updatePatchGrade(gradeDto);
+
+
+        assertEquals(savedGrade.getDescription(), updatedGradeDto.getDescription());
+        verify(gradeDtoToGrade, times(1)).convert(any());
+        verify(gradeRepository, times(1)).save(any());
+    }
+
 }

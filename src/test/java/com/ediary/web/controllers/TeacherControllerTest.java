@@ -277,6 +277,23 @@ class TeacherControllerTest {
         verify(teacherService, times(1)).updatePutGrade(any());
     }
 
+    @Test
+    void updatePatchGrade() throws Exception {
+        Long gradeId = 1L;
+        Long subjectId = 1L;
+        GradeDto gradeDto = GradeDto.builder().id(gradeId).build();
+
+        when(teacherService.updatePatchGrade(any())).thenReturn(gradeDto);
+
+        mockMvc.perform(patch("/teacher/" + teacherId + "/grade/subject/" + subjectId + "/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(gradeDto)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId));
+
+        verify(teacherService, times(1)).updatePatchGrade(any());
+    }
+
 
     @Test
     void getAllSubjects() throws Exception {

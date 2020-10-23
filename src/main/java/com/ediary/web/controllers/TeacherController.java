@@ -191,15 +191,30 @@ public class TeacherController {
                                  @PathVariable Long subjectId,
                                  @Valid @RequestBody GradeDto gradeDto,
                                  BindingResult result) {
-
         if (result.hasErrors()) {
-            //todo:
+            //todo: add view path
             return "";
         } else {
             teacherService.updatePutGrade(gradeDto);
             return "redirect:/teacher/" + teacherId +"/grade/subject/" + subjectId;
         }
     }
+
+    @PatchMapping("/{teacherId}/grade/subject/{subjectId}/update")
+    public String updatePatchGrade(@PathVariable Long teacherId,
+                                   @PathVariable Long subjectId,
+                                   @Valid @RequestBody GradeDto gradeDto,
+                                   BindingResult result) {
+        if (result.hasErrors()){
+            //todo: add view path
+            return "";
+        } else {
+            teacherService.updatePatchGrade(gradeDto);
+            return "redirect:/teacher/" + teacherId +"/grade/subject/" + subjectId;
+        }
+    }
+
+
 
 
     @GetMapping("/{teacherId}/lesson/subject")

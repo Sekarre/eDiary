@@ -165,7 +165,24 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public GradeDto updatePatchGrade(GradeDto gradeDto) {
-        return null;
+
+        GradeDto grade = gradeToGradeDto.convert(gradeRepository
+                .findById(gradeDto.getId()).orElseThrow(() -> new NotFoundException("Grade not found")));
+
+
+        if (gradeDto.getDescription() != null) {
+            grade.setDescription(gradeDto.getDescription());
+        }
+
+        if (gradeDto.getValue() != null) {
+            grade.setValue(gradeDto.getValue());
+        }
+
+        if (gradeDto.getWeight() != null) {
+            grade.setWeight(gradeDto.getWeight());
+        }
+
+        return gradeToGradeDto.convert(gradeRepository.save(gradeDtoToGrade.convert(grade)));
     }
 
     @Override
