@@ -1,9 +1,7 @@
 package com.ediary.web.controllers;
 
-import com.ediary.DTO.BehaviorDto;
-import com.ediary.DTO.EventDto;
-import com.ediary.DTO.GradeDto;
-import com.ediary.DTO.SubjectDto;
+import com.ediary.DTO.*;
+import com.ediary.domain.Lesson;
 import com.ediary.domain.Subject;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
@@ -260,8 +258,35 @@ public class TeacherController {
 
         model.addAttribute("lessons", teacherService.listLessons(teacherId, subjectId));
 
-        return "/teacher/lesson/subject/allLessons";
+        return "/teacher/lesson/allLessons";
     }
+
+
+    @GetMapping("{teacherId}/lesson/subject/{subjectId}/new")
+    public String newLesson(@PathVariable Long teacherId, @PathVariable Long subjectId,  Model model) {
+        model.addAttribute("lesson", teacherService.initNewLesson(subjectId));
+
+        return "/teacher/lesson/newLesson";
+    }
+
+
+    @PostMapping("{teacherId}/lesson/subject/{subjectId}/new")
+    public String processNewLesson(@PathVariable Long teacherId,
+                                   @PathVariable Long subjectId,
+                                   @Valid @RequestBody LessonDto lessonDto,
+                                   BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo: add view path
+            return "";
+        } else {
+            Lesson savedLesson = teacherService.saveLesson(lessonDto);
+            return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + savedLesson.getId();
+        }
+    }
+
+
+
 
     @GetMapping("/{teacherId}/subject")
     public String getSubjects(@PathVariable Long teacherId, Model model) {

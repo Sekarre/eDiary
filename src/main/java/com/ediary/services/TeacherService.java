@@ -7,10 +7,12 @@ import java.util.List;
 
 public interface TeacherService {
 
-    Lesson saveLesson(Lesson lesson);
+    LessonDto initNewLesson(Long subjectId);
+    Lesson saveLesson(LessonDto lesson);
     Boolean deleteLesson(Long lessonId);
     List<LessonDto> listLessons(Long teacherId, Long subjectId);
     List<LessonDto> listLessons(Long teacherId);
+
 
     Topic saveTopic(Topic topic);
     Boolean deleteTopic(Long topicId);

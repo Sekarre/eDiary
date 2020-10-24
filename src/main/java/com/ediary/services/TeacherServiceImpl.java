@@ -32,15 +32,22 @@ public class TeacherServiceImpl implements TeacherService {
     private final BehaviorToBehaviorDto behaviorToBehaviorDto;
     private final BehaviorDtoToBehavior behaviorDtoToBehavior;
     private final LessonToLessonDto lessonToLessonDto;
+    private final LessonDtoToLesson lessonDtoToLesson;
     private final SubjectToSubjectDto subjectToSubjectDto;
     private final SubjectDtoToSubject subjectDtoToSubject;
     private final GradeToGradeDto gradeToGradeDto;
     private final GradeDtoToGrade gradeDtoToGrade;
 
+    @Override
+    public LessonDto initNewLesson(Long subjectId) {
+        return lessonToLessonDto.convert(Lesson.builder()
+                .subject(getSubjectById(subjectId))
+                .build());
+    }
 
     @Override
-    public Lesson saveLesson(Lesson lesson) {
-        return null;
+    public Lesson saveLesson(LessonDto lesson) {
+        return lessonRepository.save(lessonDtoToLesson.convert(lesson));
     }
 
     @Override

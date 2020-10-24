@@ -51,6 +51,8 @@ class TeacherServiceImplTest {
     @Mock
     LessonToLessonDto lessonToLessonDto;
     @Mock
+    LessonDtoToLesson lessonDtoToLesson;
+    @Mock
     SubjectToSubjectDto subjectToSubjectDto;
     @Mock
     SubjectDtoToSubject subjectDtoToSubject;
@@ -66,8 +68,53 @@ class TeacherServiceImplTest {
         MockitoAnnotations.initMocks(this);
         teacherService = new TeacherServiceImpl(eventService, teacherRepository, classRepository, eventRepository,
                 behaviorRepository, lessonRepository, subjectRepository, gradeRepository, eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto,
-                behaviorDtoToBehavior, lessonToLessonDto, subjectToSubjectDto, subjectDtoToSubject, gradeToGradeDto, gradeDtoToGrade);
+                behaviorDtoToBehavior, lessonToLessonDto, lessonDtoToLesson, subjectToSubjectDto, subjectDtoToSubject, gradeToGradeDto, gradeDtoToGrade);
     }
+
+
+
+    @Test
+    void saveLesson() {
+        Lesson lesson = Lesson.builder()
+                .id(1L)
+                .build();
+
+        LessonDto lessonDto = LessonDto.builder().id(1L).build();
+
+        when(lessonRepository.save(any())).thenReturn(lesson);
+        when(lessonDtoToLesson.convert(any())).thenReturn(lesson);
+
+        Lesson savedLesson = teacherService.saveLesson(lessonDto);
+
+        assertNotNull(savedLesson);
+        verify(lessonRepository, times(1)).save(lesson);
+    }
+
+    @Test
+    void initNewLesson() {
+        Long teacherId = 1L;
+        Long subjectId = 1L;
+
+        Lesson lesson = Lesson.builder()
+                .subject(Subject.builder().id(subjectId).build())
+                .build();
+
+        LessonDto lessonDto = LessonDto.builder()
+                .subjectId(1L)
+                .build();
+
+        when(subjectRepository.findById(any())).thenReturn(Optional.ofNullable(Subject.builder().id(subjectId).build()));
+        when(lessonToLessonDto.convert(any())).thenReturn(lessonDto);
+
+        LessonDto genLesson = teacherService.initNewLesson(subjectId);
+
+        assertNotNull(genLesson);
+        assertEquals(lesson.getSubject().getId(), lessonDto.getSubjectId());
+        verify(subjectRepository, times(1)).findById(any());
+
+    }
+
+
 
     @Test
     void listEvents() {
@@ -747,7 +794,6 @@ class TeacherServiceImplTest {
         verify(subjectRepository, times(1)).findById(any());
 
     }
-
 
 
 }
