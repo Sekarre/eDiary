@@ -4,6 +4,7 @@ import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
+import com.ediary.domain.security.User;
 import com.ediary.exceptions.NoAccessException;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
@@ -38,6 +39,17 @@ public class TeacherServiceImpl implements TeacherService {
     private final SubjectDtoToSubject subjectDtoToSubject;
     private final GradeToGradeDto gradeToGradeDto;
     private final GradeDtoToGrade gradeDtoToGrade;
+    private final TeacherToTeacherDto teacherToTeacherDto;
+
+    @Override
+    public TeacherDto findByUser(User user) {
+        Optional<Teacher> teacherOptional = teacherRepository.findByUser(user);
+        if (!teacherOptional.isPresent()) {
+            throw new NotFoundException("Teacher Not Found.");
+        }
+
+        return teacherToTeacherDto.convert(teacherOptional.get());
+    }
 
     @Override
     public LessonDto initNewLesson(Long subjectId) {

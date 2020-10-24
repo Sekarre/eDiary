@@ -1,12 +1,15 @@
 package com.ediary.web.controllers;
 
 import com.ediary.DTO.*;
+import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.Event;
 import com.ediary.domain.Lesson;
 import com.ediary.domain.Subject;
+import com.ediary.domain.security.User;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +26,14 @@ import java.time.LocalDate;
 public class TeacherController {
 
     private final TeacherService teacherService;
+
+    private final UserToUserDto userToUserDto;
+
+    @ModelAttribute
+    public void addAuthenticatedUserAndTeacher(@AuthenticationPrincipal User user, Model model) {
+        model.addAttribute("user", userToUserDto.convert(user));
+        model.addAttribute("teacher", teacherService.findByUser(user));
+    }
 
     @InitBinder
     public void dataBinder(WebDataBinder dataBinder){

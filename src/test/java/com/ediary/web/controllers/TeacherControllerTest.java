@@ -1,6 +1,7 @@
 package com.ediary.web.controllers;
 
 import com.ediary.DTO.*;
+import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.*;
 import com.ediary.services.TeacherService;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +26,9 @@ class TeacherControllerTest {
     @Mock
     TeacherService teacherService;
 
+    @Mock
+    UserToUserDto userToUserDto;
+
     TeacherController teacherController;
 
     MockMvc mockMvc;
@@ -32,8 +36,22 @@ class TeacherControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        teacherController = new TeacherController(teacherService);
+        teacherController = new TeacherController(teacherService, userToUserDto);
         mockMvc = MockMvcBuilders.standaloneSetup(teacherController).build();
+    }
+
+    @Test
+    void authenticatedUserAndSTeacher() throws Exception {
+
+        when(userToUserDto.convert(any())).thenReturn(UserDto.builder().build());
+        when(teacherService.findByUser(any())).thenReturn(TeacherDto.builder().build());
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/event"))
+                .andExpect(model().attributeExists("user"))
+                .andExpect(model().attributeExists("teacher"));
+
+        verify(userToUserDto, times(1)).convert(any());
+        verify(teacherService, times(1)).findByUser(any());
     }
 
     @Test

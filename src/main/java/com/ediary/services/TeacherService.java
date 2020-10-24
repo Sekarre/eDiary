@@ -2,10 +2,13 @@ package com.ediary.services;
 
 import com.ediary.DTO.*;
 import com.ediary.domain.*;
+import com.ediary.domain.security.User;
 
 import java.util.List;
 
 public interface TeacherService {
+
+    TeacherDto findByUser(User user);
 
     LessonDto initNewLesson(Long subjectId);
     Lesson saveLesson(LessonDto lesson);

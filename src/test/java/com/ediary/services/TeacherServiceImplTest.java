@@ -4,6 +4,7 @@ import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
+import com.ediary.domain.security.User;
 import com.ediary.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,6 +61,8 @@ class TeacherServiceImplTest {
     GradeToGradeDto gradeToGradeDto;
     @Mock
     GradeDtoToGrade gradeDtoToGrade;
+    @Mock
+    TeacherToTeacherDto teacherToTeacherDto;
 
     TeacherService teacherService;
 
@@ -68,7 +71,25 @@ class TeacherServiceImplTest {
         MockitoAnnotations.initMocks(this);
         teacherService = new TeacherServiceImpl(eventService, teacherRepository, classRepository, eventRepository,
                 behaviorRepository, lessonRepository, subjectRepository, gradeRepository, eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto,
-                behaviorDtoToBehavior, lessonToLessonDto, lessonDtoToLesson, subjectToSubjectDto, subjectDtoToSubject, gradeToGradeDto, gradeDtoToGrade);
+                behaviorDtoToBehavior, lessonToLessonDto, lessonDtoToLesson, subjectToSubjectDto, subjectDtoToSubject, gradeToGradeDto, gradeDtoToGrade,
+                teacherToTeacherDto);
+    }
+
+    @Test
+    void findByUser() {
+        Long userId = 24L;
+        User user = User.builder().id(userId).build();
+
+        Teacher teacherReturned = Teacher.builder().id(teacherId).build();
+
+        when(teacherRepository.findByUser(user)).thenReturn(Optional.of(teacherReturned));
+        when(teacherToTeacherDto.convert(teacherReturned)).thenReturn(TeacherDto.builder().id(teacherReturned.getId()).build());
+
+        TeacherDto student = teacherService.findByUser(user);
+
+        assertEquals(student.getId(), teacherReturned.getId());
+        verify(teacherRepository, times(1)).findByUser(user);
+        verify(teacherToTeacherDto, times(1)).convert(teacherReturned);
     }
 
 
