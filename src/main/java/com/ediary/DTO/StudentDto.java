@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 public class StudentDto {
 
+    private Long userId;
     private Long id;
 
     //User

@@ -19,8 +19,13 @@ public class StudentToStudentDto implements Converter<Student, StudentDto> {
             return null;
         }
 
-        //TODO
-        return null;
+        StudentDto studentDto = new StudentDto();
+
+        studentDto.setUserId(source.getUser().getId());
+        studentDto.setId(source.getId());
+        studentDto.setUserName(source.getUser().getFirstName() + " " + source.getUser().getLastName());
+
+        return studentDto;
     }
 
     @Synchronized
