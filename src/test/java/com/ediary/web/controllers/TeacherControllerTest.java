@@ -411,6 +411,64 @@ class TeacherControllerTest {
     }
 
     @Test
+    void getClassesBySubject() throws Exception {
+
+        Long subjectId = 1L;
+
+        when(teacherService.listClassesByTeacherAndSubject(teacherId, subjectId)).thenReturn(Arrays.asList(
+                ClassDto.builder().id(1L).build(),
+                ClassDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId +"/class"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("classes"))
+                .andExpect(view().name("/teacher/lesson/classes"));
+
+        verify(teacherService, times(1)).listClassesByTeacherAndSubject(teacherId, subjectId);
+        assertEquals(2, teacherService.listClassesByTeacherAndSubject(teacherId, subjectId).size());
+    }
+
+    @Test
+    void newLessonEvent() throws Exception {
+        Long subjectId = 1L;
+        Long classId = 1l;
+
+        when(teacherService.initNewClassEvent(teacherId, classId)).thenReturn(EventDto.builder().build());
+
+        mockMvc.perform(get(
+                "/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId + "/newEvent"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("event"))
+                .andExpect(view().name("/teacher/lesson/newLessonEvent"));
+
+        verify(teacherService, times(1)).initNewClassEvent(subjectId, classId);
+    }
+
+    @Test
+    void processNewLessonEvent() throws Exception {
+        Long classId = 1L;
+        Long subjectId = 1L;
+
+        Event event = Event.builder()
+                .id(1L)
+                .build();
+
+        when(teacherService.saveEvent(any())).thenReturn(event);
+
+        mockMvc.perform(post(
+                "/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId + "/newEvent")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(BehaviorDto.builder().build())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name(
+                        "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + event.getId()));
+
+        verify(teacherService, times(1)).saveEvent(any());
+    }
+
+
+    @Test
     void getSubjects() throws Exception {
 
         when(teacherService.listSubjects(teacherId)).thenReturn(Arrays.asList(

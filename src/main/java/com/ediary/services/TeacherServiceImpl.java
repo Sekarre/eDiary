@@ -3,6 +3,7 @@ package com.ediary.services;
 import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
+import com.ediary.domain.Class;
 import com.ediary.exceptions.NoAccessException;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
@@ -288,6 +289,16 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public EventDto initNewClassEvent(Long teacherId, Long classId) {
+        Event event = Event.builder()
+                .teacher(getTeacherById(teacherId))
+                .schoolClass(getClassById(classId))
+                .build();
+
+        return eventToEventDto.convert(event);
+    }
+
+    @Override
     public Boolean deleteEvent(Long teacherId, Long eventId) {
         Optional<Event> optionalEvent = eventRepository.findById(eventId);
         if (!optionalEvent.isPresent()) {
@@ -449,6 +460,19 @@ public class TeacherServiceImpl implements TeacherService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ClassDto> listClassesByTeacherAndSubject(Long teacherId, Long subjectId) {
+        Teacher teacher = getTeacherById(teacherId);
+        teacher.getSubjects().stream()
+                .filter(s -> s.getId().equals(subjectId))
+                .findAny().orElseThrow(() -> new NotFoundException("Subject not found"));
+
+
+        return classRepository.findAllBySubjects(getSubjectById(subjectId)).stream()
+                .map(classToClassDto::convert)
+                .collect(Collectors.toList());
+    }
+
 
     private Teacher getTeacherById(Long teacherId) {
         Optional<Teacher> teacherOptional = teacherRepository.findById(teacherId);
@@ -463,6 +487,11 @@ public class TeacherServiceImpl implements TeacherService {
     private Subject getSubjectById(Long subjectId) {
         return subjectRepository
                 .findById(subjectId).orElseThrow(() -> new NotFoundException("Subject not found"));
+    }
+
+    private Class getClassById(Long classId) {
+        return classRepository
+                .findById(classId).orElseThrow(() -> new NotFoundException("Class not found"));
     }
 
 }

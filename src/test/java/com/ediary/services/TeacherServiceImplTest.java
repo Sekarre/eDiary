@@ -183,6 +183,25 @@ class TeacherServiceImplTest {
     }
 
     @Test
+    void initNewClassEvent() {
+        Long classId = 1L;
+
+        Teacher teacher = Teacher.builder().id(1L).build();
+        Class schoolClass = Class.builder().id(classId).build();
+
+        when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
+        when(classRepository.findById(1L)).thenReturn(Optional.of(schoolClass));
+
+        when(eventToEventDto.convert(any())).thenReturn(EventDto.builder().id(1L).build());
+
+        EventDto newEvent = teacherService.initNewClassEvent(teacherId, classId);
+
+        assertEquals(1L, newEvent.getId());
+        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(eventToEventDto, times(1)).convert(any());
+    }
+
+    @Test
     void deleteEvent() {
         Teacher teacher = Teacher.builder().id(teacherId).build();
 
@@ -792,6 +811,36 @@ class TeacherServiceImplTest {
         assertEquals(grade.getSubject().getId(), gradeDto.getSubjectId());
         verify(teacherRepository, times(1)).findById(any());
         verify(subjectRepository, times(1)).findById(any());
+
+    }
+
+    @Test
+    void listClassesByTeacherAndSubject() {
+        Long teacherId = 1L;
+        Long subjectId = 1L;
+
+        Subject subject = Subject.builder().id(subjectId).build();
+
+        Teacher teacher = Teacher.builder()
+                .id(teacherId)
+                .subjects(Collections.singleton(subject))
+                .build();
+
+
+        when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
+        when(subjectRepository.findById(subjectId)).thenReturn(Optional.of(subject));
+        when(classToClassDto.convert(any())).thenReturn(ClassDto.builder().id(1L).build());
+        when(classRepository.findAllBySubjects(any())).thenReturn(Arrays.asList(
+                Class.builder().id(1L).teacher(teacher).subjects(Collections.singleton(subject)).build(),
+                Class.builder().id(2L).teacher(teacher).subjects(Collections.singleton(subject)).build()
+        ));
+
+        List<ClassDto> classes = teacherService.listClassesByTeacherAndSubject(teacherId, subjectId);
+
+        assertEquals(2, classes.size());
+        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(classRepository, times(1)).findAllBySubjects(any());
+        verify(classToClassDto, times(2)).convert(any());
 
     }
 

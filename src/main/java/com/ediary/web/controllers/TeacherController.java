@@ -1,12 +1,12 @@
 package com.ediary.web.controllers;
 
 import com.ediary.DTO.*;
+import com.ediary.domain.Event;
 import com.ediary.domain.Lesson;
 import com.ediary.domain.Subject;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -285,7 +285,43 @@ public class TeacherController {
         }
     }
 
+    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class")
+    public String getClassesBySubject(@PathVariable Long teacherId,
+                                      @PathVariable Long subjectId,
+                                      Model model) {
 
+        model.addAttribute("classes", teacherService.listClassesByTeacherAndSubject(teacherId, subjectId));
+
+        return "/teacher/lesson/classes";
+    }
+
+
+    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")
+    public String newLessonEvent(@PathVariable Long teacherId,
+                                 @PathVariable Long subjectId,
+                                 @PathVariable Long classId,
+                                 Model model) {
+
+        model.addAttribute("event", teacherService.initNewClassEvent(teacherId, classId));
+
+        return "/teacher/lesson/newLessonEvent";
+    }
+
+    @PostMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")
+    public String processNewLessonEvent(@PathVariable Long teacherId,
+                                   @PathVariable Long subjectId,
+                                   @PathVariable Long classId,
+                                   @Valid @RequestBody EventDto eventDto,
+                                   BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo: add view path
+            return "";
+        } else {
+            Event event = teacherService.saveEvent(eventDto);
+            return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + event.getId();
+        }
+    }
 
 
     @GetMapping("/{teacherId}/subject")
