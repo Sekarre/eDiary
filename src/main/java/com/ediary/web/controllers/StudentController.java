@@ -1,15 +1,14 @@
 package com.ediary.web.controllers;
+import com.ediary.converters.UserToUserDto;
+import com.ediary.domain.security.User;
 import com.ediary.services.SubjectService;
-import com.ediary.services.TimetableService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import com.ediary.services.StudentService;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
@@ -22,6 +21,15 @@ public class StudentController {
 
     private final StudentService studentService;
     private final SubjectService subjectService;
+
+    private final UserToUserDto userToUserDto;
+
+
+    @ModelAttribute
+    public void addAuthenticatedUserAndStudent(@AuthenticationPrincipal User user, Model model) {
+        model.addAttribute("user", userToUserDto.convert(user));
+        model.addAttribute("student", studentService.findByUser(user));
+    }
 
 
     @InitBinder

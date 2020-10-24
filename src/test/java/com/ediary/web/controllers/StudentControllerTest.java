@@ -1,9 +1,7 @@
 package com.ediary.web.controllers;
 
-import com.ediary.DTO.AttendanceDto;
-import com.ediary.DTO.BehaviorDto;
-import com.ediary.DTO.EventDto;
-import com.ediary.DTO.GradeDto;
+import com.ediary.DTO.*;
+import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.Attendance;
 import com.ediary.domain.Behavior;
 import com.ediary.domain.Event;
@@ -39,6 +37,9 @@ class StudentControllerTest {
     @Mock
     SubjectService subjectService;
 
+    @Mock
+    UserToUserDto userToUserDto;
+
     StudentController studentController;
 
     MockMvc mockMvc;
@@ -46,7 +47,7 @@ class StudentControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        studentController = new StudentController(studentService, subjectService);
+        studentController = new StudentController(studentService, subjectService, userToUserDto);
         mockMvc = MockMvcBuilders.standaloneSetup(studentController).build();
     }
 
@@ -151,6 +152,20 @@ class StudentControllerTest {
                 .andExpect(view().name("student/timetable"));
 
         verify(studentService, times(1)).getTimetableByStudentId(studentId);
+    }
+
+    @Test
+    void authenticatedUserAndStudent() throws Exception {
+
+        when(userToUserDto.convert(any())).thenReturn(UserDto.builder().build());
+        when(studentService.findByUser(any())).thenReturn(StudentDto.builder().build());
+
+        mockMvc.perform(get("/student/" + studentId + "/grade"))
+                .andExpect(model().attributeExists("user"))
+                .andExpect(model().attributeExists("student"));
+
+        verify(userToUserDto, times(1)).convert(any());
+        verify(studentService, times(1)).findByUser(any());
     }
 
 

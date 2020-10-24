@@ -1,9 +1,7 @@
 package com.ediary.services;
 
-import com.ediary.DTO.AttendanceDto;
-import com.ediary.DTO.BehaviorDto;
-import com.ediary.DTO.EventDto;
-import com.ediary.DTO.GradeDto;
+import com.ediary.DTO.*;
+import com.ediary.domain.security.User;
 import com.ediary.domain.timetable.Timetable;
 
 import java.util.List;
@@ -16,4 +14,5 @@ public interface StudentService {
     List<BehaviorDto> listBehaviors(Long studentId);
     List<EventDto> listEvents(Long studentId);
     Timetable getTimetableByStudentId(Long studentId);
+    StudentDto findByUser(User user);
 }

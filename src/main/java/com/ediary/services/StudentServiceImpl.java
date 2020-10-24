@@ -1,14 +1,9 @@
 package com.ediary.services;
 
-import com.ediary.DTO.AttendanceDto;
-import com.ediary.DTO.BehaviorDto;
-import com.ediary.DTO.EventDto;
-import com.ediary.DTO.GradeDto;
-import com.ediary.converters.AttendanceToAttendanceDto;
-import com.ediary.converters.BehaviorToBehaviorDto;
-import com.ediary.converters.EventToEventDto;
-import com.ediary.converters.GradeToGradeDto;
+import com.ediary.DTO.*;
+import com.ediary.converters.*;
 import com.ediary.domain.*;
+import com.ediary.domain.security.User;
 import com.ediary.domain.timetable.Timetable;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
@@ -35,6 +30,7 @@ public class StudentServiceImpl implements StudentService {
     private final AttendanceToAttendanceDto attendanceToAttendanceDto;
     private final BehaviorToBehaviorDto behaviorToBehaviorDto;
     private final EventToEventDto eventToEventDto;
+    private final StudentToStudentDto studentToStudentDto;
 
 
     @Override
@@ -86,6 +82,15 @@ public class StudentServiceImpl implements StudentService {
         Student student = getStudentById(studentId);
 
         return timetableService.getTimetableByClassId(student.getSchoolClass().getId());
+    }
+
+    @Override
+    public StudentDto findByUser(User user) {
+        Optional<Student> studentOptional = studentRepository.findByUser(user);
+        if (!studentOptional.isPresent()) {
+            throw new NotFoundException("Student Not Found");
+        }
+        return studentToStudentDto.convert(studentOptional.get());
     }
 
     private Student getStudentById(Long studentId) {

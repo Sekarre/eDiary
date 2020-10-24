@@ -1,15 +1,10 @@
 package com.ediary.services;
 
-import com.ediary.DTO.AttendanceDto;
-import com.ediary.DTO.BehaviorDto;
-import com.ediary.DTO.EventDto;
-import com.ediary.DTO.GradeDto;
-import com.ediary.converters.AttendanceToAttendanceDto;
-import com.ediary.converters.BehaviorToBehaviorDto;
-import com.ediary.converters.EventToEventDto;
-import com.ediary.converters.GradeToGradeDto;
+import com.ediary.DTO.*;
+import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
+import com.ediary.domain.security.User;
 import com.ediary.domain.timetable.Timetable;
 import com.ediary.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,6 +61,9 @@ class StudentServiceImplTest {
     @Mock
     EventToEventDto eventToEventDto;
 
+    @Mock
+    StudentToStudentDto studentToStudentDto;
+
     StudentService studentService;
 
     Grade gradeReturned;
@@ -75,7 +73,7 @@ class StudentServiceImplTest {
         MockitoAnnotations.initMocks(this);
         studentService = new StudentServiceImpl(timetableService,eventService, gradeRepository, attendanceRepository,
                 behaviorRepository, studentRepository, gradeToGradeDto, attendanceToAttendanceDto,
-                behaviorToBehaviorDto, eventToEventDto);
+                behaviorToBehaviorDto, eventToEventDto, studentToStudentDto);
 
         gradeReturned = Grade.builder().id(gradeId).value(value).build();
     }
@@ -185,5 +183,22 @@ class StudentServiceImplTest {
         verify(studentRepository, times(1)).findById(studentId);
         verify(timetableService, times(1)).getTimetableByClassId(classId);
 
+    }
+
+    @Test
+    void findByUser() {
+        Long userId = 24L;
+        User user = User.builder().id(userId).build();
+
+        Student studentReturned = Student.builder().id(studentId).build();
+
+        when(studentRepository.findByUser(user)).thenReturn(Optional.of(studentReturned));
+        when(studentToStudentDto.convert(studentReturned)).thenReturn(StudentDto.builder().id(studentReturned.getId()).build());
+
+        StudentDto student = studentService.findByUser(user);
+
+        assertEquals(student.getId(), studentReturned.getId());
+        verify(studentRepository, times(1)).findByUser(user);
+        verify(studentToStudentDto, times(1)).convert(studentReturned);
     }
 }
