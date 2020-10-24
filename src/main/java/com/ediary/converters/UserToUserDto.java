@@ -1,6 +1,7 @@
 package com.ediary.converters;
 
 import com.ediary.DTO.UserDto;
+import com.ediary.domain.Message;
 import com.ediary.domain.security.User;
 import com.ediary.repositories.MessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class UserToUserDto implements Converter<User, UserDto> {
 
         final UserDto userDto = new UserDto();
         userDto.setId(source.getId());
-        userDto.setMessageNumber((long) messageRepository.findAllByStatus_SentAndReaders(source).size());
+        userDto.setMessageNumber((long) messageRepository.findAllByStatusAndReaders(Message.Status.SENT, source).size());
 
         return userDto;
     }

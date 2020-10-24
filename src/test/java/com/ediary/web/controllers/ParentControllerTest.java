@@ -1,6 +1,7 @@
 package com.ediary.web.controllers;
 
 import com.ediary.DTO.*;
+import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.*;
 import com.ediary.domain.timetable.Timetable;
 import com.ediary.services.ParentService;
@@ -39,6 +40,9 @@ class ParentControllerTest {
     @Mock
     SubjectService subjectService;
 
+    @Mock
+    UserToUserDto userToUserDto;
+
     MockMvc mockMvc;
 
     ParentController parentController;
@@ -47,10 +51,23 @@ class ParentControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        parentController = new ParentController(parentService, studentService, subjectService);
+        parentController = new ParentController(parentService, studentService, subjectService, userToUserDto);
         mockMvc = MockMvcBuilders.standaloneSetup(parentController).build();
     }
 
+    @Test
+    void authenticatedUserAndParent() throws Exception {
+
+        when(userToUserDto.convert(any())).thenReturn(UserDto.builder().build());
+        when(parentService.findByUser(any())).thenReturn(ParentDto.builder().build());
+
+        mockMvc.perform(get("/parent/" + parentId+ "/students"))
+                .andExpect(model().attributeExists("user"))
+                .andExpect(model().attributeExists("parent"));
+
+        verify(userToUserDto, times(1)).convert(any());
+        verify(parentService, times(1)).findByUser(any());
+    }
 
     @Test
     void getAllStudents() throws Exception {

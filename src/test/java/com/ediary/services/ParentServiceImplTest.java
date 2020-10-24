@@ -1,12 +1,15 @@
 package com.ediary.services;
 
 import com.ediary.DTO.AttendanceDto;
+import com.ediary.DTO.ParentDto;
 import com.ediary.DTO.StudentDto;
 import com.ediary.converters.AttendanceDtoToAttendance;
+import com.ediary.converters.ParentToParentDto;
 import com.ediary.converters.StudentToStudentDto;
 import com.ediary.domain.Attendance;
 import com.ediary.domain.Parent;
 import com.ediary.domain.Student;
+import com.ediary.domain.security.User;
 import com.ediary.repositories.AttendanceRepository;
 import com.ediary.repositories.ParentRepository;
 import com.ediary.repositories.StudentRepository;
@@ -39,6 +42,9 @@ class ParentServiceImplTest {
     @Mock
     AttendanceDtoToAttendance attendanceDtoToAttendance;
 
+    @Mock
+    ParentToParentDto parentToParentDto;
+
     ParentService parentService;
 
     @BeforeEach
@@ -46,7 +52,7 @@ class ParentServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         parentService = new ParentServiceImpl(studentRepository, attendanceRepository, parentRepository,
-                studentToStudentDto, attendanceDtoToAttendance);
+                studentToStudentDto, attendanceDtoToAttendance, parentToParentDto);
     }
 
 
@@ -92,6 +98,23 @@ class ParentServiceImplTest {
         assertEquals(attendanceToSave.getId(), returnedAttendance.getId());
         verify(attendanceRepository, times(1)).save(any());
         verify(attendanceDtoToAttendance, times(1)).convert(attendanceToSave);
+    }
+
+    @Test
+    void findByUser() {
+        Long userId = 24L;
+        User user = User.builder().id(userId).build();
+
+        Parent parentReturned = Parent.builder().id(parentId).build();
+
+        when(parentRepository.findByUser(user)).thenReturn(Optional.of(parentReturned));
+        when(parentToParentDto.convert(parentReturned)).thenReturn(ParentDto.builder().id(parentReturned.getId()).build());
+
+        ParentDto parent = parentService.findByUser(user);
+
+        assertEquals(parent.getId(), parentReturned.getId());
+        verify(parentRepository, times(1)).findByUser(user);
+        verify(parentToParentDto, times(1)).convert(parentReturned);
     }
 
 }
