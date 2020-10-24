@@ -2,8 +2,11 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.MessageDto;
 import com.ediary.DTO.NoticeDto;
+import com.ediary.converters.UserToUserDto;
+import com.ediary.domain.security.User;
 import com.ediary.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +23,13 @@ import java.time.LocalDate;
 public class UserController {
 
     private final UserService userService;
+
+    private final UserToUserDto userToUserDto;
+
+    @ModelAttribute
+    public void addAuthenticatedUser(@AuthenticationPrincipal User user, Model model) {
+        model.addAttribute("user", userToUserDto.convert(user));
+    }
 
     @InitBinder
     public void dataBinder(WebDataBinder dataBinder){

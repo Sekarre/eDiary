@@ -2,6 +2,8 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.MessageDto;
 import com.ediary.DTO.NoticeDto;
+import com.ediary.DTO.UserDto;
+import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 import com.ediary.services.UserService;
@@ -27,6 +29,9 @@ class UserControllerTest {
     @Mock
     UserService userService;
 
+    @Mock
+    UserToUserDto userToUserDto;
+
     UserController userController;
 
     MockMvc mockMvc;
@@ -35,8 +40,18 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        userController = new UserController(userService);
+        userController = new UserController(userService, userToUserDto);
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+    }
+
+    @Test
+    void addAuthenticatedUser() throws Exception {
+        when(userToUserDto.convert(any())).thenReturn(UserDto.builder().build());
+
+        mockMvc.perform(get("/user/notice"))
+                .andExpect(model().attributeExists("user"));
+
+        verify(userToUserDto, times(1)).convert(any());
     }
 
     @Test
