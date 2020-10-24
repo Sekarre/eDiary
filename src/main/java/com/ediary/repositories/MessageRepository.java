@@ -10,5 +10,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     List<Message> findAllByReaders(User user);
     List<Message> findAllBySenders(User user);
+    List<Message> findAllByStatus_SentAndReaders(User user);
 
 }
