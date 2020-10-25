@@ -22,7 +22,7 @@ public interface TeacherService {
 
     Topic saveTopic(Topic topic);
     Boolean deleteTopic(Long topicId);
-    List<Topic> listTopics(Long teacherId, Long subjectId);
+    List<TopicDto> listTopics(Long teacherId, Long subjectId);
 
     SubjectDto getSubjectById(Long teacherId, Long subjectId);
     Subject saveOrUpdateSubject(SubjectDto subject);

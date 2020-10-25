@@ -710,4 +710,23 @@ class TeacherControllerTest {
         verify(teacherService, times(1)).saveOrUpdateSubject(any());
     }
 
+    @Test
+    void getTopicsBySubject() throws Exception {
+
+        Long subjectId = 25L;
+
+        when(teacherService.listTopics(teacherId, subjectId)).thenReturn(Arrays.asList(
+                TopicDto.builder().id(1L).build(),
+                TopicDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/subject/" + subjectId + "/topic"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("topics"))
+                .andExpect(view().name("/teacher/subject/topic"));
+
+        verify(teacherService, times(1)).listTopics(teacherId, subjectId);
+        assertEquals(2, teacherService.listTopics(teacherId, subjectId).size());
+    }
+
 }

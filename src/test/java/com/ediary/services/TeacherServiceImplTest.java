@@ -42,6 +42,8 @@ class TeacherServiceImplTest {
     AttendanceRepository attendanceRepository;
     @Mock
     StudentRepository studentRepository;
+    @Mock
+    TopicRepository topicRepository;
 
     @Mock
     EventToEventDto eventToEventDto;
@@ -73,6 +75,8 @@ class TeacherServiceImplTest {
     AttendanceToAttendanceDto attendanceToAttendanceDto;
     @Mock
     StudentToStudentDto studentToStudentDto;
+    @Mock
+    TopicToTopicDto topicToTopicDto;
 
     TeacherService teacherService;
 
@@ -81,10 +85,11 @@ class TeacherServiceImplTest {
         MockitoAnnotations.initMocks(this);
         teacherService = new TeacherServiceImpl(eventService, teacherRepository, classRepository, eventRepository,
                 behaviorRepository, lessonRepository, subjectRepository, gradeRepository, attendanceRepository, studentRepository,
+                topicRepository,
                 eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto,
                 behaviorDtoToBehavior, lessonToLessonDto, lessonDtoToLesson, subjectToSubjectDto, subjectDtoToSubject,
                 gradeToGradeDto, gradeDtoToGrade, teacherToTeacherDto, attendanceDtoToAttendance, attendanceToAttendanceDto,
-                studentToStudentDto);
+                studentToStudentDto,topicToTopicDto);
     }
 
     @Test
@@ -609,6 +614,27 @@ class TeacherServiceImplTest {
         assertEquals(lessonId, lessonDto.getId());
         verify(lessonRepository, times(1)).findById(lessonId);
         verify(lessonToLessonDto, times(1)).convert(any());
+    }
+
+    @Test
+    void listTopics() {
+        Long subjectId = 25L;
+        Subject subject = Subject.builder().id(subjectId).build();
+
+        when(subjectRepository.findById(subjectId)).thenReturn(Optional.of(subject));
+        when(topicRepository.findAllBySubjectOrderByNumber(subject)).thenReturn(Arrays.asList(
+                Topic.builder().id(1L).build(),
+                Topic.builder().id(2L).build()
+        ));
+        when(topicToTopicDto.convert(any())).thenReturn(TopicDto.builder().id(3L).build());
+
+        List<TopicDto> topic = teacherService.listTopics(teacherId, subjectId);
+
+        assertEquals(topic.size(), 2);
+        assertEquals(topic.get(0).getId(), 3L);
+        verify(subjectRepository, times(1)).findById(subjectId);
+        verify(topicRepository, times(1)).findAllBySubjectOrderByNumber(subject);
+        verify(topicToTopicDto, times(2)).convert(any());
     }
 
     @Test

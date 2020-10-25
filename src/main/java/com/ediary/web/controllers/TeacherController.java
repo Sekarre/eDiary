@@ -483,5 +483,13 @@ public class TeacherController {
         }
     }
 
+    @GetMapping("/{teacherId}/subject/{subjectId}/topic")
+    public String getTopicsBySubject(@PathVariable Long teacherId,
+                                     @PathVariable Long subjectId,
+                                     Model model) {
+        model.addAttribute("topics", teacherService.listTopics(teacherId, subjectId));
+        return "/teacher/subject/topic";
+    }
+
 
 }

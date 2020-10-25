@@ -29,6 +29,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final GradeRepository gradeRepository;
     private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
+    private final TopicRepository topicRepository;
 
     private final EventToEventDto eventToEventDto;
     private final EventDtoToEvent eventDtoToEvent;
@@ -45,6 +46,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final AttendanceDtoToAttendance attendanceDtoToAttendance;
     private final AttendanceToAttendanceDto attendanceToAttendanceDto;
     private final StudentToStudentDto studentToStudentDto;
+    private final TopicToTopicDto topicToTopicDto;
 
     @Override
     public TeacherDto findByUser(User user) {
@@ -142,8 +144,13 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Topic> listTopics(Long teacherId, Long subjectId) {
-        return null;
+    public List<TopicDto> listTopics(Long teacherId, Long subjectId) {
+        Subject subject = getSubjectById(subjectId);
+
+        return topicRepository.findAllBySubjectOrderByNumber(subject)
+                .stream()
+                .map(topicToTopicDto::convert)
+                .collect(Collectors.toList());
     }
 
     @Override
