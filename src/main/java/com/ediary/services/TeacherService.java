@@ -10,12 +10,15 @@ public interface TeacherService {
 
     TeacherDto findByUser(User user);
 
+    List<StudentDto> listLessonStudents(Long teacherId, Long subjectId, Long classId, Long lessonId);
+
     LessonDto initNewLesson(Long subjectId);
     Lesson saveLesson(LessonDto lesson);
     Boolean deleteLesson(Long lessonId);
     List<LessonDto> listLessons(Long teacherId, Long subjectId);
     List<LessonDto> listLessons(Long teacherId);
-
+    List<LessonDto> listLessons(Long teacherId, Long subjectId, Long classId);
+    LessonDto getLesson(Long lessonId);
 
     Topic saveTopic(Topic topic);
     Boolean deleteTopic(Long topicId);
@@ -28,8 +31,8 @@ public interface TeacherService {
     SubjectDto initNewSubject(Long teacherId);
     SubjectDto updatePatchSubject(SubjectDto subjectUpdated);
 
-    Attendance saveAttendance(Attendance attendance);
-    List<Attendance> listAttendances(Long teacherId, Long lessonId);
+    Attendance saveAttendance(AttendanceDto attendance);
+    List<AttendanceDto> listAttendances(Long teacherId, Long subjectId, Long classId, Long lessonId);
 
     Grade saveClassGrade(Grade grade);
     Boolean deleteClassGrade(Long gradeId);
@@ -42,6 +45,7 @@ public interface TeacherService {
     Boolean deleteGrade(Long teacherId, Long subjectId, Long gradeId);
     Grade saveGrade(GradeDto grade);
     GradeDto initNewGrade(Long teacherId, Long subjectId);
+
 
     Event saveEvent(EventDto eventDto);
     EventDto initNewEvent(Long teacherId);
@@ -63,4 +67,5 @@ public interface TeacherService {
 
     List<ClassDto> listAllClasses();
     List<ClassDto> listClassesByTeacherAndSubject(Long teacherId, Long subjectId);
+    ClassDto getSchoolClassByTeacherAndSubject(Long classId, Long subjectId, Long teacherId);
 }

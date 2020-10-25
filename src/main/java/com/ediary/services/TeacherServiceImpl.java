@@ -27,6 +27,8 @@ public class TeacherServiceImpl implements TeacherService {
     private final LessonRepository lessonRepository;
     private final SubjectRepository subjectRepository;
     private final GradeRepository gradeRepository;
+    private final AttendanceRepository attendanceRepository;
+    private final StudentRepository studentRepository;
 
     private final EventToEventDto eventToEventDto;
     private final EventDtoToEvent eventDtoToEvent;
@@ -40,6 +42,9 @@ public class TeacherServiceImpl implements TeacherService {
     private final GradeToGradeDto gradeToGradeDto;
     private final GradeDtoToGrade gradeDtoToGrade;
     private final TeacherToTeacherDto teacherToTeacherDto;
+    private final AttendanceDtoToAttendance attendanceDtoToAttendance;
+    private final AttendanceToAttendanceDto attendanceToAttendanceDto;
+    private final StudentToStudentDto studentToStudentDto;
 
     @Override
     public TeacherDto findByUser(User user) {
@@ -49,6 +54,21 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         return teacherToTeacherDto.convert(teacherOptional.get());
+    }
+
+    @Override
+    public List<StudentDto> listLessonStudents(Long teacherId, Long subjectId, Long classId, Long lessonId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        teacher.getSubjects().stream()
+                .filter(s -> s.getSchoolClass().getLessons()
+                        .stream()
+                        .anyMatch(lesson -> lesson.getId().equals(lessonId)))
+                .findAny().orElseThrow(() -> new NoAccessException("Class -> Lesson"));
+
+        return studentRepository.findAllBySchoolClassId(classId).stream()
+                .map(studentToStudentDto::convert)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -77,7 +97,7 @@ public class TeacherServiceImpl implements TeacherService {
         Subject teacherSubject = teacher.getSubjects().stream()
                 .filter(subject -> subject.getId().equals(subjectId))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("No such subject for teacher"));
+                .orElseThrow(() -> new NoAccessException("No such subject for teacher"));
 
 
         return new ArrayList<>(lessonRepository.findAllBySubjectId(teacherSubject.getId()))
@@ -89,6 +109,26 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<LessonDto> listLessons(Long teacherId) {
         return null;
+    }
+
+    @Override
+    public List<LessonDto> listLessons(Long teacherId, Long subjectId, Long classId) {
+
+        Teacher teacher = getTeacherById(teacherId);
+
+        checkIfTeacherHasSubject(subjectId, teacher);
+
+        checkIfSubjectHasClass(classId, teacher);
+
+        return lessonRepository.findAllBySubjectIdAndSchoolClassId(subjectId, classId).stream()
+                .map(lessonToLessonDto::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public LessonDto getLesson(Long lessonId) {
+        return lessonToLessonDto.convert(lessonRepository
+                .findById(lessonId).orElseThrow(() -> new NotFoundException("Lesson not found")));
     }
 
     @Override
@@ -178,13 +218,24 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Attendance saveAttendance(Attendance attendance) {
-        return null;
+    public Attendance saveAttendance(AttendanceDto attendance) {
+        return attendanceRepository.save(attendanceDtoToAttendance.convert(attendance));
     }
 
     @Override
-    public List<Attendance> listAttendances(Long teacherId, Long lessonId) {
-        return null;
+    public List<AttendanceDto> listAttendances(Long teacherId, Long subjectId, Long classId, Long lessonId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        teacher.getSubjects().stream()
+                .filter(s -> s.getSchoolClass().getLessons()
+                        .stream()
+                        .anyMatch(lesson -> lesson.getId().equals(lessonId)))
+                .findAny().orElseThrow(() -> new NoAccessException("Class -> Lesson"));
+
+        return attendanceRepository.findAllByLesson_Id(lessonId).stream()
+                .map(attendanceToAttendanceDto::convert)
+                .sorted(Comparator.comparingLong(AttendanceDto::getId))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -287,6 +338,7 @@ public class TeacherServiceImpl implements TeacherService {
 
         return gradeToGradeDto.convert(grade);
     }
+
 
     @Override
     public Event saveEvent(EventDto eventDto) {
@@ -475,9 +527,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<ClassDto> listClassesByTeacherAndSubject(Long teacherId, Long subjectId) {
         Teacher teacher = getTeacherById(teacherId);
-        teacher.getSubjects().stream()
-                .filter(s -> s.getId().equals(subjectId))
-                .findAny().orElseThrow(() -> new NotFoundException("Subject not found"));
+        checkIfTeacherHasSubject(subjectId, teacher);
 
 
         return classRepository.findAllBySubjects(getSubjectById(subjectId)).stream()
@@ -485,6 +535,19 @@ public class TeacherServiceImpl implements TeacherService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public ClassDto getSchoolClassByTeacherAndSubject(Long classId, Long subjectId, Long teacherId) {
+
+        Teacher teacher = getTeacherById(teacherId);
+
+        checkIfTeacherHasSubject(subjectId, teacher);
+
+        checkIfSubjectHasClass(classId, teacher);
+
+
+        return classToClassDto.convert(classRepository
+                .findById(classId).orElseThrow(() -> new NotFoundException("Class not found")));
+    }
 
     private Teacher getTeacherById(Long teacherId) {
         Optional<Teacher> teacherOptional = teacherRepository.findById(teacherId);
@@ -505,5 +568,19 @@ public class TeacherServiceImpl implements TeacherService {
         return classRepository
                 .findById(classId).orElseThrow(() -> new NotFoundException("Class not found"));
     }
+
+
+    private void checkIfSubjectHasClass(Long classId, Teacher teacher) {
+        teacher.getSubjects().stream()
+                .filter(s -> s.getSchoolClass().getId().equals(classId))
+                .findAny().orElseThrow(() -> new NoAccessException("Subject -> Class"));
+    }
+
+    private void checkIfTeacherHasSubject(Long subjectId, Teacher teacher) {
+        teacher.getSubjects().stream()
+                .filter(s -> s.getId().equals(subjectId))
+                .findAny().orElseThrow(() -> new NoAccessException("Teacher -> Subject"));
+    }
+
 
 }

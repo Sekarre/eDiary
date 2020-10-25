@@ -13,6 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -103,8 +105,8 @@ class TeacherControllerTest {
         when(teacherService.saveEvent(any())).thenReturn(Event.builder().build());
 
         mockMvc.perform(post("/teacher/" + teacherId + "/event/new")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(AbstractAsJsonControllerTest.asJsonString(EventDto.builder().build())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(EventDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/event"));
 
@@ -130,8 +132,8 @@ class TeacherControllerTest {
         when(teacherService.updatePutEvent(any())).thenReturn(EventDto.builder().id(eventId).build());
 
         mockMvc.perform(put("/teacher/" + teacherId + "/event/update")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(AbstractAsJsonControllerTest.asJsonString(eventDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(eventDto)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/" + teacherId + "/event/" + eventId));
 
@@ -429,22 +431,143 @@ class TeacherControllerTest {
     }
 
     @Test
-    void getClassesBySubject() throws Exception {
+    void getAllClassesBySubject() throws Exception {
 
         Long subjectId = 1L;
 
-        when(teacherService.listClassesByTeacherAndSubject(teacherId, subjectId)).thenReturn(Arrays.asList(
-                ClassDto.builder().id(1L).build(),
-                ClassDto.builder().id(2L).build()
+        ClassDto schoolClass = ClassDto.builder().id(1L).build();
+
+        when(teacherService.listClassesByTeacherAndSubject(teacherId, subjectId)).thenReturn(Collections.singletonList(
+                schoolClass
         ));
 
-        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId +"/class"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("classes"))
-                .andExpect(view().name("/teacher/lesson/classes"));
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId
+                        + "/lesson/subject/" + subjectId + "/class/" + schoolClass.getId()));
 
         verify(teacherService, times(1)).listClassesByTeacherAndSubject(teacherId, subjectId);
-        assertEquals(2, teacherService.listClassesByTeacherAndSubject(teacherId, subjectId).size());
+        assertEquals(1, teacherService.listClassesByTeacherAndSubject(teacherId, subjectId).size());
+    }
+
+    @Test
+    void getClassBySubject() throws Exception {
+        Long subjectId = 1L;
+        Long classId = 1L;
+
+        when(teacherService.getSchoolClassByTeacherAndSubject(classId, subjectId, teacherId)).thenReturn(
+                ClassDto.builder().id(1L).build()
+        );
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("class"))
+                .andExpect(view().name("/teacher/lesson/class"));
+
+        verify(teacherService, times(1)).getSchoolClassByTeacherAndSubject(classId, subjectId, teacherId);
+        assertNotNull(teacherService.getSchoolClassByTeacherAndSubject(classId, subjectId, teacherId));
+    }
+
+    @Test
+    void getAllLessonsBySubjectAndClass() throws Exception {
+        Long subjectId = 1L;
+        Long classId = 1L;
+
+        when(teacherService.getSchoolClassByTeacherAndSubject(classId, subjectId, teacherId)).thenReturn(
+                ClassDto.builder().id(1L).build()
+        );
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId + "/lessons"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("lessons"))
+                .andExpect(view().name("/teacher/lesson/allClassLessons"));
+
+        verify(teacherService, times(1)).listLessons(teacherId, subjectId, classId);
+        assertNotNull(teacherService.listLessons(teacherId, subjectId, classId));
+    }
+
+    @Test
+    void getLesson() throws Exception {
+        Long classId = 1L;
+        Long subjectId = 1L;
+        Long lessonId = 1L;
+
+        when(teacherService.getLesson(classId)).thenReturn(
+                LessonDto.builder().id(lessonId).build()
+        );
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId
+                + "/class/" + classId + "/lessons/" + lessonId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("lesson"))
+                .andExpect(view().name("/teacher/lesson/singleLesson"));
+
+        verify(teacherService, times(1)).getLesson(classId);
+        assertNotNull(teacherService.getLesson(classId));
+    }
+
+    @Test
+    void getLessonAttendances() throws Exception {
+        Long classId = 1L;
+        Long subjectId = 1L;
+        Long lessonId = 1L;
+
+        when(teacherService.listAttendances(teacherId, subjectId, classId, lessonId)).thenReturn(
+                Collections.singletonList(AttendanceDto.builder().build())
+        );
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId
+                + "/class/" + classId + "/lessons/" + lessonId + "/attendances"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("attendances"))
+                .andExpect(view().name("/teacher/lesson/attendances"));
+
+        verify(teacherService, times(1)).listAttendances(teacherId, subjectId, classId, lessonId);
+        assertNotNull(teacherService.listAttendances(teacherId, subjectId, classId, lessonId));
+    }
+
+    @Test
+    void newLessonAttendance() throws Exception {
+        Long classId = 1L;
+        Long subjectId = 1L;
+        Long lessonId = 1L;
+
+        Attendance attendance = Attendance.builder()
+                .id(1L)
+                .build();
+
+        when(teacherService.saveAttendance(any())).thenReturn(attendance);
+
+        mockMvc.perform(post(
+                "/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId + "/lessons/"
+                        + lessonId + "/attendances/new")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(BehaviorDto.builder().build())))
+                .andExpect(status().isOk())
+                .andExpect(view().name(""));
+
+
+        verify(teacherService, times(1)).saveAttendance(any());
+    }
+
+    @Test
+    void getLessonStudents() throws Exception {
+        Long classId = 1L;
+        Long subjectId = 1L;
+        Long lessonId = 1L;
+
+        when(teacherService.listLessonStudents(teacherId, subjectId, classId, lessonId)).thenReturn(
+                Collections.singletonList(StudentDto.builder().build())
+        );
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId
+                + "/class/" + classId + "/lessons/" + lessonId + "/grades"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("students"))
+                .andExpect(view().name("/teacher/lesson/students"));
+
+        verify(teacherService, times(1)).listLessonStudents(teacherId, subjectId, classId, lessonId);
+        assertNotNull(teacherService.listLessonStudents(teacherId, subjectId, classId, lessonId));
     }
 
     @Test
@@ -490,8 +613,8 @@ class TeacherControllerTest {
     void getSubjects() throws Exception {
 
         when(teacherService.listSubjects(teacherId)).thenReturn(Arrays.asList(
-            SubjectDto.builder().id(1L).build(),
-            SubjectDto.builder().id(2L).build()
+                SubjectDto.builder().id(1L).build(),
+                SubjectDto.builder().id(2L).build()
         ));
 
         mockMvc.perform(get("/teacher/" + teacherId + "/subject"))
@@ -564,8 +687,8 @@ class TeacherControllerTest {
         when(teacherService.saveOrUpdateSubject(any())).thenReturn(Subject.builder().build());
 
         mockMvc.perform(put("/teacher/" + teacherId + "/subject/update")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(AbstractAsJsonControllerTest.asJsonString(SubjectDto.builder().build())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(SubjectDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject"));
 

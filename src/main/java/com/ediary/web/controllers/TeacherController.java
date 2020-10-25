@@ -2,6 +2,7 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
+import com.ediary.domain.Attendance;
 import com.ediary.domain.Event;
 import com.ediary.domain.Lesson;
 import com.ediary.domain.Subject;
@@ -36,16 +37,17 @@ public class TeacherController {
     }
 
     @InitBinder
-    public void dataBinder(WebDataBinder dataBinder){
+    public void dataBinder(WebDataBinder dataBinder) {
         dataBinder.setDisallowedFields("id");
 
-        dataBinder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport(){
+        dataBinder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) throws IllegalArgumentException {
                 setValue(LocalDate.parse(text));
             }
         });
     }
+
     @GetMapping("/{teacherId}/event")
     public String getAllEvents(@PathVariable Long teacherId, Model model) {
 
@@ -69,7 +71,7 @@ public class TeacherController {
 
     @PostMapping("/{teacherId}/event/new")
     public String processNewEvent(@Valid @RequestBody EventDto eventDto, BindingResult result) {
-        if (result.hasErrors()){
+        if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
@@ -89,7 +91,7 @@ public class TeacherController {
     @PutMapping("/{teacherId}/event/update")
     public String updatePutEvent(@PathVariable Long teacherId,
                                  @Valid @RequestBody EventDto eventDto, BindingResult result) {
-        if (result.hasErrors()){
+        if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
@@ -101,7 +103,7 @@ public class TeacherController {
     @PatchMapping("/{teacherId}/event/update")
     public String updatePatchEvent(@PathVariable Long teacherId,
                                    @Valid @RequestBody EventDto eventDto, BindingResult result) {
-        if (result.hasErrors()){
+        if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
@@ -135,7 +137,7 @@ public class TeacherController {
 
     @PostMapping("/{teacherId}/behavior/new")
     public String processNewBehavior(@Valid @RequestBody BehaviorDto behaviorDto, BindingResult result) {
-        if (result.hasErrors()){
+        if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
@@ -154,7 +156,7 @@ public class TeacherController {
     @PutMapping("/{teacherId}/behavior/update")
     public String updatePutBehavior(@PathVariable Long teacherId,
                                     @Valid @RequestBody BehaviorDto behaviorDto, BindingResult result) {
-        if (result.hasErrors()){
+        if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
@@ -166,8 +168,8 @@ public class TeacherController {
 
     @PatchMapping("/{teacherId}/behavior/update")
     public String updatePatchBehavior(@PathVariable Long teacherId,
-                                   @Valid @RequestBody BehaviorDto behaviorDto, BindingResult result) {
-        if (result.hasErrors()){
+                                      @Valid @RequestBody BehaviorDto behaviorDto, BindingResult result) {
+        if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
@@ -176,7 +178,6 @@ public class TeacherController {
             return "/" + teacherId + "/behavior/" + behavior.getId();
         }
     }
-
 
 
     @GetMapping("/{teacherId}/grade/subject")
@@ -208,7 +209,7 @@ public class TeacherController {
     public String processNewGrade(@PathVariable Long teacherId,
                                   @PathVariable Long subjectId,
                                   @Valid @RequestBody GradeDto gradeDto, BindingResult result) {
-        if (result.hasErrors()){
+        if (result.hasErrors()) {
             //todo: add view path
             return "/";
         } else {
@@ -236,7 +237,7 @@ public class TeacherController {
             return "";
         } else {
             teacherService.updatePutGrade(gradeDto);
-            return "redirect:/teacher/" + teacherId +"/grade/subject/" + subjectId;
+            return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
         }
     }
 
@@ -245,12 +246,12 @@ public class TeacherController {
                                    @PathVariable Long subjectId,
                                    @Valid @RequestBody GradeDto gradeDto,
                                    BindingResult result) {
-        if (result.hasErrors()){
+        if (result.hasErrors()) {
             //todo: add view path
             return "";
         } else {
             teacherService.updatePatchGrade(gradeDto);
-            return "redirect:/teacher/" + teacherId +"/grade/subject/" + subjectId;
+            return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
         }
     }
 
@@ -265,7 +266,7 @@ public class TeacherController {
 
 
     @GetMapping("/{teacherId}/lesson/subject/{subjectId}")
-    public String getAllLessonsBySubject(@PathVariable Long teacherId, @PathVariable Long subjectId,  Model model) {
+    public String getAllLessonsBySubject(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
 
         model.addAttribute("lessons", teacherService.listLessons(teacherId, subjectId));
 
@@ -274,7 +275,7 @@ public class TeacherController {
 
 
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/new")
-    public String newLesson(@PathVariable Long teacherId, @PathVariable Long subjectId,  Model model) {
+    public String newLesson(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
         model.addAttribute("lesson", teacherService.initNewLesson(subjectId));
 
         return "/teacher/lesson/newLesson";
@@ -297,14 +298,93 @@ public class TeacherController {
     }
 
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class")
-    public String getClassesBySubject(@PathVariable Long teacherId,
-                                      @PathVariable Long subjectId,
-                                      Model model) {
+    public String getAllClassesBySubject(@PathVariable Long teacherId,
+                                         @PathVariable Long subjectId) {
 
-        model.addAttribute("classes", teacherService.listClassesByTeacherAndSubject(teacherId, subjectId));
+        ClassDto schoolClass = teacherService.listClassesByTeacherAndSubject(teacherId, subjectId).get(0);
 
-        return "/teacher/lesson/classes";
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + schoolClass.getId();
     }
+
+    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}")
+    public String getClassBySubject(@PathVariable Long teacherId,
+                                    @PathVariable Long subjectId,
+                                    @PathVariable Long classId,
+                                    Model model) {
+        model.addAttribute("class", teacherService.getSchoolClassByTeacherAndSubject(classId, subjectId, teacherId));
+
+        return "/teacher/lesson/class";
+    }
+
+    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons")
+    public String getAllLessonsBySubjectAndClass(@PathVariable Long teacherId,
+                                                 @PathVariable Long subjectId,
+                                                 @PathVariable Long classId,
+                                                 Model model) {
+
+        model.addAttribute("lessons", teacherService.listLessons(teacherId, subjectId, classId));
+
+        return "/teacher/lesson/allClassLessons";
+    }
+
+    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}")
+    public String getLesson(@PathVariable Long teacherId,
+                            @PathVariable Long subjectId,
+                            @PathVariable Long classId,
+                            @PathVariable Long lessonId,
+                            Model model) {
+
+        model.addAttribute("lesson", teacherService.getLesson(lessonId));
+
+        return "/teacher/lesson/singleLesson";
+    }
+
+    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}/attendances")
+    public String getLessonAttendances(@PathVariable Long teacherId,
+                                       @PathVariable Long subjectId,
+                                       @PathVariable Long classId,
+                                       @PathVariable Long lessonId,
+                                       Model model) {
+
+        model.addAttribute("attendances", teacherService.listAttendances(teacherId, subjectId, classId, lessonId));
+
+        return "/teacher/lesson/attendances";
+    }
+
+    //todo: Modyfikuj frekwencje ucznia
+    @PostMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}/attendances/new")
+    public String newLessonAttendance(@PathVariable Long teacherId,
+                                      @PathVariable Long subjectId,
+                                      @PathVariable Long classId,
+                                      @PathVariable Long lessonId,
+                                      @Valid @RequestBody AttendanceDto attendanceDto,
+                                      BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo: add path
+            return "";
+        } else {
+            teacherService.saveAttendance(attendanceDto);
+            return "";
+        }
+
+    }
+
+
+    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}/grades")
+    public String getLessonStudents(@PathVariable Long teacherId,
+                                    @PathVariable Long subjectId,
+                                    @PathVariable Long classId,
+                                    @PathVariable Long lessonId,
+                                    Model model) {
+
+        model.addAttribute("students", teacherService.listLessonStudents(teacherId, subjectId, classId, lessonId));
+
+        return "/teacher/lesson/students";
+    }
+
+
+    //todo: Grades
 
 
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")
@@ -320,10 +400,10 @@ public class TeacherController {
 
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")
     public String processNewLessonEvent(@PathVariable Long teacherId,
-                                   @PathVariable Long subjectId,
-                                   @PathVariable Long classId,
-                                   @Valid @RequestBody EventDto eventDto,
-                                   BindingResult result) {
+                                        @PathVariable Long subjectId,
+                                        @PathVariable Long classId,
+                                        @Valid @RequestBody EventDto eventDto,
+                                        BindingResult result) {
 
         if (result.hasErrors()) {
             //todo: add view path
@@ -360,7 +440,7 @@ public class TeacherController {
     public String processNewSubject(@PathVariable Long teacherId,
                                     @Valid @RequestBody SubjectDto subject,
                                     BindingResult result) {
-        if (result.hasErrors()){
+        if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
@@ -379,7 +459,7 @@ public class TeacherController {
     @PutMapping("/{teacherId}/subject/update")
     public String updatePutSubject(@PathVariable Long teacherId,
                                    @Valid @RequestBody SubjectDto subjectDto, BindingResult result) {
-        if (result.hasErrors()){
+        if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
@@ -393,7 +473,7 @@ public class TeacherController {
     public String updatePatchSubject(@PathVariable Long teacherId,
                                      @Valid @RequestBody SubjectDto subjectDto,
                                      BindingResult result) {
-        if (result.hasErrors()){
+        if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
@@ -402,7 +482,6 @@ public class TeacherController {
             return "redirect:/teacher/" + teacherId + "/subject";
         }
     }
-
 
 
 }
