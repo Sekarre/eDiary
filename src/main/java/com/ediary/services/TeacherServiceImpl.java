@@ -92,6 +92,30 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public List<LessonDto> listLessons(Long teacherId, Long subjectId, Long classId) {
+
+        Teacher teacher = getTeacherById(teacherId);
+
+        teacher.getSubjects().stream()
+                .filter(s -> s.getId().equals(subjectId))
+                .findAny().orElseThrow(() -> new NoAccessException("Teacher -> Subject"));
+
+        teacher.getSubjects().stream()
+                .filter(s -> s.getSchoolClass().getId().equals(classId))
+                .findAny().orElseThrow(() -> new NoAccessException("Subject -> Class"));
+
+        return lessonRepository.findAllBySubjectIdAndSchoolClassId(subjectId, classId).stream()
+                .map(lessonToLessonDto::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public LessonDto getLesson(Long lessonId) {
+        return lessonToLessonDto.convert(lessonRepository
+                .findById(lessonId).orElseThrow(() -> new NotFoundException("Lesson not found")));
+    }
+
+    @Override
     public Topic saveTopic(Topic topic) {
         return null;
     }

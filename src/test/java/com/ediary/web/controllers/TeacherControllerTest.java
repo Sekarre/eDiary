@@ -467,6 +467,44 @@ class TeacherControllerTest {
     }
 
     @Test
+    void getAllLessonsBySubjectAndClass() throws Exception {
+        Long subjectId = 1L;
+        Long classId = 1L;
+
+        when(teacherService.getSchoolClassByTeacherAndSubject(classId, subjectId, teacherId)).thenReturn(
+                ClassDto.builder().id(1L).build()
+        );
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId + "/lessons"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("lessons"))
+                .andExpect(view().name("/teacher/lesson/allClassLessons"));
+
+        verify(teacherService, times(1)).listLessons(teacherId, subjectId, classId);
+        assertNotNull(teacherService.listLessons(teacherId, subjectId, classId));
+    }
+
+    @Test
+    void getLesson() throws Exception {
+        Long classId = 1L;
+        Long subjectId = 1L;
+        Long lessonId = 1L;
+
+        when(teacherService.getLesson(classId)).thenReturn(
+                LessonDto.builder().id(lessonId).build()
+        );
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId
+                + "/class/" + classId + "/lessons/" + lessonId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("lesson"))
+                .andExpect(view().name("/teacher/lesson/singleLesson"));
+
+        verify(teacherService, times(1)).getLesson(classId);
+        assertNotNull(teacherService.getLesson(classId));
+    }
+
+    @Test
     void newLessonEvent() throws Exception {
         Long subjectId = 1L;
         Long classId = 1l;

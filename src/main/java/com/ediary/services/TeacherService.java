@@ -15,7 +15,8 @@ public interface TeacherService {
     Boolean deleteLesson(Long lessonId);
     List<LessonDto> listLessons(Long teacherId, Long subjectId);
     List<LessonDto> listLessons(Long teacherId);
-
+    List<LessonDto> listLessons(Long teacherId, Long subjectId, Long classId);
+    LessonDto getLesson(Long lessonId);
 
     Topic saveTopic(Topic topic);
     Boolean deleteTopic(Long topicId);
