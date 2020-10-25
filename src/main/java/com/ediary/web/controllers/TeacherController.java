@@ -503,13 +503,13 @@ public class TeacherController {
     @PostMapping("/{teacherId}/subject/{subjectId}/topic/new")
     public String processNewTopic(@PathVariable Long teacherId,
                                   @PathVariable Long subjectId,
-                                  @Valid @RequestBody TopicDto topic,
+                                  @Valid @RequestBody TopicDto topicDto,
                                   BindingResult result) {
         if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
-            teacherService.saveOrUpdateTopic(topic);
+            teacherService.saveOrUpdateTopic(topicDto);
             return "redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic";
         }
     }
@@ -521,6 +521,21 @@ public class TeacherController {
 
         teacherService.deleteTopic(teacherId, subjectId, topicId);
         return "redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic";
+    }
+
+    @PutMapping("/{teacherId}/subject/{subjectId}/topic")
+    public String updatePutTopic(@PathVariable Long teacherId,
+                                 @PathVariable Long subjectId,
+                                 @Valid @RequestBody TopicDto topicDto,
+                                 BindingResult result) {
+
+        if (result.hasErrors()) {
+            //TODO
+            return "/";
+        } else {
+            teacherService.saveOrUpdateTopic(topicDto);
+            return "redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic";
+        }
     }
 
 

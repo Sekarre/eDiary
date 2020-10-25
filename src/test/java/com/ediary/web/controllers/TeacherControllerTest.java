@@ -773,4 +773,20 @@ class TeacherControllerTest {
         verify(teacherService, times(1)).deleteTopic(teacherId, subjectId, topicId);
     }
 
+    @Test
+    void updatePutTopic() throws Exception {
+
+        Long subjectId = 25L;
+
+        when(teacherService.saveOrUpdateTopic(any())).thenReturn(Topic.builder().build());
+
+        mockMvc.perform(put("/teacher/" + teacherId + "/subject/" + subjectId + "/topic")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(TopicDto.builder().build())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic"));
+
+        verify(teacherService, times(1)).saveOrUpdateTopic(any());
+    }
+
 }
