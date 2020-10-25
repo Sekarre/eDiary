@@ -866,4 +866,30 @@ class TeacherServiceImplTest {
     }
 
 
+    @Test
+    void getSchoolClassByTeacherAndSubject() {
+        Long subjectId = 1L;
+        Long teacherId = 1L;
+        Long classId = 1L;
+
+        Class schoolClass = Class.builder().id(classId).build();
+        Subject subject = Subject.builder().id(subjectId).schoolClass(schoolClass).build();
+        Teacher teacher = Teacher.builder().id(teacherId)
+                .subjects(Collections.singleton(subject))
+                .build();
+
+
+        when(teacherRepository.findById(any())).thenReturn(Optional.ofNullable(teacher));
+        when(classRepository.findById(any())).thenReturn(Optional.ofNullable(schoolClass));
+        when(classToClassDto.convert(any())).thenReturn(ClassDto.builder().id(classId).build());
+
+        ClassDto foundSchoolClass = teacherService.getSchoolClassByTeacherAndSubject(classId, subjectId, teacherId);
+
+        assertNotNull(foundSchoolClass);
+        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(classRepository, times(1)).findById(any());
+        verify(classToClassDto, times(1)).convert(any());
+
+    }
+
 }

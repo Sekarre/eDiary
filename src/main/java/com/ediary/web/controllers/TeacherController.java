@@ -296,14 +296,25 @@ public class TeacherController {
         }
     }
 
+    //todo: no longer m:m relation, change method to redirect or smg
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class")
-    public String getClassesBySubject(@PathVariable Long teacherId,
-                                      @PathVariable Long subjectId,
-                                      Model model) {
+    public String getAllClassesBySubject(@PathVariable Long teacherId,
+                                         @PathVariable Long subjectId,
+                                         Model model) {
 
         model.addAttribute("classes", teacherService.listClassesByTeacherAndSubject(teacherId, subjectId));
 
         return "/teacher/lesson/classes";
+    }
+
+    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}")
+    public String getClassBySubject(@PathVariable Long teacherId,
+                                    @PathVariable Long subjectId,
+                                    @PathVariable Long classId,
+                                    Model model) {
+        model.addAttribute("class", teacherService.getSchoolClassByTeacherAndSubject(classId, subjectId, teacherId));
+
+        return "/teacher/lesson/class";
     }
 
 

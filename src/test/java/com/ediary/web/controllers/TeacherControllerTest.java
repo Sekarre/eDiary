@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -429,7 +430,7 @@ class TeacherControllerTest {
     }
 
     @Test
-    void getClassesBySubject() throws Exception {
+    void getAllClassesBySubject() throws Exception {
 
         Long subjectId = 1L;
 
@@ -445,6 +446,24 @@ class TeacherControllerTest {
 
         verify(teacherService, times(1)).listClassesByTeacherAndSubject(teacherId, subjectId);
         assertEquals(2, teacherService.listClassesByTeacherAndSubject(teacherId, subjectId).size());
+    }
+
+    @Test
+    void getClassBySubject() throws Exception {
+        Long subjectId = 1L;
+        Long classId = 1L;
+
+        when(teacherService.getSchoolClassByTeacherAndSubject(classId, subjectId, teacherId)).thenReturn(
+                ClassDto.builder().id(1L).build()
+        );
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("class"))
+                .andExpect(view().name("/teacher/lesson/class"));
+
+        verify(teacherService, times(1)).getSchoolClassByTeacherAndSubject(classId, subjectId, teacherId);
+        assertNotNull(teacherService.getSchoolClassByTeacherAndSubject(classId, subjectId, teacherId));
     }
 
     @Test
