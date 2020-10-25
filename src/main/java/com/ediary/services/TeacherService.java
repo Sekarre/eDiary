@@ -20,7 +20,8 @@ public interface TeacherService {
     List<LessonDto> listLessons(Long teacherId, Long subjectId, Long classId);
     LessonDto getLesson(Long lessonId);
 
-    Topic saveTopic(Topic topic);
+    TopicDto initNewTopic(Long teacherId, Long subjectId);
+    Topic saveOrUpdateTopic(TopicDto topicDto);
     Boolean deleteTopic(Long topicId);
     List<TopicDto> listTopics(Long teacherId, Long subjectId);
 

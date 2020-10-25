@@ -729,4 +729,35 @@ class TeacherControllerTest {
         assertEquals(2, teacherService.listTopics(teacherId, subjectId).size());
     }
 
+    @Test
+    void newTopic() throws Exception {
+
+        Long subjectId = 25L;
+
+        when(teacherService.initNewTopic(teacherId, subjectId)).thenReturn(TopicDto.builder().id(1L).build());
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/subject/" + subjectId + "/topic/new"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("topic"))
+                .andExpect(view().name("/teacher/subject/topic/new"));
+
+        verify(teacherService, times(1)).initNewTopic(teacherId, subjectId);
+    }
+
+    @Test
+    void processNewTopic() throws Exception {
+
+        Long subjectId = 25L;
+
+        when(teacherService.saveOrUpdateTopic(any())).thenReturn(Topic.builder().build());
+
+        mockMvc.perform(post("/teacher/" + teacherId + "/subject/" + subjectId + "/topic/new")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(AbstractAsJsonControllerTest.asJsonString(TopicDto.builder().build())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic"));
+
+        verify(teacherService, times(1)).saveOrUpdateTopic(any());
+    }
+
 }

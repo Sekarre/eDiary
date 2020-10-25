@@ -77,6 +77,8 @@ class TeacherServiceImplTest {
     StudentToStudentDto studentToStudentDto;
     @Mock
     TopicToTopicDto topicToTopicDto;
+    @Mock
+    TopicDtoToTopic topicDtoToTopic;
 
     TeacherService teacherService;
 
@@ -89,7 +91,7 @@ class TeacherServiceImplTest {
                 eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto,
                 behaviorDtoToBehavior, lessonToLessonDto, lessonDtoToLesson, subjectToSubjectDto, subjectDtoToSubject,
                 gradeToGradeDto, gradeDtoToGrade, teacherToTeacherDto, attendanceDtoToAttendance, attendanceToAttendanceDto,
-                studentToStudentDto,topicToTopicDto);
+                studentToStudentDto,topicToTopicDto,topicDtoToTopic);
     }
 
     @Test
@@ -614,6 +616,44 @@ class TeacherServiceImplTest {
         assertEquals(lessonId, lessonDto.getId());
         verify(lessonRepository, times(1)).findById(lessonId);
         verify(lessonToLessonDto, times(1)).convert(any());
+    }
+
+    @Test
+    void initNewTopic() {
+        Long subjectId = 25L;
+        Subject subject = Subject.builder().id(subjectId).build();
+
+        int topicNumber = 10;
+        Topic topicReturned = Topic.builder().number(topicNumber).build();
+
+        when(subjectRepository.findById(subjectId)).thenReturn(Optional.of(subject));
+        when(topicRepository.findBySubjectOrderByNumberDesc(subject)).thenReturn(
+                Optional.of(topicReturned));
+        when(topicToTopicDto.convert(any())).thenReturn(TopicDto.builder().number(topicReturned.getNumber() + 1).build());
+
+        TopicDto topic = teacherService.initNewTopic(teacherId, subjectId);
+
+        assertEquals(topic.getNumber(),topicNumber + 1);
+        verify(subjectRepository, times(1)).findById(subjectId);
+        verify(topicRepository, times(1)).findBySubjectOrderByNumberDesc(subject);
+        verify(topicToTopicDto, times(1)).convert(any());
+
+    }
+
+    @Test
+    void saveOrUpdateTopic() {
+        Long topicId = 3L;
+        TopicDto topicToSave = TopicDto.builder().id(topicId).build();
+        Topic topicReturned = Topic.builder().id(topicId).build();
+
+        when(topicDtoToTopic.convert(topicToSave)).thenReturn(Topic.builder().id(topicId).build());
+        when(topicRepository.save(any())).thenReturn(topicReturned);
+
+        Topic topic = teacherService.saveOrUpdateTopic(topicToSave);
+
+        assertEquals(topic.getId(), topicToSave.getId());
+        verify(topicDtoToTopic, times(1)).convert(topicToSave);
+        verify(topicRepository, times(1)).save(any());
     }
 
     @Test

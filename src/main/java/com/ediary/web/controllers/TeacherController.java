@@ -491,5 +491,28 @@ public class TeacherController {
         return "/teacher/subject/topic";
     }
 
+    @GetMapping("/{teacherId}/subject/{subjectId}/topic/new")
+    public String newTopic(@PathVariable Long teacherId,
+                           @PathVariable Long subjectId,
+                           Model model) {
+
+        model.addAttribute("topic", teacherService.initNewTopic(teacherId, subjectId));
+        return "/teacher/subject/topic/new";
+    }
+
+    @PostMapping("/{teacherId}/subject/{subjectId}/topic/new")
+    public String processNewTopic(@PathVariable Long teacherId,
+                                  @PathVariable Long subjectId,
+                                  @Valid @RequestBody TopicDto topic,
+                                  BindingResult result) {
+        if (result.hasErrors()) {
+            //TODO
+            return "/";
+        } else {
+            teacherService.saveOrUpdateTopic(topic);
+            return "redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic";
+        }
+    }
+
 
 }

@@ -47,6 +47,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final AttendanceToAttendanceDto attendanceToAttendanceDto;
     private final StudentToStudentDto studentToStudentDto;
     private final TopicToTopicDto topicToTopicDto;
+    private final TopicDtoToTopic topicDtoToTopic;
 
     @Override
     public TeacherDto findByUser(User user) {
@@ -134,8 +135,23 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Topic saveTopic(Topic topic) {
-        return null;
+    public TopicDto initNewTopic(Long teacherId, Long subjectId) {
+        Subject subject = getSubjectById(subjectId);
+
+        final Topic topic = new Topic();
+        topic.setSubject(subject);
+
+        Optional<Topic> optionalTopic = topicRepository.findBySubjectOrderByNumberDesc(subject);
+        if (optionalTopic.isPresent()) {
+            topic.setNumber(optionalTopic.get().getNumber() + 1);
+        }
+
+        return topicToTopicDto.convert(topic);
+    }
+
+    @Override
+    public Topic saveOrUpdateTopic(TopicDto topicDto) {
+        return topicRepository.save(topicDtoToTopic.convert(topicDto));
     }
 
     @Override
