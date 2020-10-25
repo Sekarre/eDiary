@@ -28,6 +28,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final SubjectRepository subjectRepository;
     private final GradeRepository gradeRepository;
     private final AttendanceRepository attendanceRepository;
+    private final StudentRepository studentRepository;
 
     private final EventToEventDto eventToEventDto;
     private final EventDtoToEvent eventDtoToEvent;
@@ -43,6 +44,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final TeacherToTeacherDto teacherToTeacherDto;
     private final AttendanceDtoToAttendance attendanceDtoToAttendance;
     private final AttendanceToAttendanceDto attendanceToAttendanceDto;
+    private final StudentToStudentDto studentToStudentDto;
 
     @Override
     public TeacherDto findByUser(User user) {
@@ -52,6 +54,21 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         return teacherToTeacherDto.convert(teacherOptional.get());
+    }
+
+    @Override
+    public List<StudentDto> listLessonStudents(Long teacherId, Long subjectId, Long classId, Long lessonId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        teacher.getSubjects().stream()
+                .filter(s -> s.getSchoolClass().getLessons()
+                        .stream()
+                        .anyMatch(lesson -> lesson.getId().equals(lessonId)))
+                .findAny().orElseThrow(() -> new NoAccessException("Class -> Lesson"));
+
+        return studentRepository.findAllBySchoolClassId(classId).stream()
+                .map(studentToStudentDto::convert)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -321,6 +338,7 @@ public class TeacherServiceImpl implements TeacherService {
 
         return gradeToGradeDto.convert(grade);
     }
+
 
     @Override
     public Event saveEvent(EventDto eventDto) {

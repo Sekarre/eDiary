@@ -105,8 +105,8 @@ class TeacherControllerTest {
         when(teacherService.saveEvent(any())).thenReturn(Event.builder().build());
 
         mockMvc.perform(post("/teacher/" + teacherId + "/event/new")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(AbstractAsJsonControllerTest.asJsonString(EventDto.builder().build())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(EventDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/event"));
 
@@ -132,8 +132,8 @@ class TeacherControllerTest {
         when(teacherService.updatePutEvent(any())).thenReturn(EventDto.builder().id(eventId).build());
 
         mockMvc.perform(put("/teacher/" + teacherId + "/event/update")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(AbstractAsJsonControllerTest.asJsonString(eventDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(eventDto)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/" + teacherId + "/event/" + eventId));
 
@@ -441,7 +441,7 @@ class TeacherControllerTest {
                 schoolClass
         ));
 
-        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId +"/class"))
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId
                         + "/lesson/subject/" + subjectId + "/class/" + schoolClass.getId()));
@@ -551,6 +551,26 @@ class TeacherControllerTest {
     }
 
     @Test
+    void getLessonStudents() throws Exception {
+        Long classId = 1L;
+        Long subjectId = 1L;
+        Long lessonId = 1L;
+
+        when(teacherService.listLessonStudents(teacherId, subjectId, classId, lessonId)).thenReturn(
+                Collections.singletonList(StudentDto.builder().build())
+        );
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId
+                + "/class/" + classId + "/lessons/" + lessonId + "/grades"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("students"))
+                .andExpect(view().name("/teacher/lesson/students"));
+
+        verify(teacherService, times(1)).listLessonStudents(teacherId, subjectId, classId, lessonId);
+        assertNotNull(teacherService.listLessonStudents(teacherId, subjectId, classId, lessonId));
+    }
+
+    @Test
     void newLessonEvent() throws Exception {
         Long subjectId = 1L;
         Long classId = 1l;
@@ -593,8 +613,8 @@ class TeacherControllerTest {
     void getSubjects() throws Exception {
 
         when(teacherService.listSubjects(teacherId)).thenReturn(Arrays.asList(
-            SubjectDto.builder().id(1L).build(),
-            SubjectDto.builder().id(2L).build()
+                SubjectDto.builder().id(1L).build(),
+                SubjectDto.builder().id(2L).build()
         ));
 
         mockMvc.perform(get("/teacher/" + teacherId + "/subject"))
@@ -667,8 +687,8 @@ class TeacherControllerTest {
         when(teacherService.saveOrUpdateSubject(any())).thenReturn(Subject.builder().build());
 
         mockMvc.perform(put("/teacher/" + teacherId + "/subject/update")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(AbstractAsJsonControllerTest.asJsonString(SubjectDto.builder().build())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(SubjectDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject"));
 

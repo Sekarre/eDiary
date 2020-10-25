@@ -10,6 +10,8 @@ public interface TeacherService {
 
     TeacherDto findByUser(User user);
 
+    List<StudentDto> listLessonStudents(Long teacherId, Long subjectId, Long classId, Long lessonId);
+
     LessonDto initNewLesson(Long subjectId);
     Lesson saveLesson(LessonDto lesson);
     Boolean deleteLesson(Long lessonId);
@@ -43,6 +45,7 @@ public interface TeacherService {
     Boolean deleteGrade(Long teacherId, Long subjectId, Long gradeId);
     Grade saveGrade(GradeDto grade);
     GradeDto initNewGrade(Long teacherId, Long subjectId);
+
 
     Event saveEvent(EventDto eventDto);
     EventDto initNewEvent(Long teacherId);

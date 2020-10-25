@@ -346,7 +346,7 @@ public class TeacherController {
                                        @PathVariable Long lessonId,
                                        Model model) {
 
-        model.addAttribute("attendances", teacherService.listAttendances(teacherId, subjectId, classId,  lessonId));
+        model.addAttribute("attendances", teacherService.listAttendances(teacherId, subjectId, classId, lessonId));
 
         return "/teacher/lesson/attendances";
     }
@@ -371,6 +371,20 @@ public class TeacherController {
     }
 
 
+    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}/grades")
+    public String getLessonStudents(@PathVariable Long teacherId,
+                                    @PathVariable Long subjectId,
+                                    @PathVariable Long classId,
+                                    @PathVariable Long lessonId,
+                                    Model model) {
+
+        model.addAttribute("students", teacherService.listLessonStudents(teacherId, subjectId, classId, lessonId));
+
+        return "/teacher/lesson/students";
+    }
+
+
+    //todo: Grades
 
 
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")
