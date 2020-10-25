@@ -24,6 +24,7 @@ public interface TeacherService {
     Topic saveOrUpdateTopic(TopicDto topicDto);
     Boolean deleteTopic(Long teacherId, Long subjectId, Long topicId);
     List<TopicDto> listTopics(Long teacherId, Long subjectId);
+    TopicDto updatePatchTopic(TopicDto topicUpdated);
 
     SubjectDto getSubjectById(Long teacherId, Long subjectId);
     Subject saveOrUpdateSubject(SubjectDto subject);

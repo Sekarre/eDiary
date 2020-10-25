@@ -699,7 +699,7 @@ class TeacherControllerTest {
     void updatePatchSubject() throws Exception {
         Long subjectId = 3L;
 
-        when(teacherService.saveOrUpdateSubject(any())).thenReturn(Subject.builder().build());
+        when(teacherService.updatePatchSubject(any())).thenReturn(SubjectDto.builder().build());
 
         mockMvc.perform(patch("/teacher/" + teacherId + "/subject/update")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -707,7 +707,7 @@ class TeacherControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject"));
 
-        verify(teacherService, times(1)).saveOrUpdateSubject(any());
+        verify(teacherService, times(1)).updatePatchSubject(any());
     }
 
     @Test
@@ -777,16 +777,34 @@ class TeacherControllerTest {
     void updatePutTopic() throws Exception {
 
         Long subjectId = 25L;
+        Long topicId = 10L;
 
         when(teacherService.saveOrUpdateTopic(any())).thenReturn(Topic.builder().build());
 
-        mockMvc.perform(put("/teacher/" + teacherId + "/subject/" + subjectId + "/topic")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(AbstractAsJsonControllerTest.asJsonString(TopicDto.builder().build())))
+        mockMvc.perform(put("/teacher/" + teacherId + "/subject/" + subjectId + "/topic/" + topicId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(AbstractAsJsonControllerTest.asJsonString(TopicDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic"));
 
         verify(teacherService, times(1)).saveOrUpdateTopic(any());
+    }
+
+    @Test
+    void updatePatchTopic() throws Exception {
+
+        Long subjectId = 25L;
+        Long topicId = 10L;
+
+        when(teacherService.updatePatchTopic(any())).thenReturn(TopicDto.builder().build());
+
+        mockMvc.perform(patch("/teacher/" + teacherId + "/subject/" + subjectId + "/topic/" + topicId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(AbstractAsJsonControllerTest.asJsonString(TopicDto.builder().build())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic"));
+
+        verify(teacherService, times(1)).updatePatchTopic(any());
     }
 
 }

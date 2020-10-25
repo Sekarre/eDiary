@@ -539,7 +539,7 @@ public class DefaultLoader implements CommandLineRunner {
 
         for (int i = 0; i < topicNamesMath.length; i++) {
             topicRepository.save(Topic.builder()
-                    .number((int) (topicRepository.count() + 1))
+                    .number((topicRepository.count() + 1))
                     .name(topicNamesMath[i])
                     .description(descriptions[i])
                     .subject(subjectRepository.findByName(subjectNames[0]))

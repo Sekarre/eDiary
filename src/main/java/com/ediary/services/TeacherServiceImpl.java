@@ -183,6 +183,33 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public TopicDto updatePatchTopic(TopicDto topicUpdated) {
+        Optional<Topic> topicOptional = topicRepository.findById(topicUpdated.getId());
+        if (!topicOptional.isPresent()) {
+            throw new NotFoundException("Topic Not Found.");
+        }
+
+        TopicDto topic = topicToTopicDto.convert(topicOptional.get());
+
+        if(topicUpdated.getNumber() != null) {
+            topic.setNumber(topicUpdated.getNumber());
+        }
+
+        if (topicUpdated.getName() != null) {
+            topic.setName(topicUpdated.getName());
+        }
+
+        if (topicUpdated.getDescription() != null) {
+            topic.setDescription(topicUpdated.getDescription());
+        }
+
+
+        Topic savedTopic = topicRepository.save(topicDtoToTopic.convert(topic));
+
+        return topicToTopicDto.convert(savedTopic);
+    }
+
+    @Override
     public SubjectDto getSubjectById(Long teacherId, Long subjectId) {
         Teacher teacher = getTeacherById(teacherId);
         Subject subject = getSubjectById(subjectId);

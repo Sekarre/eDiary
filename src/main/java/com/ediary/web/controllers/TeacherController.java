@@ -2,7 +2,6 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
-import com.ediary.domain.Attendance;
 import com.ediary.domain.Event;
 import com.ediary.domain.Lesson;
 import com.ediary.domain.Subject;
@@ -477,7 +476,7 @@ public class TeacherController {
             //TODO
             return "/";
         } else {
-            Subject subject = teacherService.saveOrUpdateSubject(subjectDto);
+            SubjectDto subject = teacherService.updatePatchSubject(subjectDto);
             //TODO zalezy od widoku
             return "redirect:/teacher/" + teacherId + "/subject";
         }
@@ -523,7 +522,7 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic";
     }
 
-    @PutMapping("/{teacherId}/subject/{subjectId}/topic")
+    @PutMapping("/{teacherId}/subject/{subjectId}/topic/{topicId}")
     public String updatePutTopic(@PathVariable Long teacherId,
                                  @PathVariable Long subjectId,
                                  @Valid @RequestBody TopicDto topicDto,
@@ -534,6 +533,21 @@ public class TeacherController {
             return "/";
         } else {
             teacherService.saveOrUpdateTopic(topicDto);
+            return "redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic";
+        }
+    }
+
+    @PatchMapping("/{teacherId}/subject/{subjectId}/topic/{topicId}")
+    public String updatePatchTopic(@PathVariable Long teacherId,
+                                   @PathVariable Long subjectId,
+                                   @Valid @RequestBody TopicDto topicDto,
+                                   BindingResult result) {
+
+        if (result.hasErrors()) {
+            //TODO
+            return "/";
+        } else {
+            TopicDto topic = teacherService.updatePatchTopic(topicDto);
             return "redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic";
         }
     }

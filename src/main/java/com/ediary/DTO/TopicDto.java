@@ -10,7 +10,7 @@ import lombok.*;
 public class TopicDto {
 
     private Long id;
-    private int number;
+    private Long number;
     private String name;
     private String description;
 

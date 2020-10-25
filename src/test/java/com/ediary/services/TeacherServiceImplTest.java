@@ -622,7 +622,7 @@ class TeacherServiceImplTest {
         Long subjectId = 25L;
         Subject subject = Subject.builder().id(subjectId).build();
 
-        int topicNumber = 10;
+        Long topicNumber = 10L;
         Topic topicReturned = Topic.builder().number(topicNumber).build();
 
         when(subjectRepository.findById(subjectId)).thenReturn(Optional.of(subject));
@@ -693,6 +693,43 @@ class TeacherServiceImplTest {
         verify(subjectRepository, times(1)).findById(subjectId);
         verify(topicRepository, times(1)).findAllBySubjectOrderByNumber(subject);
         verify(topicToTopicDto, times(2)).convert(any());
+    }
+
+    @Test
+    void updatePatchTopic() {
+
+        TopicDto topic = TopicDto.builder()
+                .id(1L)
+                .number(3L)
+                .name("name before")
+                .description("desc")
+                .build();
+
+        TopicDto topicToUpdate = TopicDto.builder()
+                .number(4L)
+                .name("name after")
+                .build();
+
+        Topic topicDB = Topic.builder().build();
+        Topic savedTopic = Topic.builder().build();
+
+        when(topicRepository.findById(topicToUpdate.getId())).thenReturn(Optional.of(topicDB));
+        when(topicToTopicDto.convert(topicDB)).thenReturn(topic);
+
+        when(topicRepository.save(any())).thenReturn(savedTopic);
+        when(topicToTopicDto.convert(savedTopic)).thenReturn(topic);
+
+        TopicDto topicDto = teacherService.updatePatchTopic(topicToUpdate);
+
+        assertEquals(topicDto.getId(), topic.getId());
+        assertEquals(topicDto.getNumber(), topicToUpdate.getNumber());
+        assertEquals(topicDto.getName(), topicToUpdate.getName());
+        assertEquals(topicDto.getDescription(), topic.getDescription());
+
+        verify(topicRepository, times(1)).findById(topicToUpdate.getId());
+        verify(topicToTopicDto, times(2)).convert(any());
+        verify(topicDtoToTopic, times(1)).convert(any());
+        verify(topicRepository, times(1)).save(any());
     }
 
     @Test
