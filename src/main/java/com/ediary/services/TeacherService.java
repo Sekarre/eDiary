@@ -29,7 +29,7 @@ public interface TeacherService {
     SubjectDto initNewSubject(Long teacherId);
     SubjectDto updatePatchSubject(SubjectDto subjectUpdated);
 
-    Attendance saveAttendance(Attendance attendance);
+    Attendance saveAttendance(AttendanceDto attendance);
     List<AttendanceDto> listAttendances(Long teacherId, Long subjectId, Long classId, Long lessonId);
 
     Grade saveClassGrade(Grade grade);

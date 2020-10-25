@@ -435,18 +435,19 @@ class TeacherControllerTest {
 
         Long subjectId = 1L;
 
-        when(teacherService.listClassesByTeacherAndSubject(teacherId, subjectId)).thenReturn(Arrays.asList(
-                ClassDto.builder().id(1L).build(),
-                ClassDto.builder().id(2L).build()
+        ClassDto schoolClass = ClassDto.builder().id(1L).build();
+
+        when(teacherService.listClassesByTeacherAndSubject(teacherId, subjectId)).thenReturn(Collections.singletonList(
+                schoolClass
         ));
 
         mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId +"/class"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("classes"))
-                .andExpect(view().name("/teacher/lesson/classes"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId
+                        + "/lesson/subject/" + subjectId + "/class/" + schoolClass.getId()));
 
         verify(teacherService, times(1)).listClassesByTeacherAndSubject(teacherId, subjectId);
-        assertEquals(2, teacherService.listClassesByTeacherAndSubject(teacherId, subjectId).size());
+        assertEquals(1, teacherService.listClassesByTeacherAndSubject(teacherId, subjectId).size());
     }
 
     @Test
@@ -523,6 +524,30 @@ class TeacherControllerTest {
 
         verify(teacherService, times(1)).listAttendances(teacherId, subjectId, classId, lessonId);
         assertNotNull(teacherService.listAttendances(teacherId, subjectId, classId, lessonId));
+    }
+
+    @Test
+    void newLessonAttendance() throws Exception {
+        Long classId = 1L;
+        Long subjectId = 1L;
+        Long lessonId = 1L;
+
+        Attendance attendance = Attendance.builder()
+                .id(1L)
+                .build();
+
+        when(teacherService.saveAttendance(any())).thenReturn(attendance);
+
+        mockMvc.perform(post(
+                "/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId + "/lessons/"
+                        + lessonId + "/attendances/new")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(BehaviorDto.builder().build())))
+                .andExpect(status().isOk())
+                .andExpect(view().name(""));
+
+
+        verify(teacherService, times(1)).saveAttendance(any());
     }
 
     @Test

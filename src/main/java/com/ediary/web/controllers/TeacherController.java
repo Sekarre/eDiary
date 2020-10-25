@@ -2,6 +2,7 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
+import com.ediary.domain.Attendance;
 import com.ediary.domain.Event;
 import com.ediary.domain.Lesson;
 import com.ediary.domain.Subject;
@@ -296,15 +297,13 @@ public class TeacherController {
         }
     }
 
-    //todo: no longer m:m relation, change return to redirect or smg
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class")
     public String getAllClassesBySubject(@PathVariable Long teacherId,
-                                         @PathVariable Long subjectId,
-                                         Model model) {
+                                         @PathVariable Long subjectId) {
 
-        model.addAttribute("classes", teacherService.listClassesByTeacherAndSubject(teacherId, subjectId));
+        ClassDto schoolClass = teacherService.listClassesByTeacherAndSubject(teacherId, subjectId).get(0);
 
-        return "/teacher/lesson/classes";
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + schoolClass.getId();
     }
 
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}")
@@ -352,7 +351,26 @@ public class TeacherController {
         return "/teacher/lesson/attendances";
     }
 
-    
+    //todo: Modyfikuj frekwencje ucznia
+    @PostMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}/attendances/new")
+    public String newLessonAttendance(@PathVariable Long teacherId,
+                                      @PathVariable Long subjectId,
+                                      @PathVariable Long classId,
+                                      @PathVariable Long lessonId,
+                                      @Valid @RequestBody AttendanceDto attendanceDto,
+                                      BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo: add path
+            return "";
+        } else {
+            teacherService.saveAttendance(attendanceDto);
+            return "";
+        }
+
+    }
+
+
 
 
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")

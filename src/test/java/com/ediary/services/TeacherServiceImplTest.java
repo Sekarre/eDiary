@@ -680,6 +680,24 @@ class TeacherServiceImplTest {
     }
 
     @Test
+    void saveAttendances() {
+        Long attendanceId = 1L;
+
+        AttendanceDto attendanceDto = AttendanceDto.builder().id(attendanceId).build();
+        Attendance attendance = Attendance.builder().id(attendanceId).build();
+
+        when(attendanceDtoToAttendance.convert(attendanceDto)).thenReturn(Attendance.builder().id(attendanceId).build());
+        when(attendanceRepository.save(any())).thenReturn(attendance);
+
+        Attendance returnedAttendance = teacherService.saveAttendance(attendanceDto);
+
+        assertEquals(returnedAttendance.getId(), attendance.getId());
+        verify(attendanceDtoToAttendance, times(1)).convert(any());
+        verify(attendanceRepository, times(1)).save(any());
+
+    }
+
+    @Test
     void listAttendances() {
         Long subjectId = 2L;
         Long lessonId = 1L;

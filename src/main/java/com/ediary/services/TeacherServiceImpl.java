@@ -201,8 +201,8 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Attendance saveAttendance(Attendance attendance) {
-        return null;
+    public Attendance saveAttendance(AttendanceDto attendance) {
+        return attendanceRepository.save(attendanceDtoToAttendance.convert(attendance));
     }
 
     @Override
