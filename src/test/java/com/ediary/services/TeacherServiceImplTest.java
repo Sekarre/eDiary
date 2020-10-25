@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -654,6 +653,25 @@ class TeacherServiceImplTest {
         assertEquals(topic.getId(), topicToSave.getId());
         verify(topicDtoToTopic, times(1)).convert(topicToSave);
         verify(topicRepository, times(1)).save(any());
+    }
+
+    @Test
+    void deleteTopic() {
+        Teacher teacher = Teacher.builder().id(teacherId).build();
+
+        Long subjectId = 25L;
+        Subject subject = Subject.builder().id(subjectId).teacher(teacher).build();
+
+        Long topicId = 3L;
+        Topic topic = Topic.builder().id(topicId).subject(subject).build();
+
+        when(topicRepository.findById(topicId)).thenReturn(Optional.of(topic));
+
+        Boolean deleteStatus = teacherService.deleteTopic(teacherId,subjectId, topicId);
+
+        assertTrue(deleteStatus);
+        verify(topicRepository, times(1)).findById(topicId);
+        verify(topicRepository, times(1)).delete(topic);
     }
 
     @Test

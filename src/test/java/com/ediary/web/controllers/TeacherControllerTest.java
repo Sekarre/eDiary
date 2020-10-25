@@ -760,4 +760,17 @@ class TeacherControllerTest {
         verify(teacherService, times(1)).saveOrUpdateTopic(any());
     }
 
+    @Test
+    void deleteTopic() throws Exception {
+
+        Long subjectId = 25L;
+        Long topicId = 10L;
+
+        mockMvc.perform(delete("/teacher/" + teacherId + "/subject/" + subjectId + "/topic/" + topicId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic"));
+
+        verify(teacherService, times(1)).deleteTopic(teacherId, subjectId, topicId);
+    }
+
 }
