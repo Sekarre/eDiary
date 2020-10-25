@@ -12,6 +12,7 @@ import com.ediary.domain.security.User;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.security.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +32,25 @@ public class UserServiceImpl implements UserService {
 
     private final NoticeToNoticeDto noticeToNoticeDto;
     private final NoticeDtoToNotice noticeDtoToNotice;
+
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public Boolean updatePassword(User user, String password, String oldPassword) {
+
+        if (!user.getPassword().equals(passwordEncoder.encode(oldPassword))) {
+            return false;
+        }
+
+        //TODO validation
+        if (password.isEmpty()) {
+            return false;
+        }
+
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+        return true;
+    }
 
     @Override
     public List<MessageDto> listReadMessage(Long userId) {

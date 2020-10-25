@@ -43,6 +43,22 @@ public class UserController {
         });
     }
 
+    @GetMapping("/{userId}/updatePassword")
+    public String updatePassword(@PathVariable Long userId) {
+        return "user/updatePassword";
+    }
+
+    @PostMapping("/{userId}/updatePassword")
+    public String processUpdatePassword(@PathVariable Long userId,
+                                        @RequestParam("password") String password,
+                                        @RequestParam("oldPassword") String oldPassword,
+                                        @AuthenticationPrincipal User user,
+                                        Model model) {
+
+        userService.updatePassword(user, password, oldPassword);
+        return "/";
+    }
+
     @GetMapping("/{userId}/readMessages")
     public String getReadMessages(@PathVariable Long userId, Model model) {
 

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +48,9 @@ class UserServiceImplTest {
     @Mock
     NoticeDtoToNotice noticeDtoToNotice;
 
+    @Mock
+    PasswordEncoder passwordEncoder;
+
     UserService userService;
 
 
@@ -54,7 +58,40 @@ class UserServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         userService = new UserServiceImpl(messageService, userRepository, noticeService,
-                messageToMessageDto, messageDtoToMessage, noticeToNoticeDto, noticeDtoToNotice);
+                messageToMessageDto, messageDtoToMessage, noticeToNoticeDto, noticeDtoToNotice,
+                passwordEncoder);
+    }
+
+    @Test
+    void updatePassword() {
+        String password = "password";
+        String oldPassword = "oldPassword";
+        User user = User.builder().password(oldPassword).build();
+
+        when(passwordEncoder.encode(oldPassword)).thenReturn(oldPassword);
+        when(passwordEncoder.encode(password)).thenReturn(password);
+
+        Boolean status = userService.updatePassword(user, password, oldPassword);
+
+        assertTrue(status);
+        verify(passwordEncoder, times(2)).encode(any());
+        verify(userRepository, times(1)).save(user);
+    }
+
+    @Test
+    void updatePasswordIncorrectOldPassword() {
+        String password = "password";
+        String oldPassword = "oldPassword";
+        User user = User.builder().password(oldPassword).build();
+
+        when(passwordEncoder.encode(oldPassword)).thenReturn(oldPassword);
+        when(passwordEncoder.encode(password)).thenReturn(password);
+
+        Boolean status = userService.updatePassword(user, password, "incorrectOldPassword");
+
+        assertFalse(status);
+        verify(passwordEncoder, times(1)).encode(any());
+        verify(userRepository, times(0)).save(any());
     }
 
     @Test

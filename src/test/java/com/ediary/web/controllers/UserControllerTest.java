@@ -45,6 +45,26 @@ class UserControllerTest {
     }
 
     @Test
+    void updatePassword() throws Exception {
+        mockMvc.perform(get("/user/"+ userId +"/updatePassword"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/updatePassword"));
+    }
+
+    @Test
+    void processUpdatePassword() throws Exception {
+        when(userService.updatePassword(any(),any(),any())).thenReturn(true);
+
+        mockMvc.perform(post("/user/"+ userId +"/updatePassword")
+                    .param("password", "pwd")
+                    .param("oldPassword", "opwd"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("/"));
+
+        verify(userService, times(1)).updatePassword(any(),any(),any());
+    }
+
+    @Test
     void addAuthenticatedUser() throws Exception {
         when(userToUserDto.convert(any())).thenReturn(UserDto.builder().build());
 
