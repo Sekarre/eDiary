@@ -30,7 +30,7 @@ public interface TeacherService {
     SubjectDto updatePatchSubject(SubjectDto subjectUpdated);
 
     Attendance saveAttendance(Attendance attendance);
-    List<Attendance> listAttendances(Long teacherId, Long lessonId);
+    List<AttendanceDto> listAttendances(Long teacherId, Long subjectId, Long classId, Long lessonId);
 
     Grade saveClassGrade(Grade grade);
     Boolean deleteClassGrade(Long gradeId);

@@ -340,6 +340,20 @@ public class TeacherController {
         return "/teacher/lesson/singleLesson";
     }
 
+    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}/attendances")
+    public String getLessonAttendances(@PathVariable Long teacherId,
+                                       @PathVariable Long subjectId,
+                                       @PathVariable Long classId,
+                                       @PathVariable Long lessonId,
+                                       Model model) {
+
+        model.addAttribute("attendances", teacherService.listAttendances(teacherId, subjectId, classId,  lessonId));
+
+        return "/teacher/lesson/attendances";
+    }
+
+    
+
 
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")
     public String newLessonEvent(@PathVariable Long teacherId,

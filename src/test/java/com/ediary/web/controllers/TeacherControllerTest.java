@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -502,6 +503,26 @@ class TeacherControllerTest {
 
         verify(teacherService, times(1)).getLesson(classId);
         assertNotNull(teacherService.getLesson(classId));
+    }
+
+    @Test
+    void getLessonAttendances() throws Exception {
+        Long classId = 1L;
+        Long subjectId = 1L;
+        Long lessonId = 1L;
+
+        when(teacherService.listAttendances(teacherId, subjectId, classId, lessonId)).thenReturn(
+                Collections.singletonList(AttendanceDto.builder().build())
+        );
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId
+                + "/class/" + classId + "/lessons/" + lessonId + "/attendances"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("attendances"))
+                .andExpect(view().name("/teacher/lesson/attendances"));
+
+        verify(teacherService, times(1)).listAttendances(teacherId, subjectId, classId, lessonId);
+        assertNotNull(teacherService.listAttendances(teacherId, subjectId, classId, lessonId));
     }
 
     @Test

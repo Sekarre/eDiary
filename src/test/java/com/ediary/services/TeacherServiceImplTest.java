@@ -38,6 +38,8 @@ class TeacherServiceImplTest {
     SubjectRepository subjectRepository;
     @Mock
     GradeRepository gradeRepository;
+    @Mock
+    AttendanceRepository attendanceRepository;
 
     @Mock
     EventToEventDto eventToEventDto;
@@ -63,6 +65,10 @@ class TeacherServiceImplTest {
     GradeDtoToGrade gradeDtoToGrade;
     @Mock
     TeacherToTeacherDto teacherToTeacherDto;
+    @Mock
+    AttendanceDtoToAttendance attendanceDtoToAttendance;
+    @Mock
+    AttendanceToAttendanceDto attendanceToAttendanceDto;
 
     TeacherService teacherService;
 
@@ -70,9 +76,10 @@ class TeacherServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         teacherService = new TeacherServiceImpl(eventService, teacherRepository, classRepository, eventRepository,
-                behaviorRepository, lessonRepository, subjectRepository, gradeRepository, eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto,
-                behaviorDtoToBehavior, lessonToLessonDto, lessonDtoToLesson, subjectToSubjectDto, subjectDtoToSubject, gradeToGradeDto, gradeDtoToGrade,
-                teacherToTeacherDto);
+                behaviorRepository, lessonRepository, subjectRepository, gradeRepository, attendanceRepository,
+                eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto,
+                behaviorDtoToBehavior, lessonToLessonDto, lessonDtoToLesson, subjectToSubjectDto, subjectDtoToSubject,
+                gradeToGradeDto, gradeDtoToGrade, teacherToTeacherDto, attendanceDtoToAttendance, attendanceToAttendanceDto);
     }
 
     @Test
@@ -670,6 +677,39 @@ class TeacherServiceImplTest {
         verify(subjectToSubjectDto, times(2)).convert(any());
         verify(subjectDtoToSubject, times(1)).convert(any());
         verify(subjectRepository, times(1)).save(any());
+    }
+
+    @Test
+    void listAttendances() {
+        Long subjectId = 2L;
+        Long lessonId = 1L;
+
+        Lesson lesson = Lesson.builder().id(lessonId).build();
+        Class schoolClass = Class.builder().id(1L).lessons(Collections.singleton(lesson)).build();
+
+        Subject subject = Subject.builder()
+                .id(subjectId)
+                .schoolClass(schoolClass)
+                .build();
+
+        Teacher teacher = Teacher.builder()
+                .id(1L)
+                .subjects(Collections.singleton(subject))
+                .build();
+
+        when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
+
+        when(attendanceToAttendanceDto.convert(any())).thenReturn(AttendanceDto.builder().id(1L).build());
+
+        when(attendanceRepository.findAllByLesson_Id(lessonId))
+                .thenReturn(new HashSet<>(Collections.singleton(Attendance.builder().build())));
+
+        List<AttendanceDto> attendances = teacherService.listAttendances(teacherId, subjectId, 1L, 1L);
+
+        assertEquals(1, attendances.size());
+        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(attendanceRepository, times(1)).findAllByLesson_Id(lessonId);
+        verify(attendanceToAttendanceDto, times(1)).convert(any());
     }
 
     @Test
