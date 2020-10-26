@@ -139,7 +139,7 @@ public class DefaultLoader implements CommandLineRunner {
         addStudentsToClasses();
         createSubjects();
 //        Uncomment for grades (takes time)
-        createGrades();
+//        createGrades();
         createTopics();
         createLessons();
         createBehaviors();

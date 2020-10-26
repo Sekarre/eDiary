@@ -62,6 +62,7 @@ public class ParentController {
     @GetMapping("/{studentId}/grade")
     public String getAllGrades(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
 
+        //todo: Dodac metode serwisu
         List<GradeDto> studentList = studentService.listGrades(studentId);
         Set<String> subjectDtoSet = new HashSet<>();
         studentList.forEach(grade -> subjectDtoSet.add(grade.getSubjectName()));
@@ -114,7 +115,7 @@ public class ParentController {
     }
 
 
-    @GetMapping("/{studentId}/attendance/save")
+    @PostMapping("/{studentId}/attendance/save")
     public String saveAttendance(Model model) {
         //todo: Zalezy od widoku
         return "";
