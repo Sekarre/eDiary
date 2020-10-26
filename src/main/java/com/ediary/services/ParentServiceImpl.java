@@ -8,7 +8,9 @@ import com.ediary.converters.ParentToParentDto;
 import com.ediary.converters.StudentToStudentDto;
 import com.ediary.domain.Attendance;
 import com.ediary.domain.Parent;
+import com.ediary.domain.Student;
 import com.ediary.domain.security.User;
+import com.ediary.exceptions.NoAccessException;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.AttendanceRepository;
 import com.ediary.repositories.ParentRepository;
@@ -50,6 +52,22 @@ public class ParentServiceImpl implements ParentService {
                 .stream()
                 .map(studentToStudentDto::convertForParent)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public StudentDto findStudent(Long parentId, Long studentId) {
+
+        Parent parent = parentRepository
+                .findById(parentId).orElseThrow(() -> new NotFoundException("Parent not found"));
+
+        parent.getStudents().stream()
+                .filter(s -> s.getId().equals(studentId))
+                .findFirst().orElseThrow(() -> new NoAccessException("Parent -> Student"));
+
+        Student student = studentRepository
+                .findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
+
+        return studentToStudentDto.convertForParent(student);
     }
 
     @Override

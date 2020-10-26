@@ -82,6 +82,29 @@ class ParentServiceImplTest {
     }
 
     @Test
+    void findByStudent() {
+        Student student = Student.builder()
+                .id(1L)
+                .build();
+
+        Parent parent = Parent.builder()
+                .id(1L)
+                .students(new HashSet<>(Collections.singleton(student)))
+                .build();
+
+
+        when(parentRepository.findById(any())).thenReturn(Optional.of(parent));
+        when(studentToStudentDto.convertForParent(any())).thenReturn(StudentDto.builder().id(student.getId()).build());
+        when(studentRepository.findById(any())).thenReturn(Optional.of(student));
+
+        StudentDto returnedStudent = parentService.findStudent(parent.getId(), student.getId());
+
+        assertNotNull(returnedStudent);
+        verify(parentRepository, times(1)).findById(any());
+        verify(studentToStudentDto, times(1)).convertForParent(student);
+    }
+
+    @Test
     void saveAttendance() {
         AttendanceDto attendanceToSave = AttendanceDto.builder()
                 .id(1L)

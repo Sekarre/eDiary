@@ -83,8 +83,20 @@ class ParentControllerTest {
                 .andExpect(model().attributeExists("students"));
     }
 
-    //todo:
-    @Disabled
+    @Test
+    void getStudentIndex() throws Exception {
+        when(parentService.findStudent(parentId, 1L)).thenReturn(
+                StudentDto.builder().id(parentId).build()
+        );
+
+        mockMvc.perform(get("/parent/" + parentId + "/students/" + 1L))
+                .andExpect(status().isOk())
+                .andExpect(view().name("parent/index"))
+                .andExpect(model().attributeExists("students"));
+    }
+
+
+    @Test
     void getAllGrades() throws Exception {
         when(studentService.listGrades(studentId)).thenReturn(Arrays.asList(
                 GradeDto.builder().id(1L).value("1").build(),

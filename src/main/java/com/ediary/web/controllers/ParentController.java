@@ -59,6 +59,14 @@ public class ParentController {
         return "parent/allStudents";
     }
 
+    @GetMapping("/students/{studentId}")
+    public String getStudentIndex(@PathVariable Long parentId, @PathVariable Long studentId, Model model) {
+
+        model.addAttribute("students", parentService.findStudent(parentId, studentId));
+
+        return "parent/index";
+    }
+
     @GetMapping("/{studentId}/grade")
     public String getAllGrades(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
 
