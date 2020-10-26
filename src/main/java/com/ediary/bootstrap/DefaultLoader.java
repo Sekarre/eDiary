@@ -139,7 +139,7 @@ public class DefaultLoader implements CommandLineRunner {
         addStudentsToClasses();
         createSubjects();
 //        Uncomment for grades (takes time)
-//        createGrades();
+        createGrades();
         createTopics();
         createLessons();
         createBehaviors();
@@ -150,7 +150,7 @@ public class DefaultLoader implements CommandLineRunner {
         createClassrooms();
         createDurations();
 //        Uncomment for school periods
-        createSchoolPeriods();
+  //      createSchoolPeriods();
 
         log.debug("-------------- Bootstrap is done --------------");
     }
@@ -528,6 +528,20 @@ public class DefaultLoader implements CommandLineRunner {
                         .build());
             }
         }
+
+        gradeRepository.save(Grade.builder()
+                .value(2 + "")
+                .description("Kartkówka")
+                .date(Date.valueOf(LocalDate.now()))
+                .student(studentRepository.findByUserId(userRepository
+                        .findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId()))
+                .teacher(teacherRepository.findByUserId(userRepository
+                        .findByFirstNameAndLastName(
+                                teacherNames[0],
+                                teacherLastNames[0]).getId()))
+                .subject(subjectRepository.findByName(subjectNames[2]))
+                .build());
+
 
         //Time consuming, commented by default, uncomment for more data
 //        log.debug("Just a few more..");
