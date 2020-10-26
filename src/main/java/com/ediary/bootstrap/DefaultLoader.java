@@ -150,7 +150,7 @@ public class DefaultLoader implements CommandLineRunner {
         createClassrooms();
         createDurations();
 //        Uncomment for school periods
-//        createSchoolPeriods();
+        createSchoolPeriods();
 
         log.debug("-------------- Bootstrap is done --------------");
     }
@@ -212,8 +212,8 @@ public class DefaultLoader implements CommandLineRunner {
             userRepository.save(User.builder()
                     .firstName(parentNames[i])
                     .lastName(parentLastNames[i])
-                    .username("")
-                    .password("")
+                    .username(parentNames[i])
+                    .password(passwordEncoder.encode(parentLastNames[i]))
                     .address(addressRepository.findById(addressId).orElse(null))
                     .build());
 

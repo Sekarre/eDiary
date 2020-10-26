@@ -11,10 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @RequiredArgsConstructor
@@ -36,15 +35,30 @@ public class TimetableServiceImpl implements TimetableService {
 
         List<SchoolPeriod> schoolPeriods = schoolPeriodRepository.findAllBySchoolClassId(classId);
 
-        HashMap<Day, ArrayList<SchoolPeriod>> schedule = new HashMap<>();
+        TreeMap<Day, List<SchoolPeriod>> schedule = new TreeMap<>(new Comparator<Day>() {
+            @Override
+            public int compare(Day o1, Day o2) {
+
+                if (o1.getNumber() == o2.getNumber())
+                    return 0;
+                else if (o1.getNumber() > o2.getNumber())
+                    return 1;
+
+                return -1;
+            }
+        });
 
         days.forEach(day -> {
-            ArrayList<SchoolPeriod> arrayList = new ArrayList<>(durationsSize);
+            List<SchoolPeriod> arrayList = Stream
+                    .generate(SchoolPeriod::new)
+                    .limit(durationsSize)
+                    .collect(Collectors.toList());
+
             schedule.put(day, arrayList);
         });
 
         schoolPeriods.forEach(schoolPeriod -> {
-            schedule.get(schoolPeriod.getDay()).add(schoolPeriod.getDuration().getNumber(), schoolPeriod);
+            schedule.get(schoolPeriod.getDay()).add(schoolPeriod.getDuration().getNumber() - 1, schoolPeriod);
         });
 
         return Timetable.builder().durations(durations).schedule(schedule).build();

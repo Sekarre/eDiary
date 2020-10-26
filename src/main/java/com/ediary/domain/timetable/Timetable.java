@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 @Setter
 @Getter
@@ -15,5 +16,5 @@ import java.util.List;
 public class Timetable {
 
     private List<Duration> durations;
-    private HashMap<Day, ArrayList<SchoolPeriod>> schedule;
+    private TreeMap<Day, List<SchoolPeriod>> schedule;
 }
