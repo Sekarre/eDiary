@@ -61,7 +61,7 @@ The above copyright notice and this permission notice shall be included in all c
 			
 			<div class="card">
                 <div class="card-header card-header-primary">
-                  <h4 class="card-title ">Skrzynka odbiorcza</h4>
+                  <h4 class="card-title ">Skrzynka nadawcza</h4>
                 </div>
 				
                 <div class="card-body">
@@ -75,7 +75,7 @@ The above copyright notice and this permission notice shall be included in all c
                           Temat
                         </th>
                         <th>
-                          Nadawca
+                          Odbiorca
                         </th>
                         <th>
                           Treść
@@ -86,18 +86,20 @@ The above copyright notice and this permission notice shall be included in all c
                       </thead>
                       <tbody>
 
-                        <tr th:each="message : ${readMessages}">
+                        <tr th:each="message : ${sendMessages}">
                           <td th:text="${message.getSimpleDateFormat()}">
                             Data
                           </td>
                           <td th:text="${message.getTitle()}">
                             Tytuł
                           </td>
-                          <td th:text="${message.getSendersName()}">
-                            Nadawca
+                          <td>
+                            <p th:each="reader : ${message.getReadersName()}">
+                              <span th:text="${reader}"></span>
+                            </p>
                           </td>
                           <td>
-                            <div class="textOverflowCustom" th:text="${message.getContent()}" ></div>                          Lorem ipsum dolor sit amet, consectetur adip..-->
+                            <div class="textOverflowCustom" th:text="${message.getContent()}" ></div>
                           </td>
                           <td><a th:href ="${message.getId()}">
                             Czytaj..
@@ -109,7 +111,7 @@ The above copyright notice and this permission notice shall be included in all c
                   </div>
                 </div>
               </div>
-
+            </div>
             <div class="col-md-4">
               <div class="card card-profile">
                 
@@ -120,6 +122,39 @@ The above copyright notice and this permission notice shall be included in all c
         </div>
       </div>
       <footer class="footer">
+        <div class="container-fluid">
+          <nav class="float-left">
+            <ul>
+              <li>
+                <a href="https://www.creative-tim.com">
+                  Creative Tim
+                </a>
+              </li>
+              <li>
+                <a href="https://creative-tim.com/presentation">
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href="http://blog.creative-tim.com">
+                  Blog
+                </a>
+              </li>
+              <li>
+                <a href="https://www.creative-tim.com/license">
+                  Licenses
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <div class="copyright float-right">
+            &copy;
+            <script>
+              document.write(new Date().getFullYear())
+            </script>, made with <i class="material-icons">favorite</i> by
+            <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a> for a better web.
+          </div>
+        </div>
       </footer>
     </div>
   </div>

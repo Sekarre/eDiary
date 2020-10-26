@@ -4,6 +4,7 @@ import com.ediary.domain.security.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 
 @Setter
@@ -23,7 +24,9 @@ public class Message {
     }
 
     private String title;
+    @Lob
     private String content;
+    private Date date;
 
     @Enumerated(value = EnumType.STRING)
     private Status status;

@@ -33,6 +33,7 @@ public class MessageDtoToMessage implements Converter<MessageDto, Message> {
         message.setId(source.getId());
         message.setTitle(source.getTitle());
         message.setStatus(source.getStatus());
+        message.setDate(source.getDate());
 
         Optional<User> userOptional = userRepository.findById(source.getSendersId());
         if(userOptional.isPresent()) {

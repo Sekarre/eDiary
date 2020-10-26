@@ -59,6 +59,11 @@ public class UserController {
         return "/";
     }
 
+    @GetMapping("/{userId}/messages")
+    public String mainMessages(@PathVariable Long userId, Model model) {
+        return "user/messages";
+    }
+
     @GetMapping("/{userId}/readMessages")
     public String getReadMessages(@PathVariable Long userId, Model model) {
 

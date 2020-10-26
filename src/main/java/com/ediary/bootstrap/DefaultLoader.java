@@ -386,11 +386,39 @@ public class DefaultLoader implements CommandLineRunner {
                         .title(messageTitles[i])
                         .content(messageContens[i])
                         .status(statuses[i])
+                        .date(new java.util.Date())
                         .senders(userRepository.findByFirstNameAndLastName(teacherNames[senderIndexes[i]], teacherLastNames[senderIndexes[i]]))
                         .reader(userRepository.findByFirstNameAndLastName(teacherNames[readerIndexes[i]], teacherLastNames[readerIndexes[i]]))
                         .build());
             }
         }
+
+        String loremIpsum = " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean convallis urna " +
+                "egestas dapibus condimentum. Ut vestibulum sem non ultricies elementum. Pellentesque accumsan tellus " +
+                "a libero mollis, et ornare mi maximus. Donec aliquet tempor posuere. Pellentesque laoreet tempus massa, " +
+                "eget auctor augue pharetra quis. Vivamus eu magna ligula. Mauris eget eros quis nulla faucibus auctor. " +
+                "Phasellus ac mi nec diam dapibus auctor.In hac habitasse platea dictumst. Sed tristique, ipsum sit amet " +
+                "pharetra laoreet, elit odio euismod dui, vel finibus diam eros non neque. Pellentesque habitant morbi tristique " +
+                "senectus et netus et malesuada fames ac turpis egestas. Proin vel ornare mi, luctus efficitur nisl. " +
+                "Suspendisse ligula dui, dictum eu lorem ac, blandit faucibus urna. Nam at fringilla turpis. " +
+                "Quisque eget diam vel magna fermentum ultrices. Vestibulum ornare, lacus sed mattis semper, " +
+                "urna erat sagittis nibh, sagittis dictum nisl ex sit amet nisi. Donec egestas eu urna id pretium. " +
+                "Aliquam diam erat, lobortis sed ante in, tincidunt viverra mi. Nunc pretium sagittis finibus. " +
+                "Aliquam eget sodales enim. Sed suscipit sed quam et scelerisque. Vivamus pharetra vulputate " +
+                "magna quis sollicitudin. Curabitur congue lectus sodales mollis ornare. Etiam arcu purus, fermentum " +
+                "et gravida et, porttitor in elit. Sed turpis mauris, egestas ut elit in, tincidunt hendrerit augue. " +
+                "Mauris tincidunt tempus tempus. Donec lacinia lorem ac tristique pharetra. Vestibulum dictum " +
+                "nisi ut sodales imperdiet. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere " +
+                "cubilia curae; ";
+
+        messageRepository.save(Message.builder()
+                .title("Long")
+                .content(loremIpsum)
+                .status(Message.Status.SENT)
+                .date(new java.util.Date())
+                .senders(userRepository.findByFirstNameAndLastName(teacherNames[0], teacherLastNames[0]))
+                .reader(userRepository.findByFirstNameAndLastName(teacherNames[3], teacherLastNames[3]))
+                .build());
     }
 
 

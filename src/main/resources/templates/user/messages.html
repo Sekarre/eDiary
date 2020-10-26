@@ -56,69 +56,51 @@ The above copyright notice and this permission notice shall be included in all c
       <div class="content">
         <div class="container-fluid">
           <div class="row">
-		  
-            <div class="col-md-8">
-			
-			<div class="card">
-                <div class="card-header card-header-primary">
-                  <h4 class="card-title ">Skrzynka odbiorcza</h4>
+
+            <div class="col-lg-3 col-md-6 col-sm-6">
+              <a th:href="@{/user/{id}/readMessages(id=${user.id})}" class="card card-stats">
+                <div class="card-header card-header-warning card-header-icon" >
+                  <div class="card-icon">
+                    <i class="material-icons">archive</i>
+                  </div>
+                  <h3 class="card-title">Skrzynka odbiorcza</h3>
                 </div>
-				
-                <div class="card-body">
-                  <div class="table-responsive">
-                    <table class="table">
-                      <thead class=" text-primary">
-                        <th>
-                          Data
-                        </th>
-                        <th>
-                          Temat
-                        </th>
-                        <th>
-                          Nadawca
-                        </th>
-                        <th>
-                          Treść
-                        </th>
-                        <th>
-                          
-                        </th>
-                      </thead>
-                      <tbody>
-
-                        <tr th:each="message : ${readMessages}">
-                          <td th:text="${message.getSimpleDateFormat()}">
-                            Data
-                          </td>
-                          <td th:text="${message.getTitle()}">
-                            Tytuł
-                          </td>
-                          <td th:text="${message.getSendersName()}">
-                            Nadawca
-                          </td>
-                          <td>
-                            <div class="textOverflowCustom" th:text="${message.getContent()}" ></div>                          Lorem ipsum dolor sit amet, consectetur adip..-->
-                          </td>
-                          <td><a th:href ="${message.getId()}">
-                            Czytaj..
-                          </a></td>
-                        </tr>
-
-                      </tbody>
-                    </table>
+                <div class="card-footer">
+                  <div class="stats">
                   </div>
                 </div>
-              </div>
-
-            <div class="col-md-4">
-              <div class="card card-profile">
-                
-                
-              </div>
+              </a>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+              <a th:href="@{/user/{id}/sendMessages(id=${user.id})}" class="card card-stats">
+                <div class="card-header card-header-primary card-header-icon" >
+                  <div class="card-icon">
+                    <i class="material-icons">unarchive</i>
+                  </div>
+                  <h3 class="card-title">Skrzynka Nadawcza</h3>
+                </div>
+                <div class="card-footer">
+                  <div class="stats">
+                  </div>
+                </div>
+              </a>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+              <a th:href="@{/user/{id}/newMessages(id=${user.id})}" class="card card-stats">
+                <div class="card-header card-header-info card-header-icon">
+                  <div class="card-icon">
+                    <i class="material-icons">send</i>
+                  </div>
+                  <h3 class="card-title">Wyślij</h3>
+                </div>
+                <div class="card-footer">
+                  <div class="stats">
+                  </div>
+                </div>
+              </a>
             </div>
           </div>
         </div>
-      </div>
       <footer class="footer">
       </footer>
     </div>

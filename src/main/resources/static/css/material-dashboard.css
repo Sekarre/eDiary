@@ -13,6 +13,14 @@
 
  */
 /*     brand Colors              */
+
+.textOverflowCustom {
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+  width: 200px;
+}
+
 .card {
   font-size: .875rem;
 }

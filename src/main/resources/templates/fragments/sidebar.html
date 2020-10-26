@@ -34,7 +34,7 @@
                     </a>
                 </li>
                 <li th:classappend="${#httpServletRequest.getRequestURI().toLowerCase().contains('message') ? 'active':''}">
-                    <a class="nav-link" th:href="@{/user/{id}/readMessages(id=${user.id})}">
+                    <a class="nav-link" th:href="@{/user/{id}/messages(id=${user.id})}">
                         <i class="material-icons">content_paste</i>
                         <p>Wiadomości</p>
                     </a>
