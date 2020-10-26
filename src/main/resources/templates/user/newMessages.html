@@ -64,7 +64,6 @@ The above copyright notice and this permission notice shall be included in all c
                 <h4 class="card-title">Wyślij wiadomość</h4>
               </div>
               <div class="card-body">
-<!--                <form name="Form1" th:object="${message}" method="post">-->
                 <form name="Form1" th:object="${message}" th:action="@{'/user/' + ${message.getSendersId()} + '/newMessages'}" method="post">
 
               </div>
@@ -81,7 +80,9 @@ The above copyright notice and this permission notice shall be included in all c
                   <div class="form-group">
                     <label class="bmd-label-floating">Odbiorca</label>
                     <!--                          <input disabled type="text" class="form-control">-->
-                    <div id="selectedReaders"></div>
+                    <div id="selectedReaders">
+                      <a th:each="readerId : *{message.readersId}" th:text="${readerId}"></a>
+                    </div>
 
                     <div class="btn-group">
                       <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="OnAddReader">
@@ -92,8 +93,8 @@ The above copyright notice and this permission notice shall be included in all c
                         <input type="text" id="myInput" onkeyup="searchReaders()" placeholder="Wyszukaj">
                         <ol id="myUl" class="pre-scrollable">
                           <li th:each="reader : ${readers}">
-                            <a disabled name="readerId" th:value="${reader.id}" th:text="${reader.getName()}" class="dropdown-item">Action</a>
-                            <!--                                  <button class="btn btn-primary pull-right" onclick="OnAddReader()">+</button>-->
+<!--                            <a disabled name="readerId" th:value="${reader.id}" th:text="${reader.getName()}" class="dropdown-item">Action</a>-->
+                            <button type="submit" th:text="${reader.getName()}" th:name="readerToAdd" th:value="${reader.id}" class="dropdown-item" th:formaction="@{'/user/' + ${message.getSendersId()} + '/newMessages/addReader/' + ${reader.id}}">+</button>
                           </li>
                         </ol>
                       </div>
@@ -118,7 +119,6 @@ The above copyright notice and this permission notice shall be included in all c
               <input type="hidden" th:field="*{message.status}" />
               <input type="hidden" th:field="*{message.sendersId}" />
 
-              <!--                    <button class="btn btn-primary pull-right" onclick="OnSend()">Wyślij</button>-->
               <button type="submit" class="btn btn-primary pull-right">Wyślij</button>
               <div class="clearfix"></div>
               </form>
@@ -365,7 +365,7 @@ The above copyright notice and this permission notice shall be included in all c
 
     // Loop through all list items, and hide those who don't match the search query
     for (i = 0; i < li.length; i++) {
-      a = li[i].getElementsByTagName("a")[0];
+      a = li[i].getElementsByTagName("button")[0];
       txtValue = a.textContent || a.innerText;
       if (txtValue.toUpperCase().indexOf(filter) > -1) {
         li[i].style.display = "";
@@ -374,24 +374,6 @@ The above copyright notice and this permission notice shall be included in all c
       }
     }
   }
-</script>
-
-<script th:inline="javascript">
-  var userId = [[${user.id}]];
-
-  function OnSend() {
-    document.Form1.action = "/user/" +  userId + "/newMessages";
-    document.Form1.submit();
-    return true;
-  }
-
-  function OnAddReader() {
-    document.Form1.action = "/user/" +  userId + "/newMessages/addReader";
-    document.Form1.submit();
-    return true;
-  }
-
-
 </script>
 
 </body>
