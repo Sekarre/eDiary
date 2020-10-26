@@ -1,6 +1,10 @@
 package com.ediary.web.controllers;
 
+import com.ediary.DTO.GradeDto;
+import com.ediary.DTO.StudentDto;
+import com.ediary.DTO.SubjectDto;
 import com.ediary.converters.UserToUserDto;
+import com.ediary.domain.Student;
 import com.ediary.domain.security.User;
 import com.ediary.services.ParentService;
 import com.ediary.services.StudentService;
@@ -14,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -52,8 +59,18 @@ public class ParentController {
         return "parent/allStudents";
     }
 
+    @GetMapping("/{studentId}")
+    public String getStudentIndex(@PathVariable Long parentId, @PathVariable Long studentId, Model model) {
+
+        model.addAttribute("students", parentService.findStudent(parentId, studentId));
+
+        return "parent/index";
+    }
+
     @GetMapping("/{studentId}/grade")
-    public String getAllGrades(@PathVariable Long studentId, @PathVariable String parentId, Model model) {
+    public String getAllGrades(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
+
+        model.addAttribute("subjects", parentService.getAllStudentSubjectNames(parentId, studentId));
 
         model.addAttribute("grades", studentService.listGrades(studentId));
         return "parent/allGrades";
@@ -102,7 +119,7 @@ public class ParentController {
     }
 
 
-    @GetMapping("/{studentId}/attendance/save")
+    @PostMapping("/{studentId}/attendance/save")
     public String saveAttendance(Model model) {
         //todo: Zalezy od widoku
         return "";

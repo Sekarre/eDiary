@@ -9,6 +9,7 @@ import com.ediary.services.StudentService;
 import com.ediary.services.SubjectService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -83,6 +84,19 @@ class ParentControllerTest {
     }
 
     @Test
+    void getStudentIndex() throws Exception {
+        when(parentService.findStudent(parentId, 1L)).thenReturn(
+                StudentDto.builder().id(parentId).build()
+        );
+
+        mockMvc.perform(get("/parent/" + parentId + "/" + 1L))
+                .andExpect(status().isOk())
+                .andExpect(view().name("parent/index"))
+                .andExpect(model().attributeExists("students"));
+    }
+
+
+    @Test
     void getAllGrades() throws Exception {
         when(studentService.listGrades(studentId)).thenReturn(Arrays.asList(
                 GradeDto.builder().id(1L).value("1").build(),
@@ -92,9 +106,9 @@ class ParentControllerTest {
         mockMvc.perform(get("/parent/" + parentId + "/" + studentId + "/grade"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("grades"))
+                .andExpect(model().attributeExists("subjects"))
                 .andExpect(view().name("parent/allGrades"));
 
-        verify(studentService).listGrades(studentId);
         assertEquals(2, studentService.listGrades(studentId).size());
     }
 

@@ -1,23 +1,21 @@
 package com.ediary.services;
 
-import com.ediary.DTO.AttendanceDto;
-import com.ediary.DTO.ParentDto;
-import com.ediary.DTO.StudentDto;
-import com.ediary.converters.AttendanceDtoToAttendance;
-import com.ediary.converters.ParentToParentDto;
-import com.ediary.converters.StudentToStudentDto;
+import com.ediary.DTO.*;
+import com.ediary.converters.*;
 import com.ediary.domain.Attendance;
 import com.ediary.domain.Parent;
+import com.ediary.domain.Student;
 import com.ediary.domain.security.User;
+import com.ediary.exceptions.NoAccessException;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.AttendanceRepository;
+import com.ediary.repositories.GradeRepository;
 import com.ediary.repositories.ParentRepository;
 import com.ediary.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -29,6 +27,7 @@ public class ParentServiceImpl implements ParentService {
     private final StudentRepository studentRepository;
     private final AttendanceRepository attendanceRepository;
     private final ParentRepository parentRepository;
+    private final GradeRepository gradeRepository;
 
     private final StudentToStudentDto studentToStudentDto;
     private final AttendanceDtoToAttendance attendanceDtoToAttendance;
@@ -53,6 +52,29 @@ public class ParentServiceImpl implements ParentService {
     }
 
     @Override
+    public StudentDto findStudent(Long parentId, Long studentId) {
+
+        checkIfParentHasStudent(parentId, studentId);
+
+        Student student = studentRepository
+                .findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
+
+        return studentToStudentDto.convertForParent(student);
+    }
+
+    @Override
+    public List<String> getAllStudentSubjectNames(Long parentId, Long studentId) {
+
+        checkIfParentHasStudent(parentId, studentId);
+
+        Set<String> subjectDtoSet = new HashSet<>();
+        gradeRepository.findAllByStudentId(studentId).forEach(s -> subjectDtoSet.add(s.getSubject().getName()));
+
+        return new ArrayList<>(subjectDtoSet);
+    }
+
+
+    @Override
     public Attendance saveAttendance(AttendanceDto attendance) {
 
         Attendance attendanceToSave = attendanceDtoToAttendance.convert(attendance);
@@ -68,4 +90,15 @@ public class ParentServiceImpl implements ParentService {
 
         return parentToParentDto.convert(parentOptional.get());
     }
+
+    private void checkIfParentHasStudent(Long parentId, Long studentId) {
+        Parent parent = parentRepository
+                .findById(parentId).orElseThrow(() -> new NotFoundException("Parent not found"));
+
+        parent.getStudents().stream()
+                .filter(s -> s.getId().equals(studentId))
+                .findFirst().orElseThrow(() -> new NoAccessException("Parent -> Student"));
+    }
+
+
 }
