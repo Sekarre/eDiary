@@ -27,6 +27,7 @@ public class UserToUserDto implements Converter<User, UserDto> {
 
         final UserDto userDto = new UserDto();
         userDto.setId(source.getId());
+        userDto.setName(source.getFirstName() + " " + source.getLastName());
         userDto.setMessageNumber((long) messageRepository.findAllByStatusAndReaders(Message.Status.SENT, source).size());
 
         return userDto;

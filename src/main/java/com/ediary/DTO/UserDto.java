@@ -11,5 +11,7 @@ public class UserDto {
 
     private Long id;
 
+    private String Name;
+
     private Long messageNumber;
 }

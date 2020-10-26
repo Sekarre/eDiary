@@ -111,13 +111,16 @@ class UserControllerTest {
     @Test
     void newMessage() throws Exception {
         when(userService.initNewMessage(userId)).thenReturn(MessageDto.builder().build());
+        when(userService.listUsers()).thenReturn(Arrays.asList(UserDto.builder().build()));
 
         mockMvc.perform(get("/user/"+ userId +"/newMessages"))
                 .andExpect(status().isOk())
+                .andExpect(model().attributeExists("readers"))
                 .andExpect(model().attributeExists("message"))
                 .andExpect(view().name("user/newMessages"));
 
         verify(userService, times(1)).initNewMessage(userId);
+        verify(userService, times(1)).listUsers();
     }
 
     @Test

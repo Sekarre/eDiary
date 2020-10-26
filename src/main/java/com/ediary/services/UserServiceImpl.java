@@ -2,10 +2,8 @@ package com.ediary.services;
 
 import com.ediary.DTO.MessageDto;
 import com.ediary.DTO.NoticeDto;
-import com.ediary.converters.MessageDtoToMessage;
-import com.ediary.converters.MessageToMessageDto;
-import com.ediary.converters.NoticeDtoToNotice;
-import com.ediary.converters.NoticeToNoticeDto;
+import com.ediary.DTO.UserDto;
+import com.ediary.converters.*;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 import com.ediary.domain.security.User;
@@ -32,8 +30,14 @@ public class UserServiceImpl implements UserService {
 
     private final NoticeToNoticeDto noticeToNoticeDto;
     private final NoticeDtoToNotice noticeDtoToNotice;
+    private final UserToUserDto userToUserDto;
 
     private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public List<UserDto> listUsers() {
+        return userRepository.findAll().stream().map(userToUserDto::convert).collect(Collectors.toList());
+    }
 
     @Override
     public Boolean updatePassword(User user, String password, String oldPassword) {

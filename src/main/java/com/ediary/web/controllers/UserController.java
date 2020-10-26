@@ -81,6 +81,7 @@ public class UserController {
     @GetMapping("/{userId}/newMessages")
     public String newMessage(@PathVariable Long userId, Model model) {
 
+        model.addAttribute("readers", userService.listUsers());
         model.addAttribute("message", userService.initNewMessage(userId));
         return "user/newMessages";
     }
@@ -95,6 +96,27 @@ public class UserController {
             return "redirect:user/sendMessages";
         }
     }
+//
+//    @PostMapping("/{userId}/newMessages/addReader")
+//    public String addReaderToMessage(@PathVariable Long userId,
+//                                     @RequestParam("readerId") String readerId,
+//                                     @ModelAttribute MessageDto message,
+//                                     Model model,
+//                                     BindingResult result) {
+//        if (result.hasErrors()){
+//            //TODO
+//            return "/";
+//        } else {
+//            model.addAttribute("readers", userService.listUsers());
+//            try {
+//                model.addAttribute("message", message.getReadersId().add(Long.valueOf(readerId)));
+//                System.out.println("Dodano: " + readerId);
+//            } catch (Exception e){
+//
+//            }
+//            return "redirect:user/sendMessages";
+//        }
+//    }
 
     @GetMapping("/notice")
     public String getAllNotices(Model model) {

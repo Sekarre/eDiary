@@ -2,10 +2,8 @@ package com.ediary.services;
 
 import com.ediary.DTO.MessageDto;
 import com.ediary.DTO.NoticeDto;
-import com.ediary.converters.MessageDtoToMessage;
-import com.ediary.converters.MessageToMessageDto;
-import com.ediary.converters.NoticeDtoToNotice;
-import com.ediary.converters.NoticeToNoticeDto;
+import com.ediary.DTO.UserDto;
+import com.ediary.converters.*;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 import com.ediary.domain.security.User;
@@ -49,6 +47,9 @@ class UserServiceImplTest {
     NoticeDtoToNotice noticeDtoToNotice;
 
     @Mock
+    UserToUserDto userToUserDto;
+
+    @Mock
     PasswordEncoder passwordEncoder;
 
     UserService userService;
@@ -58,8 +59,25 @@ class UserServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         userService = new UserServiceImpl(messageService, userRepository, noticeService,
-                messageToMessageDto, messageDtoToMessage, noticeToNoticeDto, noticeDtoToNotice,
+                messageToMessageDto, messageDtoToMessage, noticeToNoticeDto, noticeDtoToNotice, userToUserDto,
                 passwordEncoder);
+    }
+
+    @Test
+    void listUsers() {
+        when(userRepository.findAll()).thenReturn(Arrays.asList(
+                User.builder().id(1L).build(),
+                User.builder().id(2L).build()
+        ));
+
+        when(userToUserDto.convert(any())).thenReturn(UserDto.builder().id(3L).build());
+
+        List<UserDto> users = userService.listUsers();
+
+        assertEquals(2, users.size());
+        assertEquals(3L, users.get(0).getId());
+        verify(userRepository, times(1)).findAll();
+        verify(userToUserDto, times(2)).convert(any());
     }
 
     @Test
