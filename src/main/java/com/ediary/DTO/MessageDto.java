@@ -33,6 +33,11 @@ public class MessageDto {
 
     public String getSimpleDateFormat() {
         SimpleDateFormat SDformat = new SimpleDateFormat("dd-MM-yyy HH:mm");
-        return SDformat.format(date);
+        try {
+            return SDformat.format(date);
+        }catch (Exception e) {
+            return "";
+        }
+
     }
 }

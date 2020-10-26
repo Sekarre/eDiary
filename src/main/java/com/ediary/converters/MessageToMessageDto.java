@@ -51,6 +51,7 @@ public class MessageToMessageDto implements Converter<Message, MessageDto> {
         messageDTO.setTitle(source.getTitle());
         messageDTO.setContent(source.getContent());
         messageDTO.setStatus(source.getStatus());
+        messageDTO.setDate(source.getDate());
 
         //Senders
         messageDTO.setSendersId(source.getSenders().getId());
