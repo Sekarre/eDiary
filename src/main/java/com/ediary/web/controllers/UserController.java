@@ -99,14 +99,12 @@ public class UserController {
     @GetMapping("/notice")
     public String getAllNotices(Model model) {
 
-        model.addAttribute("notices", userService.listNotices());
         return "user/notices";
     }
 
     @GetMapping("/{userId}/readNotices")
     public String getReadNotices(@PathVariable Long userId, Model model) {
-        //TODO listReadNotices ;)
-        //model.addAttribute("readNotices", userService.listReadNotices(userId));
+        model.addAttribute("notices", userService.listNotices());
         return "user/readNotices";
     }
 

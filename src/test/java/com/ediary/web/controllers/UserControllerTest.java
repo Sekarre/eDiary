@@ -133,20 +133,28 @@ class UserControllerTest {
 
     @Test
     void getAllNotices() throws Exception {
+        mockMvc.perform(get("/user/notice"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/notices"));
+    }
+
+    @Test
+    void getReadNotices() throws Exception {
         when(userService.listNotices()).thenReturn(Arrays.asList(
                 NoticeDto.builder().id(1L).build(),
                 NoticeDto.builder().id(2L).build()
         ));
 
-        mockMvc.perform(get("/user/notice"))
+        mockMvc.perform(get("/user/"+ userId + "/readNotices"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("notices"))
-                .andExpect(view().name("user/allNotices"));
+                .andExpect(view().name("user/readNotices"));
 
         verify(userService, times(1)).listNotices();
         assertEquals(2, userService.listNotices().size());
         assertEquals(2L, userService.listNotices().get(1).getId());
     }
+
 
     @Test
     void newNotice() throws Exception {
