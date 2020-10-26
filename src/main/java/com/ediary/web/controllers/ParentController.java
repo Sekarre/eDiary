@@ -59,7 +59,7 @@ public class ParentController {
         return "parent/allStudents";
     }
 
-    @GetMapping("/students/{studentId}")
+    @GetMapping("/{studentId}")
     public String getStudentIndex(@PathVariable Long parentId, @PathVariable Long studentId, Model model) {
 
         model.addAttribute("students", parentService.findStudent(parentId, studentId));
@@ -70,11 +70,7 @@ public class ParentController {
     @GetMapping("/{studentId}/grade")
     public String getAllGrades(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
 
-        //todo: Dodac metode serwisu
-        List<GradeDto> studentList = studentService.listGrades(studentId);
-        Set<String> subjectDtoSet = new HashSet<>();
-        studentList.forEach(grade -> subjectDtoSet.add(grade.getSubjectName()));
-        model.addAttribute("subjects", subjectDtoSet);
+        model.addAttribute("subjects", parentService.getAllStudentSubjectNames(parentId, studentId));
 
         model.addAttribute("grades", studentService.listGrades(studentId));
         return "parent/allGrades";

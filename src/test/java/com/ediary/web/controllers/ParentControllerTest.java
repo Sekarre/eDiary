@@ -89,7 +89,7 @@ class ParentControllerTest {
                 StudentDto.builder().id(parentId).build()
         );
 
-        mockMvc.perform(get("/parent/" + parentId + "/students/" + 1L))
+        mockMvc.perform(get("/parent/" + parentId + "/" + 1L))
                 .andExpect(status().isOk())
                 .andExpect(view().name("parent/index"))
                 .andExpect(model().attributeExists("students"));
@@ -106,6 +106,7 @@ class ParentControllerTest {
         mockMvc.perform(get("/parent/" + parentId + "/" + studentId + "/grade"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("grades"))
+                .andExpect(model().attributeExists("subjects"))
                 .andExpect(view().name("parent/allGrades"));
 
         assertEquals(2, studentService.listGrades(studentId).size());
