@@ -1,5 +1,6 @@
 package com.ediary.web.controllers;
 
+
 import com.ediary.DTO.MessageDto;
 import com.ediary.DTO.NoticeDto;
 import com.ediary.DTO.UserDto;
@@ -128,10 +129,26 @@ class UserControllerTest {
         when(userService.sendMessage(any())).thenReturn(Message.builder().build());
 
         mockMvc.perform(post("/user/"+ userId +"/newMessages"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:user/sendMessages"));
+                .andExpect(status().is3xxRedirection());
 
         verify(userService).sendMessage(any());
+    }
+
+    @Test
+    void addReaderToMessage() throws Exception {
+        Long readerId = 27L;
+
+        when(userService.listUsers()).thenReturn(Arrays.asList(UserDto.builder().build()));
+        when(userService.addReaderToMessage(any(), any())).thenReturn(MessageDto.builder().build());
+
+        mockMvc.perform(post("/user/"+ userId +"/newMessages/addReader/" + readerId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("readers"))
+                .andExpect(model().attributeExists("message"))
+                .andExpect(view().name("user/newMessages"));
+
+        verify(userService, times(1)).listUsers();
+        verify(userService, times(1)).addReaderToMessage(any(),any());
     }
 
     @Test

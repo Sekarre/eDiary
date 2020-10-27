@@ -81,7 +81,7 @@ The above copyright notice and this permission notice shall be included in all c
                     <label class="bmd-label-floating">Odbiorca</label>
                     <!--                          <input disabled type="text" class="form-control">-->
                     <div id="selectedReaders">
-                      <a th:each="readerId : *{message.readersId}" th:text="${readerId}"></a>
+                      <button disabled class="btn btn-success btn-round btn-sm" th:each="readerName : *{message.readersName}" th:text="${readerName}"></button>
                     </div>
 
                     <div class="btn-group">
@@ -93,7 +93,6 @@ The above copyright notice and this permission notice shall be included in all c
                         <input type="text" id="myInput" onkeyup="searchReaders()" placeholder="Wyszukaj">
                         <ol id="myUl" class="pre-scrollable">
                           <li th:each="reader : ${readers}">
-<!--                            <a disabled name="readerId" th:value="${reader.id}" th:text="${reader.getName()}" class="dropdown-item">Action</a>-->
                             <button type="submit" th:text="${reader.getName()}" th:name="readerToAdd" th:value="${reader.id}" class="dropdown-item" th:formaction="@{'/user/' + ${message.getSendersId()} + '/newMessages/addReader/' + ${reader.id}}">+</button>
                           </li>
                         </ol>
@@ -117,6 +116,7 @@ The above copyright notice and this permission notice shall be included in all c
 
               <input type="hidden" th:field="*{message.id}" />
               <input type="hidden" th:field="*{message.status}" />
+              <input type="hidden" th:field="*{message.readersId}" />
               <input type="hidden" th:field="*{message.sendersId}" />
 
               <button type="submit" class="btn btn-primary pull-right">Wyślij</button>

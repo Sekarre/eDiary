@@ -2,15 +2,10 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.MessageDto;
 import com.ediary.DTO.NoticeDto;
-import com.ediary.converters.MessageDtoToMessage;
-import com.ediary.converters.MessageToMessageDto;
 import com.ediary.converters.UserToUserDto;
-import com.ediary.domain.Message;
 import com.ediary.domain.security.User;
-import com.ediary.repositories.security.UserRepository;
 import com.ediary.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -100,7 +93,7 @@ public class UserController {
             return "/";
         } else {
             userService.sendMessage(message);
-            return "redirect:user/sendMessages";
+            return "redirect:/user/" + message.getSendersId() + "/sendMessages";
         }
     }
 
@@ -109,11 +102,8 @@ public class UserController {
                                      @PathVariable Long readerId,
                                      @ModelAttribute MessageDto message,
                                      Model model) {
-
-        //todo dodac odbiorce to wiadomosci
-
         model.addAttribute("readers", userService.listUsers());
-        model.addAttribute("message", message);
+        model.addAttribute("message", userService.addReaderToMessage(message, readerId));
         return "user/newMessages";
 
     }

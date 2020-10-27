@@ -3,6 +3,7 @@ package com.ediary.converters;
 import com.ediary.DTO.MessageDto;
 import com.ediary.domain.Message;
 import com.ediary.domain.security.User;
+import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
-
+@RequiredArgsConstructor
 @Component
 public class MessageToMessageDto implements Converter<Message, MessageDto> {
 
@@ -61,12 +62,11 @@ public class MessageToMessageDto implements Converter<Message, MessageDto> {
 
         //Readers
         messageDTO.setReadersId(source.getReaders().stream().map(User::getId).collect(Collectors.toList()));
-        messageDTO.setReadersName(
-                source.getReaders().stream().map(user -> {
-                            return user.getFirstName() + " " + user.getLastName();
-                        }
-                ).collect(Collectors.toList())
+        messageDTO.setReadersName(source.getReaders().stream()
+                .map(user -> user.getFirstName() + " " + user.getLastName())
+                .collect(Collectors.toList())
         );
+
 
         return messageDTO;
     }

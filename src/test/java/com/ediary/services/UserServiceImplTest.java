@@ -167,7 +167,7 @@ class UserServiceImplTest {
                 messageToConvert
         );
 
-        when(messageToMessageDto.convert(messageToConvert)).thenReturn(
+        when(messageToMessageDto.convertWithReaders(messageToConvert)).thenReturn(
                 MessageDto.builder().id(messageId).sendersId(messageToConvert.getSenders().getId()).build());
 
         MessageDto messagesDto = userService.initNewMessage(userId);
@@ -175,7 +175,28 @@ class UserServiceImplTest {
         assertEquals(user.getId(), messagesDto.getSendersId());
         verify(messageService, times(1)).initNewMessageBySender(user);
         verify(userRepository, times(1)).findById(userId);
-        verify(messageToMessageDto, times(1)).convert(messageToConvert);
+        verify(messageToMessageDto, times(1)).convertWithReaders(messageToConvert);
+    }
+
+    @Test
+    void addReaderToMessage() {
+        Long readerId = 27L;
+
+        Long messageId = 1L;
+        MessageDto messageDtoToSend = MessageDto.builder().id(messageId).build();
+        Message messageConverted = Message.builder().id(messageDtoToSend.getId()).build();
+
+        when(messageDtoToMessage.convert(messageDtoToSend)).thenReturn(messageConverted);
+        when(userRepository.findById(readerId)).thenReturn(Optional.of(User.builder().build()));
+        when(messageToMessageDto.convertWithReaders(messageConverted)).thenReturn(
+                MessageDto.builder().id(messageConverted.getId()).build());
+
+        MessageDto message = userService.addReaderToMessage(messageDtoToSend, readerId);
+
+        assertEquals(message.getId(), messageDtoToSend.getId());
+        verify(messageDtoToMessage, times(1)).convert(messageDtoToSend);
+        verify(userRepository, times(1)).findById(readerId);
+        verify(messageToMessageDto, times(1)).convertWithReaders(messageConverted);
     }
 
     @Test

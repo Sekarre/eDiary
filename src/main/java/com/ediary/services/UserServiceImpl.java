@@ -13,8 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -78,11 +77,26 @@ public class UserServiceImpl implements UserService {
         User user = getUserById(userId);
 
         Message message = messageService.initNewMessageBySender(user);
-        return messageToMessageDto.convert(message);
+        return messageToMessageDto.convertWithReaders(message);
+    }
+
+    @Override
+    public MessageDto addReaderToMessage(MessageDto messageDto, Long readerId) {
+        Message message = messageDtoToMessage.convert(messageDto);
+
+        Optional<User> userOptional = userRepository.findById(readerId);
+        if (userOptional.isPresent()) {
+            Set<User> s = new HashSet<User>();
+            s.addAll(message.getReaders());
+            s.add(userOptional.get());
+            message.setReaders(s);
+        }
+        return messageToMessageDto.convertWithReaders(message);
     }
 
     @Override
     public Message sendMessage(MessageDto messageDto) {
+        messageDto.setDate(new Date());
 
         return messageService.saveMessage(messageDtoToMessage.convert(messageDto));
     }
