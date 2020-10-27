@@ -6,7 +6,6 @@ import com.ediary.repositories.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -17,12 +16,12 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<Message> listReadMessageByUser(User user) {
-        return messageRepository.findAllByReaders(user);
+        return messageRepository.findAllByReadersOrderByDateDesc(user);
     }
 
     @Override
     public List<Message> listSendMessageByUser(User user) {
-        return messageRepository.findAllBySenders(user);
+        return messageRepository.findAllBySendersOrderByDateDesc(user);
     }
 
     @Override

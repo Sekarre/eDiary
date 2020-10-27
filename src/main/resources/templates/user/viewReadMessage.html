@@ -64,7 +64,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <h4 class="card-title">Wiadomość</h4>
               </div>
               <div class="card-body">
-                <form th:object="${message}">
+                <form th:object="${message}" th:action="@{'/user/' + ${user.getId()} + '/readMessages/' + ${message.getId()}}" method="post">
               </div>
 
               <div class="row">
@@ -72,7 +72,7 @@ The above copyright notice and this permission notice shall be included in all c
                   <div class="form-group">
                     <label class="bmd-label-floating">Nadawca</label>
                     <div id="selectedReaders">
-                      <button disabled class="btn btn-success btn-round btn-sm" th:text="*{message.sendersName}"></button>
+                      <button readonly class="btn btn-success btn-round btn-sm" th:text="*{message.sendersName}"></button>
                     </div>
                   </div>
                 </div>
@@ -83,7 +83,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-12">
                   <div class="form-group">
                     <label class="bmd-label-floating">Temat</label>
-                    <input disabled type="text" class="form-control" th:field="*{message.title}">
+                    <input readonly type="text" class="form-control" th:field="*{message.title}">
                   </div>
                 </div>
               </div>
@@ -95,7 +95,7 @@ The above copyright notice and this permission notice shall be included in all c
                     <label>Treść wiadomości</label>
                     <div class="form-group">
                       <label class="bmd-label-floating"> </label>
-                      <textarea disabled class="form-control" rows="5" th:field="*{message.content}"></textarea>
+                      <textarea readonly class="form-control" rows="5" th:field="*{message.content}"></textarea>
                     </div>
                   </div>
                 </div>
@@ -105,7 +105,7 @@ The above copyright notice and this permission notice shall be included in all c
               <input type="hidden" th:field="*{message.status}" />
               <input type="hidden" th:field="*{message.readersId}" />
               <input type="hidden" th:field="*{message.sendersId}" />
-
+              <button type="submit" class="btn btn-primary pull-right">Odpowiedz</button>
               <div class="clearfix"></div>
               </form>
 

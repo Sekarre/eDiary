@@ -35,7 +35,7 @@ class MessageServiceImplTest {
 
     @Test
     void listReadMessageByUser() {
-        when(messageRepository.findAllByReaders(user)).thenReturn(Arrays.asList(
+        when(messageRepository.findAllByReadersOrderByDateDesc(user)).thenReturn(Arrays.asList(
                 Message.builder().id(1L).build(),
                 Message.builder().id(2L).build()
         ));
@@ -44,13 +44,13 @@ class MessageServiceImplTest {
 
         assertEquals(2, messages.size());
         assertEquals(2L, messages.get(1).getId());
-        verify(messageRepository, times(1)).findAllByReaders(user);
+        verify(messageRepository, times(1)).findAllByReadersOrderByDateDesc(user);
 
     }
 
     @Test
     void listSendMessageByUser() {
-        when(messageRepository.findAllBySenders(user)).thenReturn(Arrays.asList(
+        when(messageRepository.findAllBySendersOrderByDateDesc(user)).thenReturn(Arrays.asList(
                 Message.builder().id(1L).build(),
                 Message.builder().id(2L).build()
         ));
@@ -59,7 +59,7 @@ class MessageServiceImplTest {
 
         assertEquals(2, messages.size());
         assertEquals(1L, messages.get(0).getId());
-        verify(messageRepository, times(1)).findAllBySenders(user);
+        verify(messageRepository, times(1)).findAllBySendersOrderByDateDesc(user);
     }
 
     @Test

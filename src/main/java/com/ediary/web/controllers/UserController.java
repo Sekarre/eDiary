@@ -115,6 +115,17 @@ public class UserController {
         return "/user/viewReadMessage";
     }
 
+    @PostMapping("/{userId}/readMessages/{messageId}")
+    public String replyReadMessage(@PathVariable Long userId,
+                                   @PathVariable Long messageId,
+                                   @ModelAttribute MessageDto messageDto,
+                                   Model model) {
+
+        model.addAttribute("readers", userService.listUsers());
+        model.addAttribute("message", userService.replyMessage(userId, messageDto));
+        return "/user/newMessages";
+    }
+
     @GetMapping("/{userId}/sendMessages/{messageId}")
     public String viewSendMessage(@PathVariable Long userId, @PathVariable Long messageId, Model model) {
 

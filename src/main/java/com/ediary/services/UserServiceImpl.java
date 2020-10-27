@@ -84,6 +84,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public MessageDto replyMessage(Long userId, MessageDto messageDto) {
+        User user = getUserById(userId);
+        User messageAuthor = getUserById(messageDto.getSendersId());
+
+        Message source = messageDtoToMessage.convert(messageDto);
+        Message replyMessage = new Message();
+
+        replyMessage.setTitle("Re: " + source.getTitle());
+        replyMessage.setContent("\n"
+                + "\nOd: " + source.getSenders().getFirstName() + " " + source.getSenders().getLastName()
+                + "\nDo: " + user.getFirstName() + " " + user.getLastName()
+                + "\nWysłane: " + messageDto.getSimpleDateFormat()
+                + "\nTemat: " + source.getTitle()
+                + "\n\n" + source.getContent()
+        );
+        replyMessage.setSenders(user);
+
+        Set<User> s = new HashSet<User>();
+        s.add(messageAuthor);
+        replyMessage.setReaders(s);
+
+    return messageToMessageDto.convertWithReaders(replyMessage);
+    }
+
+    @Override
     public MessageDto addReaderToMessage(MessageDto messageDto, Long readerId) {
         Message message = messageDtoToMessage.convert(messageDto);
 
