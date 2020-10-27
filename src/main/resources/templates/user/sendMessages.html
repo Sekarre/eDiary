@@ -101,7 +101,7 @@ The above copyright notice and this permission notice shall be included in all c
                           <td>
                             <div class="textOverflowCustom" th:text="${message.getContent()}" ></div>
                           </td>
-                          <td><a th:href ="${message.getId()}">
+                          <td><a th:href="@{'/user/' + ${user.id} + '/sendMessages/' + ${message.id}}">
                             Czytaj..
                           </a></td>
                         </tr>

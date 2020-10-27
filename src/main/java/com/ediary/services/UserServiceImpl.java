@@ -120,11 +120,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public MessageDto getSendMessageById(Long messageId, Long userId) {
+        User user = getUserById(userId);
+
+        Optional<Message> messageOptional = messageRepository.findById(messageId);
+        if (!messageOptional.isPresent()){
+            throw new NotFoundException("Message Not Found.");
+        }
+
+        Message message = messageOptional.get();
+        return messageToMessageDto.convertWithReaders(message);
+    }
+
+    @Override
     public Message sendMessage(MessageDto messageDto) {
         messageDto.setDate(new Date());
         messageDto.setStatus(Message.Status.SENT);
 
-        return messageService.saveMessage(messageDtoToMessage.convert(messageDto));
+        Message message = new Message();
+        if(!messageDto.getReadersId().isEmpty()) {
+            message = messageService.saveMessage(messageDtoToMessage.convert(messageDto));
+        }
+
+        return message;
     }
 
     @Override

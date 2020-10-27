@@ -206,7 +206,7 @@ class UserServiceImplTest {
     @Test
     void sendMessage() {
         Long messageId = 1L;
-        MessageDto messageDtoToSend = MessageDto.builder().id(messageId).build();
+        MessageDto messageDtoToSend = MessageDto.builder().id(messageId).readersId(Arrays.asList(1L,2l)).build();
 
 
         when(messageDtoToMessage.convert(messageDtoToSend)).thenReturn(
@@ -273,6 +273,31 @@ class UserServiceImplTest {
         verify(messageRepository, times(1)).findById(messageId);
         verify(messageRepository, times(0)).save(message);
         verify(messageToMessageDto, times(1)).convert(message);
+    }
+
+    @Test
+    void getSendMessageById() {
+        User user = User.builder().id(userId).build();
+
+        Long messageId = 10L;
+        Message message = Message.builder().id(messageId).readers(Arrays.asList(user)).status(Message.Status.READ).build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(messageRepository.findById(messageId)).thenReturn(Optional.of(message));
+        when(messageToMessageDto.convertWithReaders(message)).thenReturn(MessageDto.builder()
+                .id(message.getId())
+                .status(message.getStatus())
+                .build());
+
+
+        MessageDto messagesDto = userService.getSendMessageById(messageId, userId);
+
+        assertEquals(messageId, messagesDto.getId());
+        assertEquals(message.getStatus(), messagesDto.getStatus());
+        verify(userRepository, times(1)).findById(userId);
+        verify(messageRepository, times(1)).findById(messageId);
+        verify(messageRepository, times(0)).save(message);
+        verify(messageToMessageDto, times(1)).convertWithReaders(message);
     }
 
     @Test
