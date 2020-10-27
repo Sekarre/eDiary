@@ -108,6 +108,13 @@ public class UserController {
 
     }
 
+    @GetMapping("/{userId}/readMessages/{messageId}")
+    public String viewReadMessage(@PathVariable Long userId, @PathVariable Long messageId, Model model) {
+
+        model.addAttribute("message", userService.getReadMessageById(messageId, userId));
+        return "/user/viewReadMessage";
+    }
+
     @GetMapping("/notice")
     public String getAllNotices(Model model) {
 

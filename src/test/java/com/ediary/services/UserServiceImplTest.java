@@ -7,6 +7,7 @@ import com.ediary.converters.*;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 import com.ediary.domain.security.User;
+import com.ediary.repositories.MessageRepository;
 import com.ediary.repositories.security.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,9 @@ class UserServiceImplTest {
     MessageDtoToMessage messageDtoToMessage;
 
     @Mock
+    MessageRepository messageRepository;
+
+    @Mock
     NoticeToNoticeDto noticeToNoticeDto;
 
     @Mock
@@ -59,7 +63,7 @@ class UserServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         userService = new UserServiceImpl(messageService, userRepository, noticeService,
-                messageToMessageDto, messageDtoToMessage, noticeToNoticeDto, noticeDtoToNotice, userToUserDto,
+                messageToMessageDto, messageDtoToMessage,messageRepository, noticeToNoticeDto, noticeDtoToNotice, userToUserDto,
                 passwordEncoder);
     }
 
@@ -218,6 +222,57 @@ class UserServiceImplTest {
         assertEquals(messageId, messageSaved.getId());
         verify(messageDtoToMessage, times(1)).convert(any());
         verify(messageService, times(1)).saveMessage(any());
+    }
+
+    @Test
+    void getReadMessageByIdWithStatusChange() {
+        User user = User.builder().id(userId).build();
+
+        Long messageId = 10L;
+        Message message = Message.builder().id(messageId).readers(Arrays.asList(user)).status(Message.Status.SENT).build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(messageRepository.findById(messageId)).thenReturn(Optional.of(message));
+        when(messageRepository.save(message)).thenReturn(message);
+        when(messageToMessageDto.convert(message)).thenReturn(MessageDto.builder()
+                .id(message.getId())
+                .status(message.getStatus())
+                .build());
+
+
+        MessageDto messagesDto = userService.getReadMessageById(messageId, userId);
+
+        assertEquals(messageId, messagesDto.getId());
+        assertNotEquals(message.getStatus(), messagesDto.getStatus());
+        verify(userRepository, times(1)).findById(userId);
+        verify(messageRepository, times(1)).findById(messageId);
+        verify(messageRepository, times(1)).save(message);
+        verify(messageToMessageDto, times(1)).convert(message);
+    }
+
+    @Test
+    void getReadMessageByIdNoStatusChange() {
+        User user = User.builder().id(userId).build();
+
+        Long messageId = 10L;
+        Message message = Message.builder().id(messageId).readers(Arrays.asList(user)).status(Message.Status.READ).build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(messageRepository.findById(messageId)).thenReturn(Optional.of(message));
+        when(messageToMessageDto.convert(message)).thenReturn(MessageDto.builder()
+                .id(message.getId())
+                .status(message.getStatus())
+                .build());
+
+
+        MessageDto messagesDto = userService.getReadMessageById(messageId, userId);
+
+        assertEquals(messageId, messagesDto.getId());
+        assertEquals(message.getStatus(), messagesDto.getStatus());
+        verify(userRepository, times(1)).findById(userId);
+        verify(messageRepository, times(1)).findById(messageId);
+        verify(messageRepository, times(0)).save(message);
+        verify(messageToMessageDto, times(1)).convert(message);
     }
 
     @Test

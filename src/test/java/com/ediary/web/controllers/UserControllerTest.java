@@ -152,6 +152,21 @@ class UserControllerTest {
     }
 
     @Test
+    void viewReadMessage() throws Exception {
+        Long messageId = 10L;
+
+        when(userService.getReadMessageById(messageId, userId)).thenReturn(MessageDto.builder().build());
+
+        mockMvc.perform(get("/user/"+ userId +"/readMessages/" + messageId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("message"))
+                .andExpect(view().name("/user/viewReadMessage"));
+
+        verify(userService, times(1)).getReadMessageById(messageId, userId);
+
+    }
+
+    @Test
     void getAllNotices() throws Exception {
         mockMvc.perform(get("/user/notice"))
                 .andExpect(status().isOk())

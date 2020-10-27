@@ -61,46 +61,33 @@ The above copyright notice and this permission notice shall be included in all c
 
             <div class="card">
               <div class="card-header card-header-primary">
-                <h4 class="card-title">Wyślij wiadomość</h4>
+                <h4 class="card-title">Wiadomość</h4>
               </div>
               <div class="card-body">
-                <form th:object="${message}" th:action="@{'/user/' + ${message.getSendersId()} + '/newMessages'}" method="post">
-
+                <form th:object="${message}">
               </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label class="bmd-label-floating">Nadawca</label>
+                    <div id="selectedReaders">
+                      <button disabled class="btn btn-success btn-round btn-sm" th:text="*{message.sendersName}"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group">
                     <label class="bmd-label-floating">Temat</label>
-                    <input type="text" class="form-control" th:field="*{message.title}">
+                    <input disabled type="text" class="form-control" th:field="*{message.title}">
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group">
-                    <label class="bmd-label-floating">Odbiorca</label>
-                    <!--                          <input disabled type="text" class="form-control">-->
-                    <div id="selectedReaders">
-                      <button disabled class="btn btn-success btn-round btn-sm" th:each="readerName : *{message.readersName}" th:text="${readerName}"></button>
-                    </div>
 
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="OnAddReader">
-                        Dodaj odbiorcę
-                      </button>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-
-                        <input type="text" id="myInput" onkeyup="searchReaders()" placeholder="Wyszukaj">
-                        <ol id="myUl" class="pre-scrollable">
-                          <li th:each="reader : ${readers}">
-                            <button type="submit" th:text="${reader.getName()}" th:name="readerToAdd" th:value="${reader.id}" class="dropdown-item" th:formaction="@{'/user/' + ${message.getSendersId()} + '/newMessages/addReader/' + ${reader.id}}">+</button>
-                          </li>
-                        </ol>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
 
               <div class="row">
                 <div class="col-md-12">
@@ -108,7 +95,7 @@ The above copyright notice and this permission notice shall be included in all c
                     <label>Treść wiadomości</label>
                     <div class="form-group">
                       <label class="bmd-label-floating"> </label>
-                      <textarea class="form-control" rows="5" th:field="*{message.content}"></textarea>
+                      <textarea disabled class="form-control" rows="5" th:field="*{message.content}"></textarea>
                     </div>
                   </div>
                 </div>
@@ -119,7 +106,6 @@ The above copyright notice and this permission notice shall be included in all c
               <input type="hidden" th:field="*{message.readersId}" />
               <input type="hidden" th:field="*{message.sendersId}" />
 
-              <button type="submit" class="btn btn-primary pull-right">Wyślij</button>
               <div class="clearfix"></div>
               </form>
 

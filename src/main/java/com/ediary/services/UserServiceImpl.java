@@ -7,7 +7,9 @@ import com.ediary.converters.*;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 import com.ediary.domain.security.User;
+import com.ediary.exceptions.NoAccessException;
 import com.ediary.exceptions.NotFoundException;
+import com.ediary.repositories.MessageRepository;
 import com.ediary.repositories.security.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
     private final MessageToMessageDto messageToMessageDto;
     private final MessageDtoToMessage messageDtoToMessage;
+    private final MessageRepository messageRepository;
 
     private final NoticeToNoticeDto noticeToNoticeDto;
     private final NoticeDtoToNotice noticeDtoToNotice;
@@ -95,8 +98,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public MessageDto getReadMessageById(Long messageId, Long userId) {
+        User user = getUserById(userId);
+
+        Optional<Message> messageOptional = messageRepository.findById(messageId);
+        if (!messageOptional.isPresent()){
+            throw new NotFoundException("Message Not Found.");
+        }
+
+        Message message = messageOptional.get();
+        if (message.getReaders().contains(user)) {
+            if (message.getStatus().equals(Message.Status.SENT)) {
+                message.setStatus(Message.Status.READ);
+                messageRepository.save(message);
+            }
+            return messageToMessageDto.convert(message);
+
+        } else {
+            throw new NoAccessException();
+        }
+    }
+
+    @Override
     public Message sendMessage(MessageDto messageDto) {
         messageDto.setDate(new Date());
+        messageDto.setStatus(Message.Status.SENT);
 
         return messageService.saveMessage(messageDtoToMessage.convert(messageDto));
     }

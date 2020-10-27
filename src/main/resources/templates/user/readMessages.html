@@ -86,7 +86,7 @@ The above copyright notice and this permission notice shall be included in all c
                       </thead>
                       <tbody>
 
-                        <tr th:each="message : ${readMessages}">
+                        <tr th:each="message : ${readMessages}" class="" th:classappend="${(message.getStatus().equals(message.status.SENT) ? 'table-warning' : '')}">
                           <td th:text="${message.getSimpleDateFormat()}">
                             Data
                           </td>
@@ -99,7 +99,7 @@ The above copyright notice and this permission notice shall be included in all c
                           <td>
                             <div class="textOverflowCustom" th:text="${message.getContent()}" ></div>
                           </td>
-                          <td><a th:href ="${message.getId()}">
+                          <td><a th:href="@{'/user/' + ${user.id} + '/readMessages/' + ${message.id}}">
                             Czytaj..
                           </a></td>
                         </tr>
