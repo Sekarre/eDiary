@@ -37,8 +37,10 @@ public class SubjectToSubjectDto implements Converter<Subject, SubjectDto> {
             subjectDto.setTeacherId(source.getTeacher().getId());
 
         //Class
-        subjectDto.setClassName(source.getSchoolClass().getName());
-        subjectDto.setClassId(source.getSchoolClass().getId());
+        if (source.getSchoolClass() != null) {
+            subjectDto.setClassName(source.getSchoolClass().getName());
+            subjectDto.setClassId(source.getSchoolClass().getId());
+        }
 
         //Lessons
             subjectDto.setLessonsName(source.getLessons().stream()

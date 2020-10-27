@@ -139,16 +139,16 @@ public class DefaultLoader implements CommandLineRunner {
         addStudentsToClasses();
         createSubjects();
 //        Uncomment for grades (takes time)
-//        createGrades();
-        createTopics();
-        createLessons();
-        createBehaviors();
-        createEvents();
-        createReports();
-        createStudentCards();
-        createDays();
-        createClassrooms();
-        createDurations();
+        createGrades();
+//        createTopics();
+//        createLessons();
+//        createBehaviors();
+//        createEvents();
+//        createReports();
+//        createStudentCards();
+//        createDays();
+//        createClassrooms();
+//        createDurations();
 //        Uncomment for school periods
   //      createSchoolPeriods();
 
@@ -476,13 +476,14 @@ public class DefaultLoader implements CommandLineRunner {
                                     teacherNames[teacherSubjectIndexes[i]],
                                     teacherLastNames[teacherSubjectIndexes[i]]).getId())
             );
+
+            savedSubjects.get(i).setSchoolClass(classRepository.findByName(classNames[0]));
         }
 
 
         subjectRepository.saveAll(savedSubjects);
 
     }
-
 
     private void createGrades() {
 
@@ -511,7 +512,7 @@ public class DefaultLoader implements CommandLineRunner {
                 "Kartkówka", "Sprawdzian", "Aktywność", "Aktywność", "Kartkówka"};
 
 
-        for (int i = 0; i < classSize; i++) {
+        for (int i = 0; i < 1; i++) {
             for (int j = 0; j < gradesPerStudent[i].length; j++) {
 
                 gradeRepository.save(Grade.builder()
@@ -537,8 +538,8 @@ public class DefaultLoader implements CommandLineRunner {
                         .findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId()))
                 .teacher(teacherRepository.findByUserId(userRepository
                         .findByFirstNameAndLastName(
-                                teacherNames[0],
-                                teacherLastNames[0]).getId()))
+                                teacherNames[1],
+                                teacherLastNames[1]).getId()))
                 .subject(subjectRepository.findByName(subjectNames[2]))
                 .build());
 

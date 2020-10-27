@@ -67,41 +67,74 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="table-responsive">
                             <table class="table">
                                 <thead class=" text-primary">
-                                <th>Przedmiot</th>
-                                <!--                                <th>Oceny</th>-->
+                                    <th>Przedmiot</th>
                                 </thead>
                                 <tbody>
-
-                                <!--/*@thymesVar id="subjects" type="com.ediary.web.controllers.ParentController"*/-->
+                                <!--/*@thymesVar id="subjects" type="com.ediary.DTO.SubjectDto"*/-->
                                 <tr th:each="subject : ${subjects}">
-                                    <td th:text="${subject}"></td>
+                                    <td>
+                                    <a th:text="${subject.name}"
+                                       th:href="@{/parent/{parentId}/{studentId}/grade/subject/{subjectId}(parentId=${parent.id}, studentId=${studentId}, subjectId=${subject.id})}"
+                                    ></a></td>
                                     <span th:each="grade : ${grades}"
-                                          th:if="${grade.subjectName} == ${subject}">
+                                          th:if="${grade.subjectName} == ${subject.name}">
                                         <td>
-<!--                                            <a th:text="${grade?.value}" th:href="@{/parent/{parentId}/{studentId}/grade/{gradeId}(parentId=${parent.id}, studentId=${grade.studentId}, gradeId=${grade.id})}"></a>-->
-                                            <button type="button" class="btn btn-warning" th:text="${grade?.value}" data-target = "#modalCenter"></button>
+                                            <a data-toggle="modal" class="open-gradeDialogModal" href="#gradeModal"
+                                               th:attr="data-date=''+${grade.date}+'', data-target='#gradeModal', data-value=''+${grade.value}+'',
+                                                data-subject=''+${grade.subjectName}+'', data-teacher=''+${grade.teacherName}+'', data-desc=''+${grade.description}+''"
+                                               th:text="${grade?.value}"></a>
                                         </td>
                                     </span>
                                 </tr>
                                 </tbody>
                             </table>
 
-                            <div class="modal fade" id="modalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal fade" id="gradeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                                            <h5 class="modal-title" id="gradeModalTitle">Informacje: </h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            ...
+                                            <div class="content">
+                                                <div class="container-fluid">
+                                                    <div class="card">
+
+                                                            <div class="table-responsive">
+                                                                <table class="table">
+                                                                    <tr>
+                                                                        <td>Ocena: </td>
+                                                                        <td id="gradeValue"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Przedmiot: </td>
+                                                                        <td id="gradeSubject"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Nauczyciel: </td>
+                                                                        <td id="gradeTeacher"> </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Nauczyciel: </td>
+                                                                        <td id="gradeDate"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Opis: </td>
+                                                                        <td id="gradeDesc"></td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary">Save changes</button>
+
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -110,8 +143,6 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
 <!--   Core JS Files   -->
 <script th:src="@{/js/core/jquery.min.js}"></script>
@@ -330,6 +361,30 @@ The above copyright notice and this permission notice shall be included in all c
     $(document).ready(function() {
         //init DateTimePickers
         md.initFormExtendedDatetimepickers();
+    });
+</script>
+<script>
+    $(document).on("click", ".open-gradeDialogModal", function () {
+        var gradeValue = $(this).data('value');
+        var gradeSubject = $(this).data('subject');
+        var gradeTeacher = $(this).data('teacher');
+        var gradeDate = $(this).data('date');
+        var gradeDesc = $(this).data('desc');
+
+
+        var gradeValueElem = document.getElementById("gradeValue");
+        var gradeSubjectElem = document.getElementById("gradeSubject");
+        var gradeTeacherElem = document.getElementById("gradeTeacher");
+        var gradeDateElem = document.getElementById("gradeDate");
+        var gradeDescElem = document.getElementById("gradeDesc");
+
+
+        gradeValueElem.innerHTML = gradeValue;
+        gradeSubjectElem.innerHTML = gradeSubject;
+        gradeTeacherElem.innerHTML = gradeTeacher;
+        gradeDateElem.innerHTML = gradeDate;
+        gradeDescElem.innerHTML = gradeDesc;
+
     });
 </script>
 
