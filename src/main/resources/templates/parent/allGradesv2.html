@@ -67,15 +67,17 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="table-responsive">
                             <table class="table">
                                 <thead class=" text-primary">
-                                <th>Przedmiot</th>
+                                    <th>Przedmiot</th>
                                 </thead>
                                 <tbody>
-
-                                <!--/*@thymesVar id="subjects" type="com.ediary.web.controllers.ParentController"*/-->
+                                <!--/*@thymesVar id="subjects" type="com.ediary.DTO.SubjectDto"*/-->
                                 <tr th:each="subject : ${subjects}">
-                                    <td th:text="${subject}"></td>
+                                    <td>
+                                    <a th:text="${subject.name}"
+                                       th:href="@{/parent/{parentId}/{studentId}/grade/subject/{subjectId}(parentId=${parent.id}, studentId=${studentId}, subjectId=${subject.id})}"
+                                    ></a></td>
                                     <span th:each="grade : ${grades}"
-                                          th:if="${grade.subjectName} == ${subject}">
+                                          th:if="${grade.subjectName} == ${subject.name}">
                                         <td>
                                             <a data-toggle="modal" class="open-gradeDialogModal" href="#gradeModal"
                                                th:attr="data-date=''+${grade.date}+'', data-target='#gradeModal', data-value=''+${grade.value}+'',

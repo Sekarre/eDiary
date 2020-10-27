@@ -5,13 +5,12 @@ import com.ediary.converters.*;
 import com.ediary.domain.Attendance;
 import com.ediary.domain.Parent;
 import com.ediary.domain.Student;
+import com.ediary.domain.Subject;
 import com.ediary.domain.security.User;
+import com.ediary.domain.timetable.Day;
 import com.ediary.exceptions.NoAccessException;
 import com.ediary.exceptions.NotFoundException;
-import com.ediary.repositories.AttendanceRepository;
-import com.ediary.repositories.GradeRepository;
-import com.ediary.repositories.ParentRepository;
-import com.ediary.repositories.StudentRepository;
+import com.ediary.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +27,12 @@ public class ParentServiceImpl implements ParentService {
     private final AttendanceRepository attendanceRepository;
     private final ParentRepository parentRepository;
     private final GradeRepository gradeRepository;
+    private final SubjectRepository subjectRepository;
 
     private final StudentToStudentDto studentToStudentDto;
     private final AttendanceDtoToAttendance attendanceDtoToAttendance;
     private final ParentToParentDto parentToParentDto;
+    private final SubjectToSubjectDto subjectToSubjectDto;
 
     @Override
     public List<StudentDto> listStudents(Long parentId) {
@@ -63,14 +64,18 @@ public class ParentServiceImpl implements ParentService {
     }
 
     @Override
-    public List<String> getAllStudentSubjectNames(Long parentId, Long studentId) {
+    public List<SubjectDto> getAllStudentSubjectNames(Long parentId, Long studentId) {
 
         checkIfParentHasStudent(parentId, studentId);
 
-        Set<String> subjectDtoSet = new HashSet<>();
-        gradeRepository.findAllByStudentId(studentId).forEach(s -> subjectDtoSet.add(s.getSubject().getName()));
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
 
-        return new ArrayList<>(subjectDtoSet);
+        List<Subject> subjects = subjectRepository.findAllBySchoolClassIdOrderByName(student.getSchoolClass().getId());
+
+
+        return subjects.stream()
+                .map(subjectToSubjectDto::convert)
+                .collect(Collectors.toList());
     }
 
 

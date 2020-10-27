@@ -13,7 +13,7 @@ public interface ParentService {
 
     List<StudentDto> listStudents(Long parentId);
     StudentDto findStudent(Long parentId, Long studentId);
-    List<String> getAllStudentSubjectNames(Long parentId, Long studentId);
+    List<SubjectDto> getAllStudentSubjectNames(Long parentId, Long studentId);
     Attendance saveAttendance(AttendanceDto attendance);
     ParentDto findByUser(User user);
 }

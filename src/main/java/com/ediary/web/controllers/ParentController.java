@@ -73,13 +73,11 @@ public class ParentController {
         model.addAttribute("subjects", parentService.getAllStudentSubjectNames(parentId, studentId));
 
         model.addAttribute("grades", studentService.listGrades(studentId));
+
+        model.addAttribute("student", parentService.findStudent(parentId, studentId));
         return "parent/allGrades";
     }
 
-    @GetMapping("/{studentId}/grade/{gradeId}")
-    public String getGrade(){
-        return null;
-    }
 
     @GetMapping("/{studentId}/grade/subject/{subjectId}")
     public String getAllGradesBySubject(@PathVariable Long studentId,

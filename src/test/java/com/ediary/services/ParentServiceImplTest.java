@@ -3,15 +3,15 @@ package com.ediary.services;
 import com.ediary.DTO.AttendanceDto;
 import com.ediary.DTO.ParentDto;
 import com.ediary.DTO.StudentDto;
+import com.ediary.DTO.SubjectDto;
 import com.ediary.converters.AttendanceDtoToAttendance;
 import com.ediary.converters.ParentToParentDto;
 import com.ediary.converters.StudentToStudentDto;
+import com.ediary.converters.SubjectToSubjectDto;
 import com.ediary.domain.*;
+import com.ediary.domain.Class;
 import com.ediary.domain.security.User;
-import com.ediary.repositories.AttendanceRepository;
-import com.ediary.repositories.GradeRepository;
-import com.ediary.repositories.ParentRepository;
-import com.ediary.repositories.StudentRepository;
+import com.ediary.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -39,6 +39,9 @@ class ParentServiceImplTest {
     GradeRepository gradeRepository;
 
     @Mock
+    SubjectRepository subjectRepository;
+
+    @Mock
     StudentToStudentDto studentToStudentDto;
 
     @Mock
@@ -47,6 +50,9 @@ class ParentServiceImplTest {
     @Mock
     ParentToParentDto parentToParentDto;
 
+    @Mock
+    SubjectToSubjectDto subjectToSubjectDto;
+
     ParentService parentService;
 
     @BeforeEach
@@ -54,7 +60,7 @@ class ParentServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         parentService = new ParentServiceImpl(studentRepository, attendanceRepository, parentRepository, gradeRepository,
-                studentToStudentDto, attendanceDtoToAttendance, parentToParentDto);
+                subjectRepository, studentToStudentDto, attendanceDtoToAttendance, parentToParentDto, subjectToSubjectDto);
     }
 
 
@@ -113,6 +119,7 @@ class ParentServiceImplTest {
 
         Student student = Student.builder()
                 .id(1L)
+                .schoolClass(Class.builder().id(1L).build())
                 .build();
 
         Parent parent = Parent.builder()
@@ -122,12 +129,12 @@ class ParentServiceImplTest {
 
         Subject subject = Subject.builder().id(1L).name("xx").build();
 
-
+        when(studentRepository.findById(any())).thenReturn(Optional.ofNullable(student));
         when(parentRepository.findById(any())).thenReturn(Optional.of(parent));
-        when(gradeRepository.findAllByStudentId(studentId)).thenReturn(Collections.singletonList(Grade.builder()
-                .id(1L).subject(subject).build()));
+        when(subjectRepository.findAllBySchoolClassIdOrderByName(any())).thenReturn(Collections.singletonList(subject));
 
-        List<String> subjectNames = parentService.getAllStudentSubjectNames(studentId, subjectId);
+
+        List<SubjectDto> subjectNames = parentService.getAllStudentSubjectNames(studentId, subjectId);
 
         assertNotNull(subjectNames);
         verify(parentRepository, times(1)).findById(any());

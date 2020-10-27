@@ -476,13 +476,14 @@ public class DefaultLoader implements CommandLineRunner {
                                     teacherNames[teacherSubjectIndexes[i]],
                                     teacherLastNames[teacherSubjectIndexes[i]]).getId())
             );
+
+            savedSubjects.get(i).setSchoolClass(classRepository.findByName(classNames[0]));
         }
 
 
         subjectRepository.saveAll(savedSubjects);
 
     }
-
 
     private void createGrades() {
 
