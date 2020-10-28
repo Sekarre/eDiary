@@ -63,8 +63,7 @@ The above copyright notice and this permission notice shall be included in all c
                                 <h4 class="card-title">Dodaj ogłoszenie</h4>
                             </div>
                             <div class="card-body">
-                                <form th:object="${notice}" th:action="@{'/user/' + ${notice.getAuthorId()} + '/newNotice'}" method="post">
-
+                                <form th:object="${notice}" th:action="@{'/user/' + ${notice.getAuthorId()} + '/updateNotice/' + ${notice.getId()}}" method="post">
                             </div>
 
                         <div class="row">
@@ -72,9 +71,12 @@ The above copyright notice and this permission notice shall be included in all c
                                 <div class="form-group">
                                     <label class="bmd-label-floating">Temat ogłoszenia</label>
                                     <input type="text" class="form-control" th:field="*{notice.title}">
+                                    <input type="hidden" th:field="*{notice.id}" />
+                                    <input type="hidden" th:field="*{notice.authorId}" />
                                 </div>
                             </div>
                         </div>
+
 
                         <div class="row">
                             <div class="col-md-12">
@@ -85,12 +87,10 @@ The above copyright notice and this permission notice shall be included in all c
                                         <textarea class="form-control" rows="5" th:field="*{notice.content}"></textarea>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary pull-left">Umieść ogłoszenie</button>
+                                <button type="submit" class="btn btn-primary pull-left">Zapisz</button>
                             </div>
 
                             <div class="clearfix"></div>
-                            <input type="hidden" th:field="*{notice.id}" />
-                            <input type="hidden" th:field="*{notice.authorId}" />
                             </form>
                         </div>
                     </div>

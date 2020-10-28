@@ -10,6 +10,7 @@ import com.ediary.domain.security.User;
 import com.ediary.exceptions.NoAccessException;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.MessageRepository;
+import com.ediary.repositories.NoticeRepository;
 import com.ediary.repositories.security.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +34,7 @@ public class UserServiceImpl implements UserService {
     private final NoticeToNoticeDto noticeToNoticeDto;
     private final NoticeDtoToNotice noticeDtoToNotice;
     private final UserToUserDto userToUserDto;
+    private final NoticeRepository noticeRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -176,6 +178,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public NoticeDto getNoticeById(Long userId, Long noticeId) {
+        User user = getUserById(userId);
+
+        Optional<Notice> noticeOptional = noticeRepository.findById(noticeId);
+        if (!noticeOptional.isPresent()) {
+            throw new NotFoundException("Notice Not Found.");
+        }
+        Notice notice = noticeOptional.get();
+
+        if(notice.getUser().getId() != user.getId()) {
+            throw new NoAccessException();
+        }
+
+        return noticeToNoticeDto.convert(notice);
+    }
+
+    @Override
     public NoticeDto initNewNotice(Long userId) {
 
         User user = getUserById(userId);
@@ -188,6 +207,27 @@ public class UserServiceImpl implements UserService {
     public Notice addNotice(NoticeDto noticeDto) {
 
         return noticeService.addNotice(noticeDtoToNotice.convert(noticeDto));
+    }
+
+    @Override
+    public NoticeDto updatePatchNotice(NoticeDto noticeUpdated, Long noticeId) {
+        Optional<Notice> noticeOptional = noticeRepository.findById(noticeId);
+        if (!noticeOptional.isPresent()) {
+            throw new NotFoundException("Notice Not Found.");
+        }
+
+        NoticeDto notice = noticeToNoticeDto.convert(noticeOptional.get());
+
+        if(noticeUpdated.getTitle() != null) {
+            notice.setTitle(noticeUpdated.getTitle());
+        }
+
+        if (noticeUpdated.getContent() != null) {
+            notice.setContent(noticeUpdated.getContent());
+        }
+
+        Notice savedNotice = noticeRepository.save(noticeDtoToNotice.convert(notice));
+        return  noticeToNoticeDto.convert(savedNotice);
     }
 
     private User getUserById(Long userId) {

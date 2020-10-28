@@ -8,6 +8,7 @@ import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
 import com.ediary.domain.security.User;
 import com.ediary.repositories.MessageRepository;
+import com.ediary.repositories.NoticeRepository;
 import com.ediary.repositories.security.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,9 @@ class UserServiceImplTest {
     UserToUserDto userToUserDto;
 
     @Mock
+    NoticeRepository noticeRepository;
+
+    @Mock
     PasswordEncoder passwordEncoder;
 
     UserService userService;
@@ -64,7 +68,7 @@ class UserServiceImplTest {
         MockitoAnnotations.initMocks(this);
         userService = new UserServiceImpl(messageService, userRepository, noticeService,
                 messageToMessageDto, messageDtoToMessage,messageRepository, noticeToNoticeDto, noticeDtoToNotice, userToUserDto,
-                passwordEncoder);
+                noticeRepository, passwordEncoder);
     }
 
     @Test
@@ -341,6 +345,29 @@ class UserServiceImplTest {
         verify(noticeToNoticeDto, times(2)).convert(any());
 
     }
+
+    @Test
+    void getNoticeById() {
+        Long noticeId = 28L;
+        User user = User.builder().id(userId).build();
+
+        Notice returnedNotice = Notice.builder().id(noticeId).user(user).build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(noticeRepository.findById(noticeId)).thenReturn(Optional.of(returnedNotice));
+        when(noticeToNoticeDto.convert(returnedNotice)).thenReturn(
+                NoticeDto.builder()
+                        .id(returnedNotice.getId())
+                        .authorId(returnedNotice.getUser().getId()).build());
+
+        NoticeDto notice = userService.getNoticeById(userId, noticeId);
+
+        assertEquals(notice.getId(), noticeId);
+        verify(userRepository, times(1)).findById(userId);
+        verify(noticeRepository, times(1)).findById(noticeId);
+        verify(noticeToNoticeDto, times(1)).convert(any());
+    }
+
     @Test
     void initNewNotice() {
         User user = User.builder().id(userId).build();
@@ -384,6 +411,38 @@ class UserServiceImplTest {
         verify(noticeDtoToNotice, times(1)).convert(noticeToAdd);
         verify(noticeService, times(1)).addNotice(any());
 
+    }
+
+    @Test
+    void updatePatchSubject() {
+        Long noticeId = 1L;
+        NoticeDto notice = NoticeDto.builder()
+                .id(noticeId)
+                .title("beforeT")
+                .content("beforeC")
+                .build();
+
+        NoticeDto noticeToUpdate = NoticeDto.builder().title("Updated").build();
+
+        Notice noticeDB = Notice.builder().build();
+        Notice savedNotice = Notice.builder().build();
+
+        when(noticeRepository.findById(noticeId)).thenReturn(Optional.of(noticeDB));
+        when(noticeToNoticeDto.convert(noticeDB)).thenReturn(notice);
+
+        when(noticeRepository.save(any())).thenReturn(savedNotice);
+        when(noticeToNoticeDto.convert(savedNotice)).thenReturn(notice);
+
+        NoticeDto noticeDto = userService.updatePatchNotice(noticeToUpdate, noticeId);
+
+        assertEquals(noticeDto.getId(), notice.getId());
+        assertEquals(noticeDto.getContent(), notice.getContent());
+        assertEquals(noticeDto.getTitle(), noticeToUpdate.getTitle());
+
+        verify(noticeRepository, times(1)).findById(noticeId);
+        verify(noticeToNoticeDto, times(2)).convert(any());
+        verify(noticeDtoToNotice, times(1)).convert(any());
+        verify(noticeRepository, times(1)).save(any());
     }
 
 }

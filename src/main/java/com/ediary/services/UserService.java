@@ -22,7 +22,9 @@ public interface UserService {
     MessageDto getSendMessageById(Long messageId, Long userId);
     Message sendMessage(MessageDto messageDto);
     List<NoticeDto> listNotices();
+    NoticeDto getNoticeById(Long userId, Long noticeId);
     NoticeDto initNewNotice(Long userId);
     Notice addNotice(NoticeDto notice);
+    NoticeDto updatePatchNotice(NoticeDto noticeUpdated, Long noticeId);
 
 }
