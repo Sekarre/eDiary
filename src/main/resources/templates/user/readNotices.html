@@ -112,7 +112,8 @@ The above copyright notice and this permission notice shall be included in all c
                                                             <i class="material-icons">edit</i>
                                                         </button>
                                                     </a>
-                                                    <a th:if="${user.id == notice.getAuthorId()}">
+                                                    <a data-toggle="modal" class="open-gradeDialogModal" href="#deleteNoticeModal"
+                                                       th:attr="data-notice=''+${notice.id}+'', data-target='#deleteNoticeModal', data-user=''+${user.id}+''">
                                                         <button rel="tooltip" class="btn btn-primary btn-danger btn-fab-mini btn-round">
                                                             <i class="material-icons">close</i>
                                                         </button>
@@ -138,8 +139,37 @@ The above copyright notice and this permission notice shall be included in all c
             </div>
             <footer class="footer">
             </footer>
+
+            <!-- Modal -->
+            <div class="modal fade" id="deleteNoticeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel"><i class="material-icons">delete</i></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Usunąć ogłoszenie ?
+                        </div>
+                        <div class="modal-footer">
+                            <form id="deleteForm" method="post">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
+                                <button type="submit" class="btn btn-danger" >Usuń</button>
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
         </div>
     </div>
+        </div>
+
 
     <!--   Core JS Files   -->
     <script th:src="@{/js/core/jquery.min.js}"></script>
@@ -364,6 +394,19 @@ The above copyright notice and this permission notice shall be included in all c
             }
         }
     </script>
+
+<script>
+    $(document).on("click", ".open-gradeDialogModal", function () {
+
+        var notice = $(this).data('notice');
+        var user = $(this).data('user');
+
+        var deleteForm = document.getElementById("deleteForm");
+
+        deleteForm.setAttribute("action", "/user/" + user + "/deleteNotice/" + notice);
+
+    });
+</script>
 
 </body>
 

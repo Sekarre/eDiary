@@ -6,6 +6,8 @@ import com.ediary.DTO.UserDto;
 import com.ediary.converters.*;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
+import com.ediary.domain.Subject;
+import com.ediary.domain.Teacher;
 import com.ediary.domain.security.User;
 import com.ediary.repositories.MessageRepository;
 import com.ediary.repositories.NoticeRepository;
@@ -443,6 +445,58 @@ class UserServiceImplTest {
         verify(noticeToNoticeDto, times(2)).convert(any());
         verify(noticeDtoToNotice, times(1)).convert(any());
         verify(noticeRepository, times(1)).save(any());
+    }
+
+    @Test
+    void deleteSubject() {
+        User user = User.builder().id(userId).build();
+
+        Long noticeId = 2L;
+        Notice notice = Notice.builder().id(noticeId).user(user).build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(noticeRepository.findById(noticeId)).thenReturn(Optional.of(notice));
+
+        Boolean deleteStatus = userService.deleteNotice(userId, noticeId);
+
+        assertTrue(deleteStatus);
+        verify(noticeRepository, times(1)).findById(noticeId);
+        verify(userRepository, times(1)).findById(userId);
+        verify(noticeRepository, times(1)).delete(any());
+    }
+
+    @Test
+    void deleteSubjectNotOwner() {
+        User user = User.builder().id(userId).build();
+
+        Long noticeId = 2L;
+        Notice notice = Notice.builder().id(noticeId).user(User.builder().id(user.getId() + 1L).build()).build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(noticeRepository.findById(noticeId)).thenReturn(Optional.of(notice));
+
+        Boolean deleteStatus = userService.deleteNotice(userId, noticeId);
+
+        assertFalse(deleteStatus);
+        verify(noticeRepository, times(1)).findById(noticeId);
+        verify(userRepository, times(1)).findById(userId);
+        verify(noticeRepository, times(0)).delete(any());
+    }
+
+    @Test
+    void deleteSubjectNotFound() {
+        User user = User.builder().id(userId).build();
+        Long noticeId = 2L;
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(noticeRepository.findById(noticeId)).thenReturn(Optional.empty());
+
+        Boolean deleteStatus = userService.deleteNotice(userId, noticeId);
+
+        assertFalse(deleteStatus);
+        verify(noticeRepository, times(1)).findById(noticeId);
+        verify(userRepository, times(1)).findById(userId);
+        verify(noticeRepository, times(0)).delete(any());
     }
 
 }

@@ -186,6 +186,15 @@ public class UserController {
         }
     }
 
+    @PostMapping("/{userId}/deleteNotice/{noticeId}")
+    public String deleteNotice(@PathVariable Long userId,
+                               @PathVariable Long noticeId) {
+
+            userService.deleteNotice(userId, noticeId);
+            return "redirect:/user/" + userId + "/readNotices";
+    }
+
+
 
 
 

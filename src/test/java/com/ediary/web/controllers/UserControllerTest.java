@@ -271,4 +271,16 @@ class UserControllerTest {
 
         verify(userService).updatePatchNotice(any(), anyLong());
     }
+
+    @Test
+    void deleteNotice() throws Exception {
+        Long noticeId = 28L;
+        when(userService.deleteNotice(userId, noticeId)).thenReturn(Boolean.TRUE);
+
+        mockMvc.perform(post("/user/"+ userId +"/deleteNotice/" + noticeId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/user/" + userId + "/readNotices"));
+
+        verify(userService, times(1)).deleteNotice(userId, noticeId);
+    }
 }
