@@ -34,16 +34,13 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="material-icons">notifications</i>
-                        <span class="notification">3</span>
+                        <span class="notification" th:if="${user.messageNumber > 0}" th:text="${user.messageNumber}"></span>
                         <p class="d-lg-none d-md-block">
                             Some Actions
                         </p>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="#">Damian Kowalczyk wysłał do ciebie wiadomość</a>
-                        <a class="dropdown-item" href="#">Masz 5 nowych wiadomości</a>
-                        <a class="dropdown-item" href="#">Zostałeś wybrany/wybrana na wychowawce klasy</a>
-
+                        <a class="dropdown-item" th:href="@{/user/{id}/readMessages(id=${user.id})}" th:text="@{'Masz ' + ${user.messageNumber} + ' nowych wiadomości'}"></a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
