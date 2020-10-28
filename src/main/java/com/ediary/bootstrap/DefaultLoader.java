@@ -425,15 +425,15 @@ public class DefaultLoader implements CommandLineRunner {
     private void createNotices() {
         int[] teacherIndexes = {3, 2, 5, 1};
         String[] noticeTitle = {"Nowa wiadomość", "Nowe wydarzenie", "Nowe wydarzenie", "Nowa wiadomość"};
-        String[] noticeContent = {"Otrzymałeś nowe wiadomości", "Zaplanowano nowe wydarzenie",
-                "Zaplanowano nowe wydarzenie", "Otrzymałeś nowe wiadomości"};
+        String[] noticeContent = {"Ogłoszenie 1 ", "Zaplanowano nowe wydarzenie",
+                "Zaplanowano nowe wydarzenie", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam tincidunt, purus a egestas porttitor, ante nunc aliquam erat, at accumsan lorem odio id arcu. Vestibulum placerat gravida neque vel aliquam. Aliquam erat volutpat. Praesent ut consequat erat, ac dignissim odio. Quisque commodo arcu ipsum, non elementum ligula rutrum ac. Nunc a mattis lectus. Curabitur pulvinar dignissim egestas. Sed in leo vitae nibh egestas pulvinar ut egestas ligula. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla lorem dolor, commodo eu vestibulum vitae, varius id lorem. Morbi eleifend quam a sapien rutrum, eu commodo sem maximus. Vivamus non tellus luctus, aliquam tortor non, ultrices dui. Praesent rutrum nisl id ex sagittis, sed bibendum erat scelerisque. "};
 
 
         for (int i = 0; i < teacherIndexes.length; i++) {
             noticeRepository.save(Notice.builder()
                     .title(noticeTitle[i])
                     .content(noticeContent[i])
-                    .date(Date.valueOf(LocalDate.now()))
+                    .date(new java.util.Date())
                     .user(userRepository.findByFirstNameAndLastName(teacherNames[teacherIndexes[i]], teacherLastNames[teacherIndexes[i]]))
                     .build());
         }

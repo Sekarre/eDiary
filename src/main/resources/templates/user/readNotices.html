@@ -75,7 +75,7 @@ The above copyright notice and this permission notice shall be included in all c
                                             Temat
                                         </th>
                                         <th>
-                                            Nadawca
+                                            Autor
                                         </th>
                                         <th>
                                             Treść
@@ -85,22 +85,24 @@ The above copyright notice and this permission notice shall be included in all c
                                         </th>
                                         </thead>
                                         <tbody>
-                                        <!-- szablon z wiadomosci -->
-                                        <tr th:each="message : ${readMessages}">
-                                            <td th:text="${message.getSimpleDateFormat()}">
+                                        <tr th:each="notice : ${notices}">
+                                            <td th:text="${notice.getDate().toLocaleString()}">
                                                 Data
                                             </td>
-                                            <td th:text="${message.getTitle()}">
+                                            <td th:text="${notice.getTitle()}">
                                                 Tytuł
                                             </td>
-                                            <td th:text="${message.getSendersName()}">
+                                            <td th:text="${notice.getAuthorName()}">
                                                 Nadawca
                                             </td>
                                             <td>
-                                                <div class="textOverflowCustom" th:text="${message.getContent()}" ></div>
+                                                <div th:id="@{'content' + ${notice.id}}" class="textOverflowCustom" th:text="${notice.getContent()}" ></div>
                                             </td>
-                                            <td><a th:href ="${message.getId()}">
-                                                Czytaj..
+                                            <td><a th:href="@{'javascript:showHideContent(&quot;content' + ${notice.id} + '&quot;)'}">
+                                                <button class="btn btn-primary btn-fab btn-fab-mini btn-round">
+                                                    <i class="material-icons">read_more</i>
+                                                </button>
+
                                             </a></td>
                                         </tr>
 
@@ -337,6 +339,17 @@ The above copyright notice and this permission notice shall be included in all c
             });
         });
     </script>
+    <script>
+        function showHideContent(contentId) {
+            var x = document.getElementById(contentId);
+            if (x.classList.contains('textOverflowCustom')) {
+                x.classList.remove('textOverflowCustom');
+            } else {
+                x.classList.add('textOverflowCustom');
+            }
+        }
+    </script>
+
 </body>
 
 </html>

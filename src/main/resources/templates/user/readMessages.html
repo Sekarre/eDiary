@@ -87,7 +87,7 @@ The above copyright notice and this permission notice shall be included in all c
                       <tbody>
 
                         <tr th:each="message : ${readMessages}" class="" th:classappend="${(message.getStatus().equals(message.status.SENT) ? 'table-warning' : '')}">
-                          <td th:text="${message.getSimpleDateFormat()}">
+                          <td th:text="${message.getDate().toLocaleString()}">
                             Data
                           </td>
                           <td th:text="${message.getTitle()}">
