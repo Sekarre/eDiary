@@ -26,5 +26,5 @@ public interface UserService {
     NoticeDto initNewNotice(Long userId);
     Notice addNotice(NoticeDto notice);
     NoticeDto updatePatchNotice(NoticeDto noticeUpdated, Long noticeId);
-
+    Boolean deleteNotice(Long userId, Long noticeId);
 }

@@ -230,6 +230,24 @@ public class UserServiceImpl implements UserService {
         return  noticeToNoticeDto.convert(savedNotice);
     }
 
+    @Override
+    public Boolean deleteNotice(Long userId, Long noticeId) {
+        User user = getUserById(userId);
+
+        Optional<Notice> noticeOptional = noticeRepository.findById(noticeId);
+        if (!noticeOptional.isPresent()) {
+            return false;
+        }
+        Notice notice = noticeOptional.get();
+
+        if (notice.getUser().getId() != user.getId()) {
+            return false;
+        } else {
+            noticeRepository.delete(notice);
+            return true;
+        }
+    }
+
     private User getUserById(Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
 
