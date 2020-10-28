@@ -6,6 +6,7 @@ import com.ediary.repositories.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -16,7 +17,7 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     public List<Notice> listNotices() {
-        return noticeRepository.findAll();
+        return noticeRepository.findAllByOrderByDateDesc();
     }
 
     @Override
@@ -26,6 +27,7 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     public Notice addNotice(Notice notice) {
+        notice.setDate(new Date());
         return noticeRepository.save(notice);
     }
 }

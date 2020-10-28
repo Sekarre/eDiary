@@ -28,7 +28,7 @@ class NoticeServiceImplTest {
 
     @Test
     void listNotices() {
-        when(noticeRepository.findAll()).thenReturn(Arrays.asList(
+        when(noticeRepository.findAllByOrderByDateDesc()).thenReturn(Arrays.asList(
                 Notice.builder().id(1L).build(),
                 Notice.builder().id(2L).build()
         ));
@@ -37,7 +37,7 @@ class NoticeServiceImplTest {
 
         assertEquals(2, notices.size());
         assertEquals(1L, notices.get(0).getId());
-        verify(noticeRepository, times(1)).findAll();
+        verify(noticeRepository, times(1)).findAllByOrderByDateDesc();
     }
 
     @Test

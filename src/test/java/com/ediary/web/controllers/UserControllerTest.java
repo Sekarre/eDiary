@@ -242,7 +242,7 @@ class UserControllerTest {
 
         mockMvc.perform(post("/user/"+ userId +"/newNotice"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:user/allNotices"));
+                .andExpect(view().name("redirect:/user/" + userId + "/readNotices"));
 
         verify(userService).addNotice(any());
     }

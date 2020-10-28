@@ -83,6 +83,8 @@ The above copyright notice and this permission notice shall be included in all c
                                         <th>
 
                                         </th>
+
+
                                         </thead>
                                         <tbody>
                                         <tr th:each="notice : ${notices}">
@@ -98,12 +100,25 @@ The above copyright notice and this permission notice shall be included in all c
                                             <td>
                                                 <div th:id="@{'content' + ${notice.id}}" class="textOverflowCustom" th:text="${notice.getContent()}" ></div>
                                             </td>
-                                            <td><a th:href="@{'javascript:showHideContent(&quot;content' + ${notice.id} + '&quot;)'}">
-                                                <button class="btn btn-primary btn-fab btn-fab-mini btn-round">
-                                                    <i class="material-icons">read_more</i>
-                                                </button>
-
-                                            </a></td>
+                                            <td>
+                                                <a th:href="@{'javascript:showHideContent(&quot;content' + ${notice.id} + '&quot;)'}">
+                                                    <button class="btn btn-primary btn-primary btn-fab-mini btn-round">
+                                                        <i class="material-icons">read_more</i>
+                                                    </button>
+                                                </a>
+                                                <span th:if="${user.id == notice.getAuthorId()}">
+                                                    <a>
+                                                        <button rel="tooltip" class="btn btn-primary btn-success btn-fab-mini btn-round">
+                                                            <i class="material-icons">edit</i>
+                                                        </button>
+                                                    </a>
+                                                    <a th:if="${user.id == notice.getAuthorId()}">
+                                                        <button rel="tooltip" class="btn btn-primary btn-danger btn-fab-mini btn-round">
+                                                            <i class="material-icons">close</i>
+                                                        </button>
+                                                    </a>
+                                                </span>
+                                            </td>
                                         </tr>
 
                                         </tbody>

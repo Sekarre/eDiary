@@ -2,7 +2,6 @@ package com.ediary.DTO;
 
 import lombok.*;
 
-import javax.persistence.Lob;
 import java.util.Date;
 
 @Setter

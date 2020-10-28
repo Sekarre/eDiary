@@ -153,13 +153,14 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/newNotice")
-    public String processNewNotice(@Valid @ModelAttribute NoticeDto notice, BindingResult result) {
+    public String processNewNotice(@PathVariable Long userId,
+                                   @Valid @ModelAttribute NoticeDto notice, BindingResult result) {
         if (result.hasErrors()){
             //TODO
             return "/";
         } else {
             userService.addNotice(notice);
-            return "redirect:user/allNotices";
+            return "redirect:/user/" + userId + "/readNotices";
         }
     }
 
