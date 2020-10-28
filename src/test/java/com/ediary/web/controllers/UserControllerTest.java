@@ -17,9 +17,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -245,5 +244,31 @@ class UserControllerTest {
                 .andExpect(view().name("redirect:/user/" + userId + "/readNotices"));
 
         verify(userService).addNotice(any());
+    }
+
+    @Test
+    void editNotice() throws Exception {
+        Long noticeId = 28l;
+
+        when(userService.getNoticeById(userId, noticeId)).thenReturn(NoticeDto.builder().build());
+
+        mockMvc.perform(get("/user/"+ userId +"/editNotice/" + noticeId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("notice"))
+                .andExpect(view().name("user/editNotice"));
+
+        verify(userService, times(1)).getNoticeById(userId, noticeId);
+    }
+
+    @Test
+    void updatePatchNotice() throws Exception {
+        Long noticeId = 28L;
+        when(userService.updatePatchNotice(any(), anyLong())).thenReturn(NoticeDto.builder().build());
+
+        mockMvc.perform(post("/user/"+ userId +"/updateNotice/" + noticeId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/user/" + userId + "/readNotices"));
+
+        verify(userService).updatePatchNotice(any(), anyLong());
     }
 }

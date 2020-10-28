@@ -107,7 +107,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     </button>
                                                 </a>
                                                 <span th:if="${user.id == notice.getAuthorId()}">
-                                                    <a>
+                                                    <a th:href="@{'/user/' + ${user.id} + '/editNotice/' + ${notice.getId()}}">
                                                         <button rel="tooltip" class="btn btn-primary btn-success btn-fab-mini btn-round">
                                                             <i class="material-icons">edit</i>
                                                         </button>

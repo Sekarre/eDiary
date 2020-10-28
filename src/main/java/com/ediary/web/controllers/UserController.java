@@ -164,6 +164,30 @@ public class UserController {
         }
     }
 
+    @GetMapping("/{userId}/editNotice/{noticeId}")
+    public String editNotice(@PathVariable Long userId,
+                             @PathVariable Long noticeId,
+                             Model model) {
+
+        model.addAttribute("notice", userService.getNoticeById(userId,noticeId));
+        return "user/editNotice";
+    }
+
+    @PostMapping("/{userId}/updateNotice/{noticeId}")
+    public String updatePatchNotice(@PathVariable Long userId,
+                                    @PathVariable Long noticeId,
+                                    @Valid @ModelAttribute NoticeDto notice, BindingResult result) {
+        if (result.hasErrors()){
+            //TODO
+            return "/";
+        } else {
+            userService.updatePatchNotice(notice, noticeId);
+            return "redirect:/user/" + userId + "/readNotices";
+        }
+    }
+
+
+
 
 
 }
