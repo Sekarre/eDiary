@@ -92,7 +92,7 @@ The above copyright notice and this permission notice shall be included in all c
 
                                 </h5>
                             </div>
-                            <!-- Dodac "show" do class, aby panele byly od poczatku odkryte -->
+                                                                                                    <!-- Dodac "show" do class, aby panele byly od poczatku odkryte -->
                             <div th:attr="id=''+${weeklyAttendances?.key?.date}+'', aria-labelledby=''+${weeklyAttendances?.key?.date}+''" class="collapse"
                                  data-parent="#accordion">
                                 <div class="card-body">
@@ -149,11 +149,11 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                         </div>
                     </div>
-                    <!--                    </form>-->
-                </div>
+                <!--                    </form>-->
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <!--<form method="post" th:object="${attendances}" th:action="@{/parent/{parentId}/{studentId}/attendance/save(parentId=${parent.id}, studentId=${attendances?.get(0).studentId}}">-->

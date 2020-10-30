@@ -5,10 +5,12 @@ import com.ediary.DTO.StudentDto;
 import com.ediary.DTO.SubjectDto;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.Student;
+import com.ediary.domain.helpers.WeeklyAttendances;
 import com.ediary.domain.security.User;
 import com.ediary.services.ParentService;
 import com.ediary.services.StudentService;
 import com.ediary.services.SubjectService;
+import com.ediary.services.WeeklyAttendancesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -17,7 +19,9 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.beans.PropertyEditorSupport;
+import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +34,7 @@ public class ParentController {
     private final ParentService parentService;
     private final StudentService studentService;
     private final SubjectService subjectService;
+    private final WeeklyAttendancesService weeklyAttendancesService;
 
     private final UserToUserDto userToUserDto;
 
@@ -91,7 +96,31 @@ public class ParentController {
     @GetMapping("/{studentId}/attendance")
     public String getAllAttendances(@PathVariable Long studentId, @PathVariable String parentId, Model model) {
 
+        model.addAttribute("weeklyAttendances",
+                weeklyAttendancesService.getAttendancesByWeek(studentId, 7, Date.valueOf(LocalDate.now().minusDays(6))));
         model.addAttribute("attendances", studentService.listAttendances(studentId));
+        model.addAttribute("studentId", studentId);
+        return "parent/allAttendances";
+    }
+
+
+    @GetMapping("/{studentId}/attendance/{direction}/{dateValue}")
+    public String getAllAttendancesWithDate(@PathVariable Long studentId,
+                                            @PathVariable Long parentId,
+                                            @PathVariable String direction,
+                                            @PathVariable String dateValue,
+                                            Model model) {
+        Date date;
+        if (direction.equals("next")){
+            date = Date.valueOf(LocalDate.parse(dateValue).plusDays(7));
+        } else {
+            date = Date.valueOf(LocalDate.parse(dateValue).minusDays(7));
+        }
+
+        model.addAttribute("weeklyAttendances",
+                weeklyAttendancesService.getAttendancesByWeek(studentId, 7, date));
+        model.addAttribute("attendances", studentService.listAttendances(studentId));
+        model.addAttribute("studentId", studentId);
         return "parent/allAttendances";
     }
 

@@ -7,6 +7,7 @@ import com.ediary.domain.timetable.Timetable;
 import com.ediary.services.ParentService;
 import com.ediary.services.StudentService;
 import com.ediary.services.SubjectService;
+import com.ediary.services.WeeklyAttendancesService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -42,6 +43,9 @@ class ParentControllerTest {
     SubjectService subjectService;
 
     @Mock
+    WeeklyAttendancesService weeklyAttendancesService;
+
+    @Mock
     UserToUserDto userToUserDto;
 
     MockMvc mockMvc;
@@ -52,7 +56,7 @@ class ParentControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        parentController = new ParentController(parentService, studentService, subjectService, userToUserDto);
+        parentController = new ParentController(parentService, studentService, subjectService, weeklyAttendancesService, userToUserDto);
         mockMvc = MockMvcBuilders.standaloneSetup(parentController).build();
     }
 
