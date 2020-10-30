@@ -3,6 +3,7 @@ package com.ediary.web.controllers;
 import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.*;
+import com.ediary.domain.helpers.WeeklyAttendances;
 import com.ediary.domain.timetable.Timetable;
 import com.ediary.services.ParentService;
 import com.ediary.services.StudentService;
@@ -17,8 +18,11 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -144,6 +148,8 @@ class ParentControllerTest {
     void getAllAttendances() throws Exception {
 
         when(studentService.listAttendances(studentId)).thenReturn(Arrays.asList(AttendanceDto.builder().id(1L).build()));
+        when(weeklyAttendancesService.getAttendancesByWeek(studentId, 7, Date.valueOf(LocalDate.now())))
+                .thenReturn(WeeklyAttendances.builder().build());
 
         mockMvc.perform(get("/parent/" + parentId + "/" +  studentId + "/attendance"))
                 .andExpect(status().isOk())
@@ -151,6 +157,24 @@ class ParentControllerTest {
                 .andExpect(view().name("parent/allAttendances"));
 
         verify(studentService).listAttendances(studentId);
+        assertNotNull(weeklyAttendancesService.getAttendancesByWeek(studentId, 7, Date.valueOf(LocalDate.now())));
+        assertEquals(1, studentService.listAttendances(studentId).size());
+    }
+
+    @Test
+    void getAllAttendancesWithDate() throws Exception {
+        when(studentService.listAttendances(studentId)).thenReturn(Arrays.asList(AttendanceDto.builder().id(1L).build()));
+        when(weeklyAttendancesService.getAttendancesByWeek(studentId, 7, Date.valueOf(LocalDate.now())))
+                .thenReturn(WeeklyAttendances.builder().attendances(new TreeMap<>()).build());
+
+
+        mockMvc.perform(get("/parent/" + parentId + "/" +  studentId + "/attendance/" + "next/" + "2020-10-01"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("attendances"))
+                .andExpect(view().name("parent/allAttendances"));
+
+        verify(studentService).listAttendances(studentId);
+        assertNotNull(weeklyAttendancesService.getAttendancesByWeek(studentId, 7, Date.valueOf(LocalDate.now())));
         assertEquals(1, studentService.listAttendances(studentId).size());
     }
 

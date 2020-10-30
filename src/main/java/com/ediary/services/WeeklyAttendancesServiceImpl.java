@@ -25,7 +25,6 @@ public class WeeklyAttendancesServiceImpl implements WeeklyAttendancesService {
     private final AttendanceRepository attendanceRepository;
     private final AttendanceToAttendanceDto attendanceToAttendanceDto;
 
-    //todo tests
     @Override
     public WeeklyAttendances getAttendancesByWeek(Long studentId, Integer daysNumber, Date date) {
 

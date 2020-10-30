@@ -94,7 +94,7 @@ public class ParentController {
     }
 
     @GetMapping("/{studentId}/attendance")
-    public String getAllAttendances(@PathVariable Long studentId, @PathVariable String parentId, Model model) {
+    public String getAllAttendances(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
 
         model.addAttribute("weeklyAttendances",
                 weeklyAttendancesService.getAttendancesByWeek(studentId, 7, Date.valueOf(LocalDate.now().minusDays(6))));
@@ -125,21 +125,21 @@ public class ParentController {
     }
 
     @GetMapping("/{studentId}/behavior")
-    public String getAllBehaviors(@PathVariable Long studentId, @PathVariable String parentId, Model model) {
+    public String getAllBehaviors(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
 
         model.addAttribute("behaviors", studentService.listBehaviors(studentId));
         return "parent/allBehaviors";
     }
 
     @GetMapping("/{studentId}/event")
-    public String getAllEvents(@PathVariable Long studentId, @PathVariable String parentId, Model model) {
+    public String getAllEvents(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
 
         model.addAttribute("events", studentService.listEvents(studentId));
         return "parent/allEvents";
     }
 
     @GetMapping("/{studentId}/timetable")
-    public String getTimetable(@PathVariable Long studentId, @PathVariable String parentId, Model model){
+    public String getTimetable(@PathVariable Long studentId, @PathVariable Long parentId, Model model){
 
         model.addAttribute("timetable", studentService.getTimetableByStudentId(studentId));
         return "parent/timetable";
