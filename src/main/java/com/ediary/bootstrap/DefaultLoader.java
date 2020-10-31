@@ -587,6 +587,7 @@ public class DefaultLoader implements CommandLineRunner {
     private void createLessons() {
         String[] lessonNames = {"Dodawanie", "Dzielenie", "Mnożenie", "Odejmowanie"};
         int[] schoolClassIndexes = {0, 0, 0, 0};
+        Attendance.Status status[] = {Attendance.Status.PRESENT, Attendance.Status.PRESENT, Attendance.Status.LATE, Attendance.Status.UNEXCUSED};
 
         Long studentId = studentRepository
                 .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId()).getId();
@@ -596,7 +597,7 @@ public class DefaultLoader implements CommandLineRunner {
         for (int i = 0; i < lessonNames.length; i++) {
             lessonRepository.save(Lesson.builder()
                     .name(lessonNames[i])
-                    .date(Date.valueOf(LocalDate.now()))
+                    .date(Date.valueOf(LocalDate.now().minusDays(i)))
                     .subject(subjectRepository.findByName(subjectNames[0]))
                     .schoolClass(classRepository.findByName(classNames[schoolClassIndexes[i]]))
                     .topic(topicRepository.findByName(topicNamesMath[i]))
@@ -604,17 +605,38 @@ public class DefaultLoader implements CommandLineRunner {
                     .build());
 
         }
+        for (int i = 0; i < lessonNames.length; i++) {
+            lessonRepository.save(Lesson.builder()
+                    .name(lessonNames[i])
+                    .date(Date.valueOf(LocalDate.now().minusDays(i)))
+                    .subject(subjectRepository.findByName(subjectNames[2]))
+                    .schoolClass(classRepository.findByName(classNames[schoolClassIndexes[i]]))
+                    .topic(topicRepository.findByName(topicNamesMath[i]))
+                    .attendances(new HashSet<>(attendances))
+                    .build());
+        }
 
         //Adding attendances to lesson (studentId = 0)
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
             attendanceRepository.save(Attendance.builder()
                     .student(studentRepository
                             .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId()))
                     .status(Attendance.Status.ABSENT)
-                    .lesson(lessonRepository.findAllBySchoolClassId(classRepository.findByName(classNames[0]).getId()).get(0))
+                    .lesson(lessonRepository.findAllBySchoolClassId(classRepository.findByName(classNames[0]).getId()).get(i))
                     .build());
-
         }
+
+        //Adding attendances to lesson (studentId = 0)
+        for (int i = 0; i < 4; i++) {
+            attendanceRepository.save(Attendance.builder()
+                    .student(studentRepository
+                            .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId()))
+                    .status(status[i])
+                    .lesson(lessonRepository.findAllBySchoolClassId(classRepository.findByName(classNames[0]).getId()).get(i))
+                    .build());
+        }
+
+
     }
 
     /** Creating behavior : teacher -> id:2, student: id: 1-5 **/

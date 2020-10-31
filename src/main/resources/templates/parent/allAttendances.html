@@ -50,11 +50,11 @@ The above copyright notice and this permission notice shall be included in all c
                     <ul class="pagination justify-content-center">
                         <li class="page-item">
                             <a class="btn btn-primary btn-round"
-                               th:href="@{/parent/{parentId}/{studentId}/attendance/{direction}/{dateValue}(parentId=${parent.id}, studentId=${studentId}, direction='previous', dateValue = ${weeklyAttendances?.attendances?.keySet().stream().findFirst().toString().substring(9, 19)})}">Previous</a>
+                               th:href="@{/parent/{parentId}/{studentId}/attendance/{direction}/{dateValue}(parentId=${parent.id}, studentId=${studentId}, direction='previous', dateValue = ${weeklyAttendances?.attendances?.keySet().stream().findFirst().toString().substring(9, 19)})}">Poprzednia</a>
                         </li>
                         <li class="page-item">
                             <a class="btn btn-primary btn-round"
-                               th:href="@{/parent/{parentId}/{studentId}/attendance/{direction}/{dateValue}(parentId=${parent.id}, studentId=${studentId}, direction='next', dateValue = ${weeklyAttendances?.attendances?.keySet().stream().findFirst().toString().substring(9, 19)})}">Next</a>
+                               th:href="@{/parent/{parentId}/{studentId}/attendance/{direction}/{dateValue}(parentId=${parent.id}, studentId=${studentId}, direction='next', dateValue = ${weeklyAttendances?.attendances?.keySet().stream().findFirst().toString().substring(9, 19)})}">Następna</a>
                         </li>
                     </ul>
                 </nav>
@@ -81,20 +81,20 @@ The above copyright notice and this permission notice shall be included in all c
                         <!--/*@thymesVar id="timetable" type="com.ediary.domain.helpers.WeeklyAttendances"*/-->
                         <div class="card" th:each="weeklyAttendance : ${weeklyAttendances.attendances}">
                             <div class="card-header" id="headingOne">
-                                <h2 class="mb-0">
+                                <h3 class="mb-0">
                                     <button type="button" class="btn btn-link" data-toggle="collapse" aria-expanded="true"
-                                            th:text="${weeklyAttendance?.key}"
+                                            th:text="${weeklyAttendance?.key} + '&nbsp;&nbsp;&nbsp;&nbsp;  Nieobecności:&nbsp;&nbsp' + ${weeklyAttendances?.attendancesNumber?.get(weeklyAttendance?.key)}"
                                             th:attr="data-target='#'+${weeklyAttendance?.key?.date}+'', aria-controls=''+${weeklyAttendance?.key?.date}+''">
                                         Collapsible Group Item #1
                                     </button>
 
-                                </h2>
+                                </h3>
                             </div>
                             <!-- Dodac "show" do class, aby panele byly od poczatku odkryte -->
                             <div th:attr="id=''+${weeklyAttendance?.key?.date}+'', aria-labelledby=''+${weeklyAttendance?.key?.date}+''" class="collapse show"
                                  data-parent="#accordion">
                                 <div class="card-body">
-                                    <div class="card-body" th:if="${weeklyAttendance?.value}">
+                                    <div class="card-body" th:if="${weeklyAttendances?.attendancesNumber?.get(weeklyAttendance?.key) != 0}">
                                         <div class="table-responsive">
 
                                             <table class="table">
@@ -111,30 +111,31 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td th:text="${attendance?.studentName}">
                                                         Student
                                                     </td>
-                                                    <td th:text="${attendance?.lessonDto?.name}">
+                                                    <td class="col-md-3" th:text="${attendance?.lessonDto?.name}">
                                                         Lekcja
                                                     </td>
                                                     <td th:text="${attendance?.lessonDto?.date}">
                                                         Data
                                                     </td>
-                                                    <td>
-                                                        <th:block th:if="${attendance.status.name() eq 'PRESENT'}">
+                                                    <th:block>
+                                                        <td th:if="${attendance.status.name() eq 'PRESENT'}">
                                                             Obecny
-                                                        </th:block>
-                                                        <th:block th:if="${attendance.status.name() eq 'ABSENT'}">
+                                                        </td>
+                                                        <td th:if="${attendance.status.name() eq 'ABSENT'} " th:style="'color: red'">
                                                             Nieobecny
-                                                        </th:block>
-                                                        <th:block th:if="${attendance.status.name() eq 'LATE'}">
+                                                        </td>
+                                                        <td th:if="${attendance.status.name() eq 'LATE'}" >
                                                             Spóźniony
-                                                        </th:block>
-                                                        <th:block th:if="${attendance.status.name() eq 'EXCUSED'}">
+                                                        </td>
+                                                        <td th:if="${attendance.status.name() eq 'EXCUSED'}" >
                                                             Usprawiedliwiony
-                                                        </th:block>
-                                                        <th:block th:if="${attendance.status.name() eq 'UNEXCUSED'}">
+                                                        </td>
+                                                        <td th:if="${attendance.status.name() eq 'UNEXCUSED'}">
                                                             Nieusprawiedliwiony
-                                                        </th:block>
+                                                        </td>
+                                                    </th:block>
 
-                                                    </td>
+
                                                     <td th:if="${attendance?.isExcuseSent == false} and ${attendance?.status.name() eq 'ABSENT'}">
                                                         <div class="form-check">
                                                             <label class="form-check-label">
@@ -145,7 +146,16 @@ The above copyright notice and this permission notice shall be included in all c
                                                             </label>
                                                         </div>
                                                     </td>
-
+                                                    <td th:if="${attendance?.isExcuseSent == true} or ${attendance?.status.name() != 'ABSENT'}">
+                                                        <div class="form-check">
+                                                            <label class="form-check-label">
+                                                                <input class="form-check-input"  type="checkbox" disabled name="toExcuse" th:value="${attendance?.id}">
+                                                                <span class="form-check-sign">
+                                                                <span class="check"></span>
+                                                            </span>
+                                                            </label>
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                                 </tbody>
                                             </table>

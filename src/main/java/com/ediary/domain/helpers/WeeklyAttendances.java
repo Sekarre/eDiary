@@ -15,4 +15,5 @@ import java.util.Map;
 public class WeeklyAttendances {
 
     private Map<Date, List<AttendanceDto>> attendances;
+    private Map<Date, Integer> attendancesNumber;
 }

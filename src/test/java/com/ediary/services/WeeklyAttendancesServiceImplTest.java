@@ -38,8 +38,8 @@ public class WeeklyAttendancesServiceImplTest {
     @Test
     void getAttendanceByWeek() {
         when(attendanceRepository.findAllByStudentIdAndLesson_Date(any(),any())).thenReturn(Arrays.asList(
-                Attendance.builder().id(1L).build(),
-                Attendance.builder().id(2L).build()
+                Attendance.builder().id(1L).status(Attendance.Status.ABSENT).build(),
+                Attendance.builder().id(2L).status(Attendance.Status.ABSENT).build()
         ));
 
         when(attendanceToAttendanceDto.convert(any())).thenReturn(AttendanceDto.builder().id(1L).build());

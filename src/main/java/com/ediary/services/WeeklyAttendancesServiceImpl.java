@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -30,6 +27,7 @@ public class WeeklyAttendancesServiceImpl implements WeeklyAttendancesService {
 
         LocalDate localDate = date.toLocalDate();
 
+        Map<Date, Integer> attendancesNumber = new HashMap<>();
 
         Map<Date, List<AttendanceDto>> attendancesByDays = new TreeMap<>((o1, o2) -> {
             if (o1.getDate() == o2.getDate())
@@ -45,9 +43,14 @@ public class WeeklyAttendancesServiceImpl implements WeeklyAttendancesService {
             attendancesByDays.put(Date.valueOf(localDate), attendanceList.stream()
                     .map(attendanceToAttendanceDto::convert)
                     .collect(Collectors.toList()));
+
+            attendancesNumber.put(Date.valueOf(localDate), (int) attendanceList.stream()
+                        .filter((a) -> a.getStatus().equals(Attendance.Status.ABSENT))
+                        .count());
+
             localDate = localDate.plusDays(1);
         }
 
-        return WeeklyAttendances.builder().attendances(attendancesByDays).build();
+        return WeeklyAttendances.builder().attendances(attendancesByDays).attendancesNumber(attendancesNumber).build();
     }
 }
