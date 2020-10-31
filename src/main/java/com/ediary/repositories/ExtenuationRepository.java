@@ -14,4 +14,6 @@ public interface ExtenuationRepository extends JpaRepository<Extenuation, Long> 
 
     @Query("select e from Extenuation e join Attendance a where a.id = ?1")
     Set<Extenuation> findAllByAttendancesId(Long attendanceId);
+
+    List<Extenuation> findAllByParentId(Long parentId);
 }

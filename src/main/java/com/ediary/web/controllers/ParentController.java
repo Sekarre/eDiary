@@ -144,7 +144,15 @@ public class ParentController {
 
         Extenuation ext = parentService.saveExtenuation(extenuation, parentId, ids);
 
-        return "redirect:/parent/" + parentId + "/" + studentId + "/attendance";
+        return "redirect:/parent/" + parentId + "/" + studentId + "/attendance/extenuations";
+    }
+
+    @GetMapping("/{studentId}/attendance/extenuations")
+    public String getAllExtenuations(@PathVariable Long parentId, @PathVariable Long studentId, Model model) {
+
+        model.addAttribute("extenuations", parentService.getAllExtenuations(parentId));
+
+        return "parent/allExtenuations";
     }
 
     @GetMapping("/{studentId}/behavior")

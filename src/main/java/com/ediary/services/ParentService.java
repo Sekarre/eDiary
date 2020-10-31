@@ -15,4 +15,5 @@ public interface ParentService {
     ParentDto findByUser(User user);
     ExtenuationDto initNewExtenuation(List<Long> attendancesId, ExtenuationDto extenuationDto, Long parentId);
     Extenuation saveExtenuation(ExtenuationDto extenuation, Long parentId, List<Long> attId);
+    List<ExtenuationDto> getAllExtenuations(Long parentId);
 }

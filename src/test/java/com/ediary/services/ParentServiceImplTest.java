@@ -219,4 +219,29 @@ class ParentServiceImplTest {
         verify(extenuationDtoToExtenuation, times(1)).convert(any());
     }
 
+
+    @Test
+    void getAllExtenuations() {
+        Long studentId = 1L;
+        Long subjectId = 1L;
+
+
+        Parent parent = Parent.builder()
+                .id(1L)
+                .build();
+
+        Subject subject = Subject.builder().id(1L).name("xx").build();
+
+        when(extenuationRepository.findAllByParentId(any())).thenReturn(Collections.singletonList(Extenuation.builder().build()));
+        when(parentRepository.findById(any())).thenReturn(Optional.of(parent));
+        when(extenuationToExtenuationDto.convert(any())).thenReturn(ExtenuationDto.builder().build());
+
+
+        List<ExtenuationDto> extenuationDtos = parentService.getAllExtenuations(parentId);
+
+        assertNotNull(extenuationDtos);
+        verify(parentRepository, times(1)).findById(any());
+        verify(extenuationRepository, times(1)).findAllByParentId(parentId);
+    }
+
 }

@@ -2,11 +2,14 @@ package com.ediary.converters;
 
 import com.ediary.DTO.AttendanceDto;
 import com.ediary.domain.Attendance;
+import com.ediary.domain.Extenuation;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -36,6 +39,12 @@ public class AttendanceToAttendanceDto implements Converter<Attendance, Attendan
                 source.getStudent().getUser().getFirstName() + " " + source.getStudent().getUser().getLastName()
         );
         attendanceDto.setStudentClass(source.getStudent().getClass().getName());
+
+        //Extenuation
+        attendanceDto.setIsExcuseSent(!source.getExtenuations().isEmpty());
+        attendanceDto.setExtenuationStatus(source.getExtenuations().stream()
+                .map(Extenuation::getStatus)
+                .collect(Collectors.toList()));
 
         return attendanceDto;
     }

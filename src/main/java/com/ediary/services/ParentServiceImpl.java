@@ -101,6 +101,10 @@ public class ParentServiceImpl implements ParentService {
     public ExtenuationDto initNewExtenuation(List<Long> attendancesId, ExtenuationDto extenuationDto, Long parentId) {
         Extenuation extenuation = extenuationDtoToExtenuation.convert(extenuationDto);
 
+        if (attendancesId == null) {
+            throw new NotFoundException("Attendances not found");
+        }
+
         List<Attendance> attendances = attendanceRepository.findAllById(attendancesId);
 
         if (attendances.size() != 0) {
@@ -130,6 +134,17 @@ public class ParentServiceImpl implements ParentService {
         return extenuationRepository.save(extenuation);
     }
 
+    @Override
+    public List<ExtenuationDto> getAllExtenuations(Long parentId) {
+        Parent parent = parentRepository
+                .findById(parentId).orElseThrow(() -> new NotFoundException("Parent not found"));
+
+        return extenuationRepository.findAllByParentId(parent.getId())
+                .stream()
+                .map(extenuationToExtenuationDto::convert)
+                .collect(Collectors.toList());
+
+    }
 
     private void checkIfParentHasStudent(Long parentId, Long studentId) {
         Parent parent = parentRepository

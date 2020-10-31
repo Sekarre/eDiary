@@ -155,10 +155,8 @@ class ParentControllerTest {
 
         mockMvc.perform(get("/parent/" + parentId + "/" +  studentId + "/attendance"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("attendances"))
                 .andExpect(view().name("parent/allAttendances"));
 
-        verify(studentService).listAttendances(studentId);
         assertNotNull(weeklyAttendancesService.getAttendancesByWeek(studentId, 7, Date.valueOf(LocalDate.now())));
         assertEquals(1, studentService.listAttendances(studentId).size());
     }
@@ -172,10 +170,8 @@ class ParentControllerTest {
 
         mockMvc.perform(get("/parent/" + parentId + "/" +  studentId + "/attendance/" + "next/" + "2020-10-01"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("attendances"))
                 .andExpect(view().name("parent/allAttendances"));
 
-        verify(studentService, times(1)).listAttendances(studentId);
         assertNotNull(weeklyAttendancesService.getAttendancesByWeek(studentId, 7, Date.valueOf(LocalDate.now())));
         assertEquals(1, studentService.listAttendances(studentId).size());
     }
@@ -201,11 +197,27 @@ class ParentControllerTest {
 
         mockMvc.perform(post("/parent/" + parentId + "/" +  studentId + "/attendance/extenuation/save"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/parent/" + parentId + "/" + studentId + "/attendance"));
+                .andExpect(view().name("redirect:/parent/" + parentId + "/" + studentId + "/attendance/extenuations"));
 
 
         assertNotNull(parentService.saveExtenuation(ExtenuationDto.builder().build(), 1L,
                 new ArrayList<>(){{add(1L);add(1L);}}));
+    }
+
+    @Test
+    void getAllExtenuations() throws Exception {
+        when(parentService.getAllExtenuations(parentId)).thenReturn(Arrays.asList(
+                ExtenuationDto.builder().id(1L).build(),
+                ExtenuationDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/parent/" + parentId + "/" + studentId + "/attendance/extenuations"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("extenuations"))
+                .andExpect(view().name("parent/allExtenuations"));
+
+        verify(parentService, times(1)).getAllExtenuations(parentId);
+        assertEquals(2, parentService.getAllExtenuations(parentId).size());
     }
 
     @Test
