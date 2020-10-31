@@ -96,20 +96,9 @@ public class ParentServiceImpl implements ParentService {
         return parentToParentDto.convert(parentOptional.get());
     }
 
-    //todo: test
+
     @Override
-    public ExtenuationDto initNewExtenuation(Long studentId, Long parentId) {
-        Parent parent = parentRepository
-                .findById(parentId).orElseThrow(() -> new NotFoundException("Parent not found"));
-
-        Extenuation extenuation = Extenuation.builder().parent(parent).build();
-
-        return extenuationToExtenuationDto.convert(extenuation);
-    }
-
-    //todo: test
-    @Override
-    public ExtenuationDto addAttendancesToExtenuation(List<Long> attendancesId, ExtenuationDto extenuationDto, Long parentId) {
+    public ExtenuationDto initNewExtenuation(List<Long> attendancesId, ExtenuationDto extenuationDto, Long parentId) {
         Extenuation extenuation = extenuationDtoToExtenuation.convert(extenuationDto);
 
         List<Attendance> attendances = attendanceRepository.findAllById(attendancesId);
@@ -123,11 +112,9 @@ public class ParentServiceImpl implements ParentService {
 
         }
 
-
         return extenuationToExtenuationDto.convert(extenuation);
     }
 
-    //todo: tests
     @Override
     public Extenuation saveExtenuation(ExtenuationDto extenuationDto, Long parentId, List<Long> attId) {
         Extenuation extenuation = extenuationDtoToExtenuation.convert(extenuationDto);
@@ -142,6 +129,7 @@ public class ParentServiceImpl implements ParentService {
 
         return extenuationRepository.save(extenuation);
     }
+
 
     private void checkIfParentHasStudent(Long parentId, Long studentId) {
         Parent parent = parentRepository

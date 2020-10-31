@@ -13,7 +13,6 @@ public interface ParentService {
     List<SubjectDto> getAllStudentSubjectNames(Long parentId, Long studentId);
     Attendance saveAttendance(AttendanceDto attendance);
     ParentDto findByUser(User user);
-    ExtenuationDto initNewExtenuation(Long studentId, Long parentId);
-    ExtenuationDto addAttendancesToExtenuation(List<Long> attendancesId, ExtenuationDto extenuationDto, Long parentId);
+    ExtenuationDto initNewExtenuation(List<Long> attendancesId, ExtenuationDto extenuationDto, Long parentId);
     Extenuation saveExtenuation(ExtenuationDto extenuation, Long parentId, List<Long> attId);
 }

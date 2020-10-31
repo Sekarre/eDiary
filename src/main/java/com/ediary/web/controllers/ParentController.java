@@ -3,8 +3,6 @@ package com.ediary.web.controllers;
 import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.Extenuation;
-import com.ediary.domain.Student;
-import com.ediary.domain.helpers.WeeklyAttendances;
 import com.ediary.domain.security.User;
 import com.ediary.services.ParentService;
 import com.ediary.services.StudentService;
@@ -22,10 +20,7 @@ import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -124,22 +119,20 @@ public class ParentController {
         return "parent/allAttendances";
     }
 
-    //todo: tests
     @PostMapping("/{studentId}/attendance/extenuation")
-    public String addAttendancesToExtenuation(@PathVariable Long parentId,
+    public String newExtenuation(@PathVariable Long parentId,
                                               @PathVariable Long studentId,
                                               @ModelAttribute ExtenuationDto extenuation,
                                               @RequestParam(name = "toExcuse", required = false) List<Long> ids,
                                               Model model) {
 
         model.addAttribute("studentId", studentId);
-        model.addAttribute("extenuation", parentService.addAttendancesToExtenuation(ids, extenuation, parentId));
+        model.addAttribute("extenuation", parentService.initNewExtenuation(ids, extenuation, parentId));
         return "parent/newExtenuation";
     }
 
-    //todo: test
     @PostMapping("/{studentId}/attendance/extenuation/save")
-    public String saveExtenuation(@PathVariable Long studentId, @PathVariable Long parentId,
+    public String processNewExtenuation(@PathVariable Long studentId, @PathVariable Long parentId,
                                   @Valid @ModelAttribute ExtenuationDto extenuation,
                                   @RequestParam(name = "attId", required = false) List<Long> ids,
                                   BindingResult result) {

@@ -73,26 +73,8 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <div class="container-fluid">
-                <form method="POST"  th:action="@{/parent/{parentId}/{studentId}/attendance/save(parentId=${parent.id}, studentId=${studentId})}">
-
-                    <div class="card">
-                        <div class="card-header card-header-primary">
-                            <h3 class="card-title">Usprawiedliwienie :</h3>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-md-12">
-
-                                <label for="exampleFormControlTextarea1">Wyjaśnienie: </label>
-                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                            </div>
-                            <button disabled class="btn btn-success btn-round btn-sm" th:each="attendanceId : *{extenuation?.attendancesId}" th:text="${attendanceId}"></button>
-
-                            <button type="submit" th:object="${extenuation}" th:formaction="@{'/parent/' + ${parentId} + '/' + ${studentId} + '/attendance/addAttendances'}" th:method="post">Dodaj zaznaczone</button>
-
-                        </div>
-                    </div>
-
+            <form method="POST"   th:action="@{/parent/{parentId}/{studentId}/attendance/extenuation(parentId=${parent.id}, studentId=${studentId})}">
+                <div class="container-fluid">
                     <div class="card">
                         <div class="card-header card-header-primary">
                             <h3 class="card-title">Frekwencja :</h3>
@@ -175,11 +157,12 @@ The above copyright notice and this permission notice shall be included in all c
                                 </div>
                             </div>
                         </div>
-                </form>
-            </div>
+                        <button class="btn btn-primary" type="submit">Przejdź do usprawiedliwienia</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
-</div>
 </div>
 
 <!--<form method="post" th:object="${attendances}" th:action="@{/parent/{parentId}/{studentId}/attendance/save(parentId=${parent.id}, studentId=${attendances?.get(0).studentId}}">-->

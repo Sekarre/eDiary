@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.TreeMap;
@@ -27,6 +28,7 @@ import java.util.TreeMap;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
@@ -173,9 +175,37 @@ class ParentControllerTest {
                 .andExpect(model().attributeExists("attendances"))
                 .andExpect(view().name("parent/allAttendances"));
 
-        verify(studentService).listAttendances(studentId);
+        verify(studentService, times(1)).listAttendances(studentId);
         assertNotNull(weeklyAttendancesService.getAttendancesByWeek(studentId, 7, Date.valueOf(LocalDate.now())));
         assertEquals(1, studentService.listAttendances(studentId).size());
+    }
+
+    @Test
+    void newExtenuation() throws Exception {
+        when(parentService.initNewExtenuation(anyList(), any(), any())).thenReturn(ExtenuationDto.builder().build());
+
+
+        mockMvc.perform(post("/parent/" + parentId + "/" +  studentId + "/attendance/extenuation"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("studentId"))
+                .andExpect(view().name("parent/newExtenuation"));
+
+        assertNotNull(parentService.initNewExtenuation(new ArrayList<>(){{add(1L);add(1L);}},
+                ExtenuationDto.builder().build(), 1L));
+    }
+
+    @Test
+    void processNewExtenuation() throws Exception {
+        when(parentService.saveExtenuation(any(), any(), any())).thenReturn(Extenuation.builder().build());
+
+
+        mockMvc.perform(post("/parent/" + parentId + "/" +  studentId + "/attendance/extenuation/save"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/parent/" + parentId + "/" + studentId + "/attendance"));
+
+
+        assertNotNull(parentService.saveExtenuation(ExtenuationDto.builder().build(), 1L,
+                new ArrayList<>(){{add(1L);add(1L);}}));
     }
 
     @Test

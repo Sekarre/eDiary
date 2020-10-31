@@ -1,9 +1,6 @@
 package com.ediary.services;
 
-import com.ediary.DTO.AttendanceDto;
-import com.ediary.DTO.ParentDto;
-import com.ediary.DTO.StudentDto;
-import com.ediary.DTO.SubjectDto;
+import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
@@ -180,6 +177,46 @@ class ParentServiceImplTest {
         assertEquals(parent.getId(), parentReturned.getId());
         verify(parentRepository, times(1)).findByUser(user);
         verify(parentToParentDto, times(1)).convert(parentReturned);
+    }
+
+    @Test
+    void addAttendancesToExtenuation() {
+        Long extId = 1L;
+        Extenuation extenuation = Extenuation.builder().id(extId).build();
+
+
+        when(extenuationDtoToExtenuation.convert(any())).thenReturn(extenuation);
+        when(attendanceRepository.findAllById(any())).thenReturn(Collections.singletonList(Attendance.builder().build()));
+        when(extenuationToExtenuationDto.convert(any())).thenReturn(ExtenuationDto.builder().id(extenuation.getId()).build());
+
+        ExtenuationDto extenuationDto = parentService.initNewExtenuation(new ArrayList<>(){{add(1L);add(1L);}},
+                ExtenuationDto.builder().build(), 1L);
+
+        assertNotNull(extenuationDto);
+        verify(attendanceRepository, times(1)).findAllById(any());
+        verify(extenuationToExtenuationDto, times(1)).convert(any());
+        verify(extenuationDtoToExtenuation, times(1)).convert(any());
+    }
+
+
+    @Test
+    void saveExtenuation() {
+        Long extId = 1L;
+        Extenuation extenuation = Extenuation.builder().id(extId).build();
+
+
+        when(extenuationDtoToExtenuation.convert(any())).thenReturn(extenuation);
+        when(parentRepository.findById(any())).thenReturn(Optional.ofNullable(Parent.builder().build()));
+        when(attendanceRepository.findAllById(any())).thenReturn(Collections.singletonList(Attendance.builder().build()));
+        when(extenuationRepository.save(any())).thenReturn(extenuation);
+
+        Extenuation savedExtenuation = parentService.saveExtenuation(ExtenuationDto.builder().build(), 1L,
+                new ArrayList<>(){{add(1L);add(1L);}});
+
+        assertNotNull(savedExtenuation);
+        verify(parentRepository, times(1)).findById(any());
+        verify(attendanceRepository, times(1)).findAllById(any());
+        verify(extenuationDtoToExtenuation, times(1)).convert(any());
     }
 
 }
