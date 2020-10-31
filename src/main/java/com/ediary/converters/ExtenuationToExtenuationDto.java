@@ -9,11 +9,14 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
 public class ExtenuationToExtenuationDto implements Converter<Extenuation, ExtenuationDto> {
+
+    private final AttendanceToAttendanceDto attendanceToAttendanceDto;
 
     @Nullable
     @Synchronized
@@ -37,6 +40,10 @@ public class ExtenuationToExtenuationDto implements Converter<Extenuation, Exten
         //Attendances
         extenuationDto.setAttendancesId(source.getAttendances().stream()
                 .map(Attendance::getId)
+                .collect(Collectors.toList()));
+
+        extenuationDto.setAttendances(source.getAttendances().stream()
+                .map(attendanceToAttendanceDto::convert)
                 .collect(Collectors.toList()));
 
         return extenuationDto;

@@ -21,4 +21,5 @@ public class ExtenuationDto {
     private Long parentId;
 
     private List<Long> attendancesId;
+    private List<AttendanceDto> attendances;
 }

@@ -1,9 +1,6 @@
 package com.ediary.services;
 
-import com.ediary.DTO.AttendanceDto;
-import com.ediary.DTO.ParentDto;
-import com.ediary.DTO.StudentDto;
-import com.ediary.DTO.SubjectDto;
+import com.ediary.DTO.*;
 import com.ediary.domain.*;
 import com.ediary.domain.security.User;
 
@@ -16,4 +13,7 @@ public interface ParentService {
     List<SubjectDto> getAllStudentSubjectNames(Long parentId, Long studentId);
     Attendance saveAttendance(AttendanceDto attendance);
     ParentDto findByUser(User user);
+    ExtenuationDto initNewExtenuation(Long studentId, Long parentId);
+    ExtenuationDto addAttendancesToExtenuation(List<Long> attendancesId, ExtenuationDto extenuationDto, Long parentId);
+    Extenuation saveExtenuation(ExtenuationDto extenuation, Long parentId, List<Long> attId);
 }

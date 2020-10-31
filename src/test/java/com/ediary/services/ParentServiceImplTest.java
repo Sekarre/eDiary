@@ -4,10 +4,7 @@ import com.ediary.DTO.AttendanceDto;
 import com.ediary.DTO.ParentDto;
 import com.ediary.DTO.StudentDto;
 import com.ediary.DTO.SubjectDto;
-import com.ediary.converters.AttendanceDtoToAttendance;
-import com.ediary.converters.ParentToParentDto;
-import com.ediary.converters.StudentToStudentDto;
-import com.ediary.converters.SubjectToSubjectDto;
+import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
 import com.ediary.domain.security.User;
@@ -46,12 +43,18 @@ class ParentServiceImplTest {
 
     @Mock
     AttendanceDtoToAttendance attendanceDtoToAttendance;
+    @Mock
+    ExtenuationRepository extenuationRepository;
 
     @Mock
     ParentToParentDto parentToParentDto;
 
     @Mock
     SubjectToSubjectDto subjectToSubjectDto;
+    @Mock
+    ExtenuationToExtenuationDto extenuationToExtenuationDto;
+    @Mock
+    ExtenuationDtoToExtenuation extenuationDtoToExtenuation;
 
     ParentService parentService;
 
@@ -60,7 +63,9 @@ class ParentServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         parentService = new ParentServiceImpl(studentRepository, attendanceRepository, parentRepository, gradeRepository,
-                subjectRepository, studentToStudentDto, attendanceDtoToAttendance, parentToParentDto, subjectToSubjectDto);
+                subjectRepository, extenuationRepository,
+                studentToStudentDto, attendanceDtoToAttendance, parentToParentDto, subjectToSubjectDto,
+                extenuationToExtenuationDto, extenuationDtoToExtenuation);
     }
 
 

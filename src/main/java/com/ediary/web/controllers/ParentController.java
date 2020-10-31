@@ -1,9 +1,8 @@
 package com.ediary.web.controllers;
 
-import com.ediary.DTO.GradeDto;
-import com.ediary.DTO.StudentDto;
-import com.ediary.DTO.SubjectDto;
+import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
+import com.ediary.domain.Extenuation;
 import com.ediary.domain.Student;
 import com.ediary.domain.helpers.WeeklyAttendances;
 import com.ediary.domain.security.User;
@@ -15,9 +14,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -98,7 +99,6 @@ public class ParentController {
 
         model.addAttribute("weeklyAttendances",
                 weeklyAttendancesService.getAttendancesByWeek(studentId, 7, Date.valueOf(LocalDate.now().minusDays(6))));
-        model.addAttribute("attendances", studentService.listAttendances(studentId));
         model.addAttribute("studentId", studentId);
         return "parent/allAttendances";
     }
@@ -119,9 +119,39 @@ public class ParentController {
 
         model.addAttribute("weeklyAttendances",
                 weeklyAttendancesService.getAttendancesByWeek(studentId, 7, date));
-        model.addAttribute("attendances", studentService.listAttendances(studentId));
         model.addAttribute("studentId", studentId);
+
         return "parent/allAttendances";
+    }
+
+    //todo: tests
+    @PostMapping("/{studentId}/attendance/extenuation")
+    public String addAttendancesToExtenuation(@PathVariable Long parentId,
+                                              @PathVariable Long studentId,
+                                              @ModelAttribute ExtenuationDto extenuation,
+                                              @RequestParam(name = "toExcuse", required = false) List<Long> ids,
+                                              Model model) {
+
+        model.addAttribute("studentId", studentId);
+        model.addAttribute("extenuation", parentService.addAttendancesToExtenuation(ids, extenuation, parentId));
+        return "parent/newExtenuation";
+    }
+
+    //todo: test
+    @PostMapping("/{studentId}/attendance/extenuation/save")
+    public String saveExtenuation(@PathVariable Long studentId, @PathVariable Long parentId,
+                                  @Valid @ModelAttribute ExtenuationDto extenuation,
+                                  @RequestParam(name = "attId", required = false) List<Long> ids,
+                                  BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo:
+            return "";
+        }
+
+        Extenuation ext = parentService.saveExtenuation(extenuation, parentId, ids);
+
+        return "redirect:/parent/" + parentId + "/" + studentId + "/attendance";
     }
 
     @GetMapping("/{studentId}/behavior")
@@ -145,11 +175,5 @@ public class ParentController {
         return "parent/timetable";
     }
 
-
-    @PostMapping("/{studentId}/attendance/save")
-    public String saveAttendance(Model model) {
-        //todo: Zalezy od widoku
-        return "";
-    }
 
 }

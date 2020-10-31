@@ -39,8 +39,9 @@ public class ExtenuationDtoToExtenuation implements Converter<ExtenuationDto, Ex
         extenuation.setParent(parentRepository.findById(source.getParentId()).orElse(null));
 
         //Attendances
-        extenuation.setAttendances(new HashSet<>(attendanceRepository.findAllById(source.getAttendancesId())));
-
+        if (source.getAttendancesId() != null) {
+            extenuation.setAttendances(new HashSet<>(attendanceRepository.findAllById(source.getAttendancesId())));
+        }
 
         return extenuation;
     }

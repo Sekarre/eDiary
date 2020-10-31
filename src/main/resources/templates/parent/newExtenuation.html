@@ -49,18 +49,6 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="navbar-wrapper">
                     <a class="navbar-brand">Frekwencja:</a>
                 </div>
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item">
-                            <a class="btn btn-primary btn-round"
-                               th:href="@{/parent/{parentId}/{studentId}/attendance/{direction}/{dateValue}(parentId=${parent.id}, studentId=${studentId}, direction='previous', dateValue = ${weeklyAttendances?.attendances?.keySet().stream().findFirst().toString().substring(9, 19)})}">Previous</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="btn btn-primary btn-round"
-                               th:href="@{/parent/{parentId}/{studentId}/attendance/{direction}/{dateValue}(parentId=${parent.id}, studentId=${studentId}, direction='next', dateValue = ${weeklyAttendances?.attendances?.keySet().stream().findFirst().toString().substring(9, 19)})}">Next</a>
-                        </li>
-                    </ul>
-                </nav>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -73,113 +61,58 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <div class="container-fluid">
-                <form method="POST"  th:action="@{/parent/{parentId}/{studentId}/attendance/save(parentId=${parent.id}, studentId=${studentId})}">
-
+            <form method="POST"  th:action="@{/parent/{parentId}/{studentId}/attendance/extenuation/save(parentId=${parent.id}, studentId=${studentId})}">
+                <div class="container-fluid">
                     <div class="card">
-                        <div class="card-header card-header-primary">
-                            <h3 class="card-title">Usprawiedliwienie :</h3>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-md-12">
-
-                                <label for="exampleFormControlTextarea1">Wyjaśnienie: </label>
-                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        <div class="card">
+                            <div class="card-header card-header-primary">
+                                <h3 class="card-title">Usprawiedliwienie :</h3>
                             </div>
-                            <button disabled class="btn btn-success btn-round btn-sm" th:each="attendanceId : *{extenuation?.attendancesId}" th:text="${attendanceId}"></button>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <label for="exampleFormControlTextarea1">Wyjaśnienie: </label>
+                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" th:field="*{extenuation.description}"></textarea>
+                                </div>
+                            </div>
 
-                            <button type="submit" th:object="${extenuation}" th:formaction="@{'/parent/' + ${parentId} + '/' + ${studentId} + '/attendance/addAttendances'}" th:method="post">Dodaj zaznaczone</button>
+                            <div class="card-body">
+                                <h4>Wybrane nieobecności: </h4>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class=" text-primary">
+                                        <th>Student:</th>
+                                        <th>Lekcja</th>
+                                        <th>Data</th>
+                                        <th></th>
+                                        </thead>
+                                        <tbody>
 
-                        </div>
+                                        <tr th:each="att : ${extenuation.attendances}">
+                                            <td th:text="${att.studentName}">
+                                                Student
+                                            </td>
+                                            <td th:text="${att.getLessonDto().subjectName}">
+                                                Student
+                                            </td>
+                                            <td th:text="${att.getLessonDto().date}">
+                                                Student
+                                            </td>
+                                            <td>
+                                               <input type="hidden" th:name="'attId'" th:value="${att.id}">
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        <button class="btn btn-primary" type="submit">Wyślij</button>
                     </div>
-
-                    <div class="card">
-                        <div class="card-header card-header-primary">
-                            <h3 class="card-title">Frekwencja :</h3>
-                        </div>
-
-                        <div id="accordion">
-                            <!--/*@thymesVar id="timetable" type="com.ediary.domain.helpers.WeeklyAttendances"*/-->
-                            <div class="card" th:each="weeklyAttendance : ${weeklyAttendances.attendances}">
-                                <div class="card-header" id="headingOne">
-                                    <h2 class="mb-0">
-                                        <button class="btn btn-link" data-toggle="collapse" aria-expanded="true"
-                                                th:text="${weeklyAttendance?.key} + '&nbsp;&nbsp;&nbsp;&nbsp; Nieobecności: '+${weeklyAttendance?.value?.size()}"
-                                                th:attr="data-target='#'+${weeklyAttendance?.key?.date}+'', aria-controls=''+${weeklyAttendance?.key?.date}+''">
-                                            Collapsible Group Item #1
-                                        </button>
-
-                                    </h2>
-                                </div>
-                                <!-- Dodac "show" do class, aby panele byly od poczatku odkryte -->
-                                <div th:attr="id=''+${weeklyAttendance?.key?.date}+'', aria-labelledby=''+${weeklyAttendance?.key?.date}+''" class="collapse show"
-                                     data-parent="#accordion">
-                                    <div class="card-body">
-                                        <div class="card-body" th:if="${weeklyAttendance?.value}">
-                                            <div class="table-responsive">
-
-                                                <table class="table">
-                                                    <thead class=" text-primary">
-                                                    <th>Student:</th>
-                                                    <th>Lekcja</th>
-                                                    <th>Data</th>
-                                                    <th>Status</th>
-                                                    <th></th>
-                                                    </thead>
-                                                    <tbody>
-
-                                                    <tr th:each="attendance : ${weeklyAttendance.value}">
-                                                        <td th:text="${attendance?.studentName}">
-                                                            Student
-                                                        </td>
-                                                        <td th:text="${attendance?.lessonDto?.name}">
-                                                            Lekcja
-                                                        </td>
-                                                        <td th:text="${attendance?.lessonDto?.date}">
-                                                            Data
-                                                        </td>
-                                                        <td>
-                                                            <th:block th:if="${attendance.status.name() eq 'PRESENT'}">
-                                                                Obecny
-                                                            </th:block>
-                                                            <th:block th:if="${attendance.status.name() eq 'ABSENT'}">
-                                                                Nieobecny
-                                                            </th:block>
-                                                            <th:block th:if="${attendance.status.name() eq 'LATE'}">
-                                                                Spóźniony
-                                                            </th:block>
-                                                            <th:block th:if="${attendance.status.name() eq 'EXCUSED'}">
-                                                                Usprawiedliwiony
-                                                            </th:block>
-                                                            <th:block th:if="${attendance.status.name() eq 'UNEXCUSED'}">
-                                                                Nieusprawiedliwiony
-                                                            </th:block>
-
-                                                        </td>
-                                                        <td>
-                                                            <div class="form-check">
-                                                                <label class="form-check-label">
-                                                                    <input class="form-check-input" type="checkbox" name="toExcuse" th:value="${attendance?.id}">
-                                                                    <span class="form-check-sign">
-                                                                <span class="check"></span>
-                                                            </span>
-                                                                </label>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                </form>
-            </div>
+                </div>
         </div>
+            </form>
     </div>
-</div>
+    </div>
 </div>
 
 <!--<form method="post" th:object="${attendances}" th:action="@{/parent/{parentId}/{studentId}/attendance/save(parentId=${parent.id}, studentId=${attendances?.get(0).studentId}}">-->

@@ -73,30 +73,31 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
+            <form method="POST"   th:action="@{/parent/{parentId}/{studentId}/attendance/extenuation(parentId=${parent.id}, studentId=${studentId})}">
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h3 class="card-title">Frekwencja :</h3>
                     </div>
-                    <!--                    <form method="POST"  th:action="@{/parent/{parentId}/{studentId}/attendance/save(parentId=${parent.id}, studentId=${attendances?.get(0).studentId})}">-->
+
                     <div id="accordion">
                         <!--/*@thymesVar id="timetable" type="com.ediary.domain.helpers.WeeklyAttendances"*/-->
-                        <div class="card" th:each="weeklyAttendances : ${weeklyAttendances.attendances}">
+                        <div class="card" th:each="weeklyAttendance : ${weeklyAttendances.attendances}">
                             <div class="card-header" id="headingOne">
-                                <h5 class="mb-0">
+                                <h2 class="mb-0">
                                     <button class="btn btn-link" data-toggle="collapse" aria-expanded="true"
-                                            th:text="${weeklyAttendances?.key}"
-                                            th:attr="data-target='#'+${weeklyAttendances?.key?.date}+'', aria-controls=''+${weeklyAttendances?.key?.date}+''">
+                                            th:text="${weeklyAttendance?.key} + '&nbsp;&nbsp;&nbsp;&nbsp; Nieobecności: '+${weeklyAttendance?.value?.size()}"
+                                            th:attr="data-target='#'+${weeklyAttendance?.key?.date}+'', aria-controls=''+${weeklyAttendance?.key?.date}+''">
                                         Collapsible Group Item #1
                                     </button>
 
-                                </h5>
+                                </h2>
                             </div>
                             <!-- Dodac "show" do class, aby panele byly od poczatku odkryte -->
-                            <div th:attr="id=''+${weeklyAttendances?.key?.date}+'', aria-labelledby=''+${weeklyAttendances?.key?.date}+''" class="collapse"
+                            <div th:attr="id=''+${weeklyAttendance?.key?.date}+'', aria-labelledby=''+${weeklyAttendance?.key?.date}+''" class="collapse show"
                                  data-parent="#accordion">
                                 <div class="card-body">
-                                    <div class="card-body" th:if="${weeklyAttendances?.value}">
+                                    <div class="card-body" th:if="${weeklyAttendance?.value}">
                                         <div class="table-responsive">
 
                                             <table class="table">
@@ -109,7 +110,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                 </thead>
                                                 <tbody>
 
-                                                <tr th:each="attendance : ${weeklyAttendances.value}">
+                                                <tr th:each="attendance : ${weeklyAttendance.value}">
                                                     <td th:text="${attendance?.studentName}">
                                                         Student
                                                     </td>
@@ -138,7 +139,14 @@ The above copyright notice and this permission notice shall be included in all c
 
                                                     </td>
                                                     <td>
-                                                        <input type="checkbox" name="attendances"/>
+                                                        <div class="form-check">
+                                                            <label class="form-check-label">
+                                                                <input class="form-check-input" type="checkbox" name="toExcuse" th:value="${attendance?.id}">
+                                                                <span class="form-check-sign">
+                                                                <span class="check"></span>
+                                                            </span>
+                                                            </label>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                                 </tbody>
@@ -149,9 +157,10 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                         </div>
                     </div>
-                    <!--                    </form>-->
+                    <button class="btn btn-primary" type="submit">Przejdź do usprawiedliwienia</button>
                 </div>
             </div>
+            </form>
         </div>
     </div>
 </div>
