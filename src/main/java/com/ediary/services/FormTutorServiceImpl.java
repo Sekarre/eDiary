@@ -86,6 +86,26 @@ public class FormTutorServiceImpl implements FormTutorService {
     }
 
     @Override
+    public StudentCouncilDto removeStudentFromCouncil(StudentCouncilDto studentCouncilDto, Long studentId) {
+        StudentCouncil studentCouncil = studentCouncilDtoToStudentCouncil.convert(studentCouncilDto);
+
+        if ((studentCouncil != null) && (studentCouncil.getStudents().stream().anyMatch(s -> s.getId().equals(studentId)))) {
+
+            Student student = studentRepository
+                    .findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
+
+                studentCouncil.setStudents(studentCouncil.getStudents().stream()
+                        .filter(s -> !(s.getId().equals(studentId)))
+                        .collect(Collectors.toSet()));
+
+
+                return studentCouncilToStudentCouncilDto.convert(studentCouncilRepository.save(studentCouncil));
+        }
+
+        return studentCouncilDto;
+    }
+
+    @Override
     public ParentCouncilDto initNewParentCouncil(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
 
@@ -119,6 +139,39 @@ public class FormTutorServiceImpl implements FormTutorService {
         Teacher teacher = getTeacherById(teacherId);
 
         return parentCouncilToParentCouncilDto.convert(teacher.getSchoolClass().getParentCouncil());
+    }
+
+    @Override
+    public Boolean deleteParentCouncil(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        ParentCouncil parentCouncil = teacher.getSchoolClass().getParentCouncil();
+
+        if (parentCouncil != null) {
+            parentCouncilRepository.delete(parentCouncil);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public ParentCouncilDto removeParentFromCouncil(ParentCouncilDto parentCouncilDto, Long parentId) {
+        ParentCouncil parentCouncil = parentCouncilDtoToParentCouncil.convert(parentCouncilDto);
+
+        if ((parentCouncil != null) && (parentCouncil.getParents().stream().anyMatch(s -> s.getId().equals(parentId)))) {
+
+            Parent parent = parentRepository
+                    .findById(parentId).orElseThrow(() -> new NotFoundException("Student not found"));
+
+            parentCouncil.setParents(parentCouncil.getParents().stream()
+                    .filter(s -> !(s.getId().equals(parentId)))
+                    .collect(Collectors.toSet()));
+
+
+            return parentCouncilToParentCouncilDto.convert(parentCouncilRepository.save(parentCouncil));
+        }
+
+        return parentCouncilDto;
     }
 
     @Override

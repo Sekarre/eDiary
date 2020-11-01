@@ -13,10 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -144,6 +141,42 @@ public class FormTutorServiceImplTest {
     }
 
     @Test
+    void removeStudentFromCouncil() {
+        Long teacherId = 1L;
+        Long studentId = 1L;
+
+        StudentCouncil studentCouncil = StudentCouncil.builder()
+                .id(1L)
+                .students(new HashSet<>(){{
+                    add(Student.builder().id(studentId).build());
+                    add(Student.builder().id(2L).build());
+                }})
+                .build();
+
+        StudentCouncilDto studentCouncilDto = StudentCouncilDto.builder()
+                .id(1L)
+                .studentsId(new ArrayList<>(){{
+                    add(studentId);
+                    add(2L);
+                }})
+                .build();
+
+        when(studentRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(Student.builder().build()));
+        when(studentCouncilDtoToStudentCouncil.convert(any())).thenReturn(studentCouncil);
+        when(studentCouncilToStudentCouncilDto.convert(any())).thenReturn(studentCouncilDto);
+        when(studentCouncilRepository.save(any())).thenReturn(studentCouncil);
+
+
+        StudentCouncilDto removedStudentCouncilDto = formTutorService
+                .removeStudentFromCouncil(studentCouncilDto, studentId);
+
+
+        assertNotNull(removedStudentCouncilDto);
+        verify(studentRepository, times(1)).findById(teacherId);
+        verify(studentCouncilRepository, times(1)).save(studentCouncil);
+    }
+
+    @Test
     void initNewParentCouncil() {
         Long teacherId = 1L;
 
@@ -205,6 +238,62 @@ public class FormTutorServiceImplTest {
 
         assertNotNull(parentCouncilDto1);
         verify(teacherRepository, times(1)).findById(teacherId);
+    }
+
+    @Test
+    void deleteParentCouncil() {
+        Long teacherId = 1L;
+
+        Teacher teacher = Teacher.builder()
+                .id(teacherId)
+                .schoolClass(Class.builder()
+                        .parentCouncil(ParentCouncil.builder().build())
+                        .build())
+                .build();
+
+        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
+
+        Boolean result = formTutorService.deleteParentCouncil(teacherId);
+
+        assertTrue(result);
+        verify(teacherRepository, times(1)).findById(teacherId);
+    }
+
+
+    @Test
+    void removeParentFromCouncil() {
+        Long teacherId = 1L;
+        Long parentId = 1L;
+
+        ParentCouncil parentCouncil = ParentCouncil.builder()
+                .id(1L)
+                .parents(new HashSet<>(){{
+                    add(Parent.builder().id(parentId).build());
+                    add(Parent.builder().id(2L).build());
+                }})
+                .build();
+
+        ParentCouncilDto parentCouncilDto = ParentCouncilDto.builder()
+                .id(1L)
+                .parentsId(new ArrayList<>(){{
+                    add(parentId);
+                    add(2L);
+                }})
+                .build();
+
+        when(parentRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(Parent.builder().build()));
+        when(parentCouncilDtoToParentCouncil.convert(any())).thenReturn(parentCouncil);
+        when(parentCouncilToParentCouncilDto.convert(any())).thenReturn(parentCouncilDto);
+        when(parentCouncilRepository.save(any())).thenReturn(parentCouncil);
+
+
+        ParentCouncilDto removedParentCouncilDto = formTutorService
+                .removeParentFromCouncil(parentCouncilDto, parentId);
+
+
+        assertNotNull(removedParentCouncilDto);
+        verify(parentRepository, times(1)).findById(teacherId);
+        verify(parentCouncilRepository, times(1)).save(parentCouncil);
     }
 
 

@@ -592,6 +592,17 @@ public class TeacherController {
     }
 
 
+    @PostMapping("/{teacherId}/formTutor/studentCouncil/remove/{studentId}")
+    public String removeStudentFromCouncil(@PathVariable Long teacherId,
+                                           @PathVariable Long studentId,
+                                           @ModelAttribute StudentCouncilDto studentCouncilDto,
+                                           Model model) {
+
+        model.addAttribute("students", formTutorService.listClassStudents(teacherId));
+        model.addAttribute("studentCouncil", formTutorService.removeStudentFromCouncil(studentCouncilDto, studentId));
+
+        return "teacher/formTutor/studentCouncil";
+    }
 
     @GetMapping("/{teacherId}/formTutor/parentCouncil")
     public String getParentCouncil(@PathVariable Long teacherId, Model model) {
@@ -619,7 +630,27 @@ public class TeacherController {
 
         ParentCouncil parentCouncil = formTutorService.saveParentCouncil(teacherId, parentCouncilDto, parentsId);
 
-        return "redirect:/teacher/" + teacherId + "/formTutor/parenCouncil";
+        return "redirect:/teacher/" + teacherId + "/formTutor/parentCouncil";
+    }
+
+    @DeleteMapping("/{teacherId}/formTutor/parentCouncil/delete")
+    public String deleteParentCouncil(@PathVariable Long teacherId) {
+
+        formTutorService.deleteParentCouncil(teacherId);
+
+        return "teacher/formTutor/parentCouncil";
+    }
+
+    @PostMapping("/{teacherId}/formTutor/parentCouncil/remove/{parentId}")
+    public String removeParentFromCouncil(@PathVariable Long teacherId,
+                                           @PathVariable Long parentId,
+                                           @ModelAttribute ParentCouncilDto parentCouncilDto,
+                                           Model model) {
+
+        model.addAttribute("parents", formTutorService.listClassParents(teacherId));
+        model.addAttribute("parentCouncil", formTutorService.removeParentFromCouncil(parentCouncilDto, parentId));
+
+        return "teacher/formTutor/parentCouncil";
     }
 
 

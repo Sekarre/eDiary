@@ -880,6 +880,28 @@ class TeacherControllerTest {
         verify(formTutorService, times(1)).deleteStudentCouncil(any());
     }
 
+    @Test
+    void removeStudentFromCouncil() throws Exception {
+        Long parentId = 1L;
+
+        when(formTutorService.removeStudentFromCouncil(any(), any()))
+                .thenReturn(StudentCouncilDto.builder().build());
+        when(formTutorService.listClassStudents(teacherId)).thenReturn(Arrays.asList(
+                StudentDto.builder().id(1L).build(),
+                StudentDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(post("/teacher/" + teacherId + "/formTutor/studentCouncil/remove/" + parentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(StudentCouncilDto.builder().build())))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("studentCouncil"))
+                .andExpect(model().attributeExists("students"))
+                .andExpect(view().name("teacher/formTutor/studentCouncil"));
+
+        assertEquals(2, formTutorService.listClassStudents(teacherId).size());
+    }
+
 
     @Test
     void getParentCouncil() throws Exception {
@@ -898,6 +920,55 @@ class TeacherControllerTest {
                 .andExpect(view().name("teacher/formTutor/parentCouncil"));
 
         verify(formTutorService, times(2)).findParentCouncil(teacherId);
+        assertEquals(2, formTutorService.listClassParents(teacherId).size());
+    }
+
+    @Test
+    void processNewParentCouncil() throws Exception {
+        Long teacherId = 1L;
+
+        when(formTutorService.saveParentCouncil(any(), any(), any())).thenReturn(ParentCouncil.builder().build());
+
+        mockMvc.perform(post("/teacher/" + teacherId + "/formTutor/parentCouncil/new")
+                .param("parentId", String.valueOf(1L))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(StudentCouncilDto.builder().build())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/formTutor/parentCouncil"));
+
+        verify(formTutorService, times(1)).saveParentCouncil(any(), any(), any());
+        assertNotNull(formTutorService.saveParentCouncil(any(), any(), any()));
+    }
+
+    @Test
+    void deleteParentCouncil() throws Exception {
+        mockMvc.perform(delete("/teacher/" + teacherId + "/formTutor/parentCouncil/delete"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/formTutor/parentCouncil"));
+
+        verify(formTutorService, times(1)).deleteParentCouncil(any());
+    }
+
+    @Test
+    void removeParentFromCouncil() throws Exception {
+        Long parentId = 1L;
+        ParentCouncilDto parentCouncilDto = ParentCouncilDto.builder().build();
+
+        when(formTutorService.removeParentFromCouncil(any(), any()))
+                .thenReturn(parentCouncilDto);
+        when(formTutorService.listClassParents(teacherId)).thenReturn(Arrays.asList(
+                ParentDto.builder().id(1L).build(),
+                ParentDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(post("/teacher/" + teacherId + "/formTutor/parentCouncil/remove/" + parentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(StudentCouncilDto.builder().build())))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("parentCouncil"))
+                .andExpect(model().attributeExists("parents"))
+                .andExpect(view().name("teacher/formTutor/parentCouncil"));
+
         assertEquals(2, formTutorService.listClassParents(teacherId).size());
     }
 }

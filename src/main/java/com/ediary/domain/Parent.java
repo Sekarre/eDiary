@@ -35,5 +35,5 @@ public class Parent {
             joinColumns = {@JoinColumn(name = "Parent_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "ParentCouncil_id", referencedColumnName = "id")})
     private Set<ParentCouncil> parentCouncils;
-    
+
 }

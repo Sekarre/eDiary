@@ -18,10 +18,14 @@ public interface FormTutorService {
     StudentCouncil saveStudentCouncil(Long teacherId, StudentCouncilDto studentCouncilDto, List<Long> studentsId);
     StudentCouncilDto findStudentCouncil(Long teacherId);
     Boolean deleteStudentCouncil(Long teacherId);
+    StudentCouncilDto removeStudentFromCouncil(StudentCouncilDto studentCouncilDto, Long studentId);
 
     ParentCouncilDto initNewParentCouncil(Long teacherId);
     ParentCouncil saveParentCouncil(Long teacherId, ParentCouncilDto parentCouncilDto, List<Long> parentsId);
     ParentCouncilDto findParentCouncil(Long teacherId);
+    Boolean deleteParentCouncil(Long teacherId);
+    ParentCouncilDto removeParentFromCouncil(ParentCouncilDto parentCouncilDto, Long parentId);
+
 
     StudentCard findStudentCard(Long teacherId, Long studentId);
 
@@ -30,6 +34,5 @@ public interface FormTutorService {
 
     List<StudentDto> listClassStudents(Long teacherId);
     List<ParentDto> listClassParents(Long teacherId);
-
 
 }
