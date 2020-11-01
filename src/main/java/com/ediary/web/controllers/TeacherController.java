@@ -2,10 +2,9 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
-import com.ediary.domain.Event;
-import com.ediary.domain.Lesson;
-import com.ediary.domain.Subject;
+import com.ediary.domain.*;
 import com.ediary.domain.security.User;
+import com.ediary.services.FormTutorService;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -26,6 +26,7 @@ import java.time.LocalDate;
 public class TeacherController {
 
     private final TeacherService teacherService;
+    private final FormTutorService formTutorService;
 
     private final UserToUserDto userToUserDto;
 
@@ -552,5 +553,127 @@ public class TeacherController {
         }
     }
 
+    //FormTutor
+
+    @GetMapping("/{teacherId}/formTutor/studentCouncil")
+    public String getStudentCouncil(@PathVariable Long teacherId, Model model) {
+
+        if (formTutorService.findStudentCouncil(teacherId) != null) {
+            model.addAttribute("studentCouncil", formTutorService.findStudentCouncil(teacherId));
+        } else {
+            model.addAttribute("studentCouncil", formTutorService.initNewStudentCouncil(teacherId));
+        }
+        model.addAttribute("students", formTutorService.listClassStudents(teacherId));
+        return "teacher/formTutor/studentCouncil";
+
+    }
+
+
+    @PostMapping("/{teacherId}/formTutor/studentCouncil/new")
+    public String processNewStudentCouncil(@PathVariable Long teacherId,
+                                           @RequestParam(name = "studentId") List<Long> studentsId,
+                                           @Valid @RequestBody StudentCouncilDto studentCouncilDto,
+                                           BindingResult result) {
+        if (result.hasErrors()) {
+            //todo: path to view
+            return "";
+        }
+
+        StudentCouncil studentCouncil = formTutorService.saveStudentCouncil(teacherId, studentCouncilDto, studentsId);
+
+        return "redirect:/teacher/" + teacherId + "/formTutor/studentCouncil";
+    }
+
+    @DeleteMapping("/{teacherId}/formTutor/studentCouncil/delete")
+    public String deleteStudentCouncil(@PathVariable Long teacherId) {
+
+        formTutorService.deleteStudentCouncil(teacherId);
+        return "teacher/formTutor/studentCouncil";
+    }
+
+
+    @PostMapping("/{teacherId}/formTutor/studentCouncil/remove/{studentId}")
+    public String removeStudentFromCouncil(@PathVariable Long teacherId,
+                                           @PathVariable Long studentId,
+                                           @ModelAttribute StudentCouncilDto studentCouncilDto,
+                                           Model model) {
+
+        model.addAttribute("students", formTutorService.listClassStudents(teacherId));
+        model.addAttribute("studentCouncil", formTutorService.removeStudentFromCouncil(studentCouncilDto, studentId));
+
+        return "teacher/formTutor/studentCouncil";
+    }
+
+    @GetMapping("/{teacherId}/formTutor/parentCouncil")
+    public String getParentCouncil(@PathVariable Long teacherId, Model model) {
+
+        if (formTutorService.findParentCouncil(teacherId) != null) {
+            model.addAttribute("parentCouncil", formTutorService.findParentCouncil(teacherId));
+        } else {
+            model.addAttribute("parentCouncil", formTutorService.initNewParentCouncil(teacherId));
+        }
+        model.addAttribute("parents", formTutorService.listClassParents(teacherId));
+        return "teacher/formTutor/parentCouncil";
+
+    }
+
+
+    @PostMapping("/{teacherId}/formTutor/parentCouncil/new")
+    public String processNewParentCouncil(@PathVariable Long teacherId,
+                                           @RequestParam(name = "parentId") List<Long> parentsId,
+                                           @Valid @RequestBody ParentCouncilDto parentCouncilDto,
+                                           BindingResult result) {
+        if (result.hasErrors()) {
+            //todo: path to view
+            return "";
+        }
+
+        ParentCouncil parentCouncil = formTutorService.saveParentCouncil(teacherId, parentCouncilDto, parentsId);
+
+        return "redirect:/teacher/" + teacherId + "/formTutor/parentCouncil";
+    }
+
+    @DeleteMapping("/{teacherId}/formTutor/parentCouncil/delete")
+    public String deleteParentCouncil(@PathVariable Long teacherId) {
+
+        formTutorService.deleteParentCouncil(teacherId);
+
+        return "teacher/formTutor/parentCouncil";
+    }
+
+    @PostMapping("/{teacherId}/formTutor/parentCouncil/remove/{parentId}")
+    public String removeParentFromCouncil(@PathVariable Long teacherId,
+                                           @PathVariable Long parentId,
+                                           @ModelAttribute ParentCouncilDto parentCouncilDto,
+                                           Model model) {
+
+        model.addAttribute("parents", formTutorService.listClassParents(teacherId));
+        model.addAttribute("parentCouncil", formTutorService.removeParentFromCouncil(parentCouncilDto, parentId));
+
+        return "teacher/formTutor/parentCouncil";
+    }
+
+    @GetMapping("/{teacherId}/formTutor/behaviorGrade")
+    public String getClassBehaviorGrades(@PathVariable Long teacherId, Model model) {
+
+        model.addAttribute("behaviorGrades", formTutorService.listBehaviorGrades(teacherId));
+
+        return "teacher/formTutor/behaviorGrades";
+    }
+
+
+    @PostMapping("/{teacherId}/formTutor/behaviorGrade/new")
+    public String processNewClassBehaviorGrade(@PathVariable Long teacherId,
+                                               @Valid @RequestBody GradeDto gradeDto,
+                                               BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo: view path
+            return "";
+        }
+        Grade grade = formTutorService.saveBehaviorGrade(teacherId, gradeDto);
+
+        return "redirect:/teacher/" + teacherId + "/formTutor/behaviorGrade";
+    }
 
 }

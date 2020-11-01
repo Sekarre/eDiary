@@ -28,4 +28,12 @@ public class Parent {
 
     @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
     private Set<Extenuation> extenuations;
+
+    @Singular
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "ParentCouncil_has_Parent",
+            joinColumns = {@JoinColumn(name = "Parent_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "ParentCouncil_id", referencedColumnName = "id")})
+    private Set<ParentCouncil> parentCouncils;
+
 }
