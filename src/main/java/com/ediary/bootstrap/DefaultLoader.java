@@ -2,11 +2,13 @@ package com.ediary.bootstrap;
 
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
+import com.ediary.domain.security.Role;
 import com.ediary.domain.security.User;
 import com.ediary.domain.timetable.Classroom;
 import com.ediary.domain.timetable.Day;
 import com.ediary.domain.timetable.Duration;
 import com.ediary.repositories.*;
+import com.ediary.repositories.security.RoleRepository;
 import com.ediary.repositories.security.UserRepository;
 import com.ediary.repositories.timetable.ClassroomRepository;
 import com.ediary.repositories.timetable.DayRepository;
@@ -57,6 +59,7 @@ public class DefaultLoader implements CommandLineRunner {
     private final ClassroomRepository classroomRepository;
     private final DurationRepository durationRepository;
     private final SchoolPeriodRepository schoolPeriodRepository;
+    private final RoleRepository roleRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -64,6 +67,14 @@ public class DefaultLoader implements CommandLineRunner {
     private Long firstUserAsParentId;
     private Long firstUserAsTeacherId;
     private final int classSize = 15;
+
+    private final String ADMIN_ROLE = "ADMIN";
+    private final String STUDENT_ROLE = "STUDENT";
+    private final String PARENT_ROLE = "PARENT";
+    private final String TEACHER_ROLE = "TEACHER";
+    private final String FORM_TUTOR_ROLE = "FORM_TUTOR";
+    private final String DEPUTY_HEAD_ROLE = "DEPUTY_HEAD";
+    private final String HEADMASTER_ROLE = "HEADMASTER";
 
     private final String[] streetNames = {"Odrodzenia", "Jagiellońska", "Kaszubska", "Jana Pawła", "Borysza",
             "Wielkopolska", "Podhalańska", "Odrodzenia", "Borysza", "Mazowiecka",
@@ -124,6 +135,7 @@ public class DefaultLoader implements CommandLineRunner {
     public void run(String... args) {
         log.debug("-------------- Bootstrap --------------");
 
+        createRole();
         createAddresses();
         createSchool();
         createUsers();
@@ -153,6 +165,16 @@ public class DefaultLoader implements CommandLineRunner {
   //      createSchoolPeriods();
 
         log.debug("-------------- Bootstrap is done --------------");
+    }
+
+    private void createRole() {
+        Role adminRole = roleRepository.save(Role.builder().name(ADMIN_ROLE).build());
+        Role studentRole = roleRepository.save(Role.builder().name(STUDENT_ROLE).build());
+        Role parentRole = roleRepository.save(Role.builder().name(PARENT_ROLE).build());
+        Role teacherRole = roleRepository.save(Role.builder().name(TEACHER_ROLE).build());
+        Role formTutorRole = roleRepository.save(Role.builder().name(FORM_TUTOR_ROLE).build());
+        Role deputyHeadRole = roleRepository.save(Role.builder().name(DEPUTY_HEAD_ROLE).build());
+        Role headmasterRole = roleRepository.save(Role.builder().name(HEADMASTER_ROLE).build());
     }
 
     private void createAddresses() {
@@ -190,6 +212,9 @@ public class DefaultLoader implements CommandLineRunner {
     private void createUsers() {
 
         userRepository.save(User.builder()
+                .firstName("Admin")
+                .lastName("Admin")
+                .role(roleRepository.findByName(ADMIN_ROLE).orElse(null))
                 .username("user")
                 .password(passwordEncoder.encode("user")).build());
 
@@ -200,8 +225,8 @@ public class DefaultLoader implements CommandLineRunner {
             userRepository.save(User.builder()
                     .firstName(studentNames[i])
                     .lastName(studentLastNames[i])
-                    .username("")
-                    .password("")
+                    .username(studentNames[i])
+                    .password(passwordEncoder.encode(studentLastNames[i]))
                     .build());
         }
 
@@ -247,6 +272,14 @@ public class DefaultLoader implements CommandLineRunner {
         long userAsParentId = firstUserAsParentId;
 
         for (; userAsStudentId < firstUserAsStudentId + studentNames.length; userAsStudentId++, userAsParentId++) {
+            User user = userRepository.findById(userAsStudentId).orElse(null);
+
+            Set<Role> roles = user.getRoles();
+            roles.add(roleRepository.findByName(STUDENT_ROLE).orElse(null));
+
+            user.setRoles(roles);
+            userRepository.save(user);
+
             studentRepository.save(Student.builder()
                     .user(userRepository.findById(userAsStudentId).orElse(null))
                     .parent(createParent(userAsParentId))
@@ -260,6 +293,14 @@ public class DefaultLoader implements CommandLineRunner {
 
 
     private Parent createParent(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        Set<Role> roles = user.getRoles();
+        roles.add(roleRepository.findByName(PARENT_ROLE).orElse(null));
+
+        user.setRoles(roles);
+        userRepository.save(user);
+
         return parentRepository.save(Parent.builder()
                 .user(userRepository.findById(userId).orElse(null))
                 .build());
@@ -269,6 +310,14 @@ public class DefaultLoader implements CommandLineRunner {
     private void createTeachers() {
 
         for (long userAsTeacherId = firstUserAsTeacherId; userAsTeacherId < firstUserAsTeacherId + teacherNames.length; userAsTeacherId++) {
+            User user = userRepository.findById(userAsTeacherId).orElse(null);
+
+            Set<Role> roles = user.getRoles();
+            roles.add(roleRepository.findByName(TEACHER_ROLE).orElse(null));
+
+            user.setRoles(roles);
+            userRepository.save(user);
+
             teacherRepository.save(Teacher.builder()
                     .user(userRepository.findById(userAsTeacherId).orElse(null))
                     .build());
