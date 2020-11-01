@@ -653,5 +653,27 @@ public class TeacherController {
         return "teacher/formTutor/parentCouncil";
     }
 
+    @GetMapping("/{teacherId}/formTutor/behaviorGrade")
+    public String getClassBehaviorGrades(@PathVariable Long teacherId, Model model) {
+
+        model.addAttribute("behaviorGrades", formTutorService.listBehaviorGrades(teacherId));
+
+        return "teacher/formTutor/behaviorGrades";
+    }
+
+
+    @PostMapping("/{teacherId}/formTutor/behaviorGrade/new")
+    public String processNewClassBehaviorGrade(@PathVariable Long teacherId,
+                                               @Valid @RequestBody GradeDto gradeDto,
+                                               BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo: view path
+            return "";
+        }
+        Grade grade = formTutorService.saveBehaviorGrade(teacherId, gradeDto);
+
+        return "redirect:/teacher/" + teacherId + "/formTutor/behaviorGrade";
+    }
 
 }

@@ -1,9 +1,6 @@
 package com.ediary.services;
 
-import com.ediary.DTO.ParentCouncilDto;
-import com.ediary.DTO.ParentDto;
-import com.ediary.DTO.StudentCouncilDto;
-import com.ediary.DTO.StudentDto;
+import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
@@ -31,6 +28,8 @@ public class FormTutorServiceImplTest {
     ParentRepository parentRepository;
     @Mock
     ParentCouncilRepository parentCouncilRepository;
+    @Mock
+    GradeRepository gradeRepository;
 
     @Mock
     StudentCouncilDtoToStudentCouncil studentCouncilDtoToStudentCouncil;
@@ -44,6 +43,11 @@ public class FormTutorServiceImplTest {
     StudentToStudentDto studentToStudentDto;
     @Mock
     ParentToParentDto parentToParentDto;
+    @Mock
+    GradeToGradeDto gradeToGradeDto;
+    @Mock
+    GradeDtoToGrade gradeDtoToGrade;
+
 
     FormTutorService formTutorService;
 
@@ -52,8 +56,9 @@ public class FormTutorServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         formTutorService = new FormTutorServiceImpl(teacherRepository, studentCouncilRepository, studentRepository, parentRepository,
-                parentCouncilRepository, studentCouncilDtoToStudentCouncil, studentCouncilToStudentCouncilDto, parentCouncilDtoToParentCouncil,
-                parentCouncilToParentCouncilDto, studentToStudentDto, parentToParentDto);
+                parentCouncilRepository,gradeRepository, studentCouncilDtoToStudentCouncil, studentCouncilToStudentCouncilDto,
+                parentCouncilDtoToParentCouncil, parentCouncilToParentCouncilDto, studentToStudentDto, parentToParentDto,
+                gradeToGradeDto, gradeDtoToGrade);
     }
 
     @Test
@@ -296,6 +301,52 @@ public class FormTutorServiceImplTest {
         verify(parentCouncilRepository, times(1)).save(parentCouncil);
     }
 
+
+    @Test
+    void listBehaviorGrades() {
+        Long teacherId = 1L;
+        Long schoolClassId = 1L;
+
+        Teacher teacher = Teacher.builder()
+                .id(teacherId)
+                .schoolClass(Class.builder().id(schoolClassId).build())
+                .build();
+
+        Grade grade = Grade.builder().build();
+
+        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
+        when(gradeToGradeDto.convert(any())).thenReturn(GradeDto.builder().build());
+        when(gradeRepository.findAllByTeacherIdAndWeight(any(), any())).thenReturn(Collections.singletonList(grade));
+
+
+        List<GradeDto> gradeDtoList = formTutorService.listBehaviorGrades(teacherId);
+
+        assertNotNull(gradeDtoList);
+        verify(gradeRepository, times(1)).findAllByTeacherIdAndWeight(teacherId, 10);
+        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(gradeToGradeDto, times(1)).convert(any());
+    }
+
+    @Test
+    void saveBehaviorGrade() {
+        Long teacherId = 1L;
+
+        Teacher teacher = Teacher.builder().id(1L).build();
+        Grade grade = Grade.builder().id(1L).build();
+        GradeDto gradeDto = GradeDto.builder().id(1L).build();;
+
+        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
+        when(gradeToGradeDto.convert(any())).thenReturn(gradeDto);
+        when(gradeDtoToGrade.convert(any())).thenReturn(grade);
+        when(gradeRepository.save(any())).thenReturn(grade);
+
+        Grade savedGrade = formTutorService.saveBehaviorGrade(teacherId, gradeDto);
+
+        assertNotNull(savedGrade);
+        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(gradeDtoToGrade, times(1)).convert(gradeDto);
+        verify(gradeToGradeDto, times(0)).convert(any());
+    }
 
     @Test
     void listClassStudents() {

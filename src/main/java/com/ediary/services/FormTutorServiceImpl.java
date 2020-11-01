@@ -1,9 +1,6 @@
 package com.ediary.services;
 
-import com.ediary.DTO.ParentCouncilDto;
-import com.ediary.DTO.ParentDto;
-import com.ediary.DTO.StudentCouncilDto;
-import com.ediary.DTO.StudentDto;
+import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.exceptions.NotFoundException;
@@ -26,6 +23,7 @@ public class FormTutorServiceImpl implements FormTutorService {
     private final StudentRepository studentRepository;
     private final ParentRepository parentRepository;
     private final ParentCouncilRepository parentCouncilRepository;
+    private final GradeRepository gradeRepository;
 
     private final StudentCouncilDtoToStudentCouncil studentCouncilDtoToStudentCouncil;
     private final StudentCouncilToStudentCouncilDto studentCouncilToStudentCouncilDto;
@@ -33,6 +31,8 @@ public class FormTutorServiceImpl implements FormTutorService {
     private final ParentCouncilToParentCouncilDto parentCouncilToParentCouncilDto;
     private final StudentToStudentDto studentToStudentDto;
     private final ParentToParentDto parentToParentDto;
+    private final GradeToGradeDto gradeToGradeDto;
+    private final GradeDtoToGrade gradeDtoToGrade;
 
 
     @Override
@@ -179,9 +179,30 @@ public class FormTutorServiceImpl implements FormTutorService {
         return null;
     }
 
+    /**Assuming weight of behavior grade is 10**/
     @Override
-    public Grade saveGrade(Long studentId) {
-        return null;
+    public List<GradeDto> listBehaviorGrades(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+
+        return gradeRepository.findAllByTeacherIdAndWeight(teacherId, 10)
+                .stream()
+                .map(gradeToGradeDto::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Grade saveBehaviorGrade(Long teacherId, GradeDto gradeDto) {
+        getTeacherById(teacherId);
+
+        Grade grade = gradeDtoToGrade.convert(gradeDto);
+
+        if (grade != null) {
+            grade.setWeight(10);
+            return gradeRepository.save(grade);
+        }
+
+        return gradeDtoToGrade.convert(gradeDto);
     }
 
     @Override

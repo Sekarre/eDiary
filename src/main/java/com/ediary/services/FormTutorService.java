@@ -1,9 +1,6 @@
 package com.ediary.services;
 
-import com.ediary.DTO.ParentCouncilDto;
-import com.ediary.DTO.ParentDto;
-import com.ediary.DTO.StudentCouncilDto;
-import com.ediary.DTO.StudentDto;
+import com.ediary.DTO.*;
 import com.ediary.domain.Grade;
 import com.ediary.domain.ParentCouncil;
 import com.ediary.domain.StudentCard;
@@ -29,10 +26,11 @@ public interface FormTutorService {
 
     StudentCard findStudentCard(Long teacherId, Long studentId);
 
-    Grade saveGrade(Long studentId); //wyznaczenie oceny z zachowania (?)
+    List<GradeDto> listBehaviorGrades(Long teacherId);
+    Grade saveBehaviorGrade(Long teacher, GradeDto gradeDto);
     Grade findGrade(Long studentId); //wyswietlenie oceny z zachowania
 
     List<StudentDto> listClassStudents(Long teacherId);
-    List<ParentDto> listClassParents(Long teacherId);
 
+    List<ParentDto> listClassParents(Long teacherId);
 }

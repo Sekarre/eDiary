@@ -971,4 +971,38 @@ class TeacherControllerTest {
 
         assertEquals(2, formTutorService.listClassParents(teacherId).size());
     }
+
+    @Test
+    void getClassBehaviorGrades() throws Exception {
+        Long teacherId = 1L;
+
+        when(formTutorService.listBehaviorGrades(teacherId)).thenReturn(Arrays.asList(
+                GradeDto.builder().id(1L).build(),
+                GradeDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/behaviorGrade"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("behaviorGrades"))
+                .andExpect(view().name("teacher/formTutor/behaviorGrades"));
+
+        verify(formTutorService, times(1)).listBehaviorGrades(teacherId);
+        assertEquals(2, formTutorService.listBehaviorGrades(teacherId).size());
+    }
+
+    @Test
+    void processNewClassBehaviorGrade() throws Exception {
+        Long teacherId = 1L;
+
+        when(formTutorService.saveBehaviorGrade(any(), any())).thenReturn(Grade.builder().build());
+
+        mockMvc.perform(post("/teacher/" + teacherId + "/formTutor/behaviorGrade/new")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(Grade.builder().build())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/formTutor/behaviorGrade"));
+
+        verify(formTutorService, times(1)).saveBehaviorGrade(any(), any());
+        assertNotNull(formTutorService.saveBehaviorGrade(any(), any()));
+    }
 }
