@@ -15,6 +15,8 @@ public interface FormTutorService {
     StudentCouncilDto initNewStudentCouncil(Long teacherId);
     StudentCouncil saveStudentCouncil(Long teacherId, StudentCouncilDto studentCouncilDto, List<Long> studentsId);
     StudentCouncilDto findStudentCouncil(Long teacherId);
+    Boolean deleteStudentCouncil(Long teacherId);
+
 
     ParentCouncil saveParentCouncil(ParentCouncil parentCouncil);
     ParentCouncil findParentCouncil(Long schoolClassId);
@@ -25,4 +27,5 @@ public interface FormTutorService {
     Grade findGrade(Long studentId); //wyswietlenie oceny z zachowania
 
     List<StudentDto> listClassStudents(Long teacherId);
+
 }

@@ -821,7 +821,7 @@ class TeacherControllerTest {
                 StudentDto.builder().id(2L).build()
         ));
 
-        mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/class"))
+        mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/studentCouncil"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("studentCouncil"))
                 .andExpect(model().attributeExists("students"))
@@ -842,7 +842,7 @@ class TeacherControllerTest {
                 StudentDto.builder().id(2L).build()
         ));
 
-        mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/class"))
+        mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/studentCouncil"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("studentCouncil"))
                 .andExpect(model().attributeExists("students"))
@@ -859,15 +859,25 @@ class TeacherControllerTest {
 
         when(formTutorService.saveStudentCouncil(any(), any(), any())).thenReturn(StudentCouncil.builder().build());
 
-        mockMvc.perform(post("/teacher/" + teacherId + "/formTutor/class/new")
+        mockMvc.perform(post("/teacher/" + teacherId + "/formTutor/studentCouncil/new")
                 .param("studentId", String.valueOf(1L))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(StudentCouncilDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/formTutor/class"));
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/formTutor/studentCouncil"));
 
         verify(formTutorService, times(1)).saveStudentCouncil(any(), any(), any());
         assertNotNull(formTutorService.saveStudentCouncil(any(), any(), any()));
+    }
+
+    @Test
+    void deleteStudentCouncil() throws Exception {
+
+        mockMvc.perform(delete("/teacher/" + teacherId + "/formTutor/studentCouncil/delete"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("teacher/formTutor/studentCouncil"));
+
+        verify(formTutorService, times(1)).deleteStudentCouncil(any());
     }
 
 }

@@ -46,8 +46,13 @@ public class FormTutorServiceImpl implements FormTutorService {
         StudentCouncil studentCouncil = studentCouncilDtoToStudentCouncil.convert(studentCouncilDto);
 
         if (studentCouncil != null) {
-            studentCouncil.setStudents(new HashSet<>(studentRepository.findAllById(studentsId)));
+            if (studentCouncil.getStudents().size() > 0) {
+                studentCouncil.getStudents().addAll(studentRepository.findAllById(studentsId));
+            } else {
+                studentCouncil.setStudents(new HashSet<>(studentRepository.findAllById(studentsId)));
+            }
             return studentCouncilRepository.save(studentCouncil);
+
         } else {
             throw new NotFoundException("Students not found");
         }
@@ -58,6 +63,20 @@ public class FormTutorServiceImpl implements FormTutorService {
         Teacher teacher = getTeacherById(teacherId);
 
         return studentCouncilToStudentCouncilDto.convert(teacher.getSchoolClass().getStudentCouncil());
+    }
+
+    @Override
+    public Boolean deleteStudentCouncil(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        StudentCouncil studentCouncil = teacher.getSchoolClass().getStudentCouncil();
+
+        if (studentCouncil != null) {
+            studentCouncilRepository.delete(studentCouncil);
+            return true;
+        }
+
+        return false;
     }
 
     @Override

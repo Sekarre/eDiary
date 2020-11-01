@@ -117,6 +117,25 @@ public class FormTutorServiceImplTest {
 
     }
 
+    @Test
+    void deleteStudentCouncil() {
+        Long teacherId = 1L;
+
+        Teacher teacher = Teacher.builder()
+                .id(teacherId)
+                .schoolClass(Class.builder()
+                        .studentCouncil(StudentCouncil.builder().build())
+                        .build())
+                .build();
+
+        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
+
+        Boolean result = formTutorService.deleteStudentCouncil(teacherId);
+
+        assertTrue(result);
+        verify(teacherRepository, times(1)).findById(teacherId);
+    }
+
 
     @Test
     void listClassStudents() {

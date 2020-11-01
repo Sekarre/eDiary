@@ -558,7 +558,7 @@ public class TeacherController {
 
     //FormTutor
 
-    @GetMapping("/{teacherId}/formTutor/class")
+    @GetMapping("/{teacherId}/formTutor/studentCouncil")
     public String getStudentCouncil(@PathVariable Long teacherId, Model model) {
 
         if (formTutorService.findStudentCouncil(teacherId) != null) {
@@ -572,7 +572,7 @@ public class TeacherController {
     }
 
 
-    @PostMapping("/{teacherId}/formTutor/class/new")
+    @PostMapping("/{teacherId}/formTutor/studentCouncil/new")
     public String processNewStudentCouncil(@PathVariable Long teacherId,
                                            @RequestParam(name = "studentId") List<Long> studentsId,
                                            @Valid @RequestBody StudentCouncilDto studentCouncilDto,
@@ -584,9 +584,14 @@ public class TeacherController {
 
         StudentCouncil studentCouncil = formTutorService.saveStudentCouncil(teacherId, studentCouncilDto, studentsId);
 
-        return "redirect:/teacher/" + teacherId + "/formTutor/class";
+        return "redirect:/teacher/" + teacherId + "/formTutor/studentCouncil";
     }
 
+    @DeleteMapping("/{teacherId}/formTutor/studentCouncil/delete")
+    public String deleteStudentCouncil(@PathVariable Long teacherId) {
 
+        formTutorService.deleteStudentCouncil(teacherId);
+        return "teacher/formTutor/studentCouncil";
+    }
 
 }
