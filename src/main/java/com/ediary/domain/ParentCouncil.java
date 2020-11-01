@@ -26,4 +26,5 @@ public class ParentCouncil {
             joinColumns = {@JoinColumn(name = "ParentCouncil_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "Parent_id", referencedColumnName = "id")})
     private Set<Parent> parents;
+
 }
