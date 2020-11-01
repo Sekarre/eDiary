@@ -1,17 +1,13 @@
 package com.ediary.services;
 
+import com.ediary.DTO.ParentCouncilDto;
+import com.ediary.DTO.ParentDto;
 import com.ediary.DTO.StudentCouncilDto;
 import com.ediary.DTO.StudentDto;
-import com.ediary.converters.StudentCouncilDtoToStudentCouncil;
-import com.ediary.converters.StudentCouncilToStudentCouncilDto;
-import com.ediary.converters.StudentToStudentDto;
+import com.ediary.converters.*;
+import com.ediary.domain.*;
 import com.ediary.domain.Class;
-import com.ediary.domain.Student;
-import com.ediary.domain.StudentCouncil;
-import com.ediary.domain.Teacher;
-import com.ediary.repositories.StudentCouncilRepository;
-import com.ediary.repositories.StudentRepository;
-import com.ediary.repositories.TeacherRepository;
+import com.ediary.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -34,13 +30,23 @@ public class FormTutorServiceImplTest {
     StudentCouncilRepository studentCouncilRepository;
     @Mock
     StudentRepository studentRepository;
+    @Mock
+    ParentRepository parentRepository;
+    @Mock
+    ParentCouncilRepository parentCouncilRepository;
 
     @Mock
     StudentCouncilDtoToStudentCouncil studentCouncilDtoToStudentCouncil;
     @Mock
     StudentCouncilToStudentCouncilDto studentCouncilToStudentCouncilDto;
     @Mock
+    ParentCouncilToParentCouncilDto parentCouncilToParentCouncilDto;
+    @Mock
+    ParentCouncilDtoToParentCouncil parentCouncilDtoToParentCouncil;
+    @Mock
     StudentToStudentDto studentToStudentDto;
+    @Mock
+    ParentToParentDto parentToParentDto;
 
     FormTutorService formTutorService;
 
@@ -48,8 +54,9 @@ public class FormTutorServiceImplTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        formTutorService = new FormTutorServiceImpl(teacherRepository, studentCouncilRepository, studentRepository,
-                studentCouncilDtoToStudentCouncil, studentCouncilToStudentCouncilDto, studentToStudentDto);
+        formTutorService = new FormTutorServiceImpl(teacherRepository, studentCouncilRepository, studentRepository, parentRepository,
+                parentCouncilRepository, studentCouncilDtoToStudentCouncil, studentCouncilToStudentCouncilDto, parentCouncilDtoToParentCouncil,
+                parentCouncilToParentCouncilDto, studentToStudentDto, parentToParentDto);
     }
 
     @Test
@@ -136,6 +143,70 @@ public class FormTutorServiceImplTest {
         verify(teacherRepository, times(1)).findById(teacherId);
     }
 
+    @Test
+    void initNewParentCouncil() {
+        Long teacherId = 1L;
+
+        Teacher teacher = Teacher.builder()
+                .id(1L)
+                .schoolClass(Class.builder().id(1L).build())
+                .build();
+
+        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
+
+        ParentCouncilDto parentCouncilDto = formTutorService.initNewParentCouncil(teacherId);
+
+        assertNotNull(parentCouncilDto);
+        verify(teacherRepository, times(1)).findById(teacherId);
+
+    }
+
+
+    @Test
+    void saveParentCouncil() {
+        Long teacherId = 1L;
+
+        Teacher teacher = Teacher.builder().id(1L).build();
+        ParentCouncil parentCouncil = ParentCouncil.builder().id(1L).build();
+        ParentCouncilDto parentCouncilDto = ParentCouncilDto.builder().id(1L).build();;
+
+        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
+        when(parentCouncilDtoToParentCouncil.convert(any())).thenReturn(parentCouncil);
+        when(parentRepository.findAllById(any())).thenReturn(Collections.singletonList(Parent.builder().build()));
+        when(parentCouncilRepository.save(any())).thenReturn(parentCouncil);
+
+        ParentCouncil savedParentCouncil = formTutorService
+                .saveParentCouncil(teacherId, parentCouncilDto, new ArrayList<>(){{
+                    add(1L);
+                    add(2L);
+                }});
+
+        assertNotNull(savedParentCouncil);
+        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(parentCouncilDtoToParentCouncil, times(1)).convert(parentCouncilDto);
+    }
+
+    @Test
+    void findParentCouncil() {
+        Long teacherId = 1L;
+
+        Teacher teacher = Teacher.builder()
+                .id(1L)
+                .schoolClass(Class.builder()
+                        .parentCouncil(ParentCouncil.builder().build())
+                        .build())
+                .build();
+        ParentCouncilDto parentCouncilDto = ParentCouncilDto.builder().id(1L).build();;
+
+        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
+        when(parentCouncilToParentCouncilDto.convert(any())).thenReturn(parentCouncilDto);
+
+        ParentCouncilDto parentCouncilDto1 = formTutorService.findParentCouncil(teacherId);
+
+        assertNotNull(parentCouncilDto1);
+        verify(teacherRepository, times(1)).findById(teacherId);
+    }
+
 
     @Test
     void listClassStudents() {
@@ -160,6 +231,30 @@ public class FormTutorServiceImplTest {
         verify(studentRepository, times(1)).findAllBySchoolClassId(teacherId);
         verify(teacherRepository, times(1)).findById(teacherId);
         verify(studentToStudentDto, times(1)).convert(student);
+    }
+
+    @Test
+    void listClassParents() {
+        Long teacherId = 1L;
+        Long schoolClassId = 1L;
+
+        Teacher teacher = Teacher.builder()
+                .id(teacherId)
+                .schoolClass(Class.builder().id(schoolClassId).build())
+                .build();
+
+
+        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
+        when(parentToParentDto.convert(any())).thenReturn(ParentDto.builder().build());
+        when(studentRepository.findAllBySchoolClassId(any())).thenReturn(Collections.singletonList(Student.builder().build()));
+
+
+        List<ParentDto> parentDtoList = formTutorService.listClassParents(teacherId);
+
+        assertNotNull(parentDtoList);
+        verify(studentRepository, times(1)).findAllBySchoolClassId(teacherId);
+        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(parentToParentDto, times(1)).convert(any());
     }
 
 }

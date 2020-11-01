@@ -1,20 +1,20 @@
 package com.ediary.services;
 
+import com.ediary.DTO.ParentCouncilDto;
+import com.ediary.DTO.ParentDto;
 import com.ediary.DTO.StudentCouncilDto;
 import com.ediary.DTO.StudentDto;
-import com.ediary.converters.StudentCouncilDtoToStudentCouncil;
-import com.ediary.converters.StudentCouncilToStudentCouncilDto;
-import com.ediary.converters.StudentToStudentDto;
+import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.exceptions.NotFoundException;
-import com.ediary.repositories.StudentCouncilRepository;
-import com.ediary.repositories.StudentRepository;
-import com.ediary.repositories.TeacherRepository;
+import com.ediary.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -24,10 +24,15 @@ public class FormTutorServiceImpl implements FormTutorService {
     private final TeacherRepository teacherRepository;
     private final StudentCouncilRepository studentCouncilRepository;
     private final StudentRepository studentRepository;
+    private final ParentRepository parentRepository;
+    private final ParentCouncilRepository parentCouncilRepository;
 
     private final StudentCouncilDtoToStudentCouncil studentCouncilDtoToStudentCouncil;
     private final StudentCouncilToStudentCouncilDto studentCouncilToStudentCouncilDto;
+    private final ParentCouncilDtoToParentCouncil parentCouncilDtoToParentCouncil;
+    private final ParentCouncilToParentCouncilDto parentCouncilToParentCouncilDto;
     private final StudentToStudentDto studentToStudentDto;
+    private final ParentToParentDto parentToParentDto;
 
 
     @Override
@@ -36,6 +41,7 @@ public class FormTutorServiceImpl implements FormTutorService {
 
         return StudentCouncilDto.builder()
                 .schoolClassId(teacher.getSchoolClass().getId())
+                .schoolClassName(teacher.getSchoolClass().getName())
                 .build();
     }
 
@@ -80,13 +86,39 @@ public class FormTutorServiceImpl implements FormTutorService {
     }
 
     @Override
-    public ParentCouncil saveParentCouncil(ParentCouncil parentCouncil) {
-        return null;
+    public ParentCouncilDto initNewParentCouncil(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        return ParentCouncilDto.builder()
+                .schoolClassId(teacher.getSchoolClass().getId())
+                .schoolClassName(teacher.getSchoolClass().getName())
+                .build();
     }
 
     @Override
-    public ParentCouncil findParentCouncil(Long schoolClassId) {
-        return null;
+    public ParentCouncil saveParentCouncil(Long teacherId, ParentCouncilDto parentCouncilDto, List<Long> parentsId){
+        Teacher teacher = getTeacherById(teacherId);
+
+        ParentCouncil parentCouncil = parentCouncilDtoToParentCouncil.convert(parentCouncilDto);
+
+        if (parentCouncil != null) {
+            if (parentCouncil.getParents().size() > 0) {
+                parentCouncil.getParents().addAll(parentRepository.findAllById(parentsId));
+            } else {
+                parentCouncil.setParents(new HashSet<>(parentRepository.findAllById(parentsId)));
+            }
+            return parentCouncilRepository.save(parentCouncil);
+
+        } else {
+            throw new NotFoundException("Parents not found");
+        }
+    }
+
+    @Override
+    public ParentCouncilDto findParentCouncil(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        return parentCouncilToParentCouncilDto.convert(teacher.getSchoolClass().getParentCouncil());
     }
 
     @Override
@@ -112,6 +144,23 @@ public class FormTutorServiceImpl implements FormTutorService {
                 .stream()
                 .map(studentToStudentDto::convert)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ParentDto> listClassParents(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        List<Student> students =
+                new ArrayList<>(studentRepository.findAllBySchoolClassId(teacher.getSchoolClass().getId()));
+
+        Set<Parent> parents = students.stream()
+                .map(Student::getParent)
+                .collect(Collectors.toSet());
+
+        return parents.stream()
+                .map(parentToParentDto::convert)
+                .collect(Collectors.toList());
+
     }
 
     private Teacher getTeacherById(Long teacherId) {

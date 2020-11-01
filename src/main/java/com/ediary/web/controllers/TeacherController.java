@@ -2,10 +2,7 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
-import com.ediary.domain.Event;
-import com.ediary.domain.Lesson;
-import com.ediary.domain.StudentCouncil;
-import com.ediary.domain.Subject;
+import com.ediary.domain.*;
 import com.ediary.domain.security.User;
 import com.ediary.services.FormTutorService;
 import com.ediary.services.TeacherService;
@@ -593,5 +590,37 @@ public class TeacherController {
         formTutorService.deleteStudentCouncil(teacherId);
         return "teacher/formTutor/studentCouncil";
     }
+
+
+
+    @GetMapping("/{teacherId}/formTutor/parentCouncil")
+    public String getParentCouncil(@PathVariable Long teacherId, Model model) {
+
+        if (formTutorService.findParentCouncil(teacherId) != null) {
+            model.addAttribute("parentCouncil", formTutorService.findParentCouncil(teacherId));
+        } else {
+            model.addAttribute("parentCouncil", formTutorService.initNewParentCouncil(teacherId));
+        }
+        model.addAttribute("parents", formTutorService.listClassParents(teacherId));
+        return "teacher/formTutor/parentCouncil";
+
+    }
+
+
+    @PostMapping("/{teacherId}/formTutor/parentCouncil/new")
+    public String processNewParentCouncil(@PathVariable Long teacherId,
+                                           @RequestParam(name = "parentId") List<Long> parentsId,
+                                           @Valid @RequestBody ParentCouncilDto parentCouncilDto,
+                                           BindingResult result) {
+        if (result.hasErrors()) {
+            //todo: path to view
+            return "";
+        }
+
+        ParentCouncil parentCouncil = formTutorService.saveParentCouncil(teacherId, parentCouncilDto, parentsId);
+
+        return "redirect:/teacher/" + teacherId + "/formTutor/parenCouncil";
+    }
+
 
 }

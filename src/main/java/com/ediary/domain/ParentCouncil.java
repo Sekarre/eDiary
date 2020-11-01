@@ -3,6 +3,7 @@ package com.ediary.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -18,4 +19,11 @@ public class ParentCouncil {
 
     @OneToOne(mappedBy = "parentCouncil")
     private Class schoolClass;
+
+    @Singular
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "ParentCouncil_has_Parent",
+            joinColumns = {@JoinColumn(name = "ParentCouncil_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "Parent_id", referencedColumnName = "id")})
+    private Set<Parent> parents;
 }

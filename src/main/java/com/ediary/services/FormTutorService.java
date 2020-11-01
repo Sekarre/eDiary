@@ -1,5 +1,7 @@
 package com.ediary.services;
 
+import com.ediary.DTO.ParentCouncilDto;
+import com.ediary.DTO.ParentDto;
 import com.ediary.DTO.StudentCouncilDto;
 import com.ediary.DTO.StudentDto;
 import com.ediary.domain.Grade;
@@ -17,9 +19,9 @@ public interface FormTutorService {
     StudentCouncilDto findStudentCouncil(Long teacherId);
     Boolean deleteStudentCouncil(Long teacherId);
 
-
-    ParentCouncil saveParentCouncil(ParentCouncil parentCouncil);
-    ParentCouncil findParentCouncil(Long schoolClassId);
+    ParentCouncilDto initNewParentCouncil(Long teacherId);
+    ParentCouncil saveParentCouncil(Long teacherId, ParentCouncilDto parentCouncilDto, List<Long> parentsId);
+    ParentCouncilDto findParentCouncil(Long teacherId);
 
     StudentCard findStudentCard(Long teacherId, Long studentId);
 
@@ -27,5 +29,7 @@ public interface FormTutorService {
     Grade findGrade(Long studentId); //wyswietlenie oceny z zachowania
 
     List<StudentDto> listClassStudents(Long teacherId);
+    List<ParentDto> listClassParents(Long teacherId);
+
 
 }

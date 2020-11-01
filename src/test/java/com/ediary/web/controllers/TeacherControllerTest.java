@@ -880,4 +880,24 @@ class TeacherControllerTest {
         verify(formTutorService, times(1)).deleteStudentCouncil(any());
     }
 
+
+    @Test
+    void getParentCouncil() throws Exception {
+        Long teacherId = 1L;
+
+        when(formTutorService.findParentCouncil(teacherId)).thenReturn(ParentCouncilDto.builder().build());
+        when(formTutorService.listClassParents(teacherId)).thenReturn(Arrays.asList(
+                ParentDto.builder().id(1L).build(),
+                ParentDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/parentCouncil"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("parentCouncil"))
+                .andExpect(model().attributeExists("parents"))
+                .andExpect(view().name("teacher/formTutor/parentCouncil"));
+
+        verify(formTutorService, times(2)).findParentCouncil(teacherId);
+        assertEquals(2, formTutorService.listClassParents(teacherId).size());
+    }
 }
