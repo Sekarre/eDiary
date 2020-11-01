@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="utf-8">
@@ -76,9 +76,21 @@
                     </a>
                 </li>
                 <li class="nav-item active-pro ">
-                    <a class="nav-link" href="#">
+                    <a sec:authorize="hasRole('ADMIN')" class="nav-link" href="#">
+                        <i class="material-icons">person</i>
+                        <p>Admin</p>
+                    </a>
+                    <a sec:authorize="hasRole('STUDENT')" class="nav-link" href="#">
                         <i class="material-icons">person</i>
                         <p>Uczeń</p>
+                    </a>
+                    <a sec:authorize="hasRole('PARENT')" class="nav-link" href="#">
+                        <i class="material-icons">person</i>
+                        <p>Rodzic</p>
+                    </a>
+                    <a sec:authorize="hasRole('TEACHER')" class="nav-link" href="#">
+                        <i class="material-icons">person</i>
+                        <p>Nauczyciel</p>
                     </a>
                 </li>
 

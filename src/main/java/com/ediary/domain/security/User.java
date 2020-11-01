@@ -10,8 +10,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -53,14 +53,13 @@ public class User implements UserDetails, CredentialsContainer {
 
 
     @Transient
-    public Set<GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(Role::getAuthorities)
-                .flatMap(Set::stream)
-                .map(authority -> {
-                    return new SimpleGrantedAuthority(authority.getPermission());
-                })
-                .collect(Collectors.toSet());
+    public Set<? extends GrantedAuthority> getAuthorities() {
+        Set<Role> roles = this.getRoles();
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        for (Role role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
+        return authorities;
     }
 
     @Override
