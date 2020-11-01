@@ -3,6 +3,7 @@ package com.ediary.web.controllers;
 import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.*;
+import com.ediary.services.FormTutorService;
 import com.ediary.services.TeacherService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,9 @@ class TeacherControllerTest {
     TeacherService teacherService;
 
     @Mock
+    FormTutorService formTutorService;
+
+    @Mock
     UserToUserDto userToUserDto;
 
     TeacherController teacherController;
@@ -38,7 +42,7 @@ class TeacherControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        teacherController = new TeacherController(teacherService, userToUserDto);
+        teacherController = new TeacherController(teacherService, formTutorService, userToUserDto);
         mockMvc = MockMvcBuilders.standaloneSetup(teacherController).build();
     }
 
@@ -805,6 +809,65 @@ class TeacherControllerTest {
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic"));
 
         verify(teacherService, times(1)).updatePatchTopic(any());
+    }
+
+    @Test
+    void getStudentCouncil() throws Exception {
+        Long teacherId = 1L;
+
+        when(formTutorService.findStudentCouncil(teacherId)).thenReturn(StudentCouncilDto.builder().build());
+        when(formTutorService.listClassStudents(teacherId)).thenReturn(Arrays.asList(
+                StudentDto.builder().id(1L).build(),
+                StudentDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/class"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("studentCouncil"))
+                .andExpect(model().attributeExists("students"))
+                .andExpect(view().name("teacher/formTutor/studentCouncil"));
+
+        verify(formTutorService, times(2)).findStudentCouncil(teacherId);
+        assertEquals(2, formTutorService.listClassStudents(teacherId).size());
+    }
+
+    @Test
+    void getStudentCouncilNotExisting() throws Exception {
+        Long teacherId = 1L;
+
+        when(formTutorService.findStudentCouncil(teacherId)).thenReturn(null);
+        when(formTutorService.initNewStudentCouncil(teacherId)).thenReturn(StudentCouncilDto.builder().build());
+        when(formTutorService.listClassStudents(teacherId)).thenReturn(Arrays.asList(
+                StudentDto.builder().id(1L).build(),
+                StudentDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/class"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("studentCouncil"))
+                .andExpect(model().attributeExists("students"))
+                .andExpect(view().name("teacher/formTutor/studentCouncil"));
+
+        verify(formTutorService, times(1)).findStudentCouncil(teacherId);
+        verify(formTutorService, times(1)).initNewStudentCouncil(teacherId);
+        assertEquals(2, formTutorService.listClassStudents(teacherId).size());
+    }
+
+    @Test
+    void processNewStudentCouncil() throws Exception {
+        Long teacherId = 1L;
+
+        when(formTutorService.saveStudentCouncil(any(), any(), any())).thenReturn(StudentCouncil.builder().build());
+
+        mockMvc.perform(post("/teacher/" + teacherId + "/formTutor/class/new")
+                .param("studentId", String.valueOf(1L))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(StudentCouncilDto.builder().build())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/formTutor/class"));
+
+        verify(formTutorService, times(1)).saveStudentCouncil(any(), any(), any());
+        assertNotNull(formTutorService.saveStudentCouncil(any(), any(), any()));
     }
 
 }

@@ -4,8 +4,10 @@ import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.Event;
 import com.ediary.domain.Lesson;
+import com.ediary.domain.StudentCouncil;
 import com.ediary.domain.Subject;
 import com.ediary.domain.security.User;
+import com.ediary.services.FormTutorService;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -26,6 +29,7 @@ import java.time.LocalDate;
 public class TeacherController {
 
     private final TeacherService teacherService;
+    private final FormTutorService formTutorService;
 
     private final UserToUserDto userToUserDto;
 
@@ -551,6 +555,38 @@ public class TeacherController {
             return "redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic";
         }
     }
+
+    //FormTutor
+
+    @GetMapping("/{teacherId}/formTutor/class")
+    public String getStudentCouncil(@PathVariable Long teacherId, Model model) {
+
+        if (formTutorService.findStudentCouncil(teacherId) != null) {
+            model.addAttribute("studentCouncil", formTutorService.findStudentCouncil(teacherId));
+        } else {
+            model.addAttribute("studentCouncil", formTutorService.initNewStudentCouncil(teacherId));
+        }
+        model.addAttribute("students", formTutorService.listClassStudents(teacherId));
+        return "teacher/formTutor/studentCouncil";
+
+    }
+
+
+    @PostMapping("/{teacherId}/formTutor/class/new")
+    public String processNewStudentCouncil(@PathVariable Long teacherId,
+                                           @RequestParam(name = "studentId") List<Long> studentsId,
+                                           @Valid @RequestBody StudentCouncilDto studentCouncilDto,
+                                           BindingResult result) {
+        if (result.hasErrors()) {
+            //todo: path to view
+            return "";
+        }
+
+        StudentCouncil studentCouncil = formTutorService.saveStudentCouncil(teacherId, studentCouncilDto, studentsId);
+
+        return "redirect:/teacher/" + teacherId + "/formTutor/class";
+    }
+
 
 
 }
