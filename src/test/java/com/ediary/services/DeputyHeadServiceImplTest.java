@@ -1,7 +1,6 @@
 package com.ediary.services;
 
 import com.ediary.DTO.ClassDto;
-import com.ediary.DTO.ParentCouncilDto;
 import com.ediary.DTO.StudentDto;
 import com.ediary.DTO.TeacherDto;
 import com.ediary.converters.ClassDtoToClass;
@@ -61,6 +60,65 @@ public class DeputyHeadServiceImplTest {
         assertNotNull(newClassDto);
     }
 
+    @Test
+    void listAllClasses() {
+        Class schoolClass = Class.builder().build();
+        ClassDto schoolClassDto = ClassDto.builder().build();
+
+        when(classRepository.findAll()).thenReturn(new ArrayList<>(){{
+            add(schoolClass);
+        }});
+        when(classToClassDto.convert(any())).thenReturn(schoolClassDto);
+
+        List<ClassDto> classes = deputyHeadService.listAllClasses();
+
+        assertNotNull(classes);
+        assertEquals(1, classes.size());
+        verify(classRepository, times(1)).findAll();
+    }
+
+
+    @Test
+    void removeFormTutorFromClass() {
+        Long teacherId = 1L;
+        Long classId = 1L;
+
+        Class schoolClass = Class.builder()
+                .id(classId)
+                .teacher(Teacher.builder().id(teacherId).build())
+                .build();
+
+
+        when(classRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(schoolClass));
+        when(classToClassDto.convert(any())).thenReturn(ClassDto.builder().build());
+
+        ClassDto newSchoolClass = deputyHeadService.removeFormTutorFromClass(classId, teacherId);
+
+        assertNotNull(newSchoolClass);
+        assertNull(newSchoolClass.getTeacherId());
+        verify(classRepository, times(1)).findById(classId);
+    }
+
+    @Test
+    void removeStudentFromClass() {
+        Long studentId = 1L;
+        Long classId = 1L;
+
+        Class schoolClass = Class.builder()
+                .id(classId)
+                .students(Collections.singleton(Student.builder().id(studentId).build()))
+                .build();
+
+
+        when(classRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(schoolClass));
+        when(classToClassDto.convert(any())).thenReturn(ClassDto.builder().build());
+
+        ClassDto newSchoolClass = deputyHeadService.removeStudentFromClass(classId, studentId);
+
+        assertNotNull(newSchoolClass);
+        assertNull(newSchoolClass.getStudentsId());
+        verify(classRepository, times(1)).findById(classId);
+    }
 
     @Test
     void listAllStudentsWithoutClass() {
@@ -79,22 +137,7 @@ public class DeputyHeadServiceImplTest {
         verify(studentRepository, times(1)).findAllBySchoolClassIsNull();
     }
 
-    @Test
-    void listAllClasses() {
-        Class schoolClass = Class.builder().build();
-        ClassDto schoolClassDto = ClassDto.builder().build();
 
-        when(classRepository.findAll()).thenReturn(new ArrayList<>(){{
-            add(schoolClass);
-        }});
-        when(classToClassDto.convert(any())).thenReturn(schoolClassDto);
-
-        List<ClassDto> classes = deputyHeadService.listAllClasses();
-
-        assertNotNull(classes);
-        assertEquals(1, classes.size());
-        verify(classRepository, times(1)).findAll();
-    }
 
     @Test
     void listAllTeachersWithoutClass() {

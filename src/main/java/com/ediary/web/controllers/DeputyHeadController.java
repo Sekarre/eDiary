@@ -2,7 +2,6 @@ package com.ediary.web.controllers;
 
 
 import com.ediary.DTO.ClassDto;
-import com.ediary.DTO.MessageDto;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.security.User;
 import com.ediary.services.DeputyHeadService;
@@ -81,7 +80,7 @@ public class DeputyHeadController {
     @GetMapping("/classes/{classId}")
     public String getOneClass(@PathVariable Long classId, Model model) {
 
-        model.addAttribute("class", deputyHeadService.getSchoolClass(classId));
+        model.addAttribute("schoolClass", deputyHeadService.getSchoolClass(classId));
 
         return "deputyHead/oneClass";
     }
@@ -96,4 +95,29 @@ public class DeputyHeadController {
     }
 
 
+    @PostMapping("/classes/{classId}/teacher/{teacherId}")
+    public String removeFormTutorFromClass(@PathVariable Long teacherId,
+                                           @PathVariable Long classId,
+                                           Model model) {
+        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass());
+        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
+        model.addAttribute("schoolClass", deputyHeadService.removeFormTutorFromClass(classId, teacherId));
+
+        return "deputyHead/oneClass";
+    }
+
+    @PostMapping("/classes/{classId}/student/{studentId}")
+    public String removeStudentFromClass(@PathVariable Long studentId,
+                                         @PathVariable Long classId,
+                                         Model model) {
+
+        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass());
+        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
+        model.addAttribute("schoolClass", deputyHeadService.removeStudentFromClass(classId, studentId));
+
+        return "deputyHead/oneClass";
+    }
+
+
+    
 }

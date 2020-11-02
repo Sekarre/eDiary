@@ -54,8 +54,7 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
 
     @Override
     public Boolean deleteClass(Long schoolClassId) {
-        Class schoolClass = classRepository.findById(schoolClassId)
-                .orElseThrow(() -> new NotFoundException("School class not found"));
+        Class schoolClass = getSchoolCLass(schoolClassId);
 
         classRepository.delete(schoolClass);
 
@@ -72,8 +71,31 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
 
     @Override
     public ClassDto getSchoolClass(Long classId) {
-        return classToClassDto.convert(classRepository
-                .findById(classId).orElseThrow(() -> new NotFoundException("School class not found")));
+        return classToClassDto.convert(getSchoolCLass(classId));
+    }
+
+    @Override
+    public ClassDto removeFormTutorFromClass(Long classId, Long teacherId) {
+        Class schoolClass = getSchoolCLass(classId);
+
+        if (schoolClass.getTeacher().getId().equals(teacherId)) {
+            schoolClass.setTeacher(null);
+        }
+
+        return classToClassDto.convert(schoolClass);
+    }
+
+    @Override
+    public ClassDto removeStudentFromClass(Long classId, Long studentId) {
+        Class schoolClass = getSchoolCLass(classId);
+
+        if (schoolClass.getStudents().stream().anyMatch(student -> student.getId().equals(studentId))) {
+            schoolClass.setStudents(schoolClass.getStudents()
+                    .stream()
+                    .filter((s) -> !(s.getId().equals(studentId)))
+                    .collect(Collectors.toSet()));
+        }
+        return classToClassDto.convert(schoolClass);
     }
 
     @Override
@@ -91,5 +113,10 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
                 .stream()
                 .map(teacherToTeacherDto::convert)
                 .collect(Collectors.toList());
+    }
+
+    private Class getSchoolCLass(Long classId) {
+        return classRepository
+                .findById(classId).orElseThrow(() -> new NotFoundException("School class not found"));
     }
 }

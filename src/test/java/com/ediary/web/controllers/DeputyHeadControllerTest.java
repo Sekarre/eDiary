@@ -110,4 +110,42 @@ public class DeputyHeadControllerTest {
         verify(deputyHeadService, times(1)).deleteClass(any());
     }
 
+    @Test
+    void removeFormTutorFromClass() throws Exception {
+        when(deputyHeadService.removeFormTutorFromClass(any(), any())).thenReturn(ClassDto.builder().build());
+        when(deputyHeadService.listAllStudentsWithoutClass()).thenReturn(Collections.singletonList(StudentDto.builder().build()));
+        when(deputyHeadService.listAllTeachersWithoutClass()).thenReturn(Collections.singletonList(TeacherDto.builder().build()));
+
+
+        mockMvc.perform(post("/deputyHead/classes/" + 1L + "/teacher/" + 1L))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("schoolClass"))
+                .andExpect(model().attributeExists("students"))
+                .andExpect(model().attributeExists("teachers"))
+                .andExpect(view().name("deputyHead/oneClass"));
+
+        assertNotNull(deputyHeadService.listAllStudentsWithoutClass());
+        assertNotNull(deputyHeadService.listAllTeachersWithoutClass());
+        assertNotNull(deputyHeadService.removeFormTutorFromClass(1L, 1L));
+    }
+
+    @Test
+    void removeStudentFromClass() throws Exception {
+        when(deputyHeadService.removeStudentFromClass(any(), any())).thenReturn(ClassDto.builder().build());
+        when(deputyHeadService.listAllStudentsWithoutClass()).thenReturn(Collections.singletonList(StudentDto.builder().build()));
+        when(deputyHeadService.listAllTeachersWithoutClass()).thenReturn(Collections.singletonList(TeacherDto.builder().build()));
+
+
+        mockMvc.perform(post("/deputyHead/classes/" + 1L + "/student/" + 1L))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("schoolClass"))
+                .andExpect(model().attributeExists("students"))
+                .andExpect(model().attributeExists("teachers"))
+                .andExpect(view().name("deputyHead/oneClass"));
+
+        assertNotNull(deputyHeadService.listAllStudentsWithoutClass());
+        assertNotNull(deputyHeadService.listAllTeachersWithoutClass());
+        assertNotNull(deputyHeadService.removeStudentFromClass(1L, 1L));
+    }
+
 }
