@@ -41,10 +41,10 @@ public class ParentController {
     }
 
     @InitBinder
-    public void dataBinder(WebDataBinder dataBinder){
+    public void dataBinder(WebDataBinder dataBinder) {
         dataBinder.setDisallowedFields("id");
 
-        dataBinder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport(){
+        dataBinder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) throws IllegalArgumentException {
                 setValue(LocalDate.parse(text));
@@ -106,7 +106,7 @@ public class ParentController {
                                             @PathVariable String dateValue,
                                             Model model) {
         Date date;
-        if (direction.equals("next")){
+        if (direction.equals("next")) {
             date = Date.valueOf(LocalDate.parse(dateValue).plusDays(7));
         } else {
             date = Date.valueOf(LocalDate.parse(dateValue).minusDays(7));
@@ -121,10 +121,10 @@ public class ParentController {
 
     @PostMapping("/{studentId}/attendance/extenuation")
     public String newExtenuation(@PathVariable Long parentId,
-                                              @PathVariable Long studentId,
-                                              @ModelAttribute ExtenuationDto extenuation,
-                                              @RequestParam(name = "toExcuse", required = false) List<Long> ids,
-                                              Model model) {
+                                 @PathVariable Long studentId,
+                                 @ModelAttribute ExtenuationDto extenuation,
+                                 @RequestParam(name = "toExcuse", required = false) List<Long> ids,
+                                 Model model) {
 
         model.addAttribute("studentId", studentId);
         model.addAttribute("extenuation", parentService.initNewExtenuation(ids, extenuation, parentId));
@@ -133,9 +133,9 @@ public class ParentController {
 
     @PostMapping("/{studentId}/attendance/extenuation/save")
     public String processNewExtenuation(@PathVariable Long studentId, @PathVariable Long parentId,
-                                  @Valid @ModelAttribute ExtenuationDto extenuation,
-                                  @RequestParam(name = "attId", required = false) List<Long> ids,
-                                  BindingResult result) {
+                                        @Valid @ModelAttribute ExtenuationDto extenuation,
+                                        @RequestParam(name = "attId", required = false) List<Long> ids,
+                                        BindingResult result) {
 
         if (result.hasErrors()) {
             //todo:
@@ -170,7 +170,7 @@ public class ParentController {
     }
 
     @GetMapping("/{studentId}/timetable")
-    public String getTimetable(@PathVariable Long studentId, @PathVariable Long parentId, Model model){
+    public String getTimetable(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
 
         model.addAttribute("timetable", studentService.getTimetableByStudentId(studentId));
         return "parent/timetable";

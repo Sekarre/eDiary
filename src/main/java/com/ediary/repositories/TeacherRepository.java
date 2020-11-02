@@ -13,4 +13,5 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     Teacher findByUserId(Long userId);
     Teacher findBySchoolClass(Class schoolClass);
     Optional<Teacher> findByUser(User user);
+    List<Teacher> findAllBySchoolClassIsNull();
 }

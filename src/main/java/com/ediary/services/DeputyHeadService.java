@@ -1,13 +1,20 @@
 package com.ediary.services;
 
+import com.ediary.DTO.ClassDto;
+import com.ediary.DTO.StudentDto;
+import com.ediary.DTO.TeacherDto;
 import com.ediary.domain.Class;
 
 import java.util.List;
 
 public interface DeputyHeadService {
 
-    Class saveClass(Class schoolClass);
+    ClassDto initNewClass();
+    Class saveClass(ClassDto schoolClassDto, List<Long> studentsId);
     Boolean deleteClass(Long schoolClassId);
-    List<Class> getAllClasses();
+    List<ClassDto> listAllClasses();
 
+    List<StudentDto> listAllStudentsWithoutClass();
+
+    List<TeacherDto> listAllTeachersWithoutClass();
 }
