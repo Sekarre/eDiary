@@ -3,6 +3,7 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.ClassDto;
 import com.ediary.converters.UserToUserDto;
+import com.ediary.domain.Class;
 import com.ediary.domain.security.User;
 import com.ediary.services.DeputyHeadService;
 import lombok.RequiredArgsConstructor;
@@ -63,9 +64,9 @@ public class DeputyHeadController {
             return "";
         }
 
-        deputyHeadService.saveClass(classDto, studentsId);
+        Class schoolClass = deputyHeadService.saveClass(classDto, studentsId);
 
-        return "deputyHead/classes";
+        return "redirect:/deputyHead/classes/" + schoolClass.getId();
     }
 
 
@@ -95,7 +96,7 @@ public class DeputyHeadController {
     }
 
 
-    @PostMapping("/classes/{classId}/teacher/{teacherId}")
+    @PostMapping("/classes/{classId}/removeTeacher/{teacherId}")
     public String removeFormTutorFromClass(@PathVariable Long teacherId,
                                            @PathVariable Long classId,
                                            Model model) {
@@ -106,7 +107,7 @@ public class DeputyHeadController {
         return "deputyHead/oneClass";
     }
 
-    @PostMapping("/classes/{classId}/student/{studentId}")
+    @PostMapping("/classes/{classId}/removeStudent/{studentId}")
     public String removeStudentFromClass(@PathVariable Long studentId,
                                          @PathVariable Long classId,
                                          Model model) {
@@ -118,6 +119,32 @@ public class DeputyHeadController {
         return "deputyHead/oneClass";
     }
 
+    @PostMapping("/classes/{classId}/addTeacher/{teacherId}")
+    public String addFormTutorToClass(@PathVariable Long teacherId,
+                                      @PathVariable Long classId,
+                                      Model model) {
 
-    
+        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass());
+        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
+        model.addAttribute("schoolClass", deputyHeadService.addFormTutorToClass(classId, teacherId));
+
+        return "deputyHead/oneClass";
+    }
+
+    @PostMapping("/classes/{classId}/addStudent/{studentId}")
+    public String addFormStudentToClass(@PathVariable Long studentId,
+                                      @PathVariable Long classId,
+                                      Model model) {
+
+        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass());
+        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
+        model.addAttribute("schoolClass", deputyHeadService.addStudentToClass(classId, studentId));
+
+        return "deputyHead/oneClass";
+    }
+
+    /**
+     * Dodawanie wielu uczniow takie samo jak metoda processNewClass, wiec chyba nie bede pisal
+     **/
+
 }

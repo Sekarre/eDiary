@@ -1,6 +1,7 @@
 package com.ediary.services;
 
 import com.ediary.DTO.ClassDto;
+import com.ediary.DTO.StudentCouncilDto;
 import com.ediary.DTO.StudentDto;
 import com.ediary.DTO.TeacherDto;
 import com.ediary.converters.ClassDtoToClass;
@@ -19,6 +20,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -119,6 +121,51 @@ public class DeputyHeadServiceImplTest {
         assertNull(newSchoolClass.getStudentsId());
         verify(classRepository, times(1)).findById(classId);
     }
+
+    @Test
+    void addFormTutorToClass() {
+        Long teacherId = 1L;
+        Long classId = 1L;
+
+        Class schoolClass = Class.builder()
+                .id(classId)
+                .build();
+
+
+        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(Teacher.builder().build()));
+        when(classRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(schoolClass));
+        when(classToClassDto.convert(any())).thenReturn(ClassDto.builder().build());
+
+        ClassDto newSchoolClass = deputyHeadService.addFormTutorToClass(classId, teacherId);
+
+        assertNotNull(newSchoolClass);
+        verify(classRepository, times(1)).findById(classId);
+        verify(teacherRepository, times(1)).findById(teacherId);
+    }
+
+
+    @Test
+    void addStudentToClass() {
+        Long studentId = 1L;
+        Long classId = 1L;
+
+        Class schoolClass = Class.builder()
+                .id(classId)
+                .students(Collections.singleton(Student.builder().id(2L).build()))
+                .build();
+
+
+        when(studentRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(Student.builder().build()));
+        when(classRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(schoolClass));
+        when(classToClassDto.convert(any())).thenReturn(ClassDto.builder().build());
+
+        ClassDto newSchoolClass = deputyHeadService.addStudentToClass(classId, studentId);
+
+        assertNotNull(newSchoolClass);
+        verify(classRepository, times(1)).findById(classId);
+        verify(studentRepository, times(1)).findById(studentId);
+    }
+
 
     @Test
     void listAllStudentsWithoutClass() {

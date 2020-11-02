@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -95,7 +96,40 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
                     .filter((s) -> !(s.getId().equals(studentId)))
                     .collect(Collectors.toSet()));
         }
+
         return classToClassDto.convert(schoolClass);
+    }
+
+    @Override
+    public ClassDto addFormTutorToClass(Long classId, Long teacherId) {
+        Class schoolClass = getSchoolCLass(classId);
+
+        if (schoolClass.getTeacher() == null) {
+            schoolClass.setTeacher(teacherRepository.
+                    findById(teacherId).orElseThrow(() -> new NotFoundException("Teacher not found")));
+        }
+
+        return classToClassDto.convert(schoolClass);
+    }
+
+    @Override
+    public ClassDto addStudentToClass(Long classId, Long studentId) {
+        Class schoolClass = getSchoolCLass(classId);
+
+
+        if (schoolClass.getStudents().stream().noneMatch(s -> s.getId().equals(studentId))) {
+
+            Set<Student> newStudentSet = new HashSet<>(){{
+                addAll(schoolClass.getStudents());
+                add(studentRepository.
+                        findById(studentId).orElseThrow(() -> new NotFoundException("Student not found")));
+            }};
+
+            schoolClass.setStudents(newStudentSet);
+
+            return classToClassDto.convert(schoolClass);
+        }
+        return null;
     }
 
     @Override

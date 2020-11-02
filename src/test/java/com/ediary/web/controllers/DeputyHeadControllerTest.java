@@ -63,14 +63,14 @@ public class DeputyHeadControllerTest {
 
     @Test
     void processNewClass() throws Exception {
-        when(deputyHeadService.saveClass(any(), any())).thenReturn(Class.builder().build());
+        when(deputyHeadService.saveClass(any(), any())).thenReturn(Class.builder().id(1L).build());
 
         mockMvc.perform(post("/deputyHead/newClass")
                 .param("studentsId", String.valueOf(1L))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(StudentCouncilDto.builder().build())))
-                .andExpect(status().isOk())
-                .andExpect(view().name("deputyHead/classes"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/deputyHead/classes/" + 1L));
 
         verify(deputyHeadService, times(1)).saveClass(any(), any());
     }
@@ -95,7 +95,7 @@ public class DeputyHeadControllerTest {
 
         mockMvc.perform(get("/deputyHead/classes/" + 1L))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("class"))
+                .andExpect(model().attributeExists("schoolClass"))
                 .andExpect(view().name("deputyHead/oneClass"));
 
         assertNotNull(deputyHeadService.getSchoolClass(1L));
@@ -117,7 +117,7 @@ public class DeputyHeadControllerTest {
         when(deputyHeadService.listAllTeachersWithoutClass()).thenReturn(Collections.singletonList(TeacherDto.builder().build()));
 
 
-        mockMvc.perform(post("/deputyHead/classes/" + 1L + "/teacher/" + 1L))
+        mockMvc.perform(post("/deputyHead/classes/" + 1L + "/removeTeacher/" + 1L))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("schoolClass"))
                 .andExpect(model().attributeExists("students"))
@@ -136,7 +136,7 @@ public class DeputyHeadControllerTest {
         when(deputyHeadService.listAllTeachersWithoutClass()).thenReturn(Collections.singletonList(TeacherDto.builder().build()));
 
 
-        mockMvc.perform(post("/deputyHead/classes/" + 1L + "/student/" + 1L))
+        mockMvc.perform(post("/deputyHead/classes/" + 1L + "/removeStudent/" + 1L))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("schoolClass"))
                 .andExpect(model().attributeExists("students"))
@@ -146,6 +146,44 @@ public class DeputyHeadControllerTest {
         assertNotNull(deputyHeadService.listAllStudentsWithoutClass());
         assertNotNull(deputyHeadService.listAllTeachersWithoutClass());
         assertNotNull(deputyHeadService.removeStudentFromClass(1L, 1L));
+    }
+
+    @Test
+    void addFormTutorToClass() throws Exception {
+        when(deputyHeadService.addFormTutorToClass(any(), any())).thenReturn(ClassDto.builder().build());
+        when(deputyHeadService.listAllStudentsWithoutClass()).thenReturn(Collections.singletonList(StudentDto.builder().build()));
+        when(deputyHeadService.listAllTeachersWithoutClass()).thenReturn(Collections.singletonList(TeacherDto.builder().build()));
+
+
+        mockMvc.perform(post("/deputyHead/classes/" + 1L + "/addTeacher/" + 1L))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("schoolClass"))
+                .andExpect(model().attributeExists("students"))
+                .andExpect(model().attributeExists("teachers"))
+                .andExpect(view().name("deputyHead/oneClass"));
+
+        assertNotNull(deputyHeadService.listAllStudentsWithoutClass());
+        assertNotNull(deputyHeadService.listAllTeachersWithoutClass());
+        assertNotNull(deputyHeadService.addFormTutorToClass(1L, 1L));
+    }
+
+    @Test
+    void addStudentToClass() throws Exception {
+        when(deputyHeadService.addStudentToClass(any(), any())).thenReturn(ClassDto.builder().build());
+        when(deputyHeadService.listAllStudentsWithoutClass()).thenReturn(Collections.singletonList(StudentDto.builder().build()));
+        when(deputyHeadService.listAllTeachersWithoutClass()).thenReturn(Collections.singletonList(TeacherDto.builder().build()));
+
+
+        mockMvc.perform(post("/deputyHead/classes/" + 1L + "/addStudent/" + 1L))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("schoolClass"))
+                .andExpect(model().attributeExists("students"))
+                .andExpect(model().attributeExists("teachers"))
+                .andExpect(view().name("deputyHead/oneClass"));
+
+        assertNotNull(deputyHeadService.listAllStudentsWithoutClass());
+        assertNotNull(deputyHeadService.listAllTeachersWithoutClass());
+        assertNotNull(deputyHeadService.addStudentToClass(1L, 1L));
     }
 
 }
