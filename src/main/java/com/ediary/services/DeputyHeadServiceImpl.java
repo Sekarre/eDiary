@@ -9,6 +9,7 @@ import com.ediary.converters.StudentToStudentDto;
 import com.ediary.converters.TeacherToTeacherDto;
 import com.ediary.domain.Class;
 import com.ediary.domain.Student;
+import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.ClassRepository;
 import com.ediary.repositories.StudentRepository;
 import com.ediary.repositories.TeacherRepository;
@@ -53,12 +54,26 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
 
     @Override
     public Boolean deleteClass(Long schoolClassId) {
-        return null;
+        Class schoolClass = classRepository.findById(schoolClassId)
+                .orElseThrow(() -> new NotFoundException("School class not found"));
+
+        classRepository.delete(schoolClass);
+
+        return true;
     }
 
     @Override
     public List<ClassDto> listAllClasses() {
-        return null;
+        return classRepository.findAll()
+                .stream()
+                .map(classToClassDto::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ClassDto getSchoolClass(Long classId) {
+        return classToClassDto.convert(classRepository
+                .findById(classId).orElseThrow(() -> new NotFoundException("School class not found")));
     }
 
     @Override

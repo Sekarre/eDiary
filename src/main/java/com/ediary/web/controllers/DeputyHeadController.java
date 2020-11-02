@@ -2,6 +2,7 @@ package com.ediary.web.controllers;
 
 
 import com.ediary.DTO.ClassDto;
+import com.ediary.DTO.MessageDto;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.security.User;
 import com.ediary.services.DeputyHeadService;
@@ -67,5 +68,32 @@ public class DeputyHeadController {
 
         return "deputyHead/classes";
     }
+
+
+    @GetMapping("/classes")
+    public String getClasses(Model model) {
+
+        model.addAttribute("classes", deputyHeadService.listAllClasses());
+
+        return "deputyHead/classes";
+    }
+
+    @GetMapping("/classes/{classId}")
+    public String getOneClass(@PathVariable Long classId, Model model) {
+
+        model.addAttribute("class", deputyHeadService.getSchoolClass(classId));
+
+        return "deputyHead/oneClass";
+    }
+
+
+    @DeleteMapping("/classes/{classId}")
+    public String deleteClass(@PathVariable Long classId) {
+
+        deputyHeadService.deleteClass(classId);
+
+        return "redirect:/deputyHead/classes";
+    }
+
 
 }

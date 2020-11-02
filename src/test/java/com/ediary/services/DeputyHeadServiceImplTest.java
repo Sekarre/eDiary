@@ -80,6 +80,23 @@ public class DeputyHeadServiceImplTest {
     }
 
     @Test
+    void listAllClasses() {
+        Class schoolClass = Class.builder().build();
+        ClassDto schoolClassDto = ClassDto.builder().build();
+
+        when(classRepository.findAll()).thenReturn(new ArrayList<>(){{
+            add(schoolClass);
+        }});
+        when(classToClassDto.convert(any())).thenReturn(schoolClassDto);
+
+        List<ClassDto> classes = deputyHeadService.listAllClasses();
+
+        assertNotNull(classes);
+        assertEquals(1, classes.size());
+        verify(classRepository, times(1)).findAll();
+    }
+
+    @Test
     void listAllTeachersWithoutClass() {
         TeacherDto teacherDto = TeacherDto.builder().build();
 

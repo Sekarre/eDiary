@@ -13,6 +13,7 @@ public interface DeputyHeadService {
     Class saveClass(ClassDto schoolClassDto, List<Long> studentsId);
     Boolean deleteClass(Long schoolClassId);
     List<ClassDto> listAllClasses();
+    ClassDto getSchoolClass(Long classId);
 
     List<StudentDto> listAllStudentsWithoutClass();
 
