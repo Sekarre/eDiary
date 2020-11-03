@@ -63,7 +63,7 @@
                             <i class="material-icons">person</i>
                             <p>Rodzic</p>
                         </a>
-                        <a sec:authorize="hasRole('TEACHER')" class="nav-link" href="#">
+                        <a sec:authorize="hasRole('TEACHER')" class="nav-link" th:href="@{'/teacher/home'}">
                             <i class="material-icons">person</i>
                             <p>Nauczyciel</p>
                         </a>

@@ -48,6 +48,12 @@ public class TeacherController {
         });
     }
 
+    @GetMapping("/home")
+    public String home() {
+
+        return "/teacher/index";
+    }
+
     @GetMapping("/{teacherId}/event")
     public String getAllEvents(@PathVariable Long teacherId, Model model) {
 
