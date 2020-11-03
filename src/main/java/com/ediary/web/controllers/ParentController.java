@@ -35,12 +35,19 @@ public class ParentController {
     private final UserToUserDto userToUserDto;
 
     @ModelAttribute
-    public void addAuthenticatedUserAndParent(@AuthenticationPrincipal User user, Model model) {
+    public void addAuthenticatedUserAndParent(@AuthenticationPrincipal User user,
+                                              @CookieValue(value = "studentId", defaultValue = "NaN") String studentIdCookie,
+                                              Model model) {
         model.addAttribute("user", userToUserDto.convert(user));
         model.addAttribute("parent", parentService.findByUser(user));
 
-        //For testing purposes
-        model.addAttribute("student", StudentDto.builder().id(88L).build());
+        try {
+            Long studentId = Long.parseLong(studentIdCookie);
+            parentService.findStudent(user, studentId);
+            model.addAttribute("student", StudentDto.builder().id(88L).build());
+        } catch (Exception e) {
+
+        }
     }
 
     @InitBinder
@@ -59,6 +66,12 @@ public class ParentController {
     public String home() {
 
         return "/parent/index";
+    }
+
+    @GetMapping("/home/student")
+    public String homeStudent() {
+
+        return "/parent/indexStudent";
     }
 
     @GetMapping("/students")

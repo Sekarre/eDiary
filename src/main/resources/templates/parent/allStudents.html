@@ -73,7 +73,7 @@ The above copyright notice and this permission notice shall be included in all c
                                 <tbody>
                                 <!--/*@thymesVar id="students" type="com.ediary.DTO.StudentDto"*/-->
                                 <tr th:each="student : ${students}" style="cursor: pointer"
-                                    th:onclick="'javascript:rowClicked(\'' + ${parent.id} + '/' + ${student.id} + '\');'">
+                                    th:onclick="'javascript:rowClicked(\'' + ${parent.id} + '\',\'' + ${student.id} + '\');'">
                                         <td th:text="${student.userName}">
                                             Imie i nazwisko
                                         </td>
@@ -313,8 +313,11 @@ The above copyright notice and this permission notice shall be included in all c
     </script>
 
     <script>
-        function rowClicked(value) {
-            location.href = "/parent/" + value;
+        function rowClicked(parentId, studentId) {
+            document.cookie = "studentId=" + studentId;
+
+            var url = "/parent/" + parentId + "/home/student";
+            $(location).attr('href', url);
         }
     </script>
 </body>

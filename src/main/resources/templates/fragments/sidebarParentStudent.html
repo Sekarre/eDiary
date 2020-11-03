@@ -30,15 +30,39 @@
 
                 <span th:replace="fragments/sidebarUser :: userNav"></span>
 
+                <span th:replace="fragments/sidebarParent :: parentUsersNav"></span>
 
-                <th:block th:fragment="parentUsersNav">
-                    <li class="nav-item ">
-                        <a class="nav-link" th:href="@{'/parent/' + ${parent.id} + '/students'}">
-                            <i class="material-icons">content_copy</i>
-                            <p>Uczniowie</p>
-                        </a>
-                    </li>
-                </th:block>
+                <li class="nav-item ">
+                    <a class="nav-link" th:href="@{'/parent/' + ${parent.id} + '/' + ${student.id} + '/grade'}">
+                        <i class="material-icons">content_copy</i>
+                        <p>Oceny</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" th:href="@{'/parent/' + ${parent.id} + '/' + ${student.id} + '/attendance'}">
+                        <i class="material-icons">store</i>
+                        <p>Frekwencja</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" th:href="@{'/parent/' + ${parent.id} + '/' + ${student.id} + '/behavior'}">
+                        <i class="material-icons">info_outline</i>
+                        <p>Uwagi</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" th:href="@{'/parent/' + ${parent.id} + '/' + ${student.id} + '/event'}">
+                        <i class="material-icons">library_books</i>
+                        <p>Plan lekcji</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" th:href="@{'/parent/' + ${parent.id} + '/' + ${student.id} + '/timetable'}">
+                        <i class="material-icons">store</i>
+                        <p>Terminarz</p>
+                    </a>
+                </li>
+
 
                 <span th:replace="fragments/sidebarUser :: userRoleNav"></span>
 

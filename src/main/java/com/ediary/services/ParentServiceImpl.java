@@ -64,6 +64,12 @@ public class ParentServiceImpl implements ParentService {
     }
 
     @Override
+    public StudentDto findStudent(User user, Long studentId) {
+        ParentDto parent = findByUser(user);
+        return findStudent(parent.getId(), studentId);
+    }
+
+    @Override
     public List<SubjectDto> getAllStudentSubjectNames(Long parentId, Long studentId) {
 
         checkIfParentHasStudent(parentId, studentId);
