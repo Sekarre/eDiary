@@ -32,76 +32,26 @@ The above copyright notice and this permission notice shall be included in all c
 
 <body class="">
 <div class="wrapper ">
-    <div class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg">
-        <!--
-          Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
 
-          Tip 2: you can also add an image using data-image tag
-      -->
-        <div class="logo"><a href="#" class="simple-text logo-normal">
-            E-dziennik
-        </a></div>
-        <div class="sidebar-wrapper">
-            <ul class="nav">
-                <li class="nav-item  ">
-                    <a class="nav-link" th:href="@{/}">
-                        <i class="material-icons">dashboard</i>
-                        <p>Przeglądaj</p>
-                    </a>
-                </li>
-                <li class="nav-item ">
-                    <a class="nav-link" href="./message.html">
-                        <i class="material-icons">content_paste</i>
-                        <p>Wiadomości</p>
-                    </a>
-                </li>
-                <li class="nav-item ">
-                    <a class="nav-link" href="#">
-                        <i class="material-icons">store</i>
-                        <p>Terminarz</p>
-                    </a>
-                </li>
-                <li class="nav-item ">
-                    <a class="nav-link" href="./typography.html">
-                        <i class="material-icons">library_books</i>
-                        <p>Zarządzaj lekcją</p>
-                    </a>
-                </li>
-                <li class="nav-item ">
-                    <a class="nav-link" href="./icons.html">
-                        <i class="material-icons">bubble_chart</i>
-                        <p>Rozkład nauczania</p>
-                    </a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="./tables.html">
-                        <i class="material-icons">content_copy</i>
-                        <p>Oceny</p>
-                    </a>
-                </li>
-                <li class="nav-item ">
-                    <a class="nav-link" href="./notifications.html">
-                        <i class="material-icons">info_outline</i>
-                        <p>Uwagi</p>
-                    </a>
-                </li>
-                <li class="nav-item ">
-                    <a class="nav-link" href="./notifications.html">
-                        <i class="material-icons">notifications</i>
-                        <p>Dodaj ogłoszenie</p>
-                    </a>
-                </li>
-                <li class="nav-item active-pro ">
-                    <a class="nav-link" href="#">
-                        <i class="material-icons">person</i>
-                        <p>Nauczyciel</p>
-                    </a>
-                </li>
+    <div th:replace="fragments/sidebarStudent :: sidebar"></div>
 
-            </ul>
-        </div>
-    </div>
     <div class="main-panel">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <a class="navbar-brand" th:href="@{/user/{id}/readMessages(id=${user.id})}">Wiadomości</a>
+                </div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="navbar-toggler-icon icon-bar"></span>
+                    <span class="navbar-toggler-icon icon-bar"></span>
+                    <span class="navbar-toggler-icon icon-bar"></span>
+                </button>
+                <div th:replace="fragments/optionsBar :: optionsBar"> </div>
+            </div>
+        </nav>
+
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">

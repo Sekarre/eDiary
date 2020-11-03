@@ -27,72 +27,42 @@
         </a></div>
         <div class="sidebar-wrapper">
             <ul class="nav">
-                <li th:classappend="${#httpServletRequest.getRequestURI() == '/' ? 'active':''}">
-                    <a class="nav-link" th:href="@{/}">
-                        <i class="material-icons">dashboard</i>
-                        <p>Menu</p>
-                    </a>
-                </li>
-                <li th:classappend="${#httpServletRequest.getRequestURI().toLowerCase().contains('message') ? 'active':''}">
-                    <a class="nav-link" th:href="@{/user/{id}/messages(id=${user.id})}">
-                        <i class="material-icons">content_paste</i>
-                        <p>Wiadomości</p>
-                    </a>
-                </li>
-                <li th:classappend="${#httpServletRequest.getRequestURI().toLowerCase().contains('notice') ? 'active':''}">
-                    <a class="nav-link" th:href="@{/user/notice}">
-                        <i class="material-icons">notifications</i>
-                        <p>Ogłoszenia</p>
-                    </a>
-                </li>
+
+                <span th:replace="fragments/sidebarUser :: userNav"></span>
+
+
                 <li class="nav-item ">
-                    <a class="nav-link" th:href="@{/student/{id}/grade(id=${user.id})}">
+                    <a class="nav-link" th:href="@{'/student/' + ${student.id} + '/attendance'}">
                         <i class="material-icons">content_copy</i>
                         <p>Oceny</p>
                     </a>
                 </li>
                 <li class="nav-item ">
-                    <a class="nav-link" href="./icons.html">
+                    <a class="nav-link" th:href="@{'/student/' + ${student.id} + '/attendance'}">
                         <i class="material-icons">store</i>
                         <p>Frekwencja</p>
                     </a>
                 </li>
                 <li class="nav-item ">
-                    <a class="nav-link" href="./notifications.html">
+                    <a class="nav-link" th:href="@{'/student/' + ${student.id} + '/behavior'}">
                         <i class="material-icons">info_outline</i>
                         <p>Uwagi</p>
                     </a>
                 </li>
                 <li class="nav-item ">
-                    <a class="nav-link" th:href="@{/teacher/{id}/event(id=${user.id})}">
+                    <a class="nav-link" th:href="@{'/student/' + ${student.id} + '/timetable'}">
                         <i class="material-icons">library_books</i>
                         <p>Plan lekcji</p>
                     </a>
                 </li>
                 <li class="nav-item ">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" th:href="@{'/student/' + ${student.id} + '/event'}">
                         <i class="material-icons">store</i>
                         <p>Terminarz</p>
                     </a>
                 </li>
-                <li class="nav-item active-pro ">
-                    <a sec:authorize="hasRole('ADMIN')" class="nav-link" href="#">
-                        <i class="material-icons">person</i>
-                        <p>Admin</p>
-                    </a>
-                    <a sec:authorize="hasRole('STUDENT')" class="nav-link" href="#">
-                        <i class="material-icons">person</i>
-                        <p>Uczeń</p>
-                    </a>
-                    <a sec:authorize="hasRole('PARENT')" class="nav-link" href="#">
-                        <i class="material-icons">person</i>
-                        <p>Rodzic</p>
-                    </a>
-                    <a sec:authorize="hasRole('TEACHER')" class="nav-link" href="#">
-                        <i class="material-icons">person</i>
-                        <p>Nauczyciel</p>
-                    </a>
-                </li>
+
+                <span th:replace="fragments/sidebarUser :: userRoleNav"></span>
 
             </ul>
         </div>
