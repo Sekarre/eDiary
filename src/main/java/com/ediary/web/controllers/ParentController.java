@@ -38,6 +38,9 @@ public class ParentController {
     public void addAuthenticatedUserAndParent(@AuthenticationPrincipal User user, Model model) {
         model.addAttribute("user", userToUserDto.convert(user));
         model.addAttribute("parent", parentService.findByUser(user));
+
+        //For testing purposes
+        model.addAttribute("student", StudentDto.builder().id(88L).build());
     }
 
     @InitBinder
