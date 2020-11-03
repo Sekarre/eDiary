@@ -20,19 +20,19 @@
 </head>
 
 <body>
-        <th:block th:fragment="menuTeacher">
+        <th:block th:fragment="menuStudent">
 
             <span th:replace="fragments/menuUser :: menuUser"></span>
 
 
             <div class="col-lg-3 col-md-6 col-sm-6">
                 <div class="card card-stats">
-                    <a th:href="@{'/teacher/' + ${teacher.id} + '/classes'}">
+                    <a th:href="@{'/student/' + ${student.id} + '/grade'}">
                         <div class="card-header card-header-primary card-header-icon">
                             <div class="card-icon">
                                 <i class="material-icons">notifications</i>
                             </div>
-                            <h3 class="card-title">Klasy</h3>
+                            <h3 class="card-title">Oceny</h3>
                         </div>
                     </a>
                     <div class="card-footer">
@@ -44,12 +44,12 @@
 
             <div class="col-lg-3 col-md-6 col-sm-6">
                 <div class="card card-stats">
-                    <a th:href="@{'/teacher/' + ${teacher.id} + '/subject'}">
+                    <a th:href="@{'/student/' + ${student.id} + '/attendance'}">
                         <div class="card-header card-header-primary card-header-icon">
                             <div class="card-icon">
                                 <i class="material-icons">notifications</i>
                             </div>
-                            <h3 class="card-title">Przedmioty</h3>
+                            <h3 class="card-title">Frekwencja</h3>
                         </div>
                     </a>
                     <div class="card-footer">
@@ -61,7 +61,7 @@
 
             <div class="col-lg-3 col-md-6 col-sm-6">
                 <div class="card card-stats">
-                    <a th:href="@{'/teacher/' + ${teacher.id} + '/behavior'}">
+                    <a th:href="@{'/student/' + ${student.id} + '/behavior'}">
                         <div class="card-header card-header-primary card-header-icon">
                             <div class="card-icon">
                                 <i class="material-icons">notifications</i>
@@ -78,7 +78,24 @@
 
             <div class="col-lg-3 col-md-6 col-sm-6">
                 <div class="card card-stats">
-                    <a th:href="@{'/teacher/' + ${teacher.id} + '/event'}">
+                    <a th:href="@{'/student/' + ${student.id} + '/timetable'}">
+                        <div class="card-header card-header-primary card-header-icon">
+                            <div class="card-icon">
+                                <i class="material-icons">notifications</i>
+                            </div>
+                            <h3 class="card-title">Plan lekcji</h3>
+                        </div>
+                    </a>
+                    <div class="card-footer">
+                        <div class="stats">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                    <a th:href="@{'/student/' + ${student.id} + '/event'}">
                         <div class="card-header card-header-primary card-header-icon">
                             <div class="card-icon">
                                 <i class="material-icons">notifications</i>

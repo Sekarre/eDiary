@@ -44,6 +44,12 @@ public class StudentController {
         });
     }
 
+    @GetMapping("/home")
+    public String home() {
+
+        return "/student/index";
+    }
+
     @GetMapping("/{studentId}/grade")
     public String getAllGrades(@PathVariable Long studentId, Model model) {
 
