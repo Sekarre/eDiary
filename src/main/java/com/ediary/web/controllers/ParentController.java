@@ -55,6 +55,12 @@ public class ParentController {
         });
     }
 
+    @GetMapping("/home")
+    public String home() {
+
+        return "/parent/index";
+    }
+
     @GetMapping("/students")
     public String getAllStudents(@PathVariable Long parentId, Model model) {
 

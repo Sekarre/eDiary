@@ -59,7 +59,7 @@
                             <i class="material-icons">person</i>
                             <p>Uczeń</p>
                         </a>
-                        <a sec:authorize="hasRole('PARENT')" class="nav-link" href="#">
+                        <a sec:authorize="hasRole('PARENT')" class="nav-link" th:href="@{'/parent/ol/home'}">
                             <i class="material-icons">person</i>
                             <p>Rodzic</p>
                         </a>
