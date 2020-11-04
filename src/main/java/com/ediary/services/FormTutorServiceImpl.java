@@ -5,18 +5,19 @@ import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
+import com.ediary.services.pdf.PdfService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class FormTutorServiceImpl implements FormTutorService {
+
+    private final PdfService pdfService;
 
     private final TeacherRepository teacherRepository;
     private final StudentCouncilRepository studentCouncilRepository;
@@ -94,12 +95,12 @@ public class FormTutorServiceImpl implements FormTutorService {
             Student student = studentRepository
                     .findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
 
-                studentCouncil.setStudents(studentCouncil.getStudents().stream()
-                        .filter(s -> !(s.getId().equals(studentId)))
-                        .collect(Collectors.toSet()));
+            studentCouncil.setStudents(studentCouncil.getStudents().stream()
+                    .filter(s -> !(s.getId().equals(studentId)))
+                    .collect(Collectors.toSet()));
 
 
-                return studentCouncilToStudentCouncilDto.convert(studentCouncilRepository.save(studentCouncil));
+            return studentCouncilToStudentCouncilDto.convert(studentCouncilRepository.save(studentCouncil));
         }
 
         return studentCouncilDto;
@@ -116,7 +117,7 @@ public class FormTutorServiceImpl implements FormTutorService {
     }
 
     @Override
-    public ParentCouncil saveParentCouncil(Long teacherId, ParentCouncilDto parentCouncilDto, List<Long> parentsId){
+    public ParentCouncil saveParentCouncil(Long teacherId, ParentCouncilDto parentCouncilDto, List<Long> parentsId) {
         Teacher teacher = getTeacherById(teacherId);
 
         ParentCouncil parentCouncil = parentCouncilDtoToParentCouncil.convert(parentCouncilDto);
@@ -179,7 +180,31 @@ public class FormTutorServiceImpl implements FormTutorService {
         return null;
     }
 
-    /**Assuming weight of behavior grade is 10**/
+    @Override
+    public Boolean createStudentCard(HttpServletResponse response, Long studentId) throws Exception {
+
+        if (response == null) {
+            return false;
+        }
+
+        Student student = studentRepository
+                .findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
+
+        response.setContentType("application/pdf");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=student_card_" + studentId + ".pdf";
+        response.setHeader(headerKey, headerValue);
+
+
+
+
+        return pdfService.createStudentCardPdf(response, getStudentsGradesWithSubjects(student),
+                student, getAttendancesNumber(student));
+    }
+
+    /**
+     * Assuming weight of behavior grade is 10
+     **/
     @Override
     public List<GradeDto> listBehaviorGrades(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
@@ -240,5 +265,39 @@ public class FormTutorServiceImpl implements FormTutorService {
     private Teacher getTeacherById(Long teacherId) {
         return teacherRepository
                 .findById(teacherId).orElseThrow(() -> new NotFoundException("Teacher not found"));
+    }
+
+    private Map<String, List<Grade>> getStudentsGradesWithSubjects(Student student) {
+
+        Map<String, List<Grade>> gradesWithSubjects = new TreeMap<>();
+
+        student.getSchoolClass().getSubjects()
+                .forEach(subject -> gradesWithSubjects.put(subject.getName(),
+                        gradeRepository.findAllByStudentIdAndSubjectId(student.getId(), subject.getId())));
+
+        return gradesWithSubjects;
+    }
+
+    private Map<String, Long> getAttendancesNumber(Student student) {
+
+        Map<String, Long> attendancesNumber = new HashMap<>();
+
+
+        List<Attendance> attendanceList  = student.getAttendance()
+                .stream()
+                .filter(attendance -> attendance.getStatus().equals(Attendance.Status.ABSENT)
+                        || attendance.getStatus().equals(Attendance.Status.UNEXCUSED)
+                        || attendance.getStatus().equals(Attendance.Status.EXCUSED))
+                .collect(Collectors.toList());
+
+        Long excusedAttendances = attendanceList
+                .stream()
+                .filter(attendance ->attendance.getStatus().equals(Attendance.Status.EXCUSED))
+                .count();
+
+        attendancesNumber.put("total", (long) attendanceList.size());
+        attendancesNumber.put("excused", excusedAttendances);
+
+        return attendancesNumber;
     }
 }

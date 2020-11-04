@@ -5,11 +5,13 @@ import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
 import com.ediary.repositories.*;
+import com.ediary.services.pdf.PdfService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,6 +20,8 @@ import static org.mockito.Mockito.*;
 
 public class FormTutorServiceImplTest {
 
+    @Mock
+    PdfService pdfService;
     @Mock
     TeacherRepository teacherRepository;
     @Mock
@@ -49,16 +53,21 @@ public class FormTutorServiceImplTest {
     GradeDtoToGrade gradeDtoToGrade;
 
 
+    HttpServletResponse mockResponse;
+
     FormTutorService formTutorService;
 
     @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        formTutorService = new FormTutorServiceImpl(teacherRepository, studentCouncilRepository, studentRepository, parentRepository,
+        formTutorService = new FormTutorServiceImpl(pdfService, teacherRepository, studentCouncilRepository, studentRepository, parentRepository,
                 parentCouncilRepository,gradeRepository, studentCouncilDtoToStudentCouncil, studentCouncilToStudentCouncilDto,
                 parentCouncilDtoToParentCouncil, parentCouncilToParentCouncilDto, studentToStudentDto, parentToParentDto,
                 gradeToGradeDto, gradeDtoToGrade);
+
+        mockResponse = mock(HttpServletResponse.class);
+
     }
 
     @Test

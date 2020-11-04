@@ -15,8 +15,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
+import java.text.DateFormat;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -626,9 +628,9 @@ public class TeacherController {
 
     @PostMapping("/{teacherId}/formTutor/parentCouncil/new")
     public String processNewParentCouncil(@PathVariable Long teacherId,
-                                           @RequestParam(name = "parentId") List<Long> parentsId,
-                                           @Valid @RequestBody ParentCouncilDto parentCouncilDto,
-                                           BindingResult result) {
+                                          @RequestParam(name = "parentId") List<Long> parentsId,
+                                          @Valid @RequestBody ParentCouncilDto parentCouncilDto,
+                                          BindingResult result) {
         if (result.hasErrors()) {
             //todo: path to view
             return "";
@@ -649,9 +651,9 @@ public class TeacherController {
 
     @PostMapping("/{teacherId}/formTutor/parentCouncil/remove/{parentId}")
     public String removeParentFromCouncil(@PathVariable Long teacherId,
-                                           @PathVariable Long parentId,
-                                           @ModelAttribute ParentCouncilDto parentCouncilDto,
-                                           Model model) {
+                                          @PathVariable Long parentId,
+                                          @ModelAttribute ParentCouncilDto parentCouncilDto,
+                                          Model model) {
 
         model.addAttribute("parents", formTutorService.listClassParents(teacherId));
         model.addAttribute("parentCouncil", formTutorService.removeParentFromCouncil(parentCouncilDto, parentId));
@@ -682,4 +684,24 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/formTutor/behaviorGrade";
     }
 
+    @GetMapping("/{teacherId}/formTutor/studentCard")
+    public String getStudentCard(@PathVariable Long teacherId, Model model) {
+
+        model.addAttribute("students", formTutorService.listClassStudents(teacherId));
+
+        return "teacher/formTutor/studentCards";
+    }
+
+
+    @RequestMapping("/studentCard/{studentId}/download")
+    public void downloadStudentCardPdf(HttpServletResponse response,
+                                       @RequestHeader String referer,
+                                       @PathVariable Long studentId) throws Exception {
+
+//            //Not allowing to download via url typing
+//        if (referer != null && !referer.isEmpty()) {
+//        }
+
+        formTutorService.createStudentCard(response, studentId);
+    }
 }

@@ -6,6 +6,7 @@ import com.ediary.domain.ParentCouncil;
 import com.ediary.domain.StudentCard;
 import com.ediary.domain.StudentCouncil;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 
@@ -25,6 +26,7 @@ public interface FormTutorService {
 
 
     StudentCard findStudentCard(Long teacherId, Long studentId);
+    Boolean createStudentCard(HttpServletResponse response, Long studentId) throws Exception;
 
     List<GradeDto> listBehaviorGrades(Long teacherId);
     Grade saveBehaviorGrade(Long teacher, GradeDto gradeDto);

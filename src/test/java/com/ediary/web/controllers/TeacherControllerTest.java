@@ -10,9 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -1005,4 +1008,28 @@ class TeacherControllerTest {
         verify(formTutorService, times(1)).saveBehaviorGrade(any(), any());
         assertNotNull(formTutorService.saveBehaviorGrade(any(), any()));
     }
+
+    @Test
+    void getStudentCard() throws Exception {
+        Long teacherId = 1L;
+        Long studentId = 1L;
+
+        when(formTutorService.listClassStudents(teacherId)).thenReturn(Arrays.asList(
+                StudentDto.builder().id(1L).build(),
+                StudentDto.builder().id(2L).build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/studentCard"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("students"))
+                .andExpect(view().name("teacher/formTutor/studentCards"));
+
+        assertEquals(2, formTutorService.listClassStudents(teacherId).size());
+    }
+
+    //todo
+    @Test
+    void downloadStudentCardPdf() throws Exception {
+    }
+
 }
