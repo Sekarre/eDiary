@@ -5,8 +5,10 @@ import com.ediary.domain.Grade;
 import com.ediary.domain.ParentCouncil;
 import com.ediary.domain.StudentCard;
 import com.ediary.domain.StudentCouncil;
+import com.ediary.domain.helpers.TimeInterval;
 
 import javax.servlet.http.HttpServletResponse;
+import java.sql.Date;
 import java.util.List;
 
 
@@ -26,7 +28,7 @@ public interface FormTutorService {
 
 
     StudentCard findStudentCard(Long teacherId, Long studentId);
-    Boolean createStudentCard(HttpServletResponse response, Long studentId) throws Exception;
+    Boolean createStudentCard(HttpServletResponse response, Long studentId, Date startTime, Date endTime) throws Exception;
 
     List<GradeDto> listBehaviorGrades(Long teacherId);
     Grade saveBehaviorGrade(Long teacher, GradeDto gradeDto);
@@ -35,4 +37,6 @@ public interface FormTutorService {
     List<StudentDto> listClassStudents(Long teacherId);
 
     List<ParentDto> listClassParents(Long teacherId);
+
+    TimeInterval initNewTimeInterval();
 }

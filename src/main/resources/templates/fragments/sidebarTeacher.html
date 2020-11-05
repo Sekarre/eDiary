@@ -56,9 +56,9 @@
                     </a>
                 </li>
 
-                                                        <!--TODO: DONT FORGET TO CHANGE 88 TO studentId -->
+                                                        <!-- Just for test -->
                 <li class="nav-item ">
-                    <a class="nav-link" th:href="@{'/teacher/studentCard/88/download'}">
+                    <a class="nav-link" th:href="@{'/teacher/'+ ${teacher.id} + '/formTutor/studentCard'}">
                         <i class="material-icons">store</i>
                         <p>PDF test</p>
                     </a>

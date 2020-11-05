@@ -3,6 +3,7 @@ package com.ediary.services;
 import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
+import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
 import com.ediary.services.pdf.PdfService;
@@ -10,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -181,7 +185,7 @@ public class FormTutorServiceImpl implements FormTutorService {
     }
 
     @Override
-    public Boolean createStudentCard(HttpServletResponse response, Long studentId) throws Exception {
+    public Boolean createStudentCard(HttpServletResponse response, Long studentId, Date startTime, Date endTime) throws Exception {
 
         if (response == null) {
             return false;
@@ -195,11 +199,13 @@ public class FormTutorServiceImpl implements FormTutorService {
         String headerValue = "attachment; filename=student_card_" + studentId + ".pdf";
         response.setHeader(headerKey, headerValue);
 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        String timeInterval = simpleDateFormat.format(startTime) + " - " + simpleDateFormat.format(endTime);
 
 
-
-        return pdfService.createStudentCardPdf(response, getStudentsGradesWithSubjects(student),
-                student, getAttendancesNumber(student));
+        return pdfService.createStudentCardPdf(response, getStudentsGradesWithSubjects(student, startTime, endTime),
+                student, getAttendancesNumber(student, startTime, endTime), timeInterval);
     }
 
     /**
@@ -262,38 +268,67 @@ public class FormTutorServiceImpl implements FormTutorService {
 
     }
 
+    @Override
+    public TimeInterval initNewTimeInterval() {
+        return TimeInterval.builder()
+                .startTime(Date.valueOf(LocalDate.now().minusYears(1)))
+                .endTime(Date.valueOf(LocalDate.now()))
+                .build();
+    }
+
     private Teacher getTeacherById(Long teacherId) {
         return teacherRepository
                 .findById(teacherId).orElseThrow(() -> new NotFoundException("Teacher not found"));
     }
 
-    private Map<String, List<Grade>> getStudentsGradesWithSubjects(Student student) {
+    private Map<String, List<Grade>> getStudentsGradesWithSubjects(Student student, Date startTime, Date endTime) {
 
         Map<String, List<Grade>> gradesWithSubjects = new TreeMap<>();
 
+//        student.getSchoolClass().getSubjects()
+//                .forEach(subject -> gradesWithSubjects.put(subject.getName(),
+//                        gradeRepository.findAllByStudentIdAndSubjectId(student.getId(), subject.getId())));
+
         student.getSchoolClass().getSubjects()
                 .forEach(subject -> gradesWithSubjects.put(subject.getName(),
-                        gradeRepository.findAllByStudentIdAndSubjectId(student.getId(), subject.getId())));
+                        gradeRepository.findAllByStudentIdAndSubjectIdAndDateAfterAndDateBefore(
+                                student.getId(), subject.getId(), startTime, endTime)));
 
         return gradesWithSubjects;
     }
 
-    private Map<String, Long> getAttendancesNumber(Student student) {
+    private Map<String, Long> getAttendancesNumber(Student student, Date startTime, Date endTime) {
 
         Map<String, Long> attendancesNumber = new HashMap<>();
 
+//Old version, may be useful
+//        List<Attendance> attendanceList  = student.getAttendance()
+//                .stream()
+//                .filter(attendance -> attendance.getStatus().equals(Attendance.Status.ABSENT)
+//                        || attendance.getStatus().equals(Attendance.Status.UNEXCUSED)
+//                        || attendance.getStatus().equals(Attendance.Status.EXCUSED))
+//                .collect(Collectors.toList());
+//
+//        Long excusedAttendances = attendanceList
+//                .stream()
+//                .filter(attendance ->attendance.getStatus().equals(Attendance.Status.EXCUSED))
+//                .count();
 
         List<Attendance> attendanceList  = student.getAttendance()
                 .stream()
                 .filter(attendance -> attendance.getStatus().equals(Attendance.Status.ABSENT)
                         || attendance.getStatus().equals(Attendance.Status.UNEXCUSED)
                         || attendance.getStatus().equals(Attendance.Status.EXCUSED))
+                .filter(attendance -> attendance.getLesson().getDate().before(endTime)
+                        && attendance.getLesson().getDate().after(startTime))
                 .collect(Collectors.toList());
 
         Long excusedAttendances = attendanceList
                 .stream()
                 .filter(attendance ->attendance.getStatus().equals(Attendance.Status.EXCUSED))
                 .count();
+
+
 
         attendancesNumber.put("total", (long) attendanceList.size());
         attendancesNumber.put("excused", excusedAttendances);

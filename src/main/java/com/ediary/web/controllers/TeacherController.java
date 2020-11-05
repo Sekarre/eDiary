@@ -3,10 +3,12 @@ package com.ediary.web.controllers;
 import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.*;
+import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.domain.security.User;
 import com.ediary.services.FormTutorService;
 import com.ediary.services.TeacherService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,12 +16,17 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.util.DateUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
-import java.text.DateFormat;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -45,8 +52,16 @@ public class TeacherController {
         dataBinder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) throws IllegalArgumentException {
-                setValue(LocalDate.parse(text));
+                if (text.length() < 10) {
+                    text = "01/" + text;
+                }
+
+                DateTimeFormatter f = new DateTimeFormatterBuilder().parseCaseInsensitive()
+                        .append(DateTimeFormatter.ofPattern("dd/MM/yyyy")).toFormatter();
+                setValue(LocalDate.parse(text, f));
             }
+
+
         });
     }
 
@@ -688,20 +703,38 @@ public class TeacherController {
     public String getStudentCard(@PathVariable Long teacherId, Model model) {
 
         model.addAttribute("students", formTutorService.listClassStudents(teacherId));
+        model.addAttribute("timeInterval", formTutorService.initNewTimeInterval());
 
         return "teacher/formTutor/studentCards";
     }
 
+    //todo: tests
+    @PostMapping("/{teacherId}/formTutor/studentCard")
+    public String processNewTimeInterval(@PathVariable Long teacherId, Model model,
+                                         @RequestParam(name = "startTime") @DateTimeFormat(pattern = "MM/yyyy") LocalDate startTime,
+                                         @RequestParam(name = "endTime") @DateTimeFormat(pattern = "MM/yyyy") LocalDate endTime) {
 
-    @RequestMapping("/studentCard/{studentId}/download")
+        model.addAttribute("students", formTutorService.listClassStudents(teacherId));
+        model.addAttribute("timeInterval", TimeInterval.builder().startTime(Date.valueOf(startTime)).endTime(Date.valueOf(endTime)).build());
+
+        return "teacher/formTutor/studentCards";
+    }
+
+    //todo: tests
+    @RequestMapping("/studentCard/{studentId}/download/{startTime}/{endTime}")
     public void downloadStudentCardPdf(HttpServletResponse response,
+                                       @PathVariable Date startTime,
+                                       @PathVariable Date endTime,
                                        @RequestHeader String referer,
                                        @PathVariable Long studentId) throws Exception {
 
-//            //Not allowing to download via url typing
-//        if (referer != null && !referer.isEmpty()) {
-//        }
+        System.out.println(startTime.toString());
+        System.out.println(endTime.toString());
 
-        formTutorService.createStudentCard(response, studentId);
+            //Not allowing to download via url typing
+        if (referer != null && !referer.isEmpty()) {
+        }
+
+        formTutorService.createStudentCard(response, studentId, startTime, endTime);
     }
 }
