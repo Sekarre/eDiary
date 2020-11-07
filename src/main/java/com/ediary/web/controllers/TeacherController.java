@@ -52,6 +52,7 @@ public class TeacherController {
         dataBinder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) throws IllegalArgumentException {
+                //correction
                 if (text.length() < 10) {
                     text = "01/" + text;
                 }
@@ -728,8 +729,8 @@ public class TeacherController {
                                        @RequestHeader String referer,
                                        @PathVariable Long studentId) throws Exception {
 
-        System.out.println(startTime.toString());
-        System.out.println(endTime.toString());
+//        System.out.println(startTime.toString());
+//        System.out.println(endTime.toString());
 
             //Not allowing to download via url typing
         if (referer != null && !referer.isEmpty()) {

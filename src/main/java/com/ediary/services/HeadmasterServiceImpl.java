@@ -2,11 +2,11 @@ package com.ediary.services;
 
 import com.ediary.DTO.TeacherDto;
 import com.ediary.converters.TeacherToTeacherDto;
-import com.ediary.domain.Report;
-import com.ediary.domain.Student;
-import com.ediary.domain.Teacher;
+import com.ediary.domain.*;
 import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.exceptions.NotFoundException;
+import com.ediary.repositories.EventRepository;
+import com.ediary.repositories.GradeRepository;
 import com.ediary.repositories.LessonRepository;
 import com.ediary.repositories.TeacherRepository;
 import com.ediary.services.pdf.PdfService;
@@ -30,6 +30,8 @@ public class HeadmasterServiceImpl implements HeadmasterService {
 
     private final TeacherRepository teacherRepository;
     private final LessonRepository lessonRepository;
+    private final GradeRepository gradeRepository;
+    private final EventRepository eventRepository;
     private final TeacherToTeacherDto teacherToTeacherDto;
 
     private final PdfService pdfService;
@@ -46,7 +48,7 @@ public class HeadmasterServiceImpl implements HeadmasterService {
 
         Page<Teacher> teachers = teacherRepository.findAll(pageable);
 
-        return  teachers.stream()
+        return teachers.stream()
                 .map(teacherToTeacherDto::convert)
                 .collect(Collectors.toList());
     }
@@ -69,7 +71,12 @@ public class HeadmasterServiceImpl implements HeadmasterService {
 
     @Override
     public Boolean createTeacherReport(HttpServletResponse response, Long teacherId, Date startTime, Date endTime) throws Exception {
+
         if (response == null) {
+            return false;
+        }
+
+        if (startTime.toLocalDate().isAfter(endTime.toLocalDate())) {
             return false;
         }
 
@@ -78,8 +85,7 @@ public class HeadmasterServiceImpl implements HeadmasterService {
 
         response.setContentType("application/pdf");
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=student_card_" + teacher.getUser().getFirstName()
-                + " " + teacher.getUser().getLastName() + ".pdf";
+        String headerValue = "attachment; filename=nauczyciel_raport_" + System.currentTimeMillis() + ".pdf";
         response.setHeader(headerKey, headerValue);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -87,6 +93,52 @@ public class HeadmasterServiceImpl implements HeadmasterService {
         String timeInterval = simpleDateFormat.format(startTime) + " - " + simpleDateFormat.format(endTime);
 
 
-        return pdfService.createReportPdf(response, teacher,  timeInterval);
+        //+1 day, cuz dateBefore in repos doesnt count that day in select query
+        //simpler was '<', now is '<='
+        Date correctedEndTime = Date.valueOf(endTime.toLocalDate().plusDays(1));
+
+        //same here
+        Date correctedStartTime = Date.valueOf(startTime.toLocalDate().minusDays(1));
+
+
+        return pdfService.createReportPdf(response, teacher, timeInterval,
+                getTeacherLessonsNumber(teacher, correctedStartTime, correctedEndTime).intValue(),
+                getTeacherSubjectsNames(teacher), getTeacherGradesNumber(teacher, correctedStartTime, correctedEndTime),
+                getTeacherEventsNumber(teacher, correctedStartTime, correctedEndTime));
+    }
+
+    private Long getTeacherLessonsNumber(Teacher teacher, Date startTime, Date endTime) {
+        Long[] sumOfLessons = {0L};
+
+        List<List<Lesson>> lessons = teacher.getSubjects().
+                stream()
+                .map(subject ->
+                        lessonRepository.findAllBySubjectAndDateAfterAndDateBefore(subject, startTime, endTime))
+                .collect(Collectors.toList());
+
+        lessons.forEach(lessonList -> sumOfLessons[0] += lessonList.stream().count());
+
+        return sumOfLessons[0];
+    }
+
+    private String getTeacherSubjectsNames(Teacher teacher) {
+
+        StringBuilder subjectsNames = new StringBuilder();
+
+        teacher.getSubjects()
+                .forEach(subject -> subjectsNames.append(subject.getName()).append(", "));
+        subjectsNames.delete(subjectsNames.length() - 2, subjectsNames.length() - 1);
+
+        return subjectsNames.toString();
+    }
+
+    private Long getTeacherGradesNumber(Teacher teacher, Date startTime, Date endTime) {
+        return gradeRepository.findAllByTeacherIdAndDateAfterAndDateBefore(teacher.getId(), startTime, endTime)
+                .stream().count();
+    }
+
+    private Long getTeacherEventsNumber(Teacher teacher, Date startTime, Date endTime) {
+        return eventRepository.findAllByTeacherIdAndDateAfterAndDateBefore(teacher.getId(), startTime, endTime)
+                .stream().count();
     }
 }

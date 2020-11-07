@@ -14,5 +14,6 @@ public interface PdfService {
                                  Map<String, List<Grade>> gradesWithSubjects, Student student,
                                  Map<String, Long> attendanceNumber, String timeInterval) throws Exception;
 
-    Boolean createReportPdf(HttpServletResponse response, Teacher teacher, String timeInterval) throws Exception;
+    Boolean createReportPdf(HttpServletResponse response, Teacher teacher, String timeInterval, Integer lessonsNumber,
+                            String subjectsNames, Long gradesNumber, Long eventsNumber) throws Exception;
 }

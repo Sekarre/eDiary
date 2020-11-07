@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -77,8 +78,8 @@ public class HeadmasterControllerTest {
         when(headmasterService.setTimeInterval(any(), any())).thenReturn(TimeInterval.builder().build());
 
         mockMvc.perform(post("/headmaster/teacherReport/" + page)
-                .param("startTime", String.valueOf(LocalDate.now()))
-                .param("endTime", String.valueOf(LocalDate.now())))
+                .param("startTime", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                .param("endTime", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("teachers"))
                 .andExpect(model().attributeExists("timeInterval"))

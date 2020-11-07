@@ -1,7 +1,6 @@
 package com.ediary.web.controllers;
 
 import com.ediary.converters.UserToUserDto;
-import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.domain.security.User;
 import com.ediary.services.HeadmasterService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyEditorSupport;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 
 @RequiredArgsConstructor
 @Controller
@@ -37,10 +38,19 @@ public class HeadmasterController {
         dataBinder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) throws IllegalArgumentException {
-                setValue(LocalDate.parse(text));
+                if (text.length() < 10) {
+                    text = "01/" + text;
+                }
+
+                DateTimeFormatter f = new DateTimeFormatterBuilder().parseCaseInsensitive()
+                        .append(DateTimeFormatter.ofPattern("dd/MM/yyyy")).toFormatter();
+                setValue(LocalDate.parse(text, f));
             }
+
+
         });
     }
+
 
     @GetMapping("/teacherReport/{page}")
     public String getTeacherReport(Model model, @PathVariable Integer page) {

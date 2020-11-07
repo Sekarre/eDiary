@@ -331,7 +331,7 @@ public class FormTutorServiceImplTest {
         List<GradeDto> gradeDtoList = formTutorService.listBehaviorGrades(teacherId);
 
         assertNotNull(gradeDtoList);
-        verify(gradeRepository, times(1)).findAllByTeacherIdAndWeight(teacherId, 10);
+        verify(gradeRepository, times(1)).findAllByTeacherIdAndWeight(teacherId, 9000);
         verify(teacherRepository, times(1)).findById(teacherId);
         verify(gradeToGradeDto, times(1)).convert(any());
     }

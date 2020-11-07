@@ -191,6 +191,10 @@ public class FormTutorServiceImpl implements FormTutorService {
             return false;
         }
 
+        if (startTime.toLocalDate().isAfter(endTime.toLocalDate())) {
+            return false;
+        }
+
         Student student = studentRepository
                 .findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
 
@@ -203,20 +207,27 @@ public class FormTutorServiceImpl implements FormTutorService {
 
         String timeInterval = simpleDateFormat.format(startTime) + " - " + simpleDateFormat.format(endTime);
 
+        //+1 day, cuz dateBefore in repos doesnt count that day in select query
+        //simpler was '<', now is '<='
+        Date correctedEndTime = Date.valueOf(endTime.toLocalDate().plusDays(1));
 
-        return pdfService.createStudentCardPdf(response, getStudentsGradesWithSubjects(student, startTime, endTime),
-                student, getAttendancesNumber(student, startTime, endTime), timeInterval);
+        //same here
+        Date correctedStartTime = Date.valueOf(startTime.toLocalDate().minusDays(1));
+
+
+        return pdfService.createStudentCardPdf(response, getStudentsGradesWithSubjects(student, correctedStartTime, correctedEndTime),
+                student, getAttendancesNumber(student, correctedStartTime, correctedEndTime), timeInterval);
     }
 
     /**
-     * Assuming weight of behavior grade is 10
+     * Assuming weight of behavior grade is 9000, will be refactored to enum
      **/
     @Override
     public List<GradeDto> listBehaviorGrades(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
 
 
-        return gradeRepository.findAllByTeacherIdAndWeight(teacherId, 10)
+        return gradeRepository.findAllByTeacherIdAndWeight(teacherId, 9000)
                 .stream()
                 .map(gradeToGradeDto::convert)
                 .collect(Collectors.toList());
@@ -229,7 +240,7 @@ public class FormTutorServiceImpl implements FormTutorService {
         Grade grade = gradeDtoToGrade.convert(gradeDto);
 
         if (grade != null) {
-            grade.setWeight(10);
+            grade.setWeight(9000);
             return gradeRepository.save(grade);
         }
 
@@ -285,10 +296,6 @@ public class FormTutorServiceImpl implements FormTutorService {
 
         Map<String, List<Grade>> gradesWithSubjects = new TreeMap<>();
 
-//        student.getSchoolClass().getSubjects()
-//                .forEach(subject -> gradesWithSubjects.put(subject.getName(),
-//                        gradeRepository.findAllByStudentIdAndSubjectId(student.getId(), subject.getId())));
-
         student.getSchoolClass().getSubjects()
                 .forEach(subject -> gradesWithSubjects.put(subject.getName(),
                         gradeRepository.findAllByStudentIdAndSubjectIdAndDateAfterAndDateBefore(
@@ -314,7 +321,7 @@ public class FormTutorServiceImpl implements FormTutorService {
 //                .filter(attendance ->attendance.getStatus().equals(Attendance.Status.EXCUSED))
 //                .count();
 
-        List<Attendance> attendanceList  = student.getAttendance()
+        List<Attendance> attendanceList = student.getAttendance()
                 .stream()
                 .filter(attendance -> attendance.getStatus().equals(Attendance.Status.ABSENT)
                         || attendance.getStatus().equals(Attendance.Status.UNEXCUSED)
@@ -325,9 +332,8 @@ public class FormTutorServiceImpl implements FormTutorService {
 
         Long excusedAttendances = attendanceList
                 .stream()
-                .filter(attendance ->attendance.getStatus().equals(Attendance.Status.EXCUSED))
+                .filter(attendance -> attendance.getStatus().equals(Attendance.Status.EXCUSED))
                 .count();
-
 
 
         attendancesNumber.put("total", (long) attendanceList.size());

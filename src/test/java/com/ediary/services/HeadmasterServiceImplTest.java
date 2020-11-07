@@ -6,6 +6,8 @@ import com.ediary.converters.TeacherToTeacherDto;
 import com.ediary.domain.Teacher;
 import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.domain.security.User;
+import com.ediary.repositories.EventRepository;
+import com.ediary.repositories.GradeRepository;
 import com.ediary.repositories.LessonRepository;
 import com.ediary.repositories.TeacherRepository;
 import com.ediary.services.pdf.PdfService;
@@ -31,6 +33,10 @@ public class HeadmasterServiceImplTest {
     @Mock
     LessonRepository lessonRepository;
     @Mock
+    GradeRepository gradeRepository;
+    @Mock
+    EventRepository eventRepository;
+    @Mock
     TeacherToTeacherDto teacherToTeacherDto;
     @Mock
     PdfService pdfService;
@@ -41,7 +47,8 @@ public class HeadmasterServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        headmasterService = new HeadmasterServiceImpl(teacherRepository, lessonRepository, teacherToTeacherDto, pdfService);
+        headmasterService = new HeadmasterServiceImpl(teacherRepository, lessonRepository, gradeRepository, eventRepository,
+                teacherToTeacherDto, pdfService);
     }
 
     @Test

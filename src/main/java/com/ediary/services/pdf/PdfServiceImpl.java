@@ -54,19 +54,16 @@ public class PdfServiceImpl implements PdfService {
         doc.add(table);
 
 
-        //Student Name and class + separator
-        table = getNewTable(new float[]{100});
-        table.addCell(getCell(student.getUser().getFirstName() + " " + student.getUser().getLastName() + "\t" +
-                student.getSchoolClass().getName(), TextAlignment.LEFT, 15f, normalTextFont));
-
-        doc.add(table);
+        //Separator
         doc.add(new LineSeparator(new SolidLine(3)));
 
 
         //Main title
+        String studentNameAndClass = student.getUser().getFirstName() + " " + student.getUser().getLastName() + "  " +
+                student.getSchoolClass().getName();
         table = getNewTable(new float[]{100});
 
-        table.addCell(getCell("\n" + "Wykaz ocen",
+        table.addCell(getCell("\n" + "Wykaz ocen: " + studentNameAndClass,
                 TextAlignment.CENTER, 22f, normalTextFont));
 
         table.addCell(getCell("Przedział: " + timeInterval + "\n\n\n\n", TextAlignment.CENTER, 13f, normalTextFont));
@@ -79,8 +76,8 @@ public class PdfServiceImpl implements PdfService {
         table.addCell(getHeaderCell("Oceny", TextAlignment.CENTER, 12f, normalTextFont));
         Paragraph paragraph;
 
-
         for (Map.Entry<String, List<Grade>> entry : gradesWithSubjects.entrySet()) {
+            StringBuilder gradesPerSubject = new StringBuilder();
 
             //subject name
             paragraph = new Paragraph(entry.getKey());
@@ -91,9 +88,15 @@ public class PdfServiceImpl implements PdfService {
             paragraph = new Paragraph();
             for (Grade grade : entry.getValue()) {
                 if (grade != null) {
-                    paragraph.add(grade.getValue() + ", ");
+                    gradesPerSubject.append(grade.getValue()).append(", ");
                 }
             }
+
+            if (gradesPerSubject.length() != 0) {
+                gradesPerSubject.delete(gradesPerSubject.length() - 2, gradesPerSubject.length() - 1);
+            }
+
+            paragraph.add(gradesPerSubject.toString());
             table.addCell(paragraph);
         }
 
@@ -114,6 +117,8 @@ public class PdfServiceImpl implements PdfService {
         table.addCell(getCell("", TextAlignment.CENTER, 12f, normalTextFont));
         table.addCell(getCell("- w tym usprawiedliwione: " + attendanceNumber.get("excused"),
                 TextAlignment.CENTER, 12f, normalTextFont));
+
+
         doc.add(table);
 
         doc.close();
@@ -122,8 +127,84 @@ public class PdfServiceImpl implements PdfService {
     }
 
     @Override
-    public Boolean createReportPdf(HttpServletResponse response, Teacher teacher, String timeInterval) throws Exception {
-        return null;
+    public Boolean createReportPdf(HttpServletResponse response, Teacher teacher, String timeInterval,
+                                   Integer lessonsNumber, String subjectsNames, Long gradesNumber,
+                                   Long eventsNumber) throws Exception {
+
+        PdfWriter writer = new PdfWriter(response.getOutputStream());
+        PdfDocument pdf = new PdfDocument(writer);
+        Document doc = new Document(pdf);
+
+        PdfFont normalTextFont;
+
+        try {
+            FontProgram fontProgram = FontProgramFactory.createFont();
+            normalTextFont = PdfFontFactory.createFont(fontProgram, "Cp1257");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        //Date
+        Table table = getNewTable(new float[]{100});
+        table.addCell(getCell(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), TextAlignment.RIGHT,
+                10f, normalTextFont));
+        doc.add(table);
+
+
+        //Separator
+        doc.add(new LineSeparator(new SolidLine(3)));
+
+
+        //Main title
+        table = getNewTable(new float[]{100});
+        String teacherName = teacher.getUser().getFirstName() + " " + teacher.getUser().getLastName();
+
+
+        table.addCell(getCell("\n" + "Raport: " + teacherName,
+                TextAlignment.CENTER, 22f, normalTextFont));
+        table.addCell(getCell("Przedział: " + timeInterval + "\n\n\n", TextAlignment.CENTER, 13f, normalTextFont));
+
+        doc.add(table);
+
+
+
+        //New Table for teacher info
+        table = getNewTable(new float[]{45, 55});
+        String address = teacher.getUser().getAddress().getStreet() + "\n" +
+                teacher.getUser().getAddress().getZip() + " " + teacher.getUser().getAddress().getCity() + "\n";
+
+
+        //Teacher Address
+        fillNewRow(table, normalTextFont, "Adres: ", address);
+
+        //Number of subjects
+        fillNewRow(table, normalTextFont, "Przedmioty: ", subjectsNames);
+
+        //Number of teacher's lesson
+        fillNewRow(table, normalTextFont, "Liczba przeprowadzonych zajęć: ", lessonsNumber.toString());
+
+        //Number of grades
+        fillNewRow(table, normalTextFont, "Liczba wystawionych ocen: ", gradesNumber + "");
+
+        //Made events
+        fillNewRow(table, normalTextFont, "Stworzone wydarzenia: ", eventsNumber + "");
+
+        //Is teacher form tutor
+        fillNewRow(table, normalTextFont, "Wychowawca: ", (teacher.getSchoolClass() != null ? "tak" : "nie"));
+
+        //If form tutor show additional info
+        if (teacher.getSchoolClass() != null) {
+            fillNewRow(table, normalTextFont, "Klasa: ", teacher.getSchoolClass().getName());
+            fillNewRow(table, normalTextFont, "Liczba studentów: ", teacher.getSchoolClass().getStudents().size() + "");
+        }
+
+
+        doc.add(table);
+
+        doc.close();
+
+        return true;
     }
 
     private Cell getCell(String text, TextAlignment alignment, Float fontSize, PdfFont normalTextFont) {
@@ -153,6 +234,15 @@ public class PdfServiceImpl implements PdfService {
 
     private Table getNewTable(float[] columnWidth) {
         return new Table(UnitValue.createPercentArray(columnWidth)).useAllAvailableWidth();
+    }
+
+
+    private void fillNewRow(Table table, PdfFont normalTextFont, String... columnContent) {
+        for (String content : columnContent) {
+            Paragraph paragraph = new Paragraph(content);
+            paragraph.setFont(normalTextFont);
+            table.addCell(paragraph);
+        }
     }
 
 
