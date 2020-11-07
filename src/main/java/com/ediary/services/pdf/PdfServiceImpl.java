@@ -2,6 +2,7 @@ package com.ediary.services.pdf;
 
 import com.ediary.domain.Grade;
 import com.ediary.domain.Student;
+import com.ediary.domain.Teacher;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.kernel.font.PdfFont;
@@ -121,10 +122,9 @@ public class PdfServiceImpl implements PdfService {
     }
 
     @Override
-    public Boolean createReportPdf(HttpServletResponse response, Long teacherId) {
+    public Boolean createReportPdf(HttpServletResponse response, Teacher teacher, String timeInterval) throws Exception {
         return null;
     }
-
 
     private Cell getCell(String text, TextAlignment alignment, Float fontSize, PdfFont normalTextFont) {
         Cell cell = new Cell().add(new Paragraph(text));

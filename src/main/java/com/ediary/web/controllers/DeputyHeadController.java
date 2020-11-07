@@ -132,7 +132,7 @@ public class DeputyHeadController {
     }
 
     @PostMapping("/classes/{classId}/addStudent/{studentId}")
-    public String addFormStudentToClass(@PathVariable Long studentId,
+    public String addStudentToClass(@PathVariable Long studentId,
                                       @PathVariable Long classId,
                                       Model model) {
 

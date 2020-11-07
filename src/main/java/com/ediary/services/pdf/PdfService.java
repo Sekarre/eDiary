@@ -2,6 +2,7 @@ package com.ediary.services.pdf;
 
 import com.ediary.domain.Grade;
 import com.ediary.domain.Student;
+import com.ediary.domain.Teacher;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -13,5 +14,5 @@ public interface PdfService {
                                  Map<String, List<Grade>> gradesWithSubjects, Student student,
                                  Map<String, Long> attendanceNumber, String timeInterval) throws Exception;
 
-    Boolean createReportPdf(HttpServletResponse response, Long teacherId) throws Exception;
+    Boolean createReportPdf(HttpServletResponse response, Teacher teacher, String timeInterval) throws Exception;
 }
