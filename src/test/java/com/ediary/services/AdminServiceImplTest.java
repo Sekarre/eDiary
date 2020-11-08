@@ -1,10 +1,12 @@
 package com.ediary.services;
 
 import com.ediary.DTO.UserDto;
+import com.ediary.converters.RoleToRoleDto;
 import com.ediary.converters.UserDtoToUser;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.security.User;
 import com.ediary.repositories.SchoolRepository;
+import com.ediary.repositories.security.RoleRepository;
 import com.ediary.repositories.security.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,11 +26,14 @@ public class AdminServiceImplTest {
     @Mock
     UserRepository userRepository;
     @Mock
+    RoleRepository roleRepository;
+    @Mock
     SchoolRepository schoolRepository;
     @Mock
     UserToUserDto userToUserDto;
     @Mock
     UserDtoToUser userDtoToUser;
+    RoleToRoleDto roleToRoleDto;
 
     AdminService adminService;
 
@@ -36,7 +41,8 @@ public class AdminServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        adminService = new AdminServiceImpl(userRepository, schoolRepository, userToUserDto, userDtoToUser);
+        adminService = new AdminServiceImpl(userRepository, roleRepository, schoolRepository,  userToUserDto, userDtoToUser,
+                roleToRoleDto);
     }
 
     @Test
@@ -56,7 +62,7 @@ public class AdminServiceImplTest {
         when(userDtoToUser.convert(any())).thenReturn(user);
         when(userRepository.save(any())).thenReturn(user);
 
-        User savedUser = adminService.saveUser(userDto);
+        User savedUser = adminService.saveUser(userDto, List.of(1L, 2L));
 
         assertNotNull(savedUser);
         assertEquals(savedUser, user);
@@ -109,7 +115,7 @@ public class AdminServiceImplTest {
         when(userToUserDto.convertForAdmin(any())).thenReturn(userDto);
         when(userRepository.save(any())).thenReturn(user);
 
-        User savedUser = adminService.saveUser(userDto);
+        User savedUser = adminService.saveUser(userDto, List.of(1L, 2L));
 
         assertNotNull(savedUser);
         assertEquals(savedUser, user);

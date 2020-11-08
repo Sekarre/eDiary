@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -72,15 +73,16 @@ public class AdminControllerTest {
     @Test
     void processNewUser() throws Exception {
 
-        when(adminService.saveUser(any())).thenReturn(User.builder().build());
+        when(adminService.saveUser(any(), any())).thenReturn(User.builder().build());
 
         mockMvc.perform(post("/admin/newUser")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(AbstractAsJsonControllerTest.asJsonString(UserDto.builder().build())))
+                .content(AbstractAsJsonControllerTest.asJsonString(UserDto.builder().build()))
+                .param("roleId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("admin/users"));
 
-        assertNotNull(adminService.saveUser(any()));
+        assertNotNull(adminService.saveUser(any(), any()));
 
     }
 
@@ -133,15 +135,16 @@ public class AdminControllerTest {
         Long userId = 1L;
 
         UserDto userDto = UserDto.builder().id(userId).build();
-        when(adminService.updateUser(any())).thenReturn(userDto);
+        when(adminService.updateUser(any(), any())).thenReturn(userDto);
 
         mockMvc.perform(post("/admin/users/" + userId + "/update")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(AbstractAsJsonControllerTest.asJsonString(userDto)))
+                .content(AbstractAsJsonControllerTest.asJsonString(userDto))
+                .param("roleId", "1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/admin/users/" + userId));
 
-        assertNotNull(adminService.updateUser(any()));
+        assertNotNull(adminService.updateUser(any(), any()));
     }
 
 

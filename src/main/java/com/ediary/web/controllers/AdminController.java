@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -45,6 +46,7 @@ public class AdminController {
     public String initNewUser(Model model) {
 
         model.addAttribute("newUser", adminService.initNewUser());
+        model.addAttribute("roles", adminService.getAllRoles());
 
         return "admin/newUser";
     }
@@ -52,6 +54,7 @@ public class AdminController {
 
     @PostMapping("/newUser")
     public String processNewUser(@Valid @ModelAttribute UserDto userDto,
+                                 @RequestParam(name = "roleId") List<Long> rolesId,
                                  BindingResult result) {
 
         if (result.hasErrors()) {
@@ -59,7 +62,7 @@ public class AdminController {
             return "";
         }
 
-        User user = adminService.saveUser(userDto);
+        User user = adminService.saveUser(userDto, rolesId);
 
         //todo: change to redirect to single user
         return "admin/users";
@@ -90,14 +93,17 @@ public class AdminController {
     }
 
     @PostMapping("/users/{userId}/update")
-    public String updateUser(@PathVariable Long userId, @Valid @ModelAttribute UserDto userDto, BindingResult result) {
+    public String updateUser(@PathVariable Long userId,
+                             @RequestParam(name = "roleId") List<Long> rolesId,
+                             @Valid @ModelAttribute UserDto userDto,
+                             BindingResult result) {
 
         if (result.hasErrors()) {
             //todo: view path
             return "";
         }
 
-        UserDto updatedUser = adminService.updateUser(userDto);
+        UserDto updatedUser = adminService.updateUser(userDto, rolesId);
 
         return "redirect:/admin/users/" + updatedUser.getId();
     }
