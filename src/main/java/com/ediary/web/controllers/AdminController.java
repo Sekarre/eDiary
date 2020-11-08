@@ -1,5 +1,6 @@
 package com.ediary.web.controllers;
 
+import com.ediary.DTO.SchoolDto;
 import com.ediary.DTO.UserDto;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.security.User;
@@ -108,5 +109,33 @@ public class AdminController {
         return "redirect:/admin/users/" + updatedUser.getId();
     }
 
+    @GetMapping("/school")
+    public String getSchoolInfo(Model model) {
+
+        model.addAttribute("school", adminService.getSchool());
+
+        return "admin/school";
+    }
+
+    @GetMapping("/school/edit")
+    public String editSchool(Model model) {
+        model.addAttribute("school", adminService.getSchool());
+
+        return "admin/editSchool";
+    }
+
+    @PostMapping("school/update")
+    public String updateSchool(@Valid @ModelAttribute SchoolDto schoolDto,
+                               BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo: path
+            return "";
+        }
+
+        adminService.updateSchool(schoolDto);
+
+        return "redirect:/admin/school";
+    }
 
 }

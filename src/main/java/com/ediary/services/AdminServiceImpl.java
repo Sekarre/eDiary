@@ -1,10 +1,9 @@
 package com.ediary.services;
 
 import com.ediary.DTO.RoleDto;
+import com.ediary.DTO.SchoolDto;
 import com.ediary.DTO.UserDto;
-import com.ediary.converters.RoleToRoleDto;
-import com.ediary.converters.UserDtoToUser;
-import com.ediary.converters.UserToUserDto;
+import com.ediary.converters.*;
 import com.ediary.domain.School;
 import com.ediary.domain.security.User;
 import com.ediary.exceptions.NotFoundException;
@@ -29,6 +28,8 @@ public class AdminServiceImpl implements AdminService {
     private final UserToUserDto userToUserDto;
     private final UserDtoToUser userDtoToUser;
     private final RoleToRoleDto roleToRoleDto;
+    private final SchoolToSchoolDto schoolToSchoolDto;
+    private final SchoolDtoToSchool schoolDtoToSchool;
 
 
     @Override
@@ -96,13 +97,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public School saveSchool(School school) {
-        return null;
+    public School updateSchool(SchoolDto school) {
+        return schoolRepository.save(schoolDtoToSchool.convert(school));
     }
 
     @Override
-    public School getSchool() {
-        return null;
+    public SchoolDto getSchool() {
+        return schoolToSchoolDto.convert(schoolRepository.findAll()
+                .stream()
+                .findFirst().orElseThrow(() -> new NotFoundException("No school has been found")));
     }
 
 

@@ -1,9 +1,11 @@
 package com.ediary.services;
 
+import com.ediary.DTO.RoleDto;
+import com.ediary.DTO.SchoolDto;
 import com.ediary.DTO.UserDto;
-import com.ediary.converters.RoleToRoleDto;
-import com.ediary.converters.UserDtoToUser;
-import com.ediary.converters.UserToUserDto;
+import com.ediary.converters.*;
+import com.ediary.domain.School;
+import com.ediary.domain.security.Role;
 import com.ediary.domain.security.User;
 import com.ediary.repositories.SchoolRepository;
 import com.ediary.repositories.security.RoleRepository;
@@ -33,7 +35,13 @@ public class AdminServiceImplTest {
     UserToUserDto userToUserDto;
     @Mock
     UserDtoToUser userDtoToUser;
+    @Mock
     RoleToRoleDto roleToRoleDto;
+    @Mock
+    SchoolToSchoolDto schoolToSchoolDto;
+    @Mock
+    SchoolDtoToSchool schoolDtoToSchool;
+
 
     AdminService adminService;
 
@@ -42,7 +50,7 @@ public class AdminServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         adminService = new AdminServiceImpl(userRepository, roleRepository, schoolRepository,  userToUserDto, userDtoToUser,
-                roleToRoleDto);
+                roleToRoleDto, schoolToSchoolDto, schoolDtoToSchool);
     }
 
     @Test
@@ -136,6 +144,54 @@ public class AdminServiceImplTest {
 
         assertNotNull(userDtoList);
         assertEquals(1, userDtoList.size());
+    }
+
+    @Test
+    void getAllRoles() {
+        Long roleId = 1L;
+        RoleDto role = RoleDto.builder().id(roleId).build();
+
+        when(roleRepository.findAll()).thenReturn(Collections.singletonList(Role.builder().build()));
+        when(roleToRoleDto.convert(any())).thenReturn(role);
+
+        List<RoleDto> roles = adminService.getAllRoles();
+
+        assertNotNull(roles);
+        assertTrue(roles.contains(role));
+    }
+
+    @Test
+    void updateSchool() {
+        Long schoolId = 1L;
+
+        School school = School.builder().id(schoolId).build();
+        SchoolDto schoolDto = SchoolDto.builder().id(schoolId).build();
+
+        when(schoolDtoToSchool.convert(any())).thenReturn(school);
+        when(schoolRepository.save(any())).thenReturn(school);
+
+        School updatedSchool = adminService.updateSchool(schoolDto);
+
+        assertNotNull(updatedSchool);
+        assertEquals(updatedSchool, school);
+        verify(schoolRepository, times(1)).save(school);
+    }
+
+    @Test
+    void getSchool() {
+        Long schoolId = 1L;
+
+        School school = School.builder().id(schoolId).build();
+        SchoolDto schoolDto = SchoolDto.builder().id(schoolId).build();
+
+        when(schoolToSchoolDto.convert(any())).thenReturn(schoolDto);
+        when(schoolRepository.findAll()).thenReturn(Collections.singletonList(school));
+
+        SchoolDto getSchool = adminService.getSchool();
+
+        assertNotNull(getSchool);
+        assertEquals(getSchool, schoolDto);
+        verify(schoolRepository, times(1)).findAll();
     }
 
 }

@@ -1,6 +1,7 @@
 package com.ediary.services;
 
 import com.ediary.DTO.RoleDto;
+import com.ediary.DTO.SchoolDto;
 import com.ediary.DTO.UserDto;
 import com.ediary.domain.School;
 import com.ediary.domain.security.User;
@@ -18,7 +19,7 @@ public interface AdminService {
 
     List<RoleDto> getAllRoles();
 
-    School saveSchool(School school);
-    School getSchool();
+    School updateSchool(SchoolDto school);
+    SchoolDto getSchool();
 
 }
