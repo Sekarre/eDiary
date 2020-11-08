@@ -12,10 +12,9 @@ public interface AdminService {
     User saveUser(UserDto userDto);
     Boolean deleteUser(Long userId);
     UserDto getUser(Long userId);
+    UserDto updateUser(UserDto userDto);
     List<UserDto> getAllUsers();
 
-
     School saveSchool(School school);
-
     School getSchool();
 }

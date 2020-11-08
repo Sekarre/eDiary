@@ -56,21 +56,6 @@ public class AdminControllerTest {
         assertNotNull(adminService.getAllUsers());
     }
 
-    @Test
-    void getUser() throws Exception {
-        Long userId = 1L;
-
-        when(adminService.getUser(any())).thenReturn(UserDto.builder().build());
-
-        mockMvc.perform(get("/admin/users/" + userId))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("user"))
-                .andExpect(view().name("admin/user"));
-
-        verify(adminService, times(1)).getUser(userId);
-        assertNotNull(adminService.getUser(userId));
-    }
-
 
     @Test
     void initNewUser() throws Exception {
@@ -99,6 +84,20 @@ public class AdminControllerTest {
 
     }
 
+    @Test
+    void getUser() throws Exception {
+        Long userId = 1L;
+
+        when(adminService.getUser(any())).thenReturn(UserDto.builder().build());
+
+        mockMvc.perform(get("/admin/users/" + userId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("user"))
+                .andExpect(view().name("admin/user"));
+
+        verify(adminService, times(1)).getUser(userId);
+        assertNotNull(adminService.getUser(userId));
+    }
 
     @Test
     void deleteUser() throws Exception {
@@ -106,12 +105,45 @@ public class AdminControllerTest {
 
         when(adminService.deleteUser(any())).thenReturn(true);
 
-        mockMvc.perform(delete("/admin/deleteUser/" + userId))
+        mockMvc.perform(delete("/admin/users/" + userId + "/delete"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("admin/users"));
 
         verify(adminService, times(1)).deleteUser(userId);
         assertTrue(adminService.deleteUser(userId));
     }
+
+    @Test
+    void editUser() throws Exception {
+        Long userId = 1L;
+
+        when(adminService.getUser(any())).thenReturn(UserDto.builder().build());
+
+        mockMvc.perform(get("/admin/users/" + userId +"/edit"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("user"))
+                .andExpect(view().name("admin/editUser"));
+
+        verify(adminService, times(1)).getUser(userId);
+        assertNotNull(adminService.getUser(userId));
+    }
+
+    @Test
+    void updateUser() throws Exception {
+        Long userId = 1L;
+
+        UserDto userDto = UserDto.builder().id(userId).build();
+        when(adminService.updateUser(any())).thenReturn(userDto);
+
+        mockMvc.perform(post("/admin/users/" + userId + "/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(userDto)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/admin/users/" + userId));
+
+        assertNotNull(adminService.updateUser(any()));
+    }
+
+
 
 }

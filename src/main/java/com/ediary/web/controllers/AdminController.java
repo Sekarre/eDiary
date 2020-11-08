@@ -40,13 +40,6 @@ public class AdminController {
         return "admin/allUsers";
     }
 
-    @GetMapping("/users/{userId}")
-    public String getUser(@PathVariable Long userId, Model model) {
-
-        model.addAttribute("user", adminService.getUser(userId));
-
-        return "admin/user";
-    }
 
     @GetMapping("/newUser")
     public String initNewUser(Model model) {
@@ -72,7 +65,15 @@ public class AdminController {
         return "admin/users";
     }
 
-    @DeleteMapping("/deleteUser/{userId}")
+    @GetMapping("/users/{userId}")
+    public String getUser(@PathVariable Long userId, Model model) {
+
+        model.addAttribute("user", adminService.getUser(userId));
+
+        return "admin/user";
+    }
+
+    @DeleteMapping("/users/{userId}/delete")
     public String deleteUser(@PathVariable Long userId) {
 
         adminService.deleteUser(userId);
@@ -80,6 +81,26 @@ public class AdminController {
         return "admin/users";
     }
 
+    @GetMapping("/users/{userId}/edit")
+    public String editUser(@PathVariable Long userId, Model model) {
+
+        model.addAttribute("user", adminService.getUser(userId));
+
+        return "admin/editUser";
+    }
+
+    @PostMapping("/users/{userId}/update")
+    public String updateUser(@PathVariable Long userId, @Valid @ModelAttribute UserDto userDto, BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo: view path
+            return "";
+        }
+
+        UserDto updatedUser = adminService.updateUser(userDto);
+
+        return "redirect:/admin/users/" + updatedUser.getId();
+    }
 
 
 }

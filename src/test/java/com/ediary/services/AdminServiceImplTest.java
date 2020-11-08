@@ -98,6 +98,26 @@ public class AdminServiceImplTest {
         verify(userRepository, times(1)).findById(userId);
     }
 
+    @Test
+    void updateUser() {
+        Long userId = 1L;
+
+        User user = User.builder().id(userId).build();
+        UserDto userDto = UserDto.builder().id(userId).build();
+
+        when(userDtoToUser.convert(any())).thenReturn(user);
+        when(userToUserDto.convertForAdmin(any())).thenReturn(userDto);
+        when(userRepository.save(any())).thenReturn(user);
+
+        User savedUser = adminService.saveUser(userDto);
+
+        assertNotNull(savedUser);
+        assertEquals(savedUser, user);
+        assertTrue(savedUser.getEnabled());
+        assertTrue(savedUser.isAccountNonExpired());
+        verify(userRepository, times(1)).save(user);
+    }
+
 
     @Test
     void getAllUsers() {

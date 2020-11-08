@@ -58,8 +58,13 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
+    public UserDto updateUser(UserDto userDto) {
+        return userToUserDto
+                .convertForAdmin(userRepository.save(userDtoToUser.convert(userDto)));
+    }
 
+    @Override
+    public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(userToUserDto::convertForAdmin)
                 .collect(Collectors.toList());
