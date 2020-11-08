@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class UserToUserDto implements Converter<User, UserDto> {
 
     private final MessageRepository messageRepository;
+    private final AddressToAddressDto addressToAddressDto;
 
     @Nullable
     @Synchronized
@@ -52,15 +53,17 @@ public class UserToUserDto implements Converter<User, UserDto> {
         userDto.setMessageNumber((long) messageRepository.findAllByStatusAndReaders(Message.Status.SENT, source).size());
         userDto.setUsername(source.getUsername());
         userDto.setPassword(source.getPassword());
-        //maybe its better to have AddressDto here
-        userDto.setAddress(source.getAddress().toString());
         userDto.setIsEnabled(source.isEnabled());
+
+        //Address
+        userDto.setAddress(addressToAddressDto.convert(source.getAddress()));
 
         //Roles
         userDto.setRolesNames(source.getRoles()
                 .stream()
                 .map(Role::getName)
                 .collect(Collectors.toList()));
+
         userDto.setRolesNames(source.getRoles()
                 .stream()
                 .map(Role::getName)

@@ -19,8 +19,10 @@ public class UserDto {
     //Data for admin
     private String username;
     private String password;
-    private String address;
     private Boolean isEnabled;
+
+    //Address
+    private AddressDto address;
 
     //Roles
     private List<String> rolesNames;
