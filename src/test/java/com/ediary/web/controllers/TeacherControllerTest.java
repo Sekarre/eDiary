@@ -3,6 +3,7 @@ package com.ediary.web.controllers;
 import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.*;
+import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.services.FormTutorService;
 import com.ediary.services.TeacherService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -568,13 +571,36 @@ class TeacherControllerTest {
         );
 
         mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId
-                + "/class/" + classId + "/lessons/" + lessonId + "/grades"))
+                + "/class/" + classId + "/lessons/" + lessonId + "/students"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("students"))
                 .andExpect(view().name("/teacher/lesson/students"));
 
         verify(teacherService, times(1)).listLessonStudents(teacherId, subjectId, classId, lessonId);
         assertNotNull(teacherService.listLessonStudents(teacherId, subjectId, classId, lessonId));
+    }
+
+    @Test
+    void processNewLessonGrade() throws Exception {
+        Long classId = 1L;
+        Long subjectId = 1L;
+        Long lessonId = 1L;
+        Long studentId = 1L;
+
+
+        when(teacherService.saveGrade(any())).thenReturn(Grade.builder().build());
+
+        mockMvc.perform(post(
+                "/teacher/" + teacherId + "/lesson/subject/" + subjectId
+                        + "/class/" + classId + "/lessons/" + lessonId + "/students/" + studentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(GradeDto.builder().build())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name(
+                        "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId + "/lessons/" +
+                                lessonId + "/students/" + studentId));
+
+        assertNotNull(teacherService.saveGrade(any()));
     }
 
     @Test
@@ -1026,6 +1052,29 @@ class TeacherControllerTest {
 
         assertEquals(2, formTutorService.listClassStudents(teacherId).size());
     }
+
+    @Test
+    void processNewTimeInterval() throws Exception {
+        Long teacherId = 1L;
+
+        when(formTutorService.listClassStudents(any())).thenReturn(Arrays.asList(
+                StudentDto.builder().id(1L).build(),
+                StudentDto.builder().id(2L).build()
+        ));
+
+        when(formTutorService.setTimeInterval(any(), any())).thenReturn(TimeInterval.builder().build());
+
+        mockMvc.perform(post("/teacher/" + teacherId + "/formTutor/studentCard")
+                .param("startTime", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                .param("endTime", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("students"))
+                .andExpect(model().attributeExists("timeInterval"))
+                .andExpect(view().name("teacher/formTutor/studentCards"));
+
+        assertEquals(2, formTutorService.listClassStudents(teacherId).size());
+    }
+
 
     //todo
     @Test

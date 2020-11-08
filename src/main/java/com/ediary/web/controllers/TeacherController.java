@@ -221,7 +221,6 @@ public class TeacherController {
         return "/teacher/grade/allGrades";
     }
 
-    //todo: url mapping
     @GetMapping("/{teacherId}/grade/subject/{subjectId}/new")
     public String newGrade(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
 
@@ -395,7 +394,7 @@ public class TeacherController {
     }
 
 
-    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}/grades")
+    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}/students")
     public String getLessonStudents(@PathVariable Long teacherId,
                                     @PathVariable Long subjectId,
                                     @PathVariable Long classId,
@@ -403,12 +402,35 @@ public class TeacherController {
                                     Model model) {
 
         model.addAttribute("students", teacherService.listLessonStudents(teacherId, subjectId, classId, lessonId));
-
+        model.addAttribute("grade", teacherService.initNewGrade(teacherId, subjectId));
         return "/teacher/lesson/students";
     }
 
 
     //todo: Grades
+    @PostMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}/students/{studentId}")
+    public String processNewLessonGrade(@PathVariable Long teacherId,
+                                        @PathVariable Long subjectId,
+                                        @PathVariable Long classId,
+                                        @PathVariable Long lessonId,
+                                        @PathVariable Long studentId,
+                                        @Valid @ModelAttribute GradeDto gradeDto,
+                                        BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo: view path
+            return "";
+        }
+
+        Grade grade = teacherService.saveGrade(gradeDto);
+
+        //XD?
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId + "/lessons/" +
+                lessonId + "/students/" + studentId;
+    }
+
+
+
 
 
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")
@@ -709,14 +731,13 @@ public class TeacherController {
         return "teacher/formTutor/studentCards";
     }
 
-    //todo: tests
     @PostMapping("/{teacherId}/formTutor/studentCard")
     public String processNewTimeInterval(@PathVariable Long teacherId, Model model,
                                          @RequestParam(name = "startTime") @DateTimeFormat(pattern = "MM/yyyy") LocalDate startTime,
                                          @RequestParam(name = "endTime") @DateTimeFormat(pattern = "MM/yyyy") LocalDate endTime) {
 
         model.addAttribute("students", formTutorService.listClassStudents(teacherId));
-        model.addAttribute("timeInterval", TimeInterval.builder().startTime(Date.valueOf(startTime)).endTime(Date.valueOf(endTime)).build());
+        model.addAttribute("timeInterval", formTutorService.setTimeInterval(startTime, endTime));
 
         return "teacher/formTutor/studentCards";
     }

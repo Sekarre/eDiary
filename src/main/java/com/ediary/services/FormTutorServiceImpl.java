@@ -287,6 +287,14 @@ public class FormTutorServiceImpl implements FormTutorService {
                 .build();
     }
 
+    @Override
+    public TimeInterval setTimeInterval(LocalDate startTime, LocalDate endTime) {
+        return TimeInterval.builder()
+                .startTime(Date.valueOf(startTime))
+                .endTime(Date.valueOf(endTime))
+                .build();
+    }
+
     private Teacher getTeacherById(Long teacherId) {
         return teacherRepository
                 .findById(teacherId).orElseThrow(() -> new NotFoundException("Teacher not found"));

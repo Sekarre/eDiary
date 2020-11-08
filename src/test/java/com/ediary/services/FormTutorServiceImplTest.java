@@ -4,6 +4,7 @@ import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
+import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.repositories.*;
 import com.ediary.services.pdf.PdfService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -404,6 +406,28 @@ public class FormTutorServiceImplTest {
         verify(studentRepository, times(1)).findAllBySchoolClassId(teacherId);
         verify(teacherRepository, times(1)).findById(teacherId);
         verify(parentToParentDto, times(1)).convert(any());
+    }
+
+    @Test
+    void initNewTimeInterval() {
+        TimeInterval timeInterval = formTutorService.initNewTimeInterval();
+
+        assertNotNull(timeInterval);
+        assertNotNull(timeInterval.getStartTime());
+        assertNotNull(timeInterval.getEndTime());
+        assertEquals(timeInterval.getEndTime().toLocalDate(), timeInterval.getStartTime().toLocalDate().plusYears(1));
+    }
+
+    @Test
+    void setTimeInterval() {
+        LocalDate startTime = LocalDate.now();
+        LocalDate endTime = LocalDate.now().plusDays(5);
+
+        TimeInterval timeInterval = formTutorService.setTimeInterval(startTime, endTime);
+
+        assertNotNull(timeInterval);
+        assertEquals(timeInterval.getStartTime().toLocalDate(), startTime);
+        assertEquals(timeInterval.getEndTime().toLocalDate(), endTime);
     }
 
 }

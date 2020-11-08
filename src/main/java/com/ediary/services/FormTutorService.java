@@ -9,6 +9,7 @@ import com.ediary.domain.helpers.TimeInterval;
 
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -39,4 +40,6 @@ public interface FormTutorService {
     List<ParentDto> listClassParents(Long teacherId);
 
     TimeInterval initNewTimeInterval();
+    TimeInterval setTimeInterval(LocalDate startTime, LocalDate endTime);
+
 }

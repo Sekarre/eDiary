@@ -312,12 +312,12 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Grade> listClassGrades(Long teacherId, Long schoolClassId) {
+    public List<GradeDto> listClassGrades(Long teacherId, Long schoolClassId) {
         return null;
     }
 
     @Override
-    public List<Grade> listStudentGrades(Long teacherId, Long studentId) {
+    public List<GradeDto> listStudentGrades(Long teacherId, Long studentId) {
         return null;
     }
 
