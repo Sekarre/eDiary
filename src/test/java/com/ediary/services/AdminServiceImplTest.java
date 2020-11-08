@@ -40,19 +40,6 @@ public class AdminServiceImplTest {
     }
 
     @Test
-    void getAllUsers() {
-        UserDto userDto = UserDto.builder().id(1L).build();
-
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(User.builder().build()));
-        when(userToUserDto.convertForAdmin(any())).thenReturn(userDto);
-
-        List<UserDto> userDtoList = adminService.getAllUsers();
-
-        assertNotNull(userDtoList);
-        assertEquals(1, userDtoList.size());
-    }
-
-    @Test
     void initNewUser() {
         UserDto userDto = adminService.initNewUser();
 
@@ -73,7 +60,56 @@ public class AdminServiceImplTest {
 
         assertNotNull(savedUser);
         assertEquals(savedUser, user);
+        assertTrue(savedUser.getEnabled());
+        assertTrue(savedUser.isAccountNonExpired());
         verify(userRepository, times(1)).save(user);
+    }
+
+
+    @Test
+    void deleteUser() {
+        Long userId = 1L;
+
+        User user = User.builder().enabled(true).id(userId).build();
+
+        when(userRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(user));
+
+        Boolean result = adminService.deleteUser(userId);
+
+        assertTrue(result);
+        verify(userRepository, times(1)).findById(userId);
 
     }
+
+    @Test
+    void getUser() {
+        Long userId = 1L;
+
+        User user = User.builder().id(userId).build();
+        UserDto userDto = UserDto.builder().build();
+
+        when(userToUserDto.convertForAdmin(any())).thenReturn(userDto);
+        when(userRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(user));
+
+        UserDto foundUser = adminService.getUser(userId);
+
+        assertNotNull(foundUser);
+        assertEquals(foundUser, userDto);
+        verify(userRepository, times(1)).findById(userId);
+    }
+
+
+    @Test
+    void getAllUsers() {
+        UserDto userDto = UserDto.builder().id(1L).build();
+
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(User.builder().build()));
+        when(userToUserDto.convertForAdmin(any())).thenReturn(userDto);
+
+        List<UserDto> userDtoList = adminService.getAllUsers();
+
+        assertNotNull(userDtoList);
+        assertEquals(1, userDtoList.size());
+    }
+
 }

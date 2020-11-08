@@ -9,10 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -40,7 +37,15 @@ public class AdminController {
     public String getAllUsers(Model model) {
         model.addAttribute("users", adminService.getAllUsers());
 
-        return "admin/users";
+        return "admin/allUsers";
+    }
+
+    @GetMapping("/users/{userId}")
+    public String getUser(@PathVariable Long userId, Model model) {
+
+        model.addAttribute("user", adminService.getUser(userId));
+
+        return "admin/user";
     }
 
     @GetMapping("/newUser")
@@ -67,6 +72,13 @@ public class AdminController {
         return "admin/users";
     }
 
+    @DeleteMapping("/deleteUser/{userId}")
+    public String deleteUser(@PathVariable Long userId) {
+
+        adminService.deleteUser(userId);
+
+        return "admin/users";
+    }
 
 
 

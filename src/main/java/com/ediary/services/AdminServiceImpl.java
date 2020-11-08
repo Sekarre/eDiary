@@ -5,6 +5,7 @@ import com.ediary.converters.UserDtoToUser;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.School;
 import com.ediary.domain.security.User;
+import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.SchoolRepository;
 import com.ediary.repositories.security.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +36,6 @@ public class AdminServiceImpl implements AdminService {
         User user = userDtoToUser.convert(userDto);
 
         if (user != null) {
-            user.setAccountNonExpired(true);
-            user.setAccountNonLocked(true);
-            user.setCredentialsNonExpired(true);
-            user.setEnabled(true);
-
             return userRepository.save(user);
         }
 
@@ -48,12 +44,17 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Boolean deleteUser(Long userId) {
-        return null;
+        User user = getUserById(userId);
+
+        user.setEnabled(false);
+//        userRepository.delete(user);
+
+        return true;
     }
 
     @Override
-    public User findUser(Long userId) {
-        return null;
+    public UserDto getUser(Long userId) {
+        return userToUserDto.convertForAdmin(getUserById(userId));
     }
 
     @Override
@@ -74,4 +75,9 @@ public class AdminServiceImpl implements AdminService {
     public School getSchool() {
         return null;
     }
+
+    private User getUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+    }
+
 }

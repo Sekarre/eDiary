@@ -11,8 +11,7 @@ public interface AdminService {
     UserDto initNewUser();
     User saveUser(UserDto userDto);
     Boolean deleteUser(Long userId);
-    User findUser(Long userId);
-
+    UserDto getUser(Long userId);
     List<UserDto> getAllUsers();
 
 

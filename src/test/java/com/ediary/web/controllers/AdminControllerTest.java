@@ -20,8 +20,7 @@ import java.util.Collections;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -52,9 +51,24 @@ public class AdminControllerTest {
         mockMvc.perform(get("/admin/users"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("users"))
-                .andExpect(view().name("admin/users"));
+                .andExpect(view().name("admin/allUsers"));
 
         assertNotNull(adminService.getAllUsers());
+    }
+
+    @Test
+    void getUser() throws Exception {
+        Long userId = 1L;
+
+        when(adminService.getUser(any())).thenReturn(UserDto.builder().build());
+
+        mockMvc.perform(get("/admin/users/" + userId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("user"))
+                .andExpect(view().name("admin/user"));
+
+        verify(adminService, times(1)).getUser(userId);
+        assertNotNull(adminService.getUser(userId));
     }
 
 
@@ -83,6 +97,21 @@ public class AdminControllerTest {
 
         assertNotNull(adminService.saveUser(any()));
 
+    }
+
+
+    @Test
+    void deleteUser() throws Exception {
+        Long userId = 1L;
+
+        when(adminService.deleteUser(any())).thenReturn(true);
+
+        mockMvc.perform(delete("/admin/deleteUser/" + userId))
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/users"));
+
+        verify(adminService, times(1)).deleteUser(userId);
+        assertTrue(adminService.deleteUser(userId));
     }
 
 }
