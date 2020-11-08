@@ -17,6 +17,7 @@ public class UserDto {
     private Long messageNumber;
 
     //Data for admin
+
     private String username;
     private String password;
     private Boolean isEnabled;

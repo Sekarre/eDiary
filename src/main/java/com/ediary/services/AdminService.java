@@ -8,11 +8,15 @@ import java.util.List;
 
 public interface AdminService {
 
-    User saveUser(User user);
+    UserDto initNewUser();
+    User saveUser(UserDto userDto);
     Boolean deleteUser(Long userId);
     User findUser(Long userId);
-    List<UserDto> getAllAccounts();
+
+    List<UserDto> getAllUsers();
+
 
     School saveSchool(School school);
+
     School getSchool();
 }

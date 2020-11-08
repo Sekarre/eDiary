@@ -1,6 +1,7 @@
 package com.ediary.services;
 
 import com.ediary.DTO.UserDto;
+import com.ediary.converters.UserDtoToUser;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.School;
 import com.ediary.domain.security.User;
@@ -20,10 +21,28 @@ public class AdminServiceImpl implements AdminService {
     private final SchoolRepository schoolRepository;
 
     private final UserToUserDto userToUserDto;
+    private final UserDtoToUser userDtoToUser;
 
 
     @Override
-    public User saveUser(User user) {
+    public UserDto initNewUser() {
+        return UserDto.builder().build();
+    }
+
+    @Override
+    public User saveUser(UserDto userDto) {
+
+        User user = userDtoToUser.convert(userDto);
+
+        if (user != null) {
+            user.setAccountNonExpired(true);
+            user.setAccountNonLocked(true);
+            user.setCredentialsNonExpired(true);
+            user.setEnabled(true);
+
+            return userRepository.save(user);
+        }
+
         return null;
     }
 
@@ -38,7 +57,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<UserDto> getAllAccounts() {
+    public List<UserDto> getAllUsers() {
 
         return userRepository.findAll().stream()
                 .map(userToUserDto::convertForAdmin)
