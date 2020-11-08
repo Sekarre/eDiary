@@ -44,6 +44,12 @@ public class DeputyHeadController {
         });
     }
 
+    @GetMapping("/home")
+    public String home() {
+
+        return "deputyHead/index";
+    }
+
 
     @GetMapping("/newClass")
     public String newClass(Model model) {
