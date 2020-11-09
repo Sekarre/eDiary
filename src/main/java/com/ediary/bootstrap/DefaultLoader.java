@@ -23,7 +23,9 @@ import org.springframework.stereotype.Component;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -155,7 +157,7 @@ public class DefaultLoader implements CommandLineRunner {
         createTopics();
         createLessons();
 //        createBehaviors();
-//        createEvents();
+        createEvents();
 //        createReports();
 //        createStudentCards();
 //        createDays();
@@ -708,18 +710,30 @@ public class DefaultLoader implements CommandLineRunner {
     }
 
     private void createEvents() {
-        Event.Type[] types = {Event.Type.EXAM, Event.Type.HOMEWORK, Event.Type.HOMEWORK, Event.Type.HOMEWORK, Event.Type.TEST};
-        String[] description = {"Sprawdzian z matematyki", "Praca domowa - ćwiczenia 1-3",
-                "Praca domowa - ćwiczenia 5-12", "Praca domowa ", "Test - operacje dodawania i odejmowania"};
-        int[] teachersIndexes = {0, 0, 0, 0, 0};
-        int[] schoolClassIndexes = {0, 0, 0, 0, 0};
+        Event.Type[] types = {Event.Type.EXAM, Event.Type.HOMEWORK, Event.Type.HOMEWORK, Event.Type.HOMEWORK, Event.Type.TEST,
+                Event.Type.EXAM, Event.Type.OTHER, Event.Type.HOMEWORK, Event.Type.HOMEWORK, Event.Type.HOMEWORK,
+                Event.Type.OTHER};
+        String[] description = {"Sprawdzian z matematyki", "Praca domowa - ćwiczenia 1-3, str 2",
+                "Praca domowa - ćwiczenia 5-12, str 4", "Praca domowa ", "Test - operacje dodawania i odejmowania",
+                "Egzamin", "Prezentacja ustna", "Praca domowa - ćw 1 - 2, str 10", "Praca domowa - ćw 1- 4, str 20",
+                "Praca domowa - ćw  1 - 10, str 21", "Prezentacja ustna"
+        };
+        int[] teachersIndexes = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        int[] schoolClassIndexes = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
         for (int i = 0; i < types.length; i++) {
+
+            LocalDateTime dateToConvert = LocalDate.now().atStartOfDay().plusMinutes(400 + i);
+
+            Date date = new java.sql.Date(java.util.Date
+                    .from(dateToConvert.atZone(ZoneId.systemDefault())
+                            .toInstant()).getTime());
+
             eventRepository.save(Event.builder()
                     .type(types[i])
                     .description(description[i])
                     .createDate(Date.valueOf(LocalDate.now()))
-                    .date(Date.valueOf(LocalDate.now().plusDays(3)))
+                    .date(date)
                     .teacher(teacherRepository.findByUserId(userRepository
                             .findByFirstNameAndLastName(
                                     teacherNames[teachersIndexes[i]],

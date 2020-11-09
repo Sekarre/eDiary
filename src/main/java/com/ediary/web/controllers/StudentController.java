@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
+import java.util.Optional;
 
 
 @RequiredArgsConstructor
@@ -87,9 +88,14 @@ public class StudentController {
     }
 
     @GetMapping("/{studentId}/event")
-    public String getAllEvents(@PathVariable Long studentId, Model model) {
+    public String getAllEvents(@PathVariable Long studentId,
+                               @RequestParam(name = "page", required = false) Optional<Integer> page,
+                               Model model) {
 
-        model.addAttribute("events", studentService.listEvents(studentId));
+        model.addAttribute("monthNames", studentService.getMonthsNames());
+        model.addAttribute("dayNames", studentService.getDayNames());
+        model.addAttribute("page", page);
+        model.addAttribute("events", studentService.listEvents(studentId, page.orElse(0), 10));
         return "student/allEvents";
     }
 

@@ -11,7 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +53,9 @@ class StudentServiceImplTest {
     StudentRepository studentRepository;
 
     @Mock
+    EventRepository eventRepository;
+
+    @Mock
     GradeToGradeDto gradeToGradeDto;
 
     @Mock
@@ -72,7 +78,7 @@ class StudentServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         studentService = new StudentServiceImpl(timetableService,eventService, gradeRepository, attendanceRepository,
-                behaviorRepository, studentRepository, gradeToGradeDto, attendanceToAttendanceDto,
+                behaviorRepository, studentRepository, eventRepository, gradeToGradeDto, attendanceToAttendanceDto,
                 behaviorToBehaviorDto, eventToEventDto, studentToStudentDto);
 
         gradeReturned = Grade.builder().id(gradeId).value(value).build();
@@ -147,21 +153,23 @@ class StudentServiceImplTest {
                 Student.builder().id(studentId).build()
                 ));
 
-        when(eventService.listEventsBySchoolClass(any())).thenReturn(Arrays.asList(
-                Event.builder().id(1L).build(),
-                Event.builder().id(2L).build()
-        ));
+        List<Event> events = new ArrayList<>() {{
+            add(Event.builder().build());
+        }};
 
+        Page<Event> page = new PageImpl<>(events);
+
+        when(eventRepository.findAllBySchoolClassIdOrderByDate(any(), any())).thenReturn(page);
         when(eventToEventDto.convert(any())).thenReturn(EventDto.builder().id(3L).build());
+        when(studentRepository.findById(any()))
+                .thenReturn(Optional.ofNullable(Student.builder().schoolClass(Class.builder().id(1L).build()).build()));
 
-        List<EventDto> events = studentService.listEvents(studentId);
+        List<EventDto> gotEvents = studentService.listEvents(studentId, 0, 1);
 
-        assertEquals(2, events.size());
-        assertEquals(3L, events.get(1).getId());
+        assertEquals(1, gotEvents.size());
         verify(studentRepository, times(1)).findById(studentId);
-        verify(eventService, times(1)).listEventsBySchoolClass(any());
-        verify(eventToEventDto, times(2)).convert(any());
-
+        verify(eventRepository, times(1)).findAllBySchoolClassIdOrderByDate(any(), any());
+        verify(eventToEventDto, times(1)).convert(any());
     }
 
     @Test

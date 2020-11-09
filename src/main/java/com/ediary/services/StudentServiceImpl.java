@@ -8,9 +8,16 @@ import com.ediary.domain.timetable.Timetable;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,6 +32,7 @@ public class StudentServiceImpl implements StudentService {
     private final AttendanceRepository attendanceRepository;
     private final BehaviorRepository behaviorRepository;
     private final StudentRepository studentRepository;
+    private final EventRepository eventRepository;
 
     private final GradeToGradeDto gradeToGradeDto;
     private final AttendanceToAttendanceDto attendanceToAttendanceDto;
@@ -66,11 +74,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<EventDto> listEvents(Long studentId) {
+    public List<EventDto> listEvents(Long studentId, Integer page, Integer size) {
 
         Student student = getStudentById(studentId);
 
-        return eventService.listEventsBySchoolClass(student.getSchoolClass())
+        Pageable pageable = PageRequest.of(page, size);
+
+        return eventRepository.findAllBySchoolClassIdOrderByDate(student.getSchoolClass().getId(), pageable)
                 .stream()
                 .map(eventToEventDto::convert)
                 .collect(Collectors.toList());
@@ -91,6 +101,37 @@ public class StudentServiceImpl implements StudentService {
             throw new NotFoundException("Student Not Found");
         }
         return studentToStudentDto.convert(studentOptional.get());
+    }
+
+    @Override
+    public Map<Integer, String> getDayNames() {
+        return new HashMap<>(){{
+            put(0, "Niedziela");
+            put(1, "Poniedziałek");
+            put(2, "Wtorek");
+            put(3, "Środa");
+            put(4, "Czwartek");
+            put(5, "Piątek");
+            put(6, "Sobota");
+        }};
+    }
+
+    @Override
+    public Map<Integer, String> getMonthsNames() {
+        return new HashMap<>(){{
+            put(0, "Styczeń");
+            put(1, "Luty");
+            put(2, "Marzec");
+            put(3, "Kwiecień");
+            put(4, "Maj");
+            put(5, "Czerwiec");
+            put(6, "Lipiec");
+            put(7, "Sierpień");
+            put(8, "Wrzesień");
+            put(9, "Październik");
+            put(10, "Listopad");
+            put(11, "Grudzień");
+        }};
     }
 
     private Student getStudentById(Long studentId) {

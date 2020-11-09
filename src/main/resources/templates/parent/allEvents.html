@@ -29,9 +29,37 @@ The above copyright notice and this permission notice shall be included in all c
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
 
-<!--    calendar test-->
-    <script src="https://unpkg.com/js-year-calendar@latest/dist/js-year-calendar.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/js-year-calendar@latest/dist/js-year-calendar.min.css" />
+    <style>
+        .agenda {  }
+
+        /* Dates */
+        .agenda .agenda-date { width: 170px; }
+        .agenda .agenda-date .dayofmonth {
+            width: 40px;
+            font-size: 36px;
+            line-height: 36px;
+            float: left;
+            text-align: right;
+            margin-right: 10px;
+        }
+        .agenda .agenda-date .shortdate {
+            font-size: 0.75em;
+        }
+
+
+        /* Times */
+        .agenda .agenda-time { width: 140px; }
+
+
+        /* Events */
+        .agenda .agenda-events {  }
+        .agenda .agenda-events .agenda-event {  }
+
+        .active a{
+            background-color: #9c27b0 !important;
+        }
+
+    </style>
 </head>
 
 <body class="">
@@ -46,7 +74,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" th:href="@{/user/{id}/readMessages(id=${user.id})}">Plon</a>
+                    <a class="navbar-brand">Terminarz</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -60,35 +88,65 @@ The above copyright notice and this permission notice shall be included in all c
         <!-- End Navbar -->
         <div class="content">
             <div class="container-fluid">
-                        <div class="card">
-                            <div class="card-header card-header-primary">
-                                <h4 class="card-title ">Plon zojeńć</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title ">Terminarz</h4>
+                    </div>
 
-<!--                                        /*@thymesVar id="timetable" type="com.ediary.domain.timetable.Timetable"*/-->
-                                        <tr th:each="timetable : ${timetable?.schedule}">
-                                            <th th:text="${timetable?.key?.name}">day</th>
-                                            <table>
-                                                <tr th:each="hour : ${timetable.value}">
-                                                    <td th:text="${hour?.duration?.number}">Some name</td>
-                                                    <td th:text="${hour?.duration?.startTime}">Some name</td>
-                                                    <td th:text=" '  -  ' "></td>
-                                                    <td th:text="${hour?.duration?.endTime}">Some name</td>
-                                                    <td th:text="'     '"></td>
-                                                    <td th:text="${hour?.subject?.name}">Some name</td>
-                                                    <td th:text="${hour?.teacher?.user?.firstName}">Some name</td>
-                                                </tr>
-                                            </table>
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div class="agenda">
+                                <div class="table-responsive">
+                                    <table class="table table-condensed table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Godzina</th>
+                                            <th>Nauczyciel</th>
+                                            <th>Rodzaj</th>
+                                            <th>Wydarzenie</th>
                                         </tr>
+                                        </thead>
+                                        <tbody>
+                                        <!-- Single event in a single day -->
+                                        <tr th:each="event : ${events}">
+                                            <td class="agenda-date active" rowspan="1">
+                                                <div class="dayofmonth" th:text="${event.date.getDate()}"></div>
+                                                <div class="dayofweek" th:text="${dayNames.get(event.date.getDay())}">Saturday</div>
+                                                <div class="shortdate text-muted" th:text="${monthNames.get(event.date.getMonth()) + ', ' + (event.date.getYear() + 1900)}">Miesiac, 2020</div>
+                                            </td>
+                                            <td class="agenda-time" th:text="${event.date.getHours() + ':' + event.date.getMinutes()}">
+                                                15:30
+                                            </td>
+                                            <td class="agenda-time" th:text="${event.teacherName}">Nauczyciel</td>
+                                            <td class="agenda-time" th:text="${event.type.name()}">Rodzaj</td>
+                                            <td class="agenda-events">
+                                                <div class="agenda-event">
+                                                    <i class="glyphicon glyphicon-repeat" th:text="${event.description}"></i>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item " th:classappend="${page.isPresent() && page.get() > 0} ? 'active' : 'disabled'">
+                                            <a class="page-link" th:href="@{/parent/{parentId}/{studentId}/event(parentId = ${parentId}, studentId = ${studentId}, page = ${page.orElse(0) - 1})}" th:text="'Poprzednia'"></a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${events.size() < 10} ? 'disabled' : 'active'">
+                                            <a class="page-link" th:href="@{/parent/{parentId}/{studentId}/event(parentId = ${parentId}, studentId = ${studentId}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
+
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 </div>
 </div>
