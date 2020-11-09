@@ -552,6 +552,8 @@ public class DefaultLoader implements CommandLineRunner {
                 {1, 5, 3, 3},
         };
 
+        int[] gradeWeight = {1,2,3};
+
         String[] descriptions = {"Kartkówka", "Kartkówka", "Sprawdzian", "Aktywność", "Aktywność",
                 "Kartkówka", "Sprawdzian", "Aktywność", "Aktywność", "Kartkówka"};
 
@@ -561,6 +563,7 @@ public class DefaultLoader implements CommandLineRunner {
 
                 gradeRepository.save(Grade.builder()
                         .value(gradesPerStudent[i][j] + "")
+                        .weight(gradeWeight[j%3])
                         .description(descriptions[j])
                         .date(Date.valueOf(LocalDate.now()))
                         .student(studentRepository.findByUserId(userRepository
@@ -576,6 +579,7 @@ public class DefaultLoader implements CommandLineRunner {
 
         gradeRepository.save(Grade.builder()
                 .value(2 + "")
+                .weight(gradeWeight[0])
                 .description("Kartkówka")
                 .date(Date.valueOf(LocalDate.now()))
                 .student(studentRepository.findByUserId(userRepository

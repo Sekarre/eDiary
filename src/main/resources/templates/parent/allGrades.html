@@ -45,7 +45,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" href="#">Oceny:</a>
+                    <h3 class="card-title" th:text="${student.userName} + ' - Oceny: '"></h3>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -58,36 +58,22 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <div class="container-fluid">
+            <div th:each="subject : ${subjects}" class="container-fluid">
                 <div class="card">
-                    <div class="card-header card-header-primary">
-                        <h3 class="card-title" th:text="${student.userName} + ' - Oceny: '"></h3>
+                    <div class="card-header-pills card-header-primary">
+                        <h3 class="card-title" th:text="${subject.name}"></h3>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table">
-                                <thead class=" text-primary">
-                                <th>Przedmiot</th>
-                                </thead>
-                                <tbody>
-                                <!--/*@thymesVar id="subjects" type="com.ediary.DTO.SubjectDto"*/-->
-                                <tr th:each="subject : ${subjects}">
-                                    <td>
-                                        <a th:text="${subject.name}"
-                                           th:href="@{/parent/{parentId}/{studentId}/grade/subject/{subjectId}(parentId=${parent.id}, studentId=${studentId}, subjectId=${subject.id})}"
-                                        ></a></td>
-                                    <span th:each="grade : ${grades}"
-                                          th:if="${grade.subjectName} == ${subject.name}">
-                                        <td>
-                                            <a data-toggle="modal" class="open-gradeDialogModal" href="#gradeModal"
-                                               th:attr="data-date=''+${grade.date}+'', data-target='#gradeModal', data-value=''+${grade.value}+'',
-                                                data-subject=''+${grade.subjectName}+'', data-teacher=''+${grade.teacherName}+'',data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+''"
-                                               th:text="${grade?.value}"></a>
-                                        </td>
-                                    </span>
-                                </tr>
-                                </tbody>
-                            </table>
+
+                            <span th:each="grade : ${grades}" th:if="${grade.subjectName} == ${subject.name}">
+                                <a data-toggle="modal" class="open-gradeDialogModal btn btn-info btn-lg" href="#gradeModal"
+                                   th:attr="data-date=''+${grade.date}+'', data-target='#gradeModal', data-value=''+${grade.value}+'', data-weight=''+${grade.weight}+'',
+                                        data-subject=''+${grade.subjectName}+'', data-teacher=''+${grade.teacherName}+'',data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+''"
+                                   th:text="${grade?.value}">
+                                </a>
+                            </span>
+
 
                             <div class="modal fade" id="gradeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -108,6 +94,10 @@ The above copyright notice and this permission notice shall be included in all c
                                                                 <tr>
                                                                     <td>Ocena: </td>
                                                                     <td id="gradeValue"></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Waga: </td>
+                                                                    <td id="gradeWeight"></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Przedmiot: </td>
@@ -370,6 +360,7 @@ The above copyright notice and this permission notice shall be included in all c
 <script>
     $(document).on("click", ".open-gradeDialogModal", function () {
         var gradeValue = $(this).data('value');
+        var gradeWeight = $(this).data('weight');
         var gradeSubject = $(this).data('subject');
         var gradeTeacher = $(this).data('teacher');
         var gradeStudent = $(this).data('student');
@@ -379,6 +370,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 
         var gradeValueElem = document.getElementById("gradeValue");
+        var gradeWeightElem = document.getElementById("gradeWeight");
         var gradeSubjectElem = document.getElementById("gradeSubject");
         var gradeTeacherElem = document.getElementById("gradeTeacher");
         var gradeStudentElem = document.getElementById("gradeStudent")
@@ -387,6 +379,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 
         gradeValueElem.innerHTML = gradeValue;
+        gradeWeightElem.innerHTML = gradeWeight;
         gradeSubjectElem.innerHTML = gradeSubject;
         gradeTeacherElem.innerHTML = gradeTeacher;
         gradeStudentElem.innerHTML = gradeStudent;
