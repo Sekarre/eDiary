@@ -9,6 +9,7 @@ import com.ediary.domain.Grade;
 import com.ediary.domain.timetable.Timetable;
 import com.ediary.services.StudentService;
 import com.ediary.services.SubjectService;
+import com.ediary.services.WeeklyAttendancesService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -33,9 +34,10 @@ class StudentControllerTest {
 
     @Mock
     StudentService studentService;
-
     @Mock
     SubjectService subjectService;
+    @Mock
+    WeeklyAttendancesService weeklyAttendancesService;
 
     @Mock
     UserToUserDto userToUserDto;
@@ -47,7 +49,7 @@ class StudentControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        studentController = new StudentController(studentService, subjectService, userToUserDto);
+        studentController = new StudentController(studentService, subjectService, weeklyAttendancesService, userToUserDto);
         mockMvc = MockMvcBuilders.standaloneSetup(studentController).build();
     }
 

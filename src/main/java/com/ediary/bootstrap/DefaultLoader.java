@@ -101,7 +101,7 @@ public class DefaultLoader implements CommandLineRunner {
     private final String[] studentNames = {"Dagmara", "Daniel", "Alicja", "Olgierd", "Kamil",
             "Olga", "Michał", "Piotr", "Adrian", "Adam",
             "Dominika", "Kinga", "Weronika", "Daniel", "Damian",
-            "Natalia", "Konrad", "Aleksandra", "Aneta", "Mateusz"
+            "Natalia", "Ojczyznosław", "Aleksandra", "Aneta", "Mateusz"
 
     };
     private final String[] studentLastNames = {"Lis", "Mazur", "Skrzeczkowska", "Szymczak", "Kubiak",
