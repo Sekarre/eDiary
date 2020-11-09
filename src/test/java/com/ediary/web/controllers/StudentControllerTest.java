@@ -58,13 +58,22 @@ class StudentControllerTest {
                 GradeDto.builder().id(2L).value("2").build()
         ));
 
+        when(studentService.listSubjects(studentId)).thenReturn(Arrays.asList(
+                SubjectDto.builder().id(1L).build(),
+                SubjectDto.builder().id(2L).build(),
+                SubjectDto.builder().id(3L).build()
+        ));
+
         mockMvc.perform(get("/student/" + studentId + "/grade"))
                 .andExpect(status().isOk())
+                .andExpect(model().attributeExists("subjects"))
                 .andExpect(model().attributeExists("grades"))
                 .andExpect(view().name("student/allGrades"));
 
         verify(studentService).listGrades(studentId);
+        verify(studentService).listSubjects(studentId);
         assertEquals(2, studentService.listGrades(studentId).size());
+        assertEquals(3, studentService.listSubjects(studentId).size());
     }
 
     @Test

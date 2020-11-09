@@ -36,39 +36,34 @@ class StudentServiceImplTest {
 
     @Mock
     TimetableService timetableService;
-
     @Mock
     EventService eventService;
 
     @Mock
     GradeRepository gradeRepository;
-
     @Mock
     AttendanceRepository attendanceRepository;
-
     @Mock
     BehaviorRepository behaviorRepository;
-
     @Mock
     StudentRepository studentRepository;
-
     @Mock
     EventRepository eventRepository;
+    @Mock
+    SubjectRepository subjectRepository;
 
     @Mock
     GradeToGradeDto gradeToGradeDto;
-
     @Mock
     AttendanceToAttendanceDto attendanceToAttendanceDto;
-
     @Mock
     BehaviorToBehaviorDto behaviorToBehaviorDto;
-
     @Mock
     EventToEventDto eventToEventDto;
-
     @Mock
     StudentToStudentDto studentToStudentDto;
+    @Mock
+    SubjectToSubjectDto subjectToSubjectDto;
 
     StudentService studentService;
 
@@ -78,8 +73,8 @@ class StudentServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         studentService = new StudentServiceImpl(timetableService,eventService, gradeRepository, attendanceRepository,
-                behaviorRepository, studentRepository, eventRepository, gradeToGradeDto, attendanceToAttendanceDto,
-                behaviorToBehaviorDto, eventToEventDto, studentToStudentDto);
+                behaviorRepository, studentRepository, eventRepository,subjectRepository,
+                gradeToGradeDto, attendanceToAttendanceDto, behaviorToBehaviorDto, eventToEventDto, studentToStudentDto, subjectToSubjectDto);
 
         gradeReturned = Grade.builder().id(gradeId).value(value).build();
     }
@@ -96,6 +91,28 @@ class StudentServiceImplTest {
         assertEquals(gradeId, grades.get(0).getId());
         verify(gradeRepository, times(1)).findAllByStudentId(anyLong());
         verify(gradeToGradeDto, times(1)).convert(gradeReturned);
+    }
+
+
+    @Test
+    void listSubjects(){
+        Student student = Student.builder().id(studentId).build();
+
+        when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
+        when(subjectRepository.findAllBySchoolClass_Students(student)).thenReturn(Arrays.asList(
+                Subject.builder().id(1L).build(),
+                Subject.builder().id(2L).build()
+        ));
+
+        when(subjectToSubjectDto.convert(any(Subject.class))).thenReturn(SubjectDto.builder().id(1L).build());
+
+        List<SubjectDto> subjects = studentService.listSubjects(studentId);
+
+        assertEquals(2, subjects.size());
+        assertEquals(1L, subjects.get(0).getId());
+        verify(studentRepository, times(1)).findById(studentId);
+        verify(subjectRepository, times(1)).findAllBySchoolClass_Students(student);
+        verify(subjectToSubjectDto, times(2)).convert(any(Subject.class));
     }
 
     @Test

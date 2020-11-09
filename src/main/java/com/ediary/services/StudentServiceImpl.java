@@ -33,12 +33,14 @@ public class StudentServiceImpl implements StudentService {
     private final BehaviorRepository behaviorRepository;
     private final StudentRepository studentRepository;
     private final EventRepository eventRepository;
+    private final SubjectRepository subjectRepository;
 
     private final GradeToGradeDto gradeToGradeDto;
     private final AttendanceToAttendanceDto attendanceToAttendanceDto;
     private final BehaviorToBehaviorDto behaviorToBehaviorDto;
     private final EventToEventDto eventToEventDto;
     private final StudentToStudentDto studentToStudentDto;
+    private final SubjectToSubjectDto subjectToSubjectDto;
 
 
     @Override
@@ -54,6 +56,15 @@ public class StudentServiceImpl implements StudentService {
         return gradeRepository.findAllByStudentIdAndSubjectId(studentId, subjectId)
                 .stream()
                 .map(gradeToGradeDto::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SubjectDto> listSubjects(Long studentId) {
+        Student student = getStudentById(studentId);
+        return subjectRepository.findAllBySchoolClass_Students(student)
+                .stream()
+                .map(subjectToSubjectDto::convert)
                 .collect(Collectors.toList());
     }
 

@@ -11,6 +11,7 @@ public interface StudentService {
 
     List<GradeDto> listGrades(Long studentId);                 //Wszystkie oceny
     List<GradeDto> listGrades(Long studentId, Long subjectId); //Oceny wedlug przedmiotu
+    List<SubjectDto> listSubjects(Long studentId);
     List<AttendanceDto> listAttendances(Long studentId);
     List<BehaviorDto> listBehaviors(Long studentId);
     List<EventDto> listEvents(Long studentId, Integer page, Integer size);
