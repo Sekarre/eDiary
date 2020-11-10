@@ -3,7 +3,6 @@ package com.ediary.web.controllers;
 import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.*;
-import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.domain.security.User;
 import com.ediary.services.FormTutorService;
 import com.ediary.services.TeacherService;
@@ -16,14 +15,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.util.DateUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -465,7 +461,7 @@ public class TeacherController {
     public String getSubjects(@PathVariable Long teacherId, Model model) {
 
         model.addAttribute("subjects", teacherService.listSubjects(teacherId));
-        return "/teacher/subject";
+        return "/teacher/allSubject";
     }
 
     @GetMapping("/{teacherId}/subject/{subjectId}")

@@ -653,7 +653,7 @@ class TeacherControllerTest {
         mockMvc.perform(get("/teacher/" + teacherId + "/subject"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("subjects"))
-                .andExpect(view().name("/teacher/subject"));
+                .andExpect(view().name("/teacher/allSubject"));
 
         verify(teacherService, times(1)).listSubjects(teacherId);
         assertEquals(2, teacherService.listSubjects(teacherId).size());
