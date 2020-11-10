@@ -117,24 +117,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td th:text="${attendance?.lessonDto?.date}">
                                                         Data
                                                     </td>
-                                                    <th:block>
-                                                        <td th:if="${attendance.status.name() eq 'PRESENT'}">
-                                                            Obecny
-                                                        </td>
-                                                        <td th:if="${attendance.status.name() eq 'ABSENT'} " th:style="'color: red'">
-                                                            Nieobecny
-                                                        </td>
-                                                        <td th:if="${attendance.status.name() eq 'LATE'}" >
-                                                            Spóźniony
-                                                        </td>
-                                                        <td th:if="${attendance.status.name() eq 'EXCUSED'}" >
-                                                            Usprawiedliwiony
-                                                        </td>
-                                                        <td th:if="${attendance.status.name() eq 'UNEXCUSED'}">
-                                                            Nieusprawiedliwiony
-                                                        </td>
-                                                    </th:block>
-
+                                                    <td th:text="${attendance?.status?.getTranslatedName()}" th:styleappend="${attendance.status.name() eq 'ABSENT'} ? 'color: red' : ''"></td>
 
                                                     <td th:if="${attendance?.isExcuseSent == false} and ${attendance?.status.name() eq 'ABSENT'}">
                                                         <div class="form-check">

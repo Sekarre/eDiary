@@ -120,7 +120,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                 15:30
                                             </td>
                                             <td class="agenda-time" th:text="${event.teacherName}">Nauczyciel</td>
-                                            <td class="agenda-time" th:text="${event.type.name()}">Rodzaj</td>
+                                            <td class="agenda-time" th:text="${event.type.getTranslatedName()}">Rodzaj</td>
                                             <td class="agenda-events">
                                                 <div class="agenda-event">
                                                     <i class="glyphicon glyphicon-repeat" th:text="${event.description}"></i>
