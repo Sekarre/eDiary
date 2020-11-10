@@ -29,9 +29,18 @@ The above copyright notice and this permission notice shall be included in all c
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
 
-<!--    calendar test-->
-    <script src="https://unpkg.com/js-year-calendar@latest/dist/js-year-calendar.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/js-year-calendar@latest/dist/js-year-calendar.min.css" />
+    <style>
+        .timetable { }
+        .timetable-workout { font-size: 12px; text-transform: uppercase;letter-spacing: 1px; background-color: rgb(202, 82, 229);}
+        .timetable-size{ height: 80px; }
+        .timetable-workout,.timetable.table>tbody>tr>td { color: #fff; }
+        .timetable,.table>tbody>tr>th { font-size: 14px; text-transform: uppercase; letter-spacing: 1px;}
+        .timetable,.table>thead>tr>th { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .table { width: 100%; max-width: 100%; margin-bottom: 1rem; }
+        .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th { border-top: transparent; color: #26282c; border-bottom: 1px solid #eee;}
+        .table thead th { vertical-align: bottom; border-bottom: 2px solid #eee; margin-top: 3px; }
+        .table-striped tbody tr:nth-of-type(odd) { background-color: hsl(224, 100%, 99%); }
+    </style>
 </head>
 
 <body class="">
@@ -46,7 +55,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" th:href="@{/user/{id}/readMessages(id=${user.id})}">Plon</a>
+                    <a class="navbar-brand">Plan zajęć</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -62,26 +71,35 @@ The above copyright notice and this permission notice shall be included in all c
             <div class="container-fluid">
                         <div class="card">
                             <div class="card-header card-header-primary">
-                                <h4 class="card-title ">Plon zojeńć</h4>
+                                <h4 class="card-title ">Plan zajęć</h4>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
+                                    <table class="timetable table table-bordered" >
+                                        <tr class="text-center">
+                                            <th scope="col">Lp. </th>
+                                            <th scope="col">Godzina: </th>
+                                            <th scope="col">Poniedziałek</th>
+                                            <th scope="col">Wtorek</th>
+                                            <th scope="col">Środa</th>
+                                            <th scope="col">Czwartek</th>
+                                            <th scope="col">Piątek</th>
+                                            <th scope="col">Sobota</th>
+                                            <th scope="col">Niedziela</th>
 
-<!--                                        /*@thymesVar id="timetable" type="com.ediary.domain.timetable.Timetable"*/-->
-                                        <tr th:each="timetable : ${timetable?.schedule}">
-                                            <th th:text="${timetable?.key?.name}">day</th>
-                                            <table>
-                                                <tr th:each="hour : ${timetable.value}">
-                                                    <td th:text="${hour?.duration?.number}">Some name</td>
-                                                    <td th:text="${hour?.duration?.startTime}">Some name</td>
-                                                    <td th:text=" '  -  ' "></td>
-                                                    <td th:text="${hour?.duration?.endTime}">Some name</td>
-                                                    <td th:text="'     '"></td>
-                                                    <td th:text="${hour?.subject?.name}">Some name</td>
-                                                    <td th:text="${hour?.teacher?.user?.firstName}">Some name</td>
-                                                </tr>
-                                            </table>
                                         </tr>
+                                        <tbody>
+                                        <th:block th:each="schedule : ${timetable?.schedule}">
+                                            <tr th:each="time : ${schedule?.key}">
+                                                <th scope="row" class="text-center thead-light" th:text="${time?.number + 1}"></th>
+                                                <th class="text-center thead-light" th:text="${#temporals.format(time?.startTime, 'hh:mm')} + '-' + ${#temporals.format(time?.endTime, 'hh:mm')}" ></th>
+                                                <th:block th:each="dur : ${schedule?.value}">
+                                                    <td th:if="${durStat.index < 7}" th:classappend="${dur.subject != null} ? 'timetable-workout' : ''" class="text-center timetable-size" th:text="${dur?.subject?.name}">Some name</td>
+                                                </th:block>
+                                            </tr>
+                                        </th:block>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -90,8 +108,6 @@ The above copyright notice and this permission notice shall be included in all c
         </div>
     </div>
 
-</div>
-</div>
 
 <!--   Core JS Files   -->
 <script th:src="@{/js/core/jquery.min.js}"></script>

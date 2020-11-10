@@ -18,7 +18,20 @@ public class Event {
     private Long id;
 
     public enum Type {
-        HOMEWORK, EXAM, TEST, OTHER
+        HOMEWORK("Praca domowa"),
+        EXAM("Sprawdzian"),
+        TEST("Kartkówka/Test"),
+        OTHER("Inne");
+
+        private final String translatedName;
+
+        Type(String name) {
+            this.translatedName = name;
+        }
+
+        public String getTranslatedName() {
+            return translatedName;
+        }
     }
 
     private String description;

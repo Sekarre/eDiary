@@ -18,6 +18,4 @@ public interface StudentService {
     Timetable getTimetableByStudentId(Long studentId);
     StudentDto findByUser(User user);
 
-    Map<Integer, String> getDayNames();
-    Map<Integer, String> getMonthsNames();
 }

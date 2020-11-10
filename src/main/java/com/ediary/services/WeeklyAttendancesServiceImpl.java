@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,14 +30,7 @@ public class WeeklyAttendancesServiceImpl implements WeeklyAttendancesService {
 
         Map<Date, Integer> attendancesNumber = new HashMap<>();
 
-        Map<Date, List<AttendanceDto>> attendancesByDays = new TreeMap<>((o1, o2) -> {
-            if (o1.getDate() == o2.getDate())
-                return 0;
-            else if (o1.getDate() > o2.getDate())
-                return 1;
-
-            return -1;
-        });
+        Map<Date, List<AttendanceDto>> attendancesByDays = new TreeMap<>();
 
         for (int i = 0; i < 7; i++) {
             List<Attendance> attendanceList = attendanceRepository.findAllByStudentIdAndLesson_Date(studentId, Date.valueOf(localDate));
