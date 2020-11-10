@@ -19,7 +19,21 @@ public class Attendance {
     private Long id;
 
     public enum Status {
-        PRESENT, ABSENT, LATE, EXCUSED, UNEXCUSED
+        PRESENT("Obecny"),
+        ABSENT("Nieobecny"),
+        LATE("Spóźniony"),
+        EXCUSED("Usprawiedliwiony"),
+        UNEXCUSED("Nieusprawiedliwiony");
+
+        private final String translatedName;
+
+        Status(String translatedName) {
+            this.translatedName = translatedName;
+        }
+
+        public String getTranslatedName() {
+            return translatedName;
+        }
     }
 
     @Enumerated(value = EnumType.STRING)

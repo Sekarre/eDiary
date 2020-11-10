@@ -33,11 +33,13 @@ public class TimetableServiceImpl implements TimetableService {
 
         List<Day> days = dayRepository.findAllByOrderByNumberAsc();
 
+        Set<Duration> durs = new HashSet<>(durationRepository.findAllByOrderByNumberAsc());
+
         List<SchoolPeriod> schoolPeriods = schoolPeriodRepository.findAllBySchoolClassId(classId);
 
-        TreeMap<Day, List<SchoolPeriod>> schedule = new TreeMap<>(new Comparator<Day>() {
+        TreeMap<Duration, List<SchoolPeriod>> schedule = new TreeMap<>(new Comparator<Duration>() {
             @Override
-            public int compare(Day o1, Day o2) {
+            public int compare(Duration o1, Duration o2) {
 
                 if (o1.getNumber() == o2.getNumber())
                     return 0;
@@ -48,17 +50,17 @@ public class TimetableServiceImpl implements TimetableService {
             }
         });
 
-        days.forEach(day -> {
+        durs.forEach(duration -> {
             List<SchoolPeriod> arrayList = Stream
                     .generate(SchoolPeriod::new)
                     .limit(durationsSize)
                     .collect(Collectors.toList());
 
-            schedule.put(day, arrayList);
+            schedule.put(duration, arrayList);
         });
 
         schoolPeriods.forEach(schoolPeriod -> {
-            schedule.get(schoolPeriod.getDay()).add(schoolPeriod.getDuration().getNumber() - 1, schoolPeriod);
+            schedule.get(schoolPeriod.getDuration()).add(schoolPeriod.getDay().getNumber(), schoolPeriod);
         });
 
         return Timetable.builder().durations(durations).schedule(schedule).build();

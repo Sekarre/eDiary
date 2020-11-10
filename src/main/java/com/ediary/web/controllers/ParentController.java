@@ -191,9 +191,7 @@ public class ParentController {
                                @RequestParam(name = "page", required = false) Optional<Integer> page,
                                Model model) {
 
-
-        model.addAttribute("monthNames", studentService.getMonthsNames());
-        model.addAttribute("dayNames", studentService.getDayNames());
+        
         model.addAttribute("page", page);
         model.addAttribute("events", studentService.listEvents(studentId, page.orElse(0), 10));
         return "parent/allEvents";

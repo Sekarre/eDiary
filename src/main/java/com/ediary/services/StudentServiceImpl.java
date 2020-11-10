@@ -114,37 +114,6 @@ public class StudentServiceImpl implements StudentService {
         return studentToStudentDto.convert(studentOptional.get());
     }
 
-    @Override
-    public Map<Integer, String> getDayNames() {
-        return new HashMap<>(){{
-            put(0, "Niedziela");
-            put(1, "Poniedziałek");
-            put(2, "Wtorek");
-            put(3, "Środa");
-            put(4, "Czwartek");
-            put(5, "Piątek");
-            put(6, "Sobota");
-        }};
-    }
-
-    @Override
-    public Map<Integer, String> getMonthsNames() {
-        return new HashMap<>(){{
-            put(0, "Styczeń");
-            put(1, "Luty");
-            put(2, "Marzec");
-            put(3, "Kwiecień");
-            put(4, "Maj");
-            put(5, "Czerwiec");
-            put(6, "Lipiec");
-            put(7, "Sierpień");
-            put(8, "Wrzesień");
-            put(9, "Październik");
-            put(10, "Listopad");
-            put(11, "Grudzień");
-        }};
-    }
-
     private Student getStudentById(Long studentId) {
         Optional<Student> studentOptional = studentRepository.findById(studentId);
 

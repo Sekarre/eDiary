@@ -16,5 +16,5 @@ import java.util.TreeMap;
 public class Timetable {
 
     private List<Duration> durations;
-    private TreeMap<Day, List<SchoolPeriod>> schedule;
+    private TreeMap<Duration, List<SchoolPeriod>> schedule;
 }
