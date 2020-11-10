@@ -156,7 +156,7 @@ public class DefaultLoader implements CommandLineRunner {
         createGrades();
         createTopics();
         createLessons();
-//        createBehaviors();
+        createBehaviors();
         createEvents();
 //        createReports();
 //        createStudentCards();
