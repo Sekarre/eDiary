@@ -2,9 +2,11 @@ package com.ediary.domain.timetable;
 
 import com.ediary.domain.SchoolPeriod;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.Set;
 
 @Setter
@@ -20,8 +22,10 @@ public class Duration {
     private Long id;
 
     private int number;
-    private Time startTime;
-    private Time endTime;
+    @DateTimeFormat(pattern = "hh:mm")
+    private LocalTime startTime;
+    @DateTimeFormat(pattern = "hh:mm")
+    private LocalTime endTime;
 
     @OneToMany(mappedBy = "duration", fetch = FetchType.EAGER)
     private Set<SchoolPeriod> schoolPeriods;

@@ -160,11 +160,11 @@ public class DefaultLoader implements CommandLineRunner {
         createEvents();
 //        createReports();
 //        createStudentCards();
-//        createDays();
-//        createClassrooms();
-//        createDurations();
-//        Uncomment for school periods
-  //      createSchoolPeriods();
+//        Uncomment all below for school periods
+        createDays();
+        createClassrooms();
+        createDurations();
+        createSchoolPeriods();
 
         log.debug("-------------- Bootstrap is done --------------");
     }
@@ -839,9 +839,12 @@ public class DefaultLoader implements CommandLineRunner {
         for (int i = 0; i < 8; i++) {
             durationRepository.save(Duration.builder()
                     .number(i)
-                    .startTime(Time.valueOf(startTime.plusMinutes(45L)))
-                    .endTime(Time.valueOf(endTime.plusMinutes(90L)))
+                    .startTime(startTime)
+                    .endTime(endTime)
                     .build());
+
+            startTime = endTime.plusMinutes(45L);
+            endTime = endTime.plusMinutes(90L);
         }
     }
 
@@ -850,9 +853,9 @@ public class DefaultLoader implements CommandLineRunner {
     private void createSchoolPeriods() {
         int numberOfDays = 5;
         int[][] durationNumbers = {
-                {1,3,5},
+                {0,3,5},
                 {1,2,3,4,5,6},
-                {1,2,3,4,5},
+                {0,2,3,4,5},
                 {1,2,3},
                 {1,3,4}
         };
