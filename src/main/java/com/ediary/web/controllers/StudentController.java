@@ -4,6 +4,7 @@ import com.ediary.domain.security.User;
 import com.ediary.services.SubjectService;
 import com.ediary.services.WeeklyAttendancesService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -6,6 +6,7 @@ import com.ediary.domain.Attendance;
 import com.ediary.domain.Behavior;
 import com.ediary.domain.Event;
 import com.ediary.domain.Grade;
+import com.ediary.domain.helpers.WeeklyAttendances;
 import com.ediary.domain.timetable.Timetable;
 import com.ediary.services.StudentService;
 import com.ediary.services.SubjectService;
@@ -17,6 +18,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -105,15 +108,15 @@ class StudentControllerTest {
     @Test
     void getAllAttendances() throws Exception {
 
-        when(studentService.listAttendances(studentId)).thenReturn(Arrays.asList(AttendanceDto.builder().id(1L).build()));
+        when(weeklyAttendancesService.getAttendancesByWeek(studentId,7, Date.valueOf(LocalDate.now().minusDays(6))))
+                .thenReturn(WeeklyAttendances.builder().build());
 
         mockMvc.perform(get("/student/" + studentId + "/attendance"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("attendances"))
+                .andExpect(model().attributeExists("weeklyAttendances"))
                 .andExpect(view().name("student/allAttendances"));
 
-        verify(studentService).listAttendances(studentId);
-        assertEquals(1, studentService.listAttendances(studentId).size());
+        verify(weeklyAttendancesService).getAttendancesByWeek(studentId,7, Date.valueOf(LocalDate.now().minusDays(6)));
     }
 
     @Test
