@@ -27,7 +27,7 @@ public class HeadmasterController {
     private final UserToUserDto userToUserDto;
 
     @ModelAttribute
-    public void addAuthenticatedUserAndParent(@AuthenticationPrincipal User user, Model model) {
+    public void addAuthenticatedUser(@AuthenticationPrincipal User user, Model model) {
         model.addAttribute("user", userToUserDto.convert(user));
     }
 
@@ -49,6 +49,11 @@ public class HeadmasterController {
 
 
         });
+    }
+
+    @GetMapping("/home")
+    public String home() {
+        return "headmaster/index";
     }
 
 

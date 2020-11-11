@@ -220,7 +220,6 @@ public class DefaultLoader implements CommandLineRunner {
                 .username("user")
                 .password(passwordEncoder.encode("user")).build());
 
-        //todo: username, password (with encoder)
 
         //Students
         for (int i = 0; i < studentNames.length; i++) {
@@ -257,6 +256,14 @@ public class DefaultLoader implements CommandLineRunner {
                     .address(addressRepository.findById(addressId++).orElse(null))
                     .build());
         }
+
+        userRepository.save(User.builder()
+                .firstName("DeputyHead")
+                .lastName("DeputyHead")
+                .role(roleRepository.findByName(DEPUTY_HEAD_ROLE).orElse(null))
+                .username("deputy")
+                .password(passwordEncoder.encode("deputy")).build());
+
 
         firstUserAsStudentId = userRepository.findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId();
         firstUserAsParentId = userRepository.findByFirstNameAndLastName(parentNames[0], parentLastNames[0]).getId();

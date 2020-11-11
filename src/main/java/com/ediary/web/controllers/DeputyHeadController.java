@@ -28,7 +28,7 @@ public class DeputyHeadController {
     private final UserToUserDto userToUserDto;
 
     @ModelAttribute
-    public void addAuthenticatedUserAndParent(@AuthenticationPrincipal User user, Model model) {
+    public void addAuthenticatedUser(@AuthenticationPrincipal User user, Model model) {
         model.addAttribute("user", userToUserDto.convert(user));
     }
 
@@ -49,6 +49,7 @@ public class DeputyHeadController {
 
         return "deputyHead/index";
     }
+
 
 
     @GetMapping("/newClass")

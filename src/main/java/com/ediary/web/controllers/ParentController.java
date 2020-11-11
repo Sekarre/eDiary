@@ -45,7 +45,7 @@ public class ParentController {
         try {
             Long studentId = Long.parseLong(studentIdCookie);
             parentService.findStudent(user, studentId);
-            model.addAttribute("student", StudentDto.builder().id(88L).build());
+            model.addAttribute("student", StudentDto.builder().id(studentId).build());
         } catch (Exception e) {
 
         }
