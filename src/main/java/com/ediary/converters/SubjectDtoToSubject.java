@@ -48,18 +48,21 @@ public class SubjectDtoToSubject implements Converter<SubjectDto, Subject> {
         }
 
         //Class
-        Optional<Class> classOptional = classRepository.findById(source.getClassId());
-        if (classOptional.isPresent()) {
-            subject.setSchoolClass(classOptional.get());
+        if (source.getClassId() != null) {
+            Optional<Class> classOptional = classRepository.findById(source.getClassId());
+            if (classOptional.isPresent()) {
+                subject.setSchoolClass(classOptional.get());
+            }
         }
 
-
         //Lessons
-        subject.setLessons(new HashSet<>(lessonRepository.findAllById(source.getLessonsId())));
-
+        if (source.getLessonsId() != null) {
+            subject.setLessons(new HashSet<>(lessonRepository.findAllById(source.getLessonsId())));
+        }
         //Topic
-        subject.setTopics(new HashSet<>(topicRepository.findAllById(source.getTopicsId())));
-
+        if (source.getTopicsId() != null) {
+            subject.setTopics(new HashSet<>(topicRepository.findAllById(source.getTopicsId())));
+        }
         return subject;
     }
 }

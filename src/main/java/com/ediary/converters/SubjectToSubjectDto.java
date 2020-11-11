@@ -43,6 +43,7 @@ public class SubjectToSubjectDto implements Converter<Subject, SubjectDto> {
         }
 
         //Lessons
+        if(source.getLessons() != null){
             subjectDto.setLessonsName(source.getLessons().stream()
                     .map(Lesson::getName)
                     .collect(Collectors.toList()));
@@ -50,17 +51,19 @@ public class SubjectToSubjectDto implements Converter<Subject, SubjectDto> {
             subjectDto.setLessonsId(source.getLessons().stream()
                     .map(Lesson::getId)
                     .collect(Collectors.toList()));
+        }
+
 
         //Topic
-        subjectDto.setTopicsName(source.getTopics().stream()
-                .map(Topic::getName)
-                .collect(Collectors.toList()));
+        if(source.getTopics() != null) {
+            subjectDto.setTopicsName(source.getTopics().stream()
+                    .map(Topic::getName)
+                    .collect(Collectors.toList()));
 
-        subjectDto.setTopicsId(source.getTopics().stream()
-                .map(Topic::getId)
-                .collect(Collectors.toList()));
-
-
+            subjectDto.setTopicsId(source.getTopics().stream()
+                    .map(Topic::getId)
+                    .collect(Collectors.toList()));
+        }
 
         return subjectDto;
     }

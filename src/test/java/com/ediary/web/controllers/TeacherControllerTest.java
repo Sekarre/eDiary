@@ -653,7 +653,7 @@ class TeacherControllerTest {
         mockMvc.perform(get("/teacher/" + teacherId + "/subject"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("subjects"))
-                .andExpect(view().name("/teacher/allSubject"));
+                .andExpect(view().name("/teacher/subject/allSubject"));
 
         verify(teacherService, times(1)).listSubjects(teacherId);
         assertEquals(2, teacherService.listSubjects(teacherId).size());
@@ -684,7 +684,7 @@ class TeacherControllerTest {
         mockMvc.perform(get("/teacher/" + teacherId + "/subject/new"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("subject"))
-                .andExpect(view().name("/teacher/subject/new"));
+                .andExpect(view().name("/teacher/subject/newSubject"));
 
         verify(teacherService, times(1)).initNewSubject(teacherId);
     }
