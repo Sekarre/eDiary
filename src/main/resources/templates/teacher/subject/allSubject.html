@@ -54,11 +54,26 @@ The above copyright notice and this permission notice shall be included in all c
         <!-- End Navbar -->
         <div class="content">
             <div class="container-fluid">
+                <div class="row justify-content-md-center">
+                    <div class="col-lg-10 col-md-10 col-sm-12">
+                        <a href="#" class="card card-stats">
+                            <div class="card-header card-header-primary card-header-icon" >
+                                <div class="card-icon">
+                                    <i class="material-icons">add_circle</i>
+                                </div>
+                                <h2 class="card-title">Dodaj</h2>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
                 <div th:each="subject : ${subjects}" class="row justify-content-md-center">
-
-                    <div class="col-lg-8 col-md-10 col-sm-12">
+                    <div class="col-lg-10 col-md-10 col-sm-12">
                         <a href="#" class="card">
-
                             <div class="card-header card-header-warning card-header-icon" >
                                 <div class="card-text float-left">
                                     <h2 th:text="${subject.className}"></h2>
@@ -72,7 +87,6 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                         </a>
                     </div>
-
                 </div>
             </div>
             <footer class="footer">
