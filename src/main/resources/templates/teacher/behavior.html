@@ -60,32 +60,27 @@ The above copyright notice and this permission notice shall be included in all c
                     <div class="col-md-8">
 
                         <div class="card">
-                            <div class="card-header card-header-primary">
-                                <h4 class="card-title ">Uwagi</h4>
+                            <div class="card-header card-header-primary float-left">
+                                <div class="card-header text-left float-left">
+                                    <h4 class="card-title ">Uwagi</h4>
+                                </div>
+                                <div class="card-header text-right float-right">
+                                    <a th:href="@{'/teacher/' + ${teacher.id} + '/behavior/new'}">
+                                        <h4 class="card-title">Dodaj uwagę</h4>
+                                    </a>
+                                </div>
                             </div>
 
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class=" text-primary">
-                                        <th>
-                                            Data
-                                        </th>
-                                        <th>
-                                            Nauczyciel
-                                        </th>
-                                        <th>
-                                            Student
-                                        </th>
-                                        <th>
-                                            Ocena
-                                        </th>
-                                        <th>
-                                            Treść
-                                        </th>
-                                        <th>
-
-                                        </th>
+                                        <th>Data</th>
+                                        <th>Nauczyciel</th>
+                                        <th>Student</th>
+                                        <th>Ocena</th>
+                                        <th>Treść</th>
+                                        <th></th>
                                         </thead>
                                         <tbody>
 
@@ -105,11 +100,13 @@ The above copyright notice and this permission notice shall be included in all c
                                             <td th:text="${behavior?.content}">
                                                 Treść
                                             </td>
-                                            <td><a th:href="@{'/teacher/' + ${teacher.id} + '/behavior'}">
-                                                Czytaj..</a>
-                                                <a th:href="@{'/teacher/' + ${teacher.id} + '/behavior/update'}">
-                                                    Edytuj
+                                            <td>
+                                                <a th:href="@{'javascript:showHideContent(&quot;content' + ${behavior.id} + '&quot;)'}">
+                                                    <button class="btn btn-primary btn-primary btn-fab-mini btn-round">
+                                                        <i class="material-icons">read_more</i>
+                                                    </button>
                                                 </a>
+
                                             </td>
                                         </tr>
                                         </tbody>
@@ -118,28 +115,12 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-lg-3 col-md-6 col-sm-6">
-                        <div class="card card-stats">
-                            <a th:href="@{'/teacher/' + ${teacher.id} + '/behavior/new'}">
-                                <div class="card-header card-header-primary card-header-icon">
-                                    <div class="card-icon">
-                                        <i class="material-icons">send</i>
-                                    </div>
-                                    <h3 class="card-title">Dodaj uwagę</h3>
-                                </div>
-                            </a>
-                            <div class="card-footer">
-                                <div class="stats">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
             <footer class="footer">
             </footer>
+
+
         </div>
     </div>
 
@@ -355,6 +336,16 @@ The above copyright notice and this permission notice shall be included in all c
                 });
             });
         });
+    </script>
+    <script>
+        function showHideContent(contentId) {
+            var x = document.getElementById(contentId);
+            if (x.classList.contains('textOverflowCustom')) {
+                x.classList.remove('textOverflowCustom');
+            } else {
+                x.classList.add('textOverflowCustom');
+            }
+        }
     </script>
 </body>
 

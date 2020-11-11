@@ -186,7 +186,8 @@ public class TeacherController {
         } else {
             BehaviorDto behavior = teacherService.updatePutBehavior(behaviorDto);
             //TODO zalezy od widoku
-            return "/" + teacherId + "/behavior/" + behavior.getId();
+            //return "/" + teacherId + "/behavior/" + behavior.getId();
+            return "redirect:/teacher/" + teacherId + "/behavior";
         }
     }
 
@@ -199,7 +200,8 @@ public class TeacherController {
         } else {
             BehaviorDto behavior = teacherService.updatePatchBehavior(behaviorDto);
             //TODO zalezy od widoku
-            return "/" + teacherId + "/behavior/" + behavior.getId();
+            //return "/" + teacherId + "/behavior/" + behavior.getId();
+            return "redirect:/teacher/" + teacherId + "/behavior";
         }
     }
 
