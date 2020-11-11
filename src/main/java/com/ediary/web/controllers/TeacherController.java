@@ -463,7 +463,7 @@ public class TeacherController {
     public String getSubjects(@PathVariable Long teacherId, Model model) {
 
         model.addAttribute("subjects", teacherService.listSubjects(teacherId));
-        return "/teacher/allSubject";
+        return "/teacher/subject/allSubject";
     }
 
     @GetMapping("/{teacherId}/subject/{subjectId}")
@@ -477,12 +477,13 @@ public class TeacherController {
     public String newSubject(@PathVariable Long teacherId, Model model) {
 
         model.addAttribute("subject", teacherService.initNewSubject(teacherId));
-        return "/teacher/subject/new";
+        model.addAttribute("schoolClasses", teacherService.listAllClasses());
+        return "/teacher/subject/newSubject";
     }
 
     @PostMapping("/{teacherId}/subject/new")
     public String processNewSubject(@PathVariable Long teacherId,
-                                    @Valid @RequestBody SubjectDto subject,
+                                    @Valid @ModelAttribute SubjectDto subject,
                                     BindingResult result) {
         if (result.hasErrors()) {
             //TODO
