@@ -1,6 +1,7 @@
 package com.ediary.converters;
 
 import com.ediary.DTO.ClassDto;
+import com.ediary.DTO.StudentDto;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -41,11 +44,18 @@ public class ClassToClassDto implements Converter<Class, ClassDto> {
         //Parent Council
         classDto.setParentCouncilId(source.getParentCouncil().getId());
 
-        //Students
-        classDto.setStudents(source.getStudents()
-                .stream()
-                .map(studentToStudentDto::convert)
-                .collect(Collectors.toList()));
+        if (source.getStudents() != null) {
+            //Students sorted by last name
+            classDto.setStudents(source.getStudents()
+                    .stream()
+                    .map(studentToStudentDto::convert)
+                    .sorted(Comparator
+                            .comparing(studentDto ->
+                                    Arrays.stream(studentDto
+                                            .getUserName()
+                                            .split(" ")).skip(1).findFirst().get()))
+                    .collect(Collectors.toList()));
+        }
 
         //Events
         classDto.setEventsId(source.getEvents().stream()
