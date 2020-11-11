@@ -665,13 +665,19 @@ class TeacherControllerTest {
         Long subjectId = 2L;
 
         when(teacherService.getSubjectById(teacherId, subjectId)).thenReturn(SubjectDto.builder().id(subjectId).build());
+        when(teacherService.listTopics(teacherId, subjectId)).thenReturn(Arrays.asList(
+                TopicDto.builder().id(1L).build(),
+                TopicDto.builder().id(1L).build()
+        ));
 
         mockMvc.perform(get("/teacher/" + teacherId + "/subject/" + subjectId))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("subject"))
-                .andExpect(view().name("/teacher/subject/" + subjectId));
+                .andExpect(model().attributeExists("topics"))
+                .andExpect(view().name("/teacher/subject/subject"));
 
         verify(teacherService, times(1)).getSubjectById(teacherId, subjectId);
+        verify(teacherService, times(1)).listTopics(teacherId, subjectId);
     }
 
     @Test

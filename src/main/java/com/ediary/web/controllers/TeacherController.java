@@ -470,7 +470,8 @@ public class TeacherController {
     public String getSubject(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
 
         model.addAttribute("subject", teacherService.getSubjectById(teacherId, subjectId));
-        return "/teacher/subject/" + subjectId;
+        model.addAttribute("topics", teacherService.listTopics(teacherId, subjectId));
+        return "/teacher/subject/subject";
     }
 
     @GetMapping("/{teacherId}/subject/new")
