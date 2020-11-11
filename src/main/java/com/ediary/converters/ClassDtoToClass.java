@@ -1,6 +1,7 @@
 package com.ediary.converters;
 
 import com.ediary.DTO.ClassDto;
+import com.ediary.DTO.StudentDto;
 import com.ediary.domain.Class;
 import com.ediary.domain.SchoolPeriod;
 import com.ediary.repositories.*;
@@ -11,6 +12,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -23,6 +25,9 @@ public class ClassDtoToClass implements Converter<ClassDto, Class> {
     private final StudentRepository studentRepository;
     private final SchoolPeriodRepository schoolPeriodRepository;
     private final LessonRepository lessonRepository;
+
+    private final StudentDtoToStudent studentDtoToStudent;
+
 
     @Override
     @Nullable
@@ -47,7 +52,10 @@ public class ClassDtoToClass implements Converter<ClassDto, Class> {
         schoolClass.setParentCouncil(parentCouncilRepository.findById(source.getParentCouncilId()).orElse(null));
 
         //Students
-        schoolClass.setStudents(new HashSet<>(studentRepository.findAllById(source.getStudentsId())));
+        schoolClass.setStudents(source.getStudents()
+                .stream()
+                .map(studentDtoToStudent::convert)
+                .collect(Collectors.toSet()));
 
         //Events
         schoolClass.setEvents(new HashSet<>(eventRepository.findAllById(source.getEventsId())));
