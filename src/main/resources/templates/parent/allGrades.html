@@ -60,14 +60,18 @@ The above copyright notice and this permission notice shall be included in all c
         <div class="content">
             <div th:each="subject : ${subjects}" class="container-fluid">
                 <div class="card">
-                    <div class="card-header-pills card-header-primary">
-                        <h3 class="card-title" th:text="${subject.name}"></h3>
+                    <div class="card-header card-header-text card-header-primary">
+                        <div class="card-text col-md-3" >
+                            <h4 class="card-title">
+                                <a th:href="@{/parent/{parentId}/{studentId}/grade/subject/{subjectId}(parentId=${parent.id}, studentId=${studentId}, subjectId=${subject.id})}"  th:text="${subject.name}"></a>
+                            </h4>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
 
                             <span th:each="grade : ${grades}" th:if="${grade.subjectName} == ${subject.name}">
-                                <a data-toggle="modal" class="open-gradeDialogModal btn btn-info btn-lg" href="#gradeModal"
+                                <a data-toggle="modal" class="open-gradeDialogModal btn btn-info" href="#gradeModal"
                                    th:attr="data-date=''+${grade.date}+'', data-target='#gradeModal', data-value=''+${grade.value}+'', data-weight=''+${grade.weight}+'',
                                         data-subject=''+${grade.subjectName}+'', data-teacher=''+${grade.teacherName}+'',data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+''"
                                    th:text="${grade?.value}">
