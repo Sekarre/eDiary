@@ -502,6 +502,16 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/subject";
     }
 
+    @GetMapping("/{teacherId}/subject/{subjectId}/update")
+    public String updateSubject(@PathVariable Long teacherId,
+                                @PathVariable Long subjectId, Model model) {
+
+        model.addAttribute("subject", teacherService.getSubjectById(teacherId, subjectId));
+        model.addAttribute("schoolClasses", teacherService.listAllClasses());
+        return "/teacher/subject/updateSubject";
+
+    }
+
     @PutMapping("/{teacherId}/subject/update")
     public String updatePutSubject(@PathVariable Long teacherId,
                                    @Valid @RequestBody SubjectDto subjectDto, BindingResult result) {
@@ -515,14 +525,16 @@ public class TeacherController {
         }
     }
 
-    @PatchMapping("/{teacherId}/subject/update")
+    @PostMapping("/{teacherId}/subject/{subjectId}/update")
     public String updatePatchSubject(@PathVariable Long teacherId,
-                                     @Valid @RequestBody SubjectDto subjectDto,
+                                     @PathVariable Long subjectId,
+                                     @Valid @ModelAttribute SubjectDto subjectDto,
                                      BindingResult result) {
         if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
+            subjectDto.setId(subjectId);
             SubjectDto subject = teacherService.updatePatchSubject(subjectDto);
             //TODO zalezy od widoku
             return "redirect:/teacher/" + teacherId + "/subject";

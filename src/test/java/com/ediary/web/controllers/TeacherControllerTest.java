@@ -720,6 +720,23 @@ class TeacherControllerTest {
     }
 
     @Test
+    void updateSubject() throws Exception {
+        Long subjectId = 2L;
+
+        when(teacherService.getSubjectById(teacherId, subjectId)).thenReturn(SubjectDto.builder().build());
+        when(teacherService.listAllClasses()).thenReturn(Arrays.asList(ClassDto.builder().build()));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/subject/" + subjectId + "/update"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("subject"))
+                .andExpect(model().attributeExists("schoolClasses"))
+                .andExpect(view().name("/teacher/subject/updateSubject"));
+
+        verify(teacherService, times(1)).getSubjectById(teacherId, subjectId);
+        verify(teacherService, times(1)).listAllClasses();
+    }
+
+    @Test
     void updatePutSubject() throws Exception {
         Long subjectId = 3L;
 
@@ -738,11 +755,11 @@ class TeacherControllerTest {
     void updatePatchSubject() throws Exception {
         Long subjectId = 3L;
 
-        when(teacherService.updatePatchSubject(any())).thenReturn(SubjectDto.builder().build());
+        when(teacherService.updatePatchSubject(any())).thenReturn(SubjectDto.builder().id(subjectId).build());
 
-        mockMvc.perform(patch("/teacher/" + teacherId + "/subject/update")
+        mockMvc.perform(post("/teacher/" + teacherId + "/subject/" + subjectId + "/update")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(AbstractAsJsonControllerTest.asJsonString(SubjectDto.builder().build())))
+                .content(AbstractAsJsonControllerTest.asJsonString(SubjectDto.builder().id(subjectId).build())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject"));
 

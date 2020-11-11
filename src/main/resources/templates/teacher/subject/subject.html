@@ -63,7 +63,7 @@ The above copyright notice and this permission notice shall be included in all c
 
                         <div class="col-lg-4 col-md-6 col-sm-6">
                             <div class="card card-stats">
-                                <a th:href="@{/user/{id}/messages(id=${user.id})}">
+                                <a th:href="@{'/teacher/' + ${teacherId} + '/subject/' + ${subjectId} + '/update'}">
                                     <div class="card-header card-header-warning card-header-icon">
                                         <div class="card-icon">
                                             <i class="material-icons">edit</i>
@@ -75,7 +75,7 @@ The above copyright notice and this permission notice shall be included in all c
                         </div>
                         <div class="col-lg-4 col-md-6 col-sm-6">
                             <div class="card card-stats">
-                                <a th:href="@{/user/{id}/messages(id=${user.id})}">
+                                <a href="">
                                     <div class="card-header card-header-danger card-header-icon">
                                         <div class="card-icon">
                                             <i class="material-icons">delete_forever</i>
@@ -90,7 +90,17 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h3 class="card-title">Tematy</h3>
+                        <div class="float-left">
+                            <h3 class="card-title">Tematy</h3>
+                        </div>
+                        <div class="float-right">
+                            <a class="text-right" href="">
+                                <button rel="tooltip" class="btn btn-primary btn-success btn-fab-mini btn-round">
+                                    <i class="material-icons">add</i>
+                                </button>
+                            </a>
+                        </div>
+
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
