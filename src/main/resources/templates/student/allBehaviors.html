@@ -38,14 +38,14 @@ The above copyright notice and this permission notice shall be included in all c
 <body class="">
 <div class="wrapper ">
 
-    <div th:replace="fragments/sidebarParentStudent :: sidebar"></div>
+    <div th:replace="fragments/sidebarStudent :: sidebar"></div>
 
     <div class="main-panel">
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" href="#">Oceny:</a>
+                    <a class="navbar-brand">Uwagi:</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -61,41 +61,34 @@ The above copyright notice and this permission notice shall be included in all c
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h3 class="card-title" th:text="'Oceny - ' + ${subjectName} + ':'"></h3>
+                        <h3 class="card-title">Uwagi :</h3>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
                                 <thead class=" text-primary">
-                                    <th>Ocena</th>
-                                    <th>Waga</th>
-                                    <th>Nauczyciel</th>
-                                    <th>Student</th>
-                                    <th>Data</th>
-                                    <th>Opis</th>
+                                <th>Nauczyciel</th>
+                                <th>Treść</th>
+                                <th>Ocena</th>
+                                <th>Data</th>
                                 </thead>
                                 <tbody>
 
-                                <!--/*@thymesVar id="subjects" type="com.ediary.DTO.GradeDto"*/-->
-                                <tr th:each="grade : ${grades}">
-                                    <td th:text="${grade.value}">
-                                        Ocena
-                                    </td>
-                                    <td th:text="${grade.weight}">
-                                        Waga
-                                    </td>
-                                    <td th:text="${grade.teacherName}" >
-                                        Nauczyciel
-                                    </td>
-                                    <td th:text="${grade.studentName}" >
-                                        Student
-                                    </td>
-                                    <td th:text="${grade.date}">
-                                        Data
-                                    </td>
-                                    <td th:text="${grade.description}" >
-                                        Opis
-                                    </td>
+                                <!--/*@thymesVar id="subjects" type="com.ediary.DTO.BehaviorDto"*/-->
+                                <tr th:each="behavior : ${behaviors}">
+                                        <td th:text="${behavior?.teacherName}">
+                                            Imie i nazwisko
+                                         </td>
+
+                                         <td th:text="${behavior?.content}">
+                                            Zawartośc
+                                        </td>
+                                        <td th:text="${behavior?.positive} ? 'Pozytywna' : 'Negatywna' " >
+                                            Ocena
+                                        </td>
+                                        <td th:text="${behavior?.date}">
+                                            Data
+                                        </td>
                                 </tr>
                                 </tbody>
                             </table>

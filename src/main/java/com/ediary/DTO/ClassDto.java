@@ -21,8 +21,7 @@ public class ClassDto {
 
     private Long parentCouncilId;
 
-    private List<String> studentsName;
-    private List<Long> studentsId;
+    private List<StudentDto> students;
 
     private List<Long> eventsId;
 

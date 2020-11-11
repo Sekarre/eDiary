@@ -118,7 +118,7 @@ public class DeputyHeadServiceImplTest {
         ClassDto newSchoolClass = deputyHeadService.removeStudentFromClass(classId, studentId);
 
         assertNotNull(newSchoolClass);
-        assertNull(newSchoolClass.getStudentsId());
+        assertNull(newSchoolClass.getStudents());
         verify(classRepository, times(1)).findById(classId);
     }
 

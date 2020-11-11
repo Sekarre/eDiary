@@ -98,36 +98,24 @@ The above copyright notice and this permission notice shall be included in all c
 
                                             <table class="table">
                                                 <thead class=" text-primary">
-                                                <th>Lekcja</th>
-                                                <th>Data</th>
-                                                <th>Status</th>
+                                                    <th>Przedmiot</th>
+                                                    <th>Lekcja</th>
+                                                    <th>Data</th>
+                                                    <th>Status</th>
                                                 </thead>
                                                 <tbody>
 
                                                 <tr th:each="attendance : ${weeklyAttendance.value}">
-                                                    <td class="col-md-3" th:text="${attendance?.lessonDto?.name}">
+                                                    <td th:text="${attendance?.lessonDto?.subjectName}">
+                                                        Przedmiot
+                                                    </td>
+                                                    <td th:text="${attendance?.lessonDto?.name}">
                                                         Lekcja
                                                     </td>
                                                     <td th:text="${attendance?.lessonDto?.date}">
                                                         Data
                                                     </td>
-                                                    <th:block>
-                                                        <td th:if="${attendance.status.name() eq 'PRESENT'}">
-                                                            Obecny
-                                                        </td>
-                                                        <td th:if="${attendance.status.name() eq 'ABSENT'} " th:style="'color: red'">
-                                                            Nieobecny
-                                                        </td>
-                                                        <td th:if="${attendance.status.name() eq 'LATE'}" >
-                                                            Spóźniony
-                                                        </td>
-                                                        <td th:if="${attendance.status.name() eq 'EXCUSED'}" >
-                                                            Usprawiedliwiony
-                                                        </td>
-                                                        <td th:if="${attendance.status.name() eq 'UNEXCUSED'}">
-                                                            Nieusprawiedliwiony
-                                                        </td>
-                                                    </th:block>
+                                                    <td th:text="${attendance?.status?.getTranslatedName()}" th:styleappend="${attendance.status.name() eq 'ABSENT'} ? 'color: red' : ''"></td>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -137,7 +125,6 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-primary accept" id="accept" type="submit" disabled>Przejdź do usprawiedliwienia</button>
                 </div>
             </div>
         </div>

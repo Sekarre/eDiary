@@ -63,11 +63,6 @@ public class StudentController {
         return "student/allGrades";
     }
 
-    @GetMapping("/{studentId}/grade/{gradeId}")
-    public String getGrade(){
-        //TODO
-        return null;
-    }
 
     @GetMapping("/{studentId}/grade/subject/{subjectId}")
     public String getAllGradesBySubject(@PathVariable Long studentId,

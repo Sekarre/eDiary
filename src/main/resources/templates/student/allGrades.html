@@ -44,6 +44,9 @@ The above copyright notice and this permission notice shall be included in all c
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <h3 class="card-title" th:text="${student.userName} + ' - Oceny: '"></h3>
+                </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="navbar-toggler-icon icon-bar"></span>
@@ -57,14 +60,18 @@ The above copyright notice and this permission notice shall be included in all c
         <div class="content">
             <div th:each="subject : ${subjects}" class="container-fluid">
                 <div class="card">
-                    <div class="card-header-pills card-header-primary">
-                        <h3 class="card-title" th:text="${subject.name}"></h3>
+                    <div class="card-header card-header-text card-header-primary">
+                        <div class="card-text col-md-3" >
+                            <h4 class="card-title">
+                                <a th:href="@{/student/{studentId}/grade/subject/{subjectId}(studentId=${studentId}, subjectId=${subject.id})}"  th:text="${subject.name}"></a>
+                            </h4>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
 
                             <span th:each="grade : ${grades}" th:if="${grade.subjectName} == ${subject.name}">
-                                <a data-toggle="modal" class="open-gradeDialogModal btn btn-info btn-lg" href="#gradeModal"
+                                <a data-toggle="modal" class="open-gradeDialogModal btn btn-info" href="#gradeModal"
                                    th:attr="data-date=''+${grade.date}+'', data-target='#gradeModal', data-value=''+${grade.value}+'', data-weight=''+${grade.weight}+'',
                                         data-subject=''+${grade.subjectName}+'', data-teacher=''+${grade.teacherName}+'',data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+''"
                                    th:text="${grade?.value}">
