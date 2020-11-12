@@ -183,7 +183,7 @@ public class TeacherController {
             BehaviorDto behavior = teacherService.updatePutBehavior(behaviorDto);
             //TODO zalezy od widoku
             //return "/" + teacherId + "/behavior/" + behavior.getId();
-            return "redirect:/teacher/" + teacherId + "/behavior";
+            return "/teacher/" + teacherId + "/behavior";
         }
     }
 

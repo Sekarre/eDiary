@@ -703,8 +703,8 @@ public class DefaultLoader implements CommandLineRunner {
 
     /** Creating behavior : teacher -> id:2, student: id: 1-5 **/
     private void createBehaviors() {
-        String[] content = {"", "Uczeń śpiewał na lekcji i bujał się na krześle. Nie reagował na prośby nauczyciela," +
-                "Następnie uczeń, wziął kredę spod tablicy, starł ją na własnym biurku i ustawil w kreskę" +
+        String[] content = {"", "Uczeń śpiewał na lekcji i bujał się na krześle. Nie reagował na prośby nauczyciela, " +
+                "Następnie uczeń, wziął kredę spod tablicy, starł ją na własnym biurku i ustawil w kreskę " +
                 "po czym wyjął banknot z portfela i zaczął wciągać kredę nosem. ", "złe zachowanie", "złe zachowanie", "złe zachowanie", "", "", "złe zachowanie"};
         boolean[] positive = {true, false, false, false, false, true, true, false};
         int[] studentIndexes = {1, 2, 2, 2, 2, 4, 5, 3};
