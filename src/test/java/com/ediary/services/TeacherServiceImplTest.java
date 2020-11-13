@@ -642,7 +642,7 @@ class TeacherServiceImplTest {
     }
 
     @Test
-    void saveOrUpdateTopic() {
+    void updateTopic() {
         Long topicId = 3L;
         TopicDto topicToSave = TopicDto.builder().id(topicId).build();
         Topic topicReturned = Topic.builder().id(topicId).build();
@@ -650,10 +650,25 @@ class TeacherServiceImplTest {
         when(topicDtoToTopic.convert(topicToSave)).thenReturn(Topic.builder().id(topicId).build());
         when(topicRepository.save(any())).thenReturn(topicReturned);
 
-        Topic topic = teacherService.saveOrUpdateTopic(topicToSave);
+        Topic topic = teacherService.updateTopic(topicToSave);
 
         assertEquals(topic.getId(), topicToSave.getId());
         verify(topicDtoToTopic, times(1)).convert(topicToSave);
+        verify(topicRepository, times(1)).save(any());
+    }
+
+    @Test
+    void saveTopic() {
+        Long returnedTopicId = 3L;
+        TopicDto topicToSave = TopicDto.builder().build();
+        Topic topicReturned = Topic.builder().id(returnedTopicId).build();
+
+        when(topicDtoToTopic.convertForSave(topicToSave)).thenReturn(Topic.builder().id(returnedTopicId).build());
+        when(topicRepository.save(any())).thenReturn(topicReturned);
+
+        Topic topic = teacherService.saveTopic(topicToSave);
+
+        verify(topicDtoToTopic, times(1)).convertForSave(topicToSave);
         verify(topicRepository, times(1)).save(any());
     }
 

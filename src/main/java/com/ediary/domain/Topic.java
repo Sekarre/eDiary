@@ -18,6 +18,7 @@ public class Topic {
 
     private Long number;
     private String name;
+    @Lob
     private String description;
 
     @ManyToOne

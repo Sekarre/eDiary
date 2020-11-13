@@ -567,8 +567,8 @@ public class TeacherController {
             //TODO
             return "/";
         } else {
-            teacherService.saveOrUpdateTopic(topicDto);
-            return "redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic";
+            teacherService.saveTopic(topicDto);
+            return "redirect:/teacher/" + teacherId + "/subject";
         }
     }
 
@@ -591,7 +591,7 @@ public class TeacherController {
             //TODO
             return "/";
         } else {
-            teacherService.saveOrUpdateTopic(topicDto);
+            teacherService.updateTopic(topicDto);
             return "redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic";
         }
     }

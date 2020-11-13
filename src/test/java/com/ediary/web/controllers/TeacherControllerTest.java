@@ -11,17 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -805,15 +801,15 @@ class TeacherControllerTest {
 
         Long subjectId = 25L;
 
-        when(teacherService.saveOrUpdateTopic(any())).thenReturn(Topic.builder().build());
+        when(teacherService.updateTopic(any())).thenReturn(Topic.builder().build());
 
         mockMvc.perform(post("/teacher/" + teacherId + "/subject/" + subjectId + "/topic/new")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(AbstractAsJsonControllerTest.asJsonString(TopicDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic"));
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject"));
 
-        verify(teacherService, times(1)).saveOrUpdateTopic(any());
+        verify(teacherService, times(1)).saveTopic(any());
     }
 
     @Test
@@ -835,7 +831,7 @@ class TeacherControllerTest {
         Long subjectId = 25L;
         Long topicId = 10L;
 
-        when(teacherService.saveOrUpdateTopic(any())).thenReturn(Topic.builder().build());
+        when(teacherService.updateTopic(any())).thenReturn(Topic.builder().build());
 
         mockMvc.perform(put("/teacher/" + teacherId + "/subject/" + subjectId + "/topic/" + topicId)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -843,7 +839,7 @@ class TeacherControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic"));
 
-        verify(teacherService, times(1)).saveOrUpdateTopic(any());
+        verify(teacherService, times(1)).updateTopic(any());
     }
 
     @Test
