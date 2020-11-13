@@ -248,8 +248,8 @@ class TeacherControllerTest {
         mockMvc.perform(put("/teacher/" + teacherId + "/behavior/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(behaviorDto)))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/behavior"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("/teacher/" + teacherId + "/behavior"));
 
         verify(teacherService, times(1)).updatePutBehavior(any());
     }
