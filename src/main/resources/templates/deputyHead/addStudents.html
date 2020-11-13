@@ -49,7 +49,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <h3  th:text="'Klasa  ' + ${schoolClass.name} + ': Zmiana wychowawcy'"></h3>
+                    <h3  th:text="'Klasa  ' + ${schoolClass.name} + ': Dodawanie uczniów'"></h3>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -65,7 +65,62 @@ The above copyright notice and this permission notice shall be included in all c
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h3 class="card-title">Dostępni nauczyciele :</h3>
+                        <h3 class="card-title" th:text="'Obecny skład klasy: '">Skład klasy: </h3>
+                    </div>
+                    <div id="accordion">
+                        <!--/*@thymesVar id="timetable" type="com.ediary.domain.helpers.WeeklyAttendances"*/-->
+                        <div class="card">
+                            <div class="card-header" id="headingOne">
+                                <h3 class="mb-0">
+                                    <button type="button" class="btn btn-link" data-toggle="collapse" aria-expanded="true"
+                                            th:text="'Liczba uczniów:&nbsp;&nbsp' + ${schoolClass?.students?.size()}"
+                                            th:attr="data-target='#currentClass', aria-controls='currentClass'">
+                                        Collapsible Group Item #1
+                                    </button>
+
+                                </h3>
+                            </div>
+                            <!-- Dodac "show" do class, aby panele byly od poczatku odkryte -->
+                            <div th:attr="id='currentClass', aria-labelledby='currentClass'" class="collapse"
+                                 data-parent="#accordion">
+                                <div class="card-body">
+                                    <div class="card-body" th:if="${schoolClass?.students?.size() != 0}">
+                                        <div class="table-responsive">
+
+                                            <table class="table">
+                                                <thead class=" text-primary">
+                                                <th>Student:</th>
+                                                <th>Usuń</th>
+                                                </thead>
+                                                <tbody>
+
+                                                <tr  th:each="student : ${schoolClass?.students}">
+                                                    <form method="post" th:action="@{'/deputyHead/classes/' + ${schoolClass.id} +'/removeStudent/' + ${student.id}}">
+                                                        <td th:text="${student.userName}">
+                                                            Imie i nazwisko
+                                                        </td>
+                                                        <td>
+                                                            <button class="submit btn btn-primary btn-link">
+                                                                <i class="material-icons">delete</i>
+                                                            </button>
+                                                        </td>
+                                                        <input type="hidden" name="addStudentsView" th:value="true">
+                                                    </form>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h3 class="card-title" th:text="'Dostępni studenci: ' + ${students?.size()}">Dostępni studenci :</h3>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -77,16 +132,16 @@ The above copyright notice and this permission notice shall be included in all c
                                 </thead>
                                 <tbody>
 
-                                <tr th:each="teacher : ${teachers}">
-                                    <form method="post" th:action="@{'/deputyHead/classes/' + ${schoolClass.id} +'/addTeacher/' + ${teacher.id}}">
-                                    <td th:text="${teacher.name}">
-                                        Imie i nazwisko
-                                    </td>
-                                    <td>
-                                        <button class="submit btn btn-primary btn-link">
-                                            <i class="material-icons">add</i>
-                                        </button>
-                                    </td>
+                                <tr th:each="student : ${students}">
+                                    <form method="post" th:action="@{'/deputyHead/classes/' + ${schoolClass.id} +'/addStudent/' + ${student.id}}">
+                                        <td th:text="${student.userName}">
+                                            Imie i nazwisko
+                                        </td>
+                                        <td>
+                                            <button class="submit btn btn-primary btn-link">
+                                                <i class="material-icons">add</i>
+                                            </button>
+                                        </td>
                                     </form>
                                 </tr>
                                 </tbody>

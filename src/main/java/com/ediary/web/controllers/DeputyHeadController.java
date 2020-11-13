@@ -51,7 +51,6 @@ public class DeputyHeadController {
     }
 
 
-
     @GetMapping("/newClass")
     public String newClass(Model model) {
 
@@ -129,13 +128,27 @@ public class DeputyHeadController {
     @PostMapping("/classes/{classId}/removeStudent/{studentId}")
     public String removeStudentFromClass(@PathVariable Long studentId,
                                          @PathVariable Long classId,
+                                         @RequestParam(name = "addStudentsView") Boolean addStudentsView,
                                          Model model) {
 
         model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass());
         model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
         model.addAttribute("schoolClass", deputyHeadService.removeStudentFromClass(classId, studentId));
 
+        if (addStudentsView) {
+            return "redirect:/deputyHead/classes/" + classId + "/addStudents";
+        }
+
         return "redirect:/deputyHead/classes/" + classId;
+    }
+
+    @GetMapping("/classes/{classId}/addStudents")
+    public String addStudents(@PathVariable Long classId, Model model) {
+
+        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass());
+        model.addAttribute("schoolClass", deputyHeadService.getSchoolClass(classId));
+
+        return "deputyHead/addStudents";
     }
 
     @PostMapping("/classes/{classId}/addTeacher/{teacherId}")
@@ -152,18 +165,12 @@ public class DeputyHeadController {
 
     @PostMapping("/classes/{classId}/addStudent/{studentId}")
     public String addStudentToClass(@PathVariable Long studentId,
-                                      @PathVariable Long classId,
-                                      Model model) {
+                                    @PathVariable Long classId) {
 
-        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass());
-        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
-        model.addAttribute("schoolClass", deputyHeadService.addStudentToClass(classId, studentId));
+        deputyHeadService.addStudentToClass(classId, studentId);
 
-        return "deputyHead/oneClass";
+        return "redirect:/deputyHead/classes/" + classId + "/addStudents";
     }
 
-    /**
-     * Dodawanie wielu uczniow takie samo jak metoda processNewClass, wiec chyba nie bede pisal
-     **/
 
 }

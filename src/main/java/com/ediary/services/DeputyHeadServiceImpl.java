@@ -129,16 +129,24 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     public ClassDto addStudentToClass(Long classId, Long studentId) {
         Class schoolClass = getSchoolCLass(classId);
 
+        Student student = studentRepository
+                .findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
+
+        if (student == null || student.getSchoolClass() != null) {
+            throw new NotFoundException("Student has class already");
+        }
 
         if (schoolClass.getStudents().stream().noneMatch(s -> s.getId().equals(studentId))) {
 
             Set<Student> newStudentSet = new HashSet<>(){{
                 addAll(schoolClass.getStudents());
-                add(studentRepository.
-                        findById(studentId).orElseThrow(() -> new NotFoundException("Student not found")));
+                add(student);
             }};
 
             schoolClass.setStudents(newStudentSet);
+            student.setSchoolClass(schoolClass);
+
+            classRepository.save(schoolClass);
 
             return classToClassDto.convert(schoolClass);
         }
