@@ -15,11 +15,11 @@ import com.ediary.repositories.ClassRepository;
 import com.ediary.repositories.StudentRepository;
 import com.ediary.repositories.TeacherRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -154,18 +154,25 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     }
 
     @Override
-    public List<StudentDto> listAllStudentsWithoutClass() {
+    public List<StudentDto> listAllStudentsWithoutClass(Integer page, Integer size) {
 
-        return studentRepository.findAllBySchoolClassIsNull()
+        Pageable pageable = PageRequest.of(page, size);
+
+        return studentRepository.findAllBySchoolClassIsNull(pageable)
                 .stream()
+                .sorted(Comparator.comparing(student -> student.getUser().getLastName()))
                 .map(studentToStudentDto::convert)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<TeacherDto> listAllTeachersWithoutClass() {
-        return teacherRepository.findAllBySchoolClassIsNull()
+    public List<TeacherDto> listAllTeachersWithoutClass(Integer page, Integer size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return teacherRepository.findAllBySchoolClassIsNull(pageable)
                 .stream()
+                .sorted(Comparator.comparing(teacher -> teacher.getUser().getLastName()))
                 .map(teacherToTeacherDto::convert)
                 .collect(Collectors.toList());
     }
@@ -174,6 +181,11 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     public TeacherDto findTeacher(Long teacherId, Long classId) {
         return teacherToTeacherDto.convert(teacherRepository.findByIdAndSchoolClassId(teacherId, classId)
                 .orElseThrow(() -> new NotFoundException("Form tutor not found")));
+    }
+
+    @Override
+    public Integer countStudentsWithoutClass() {
+        return  studentRepository.countStudentBySchoolClassIsNull().intValue();
     }
 
     private Class getSchoolCLass(Long classId) {

@@ -13,11 +13,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Controller
@@ -26,6 +28,7 @@ public class DeputyHeadController {
 
     private final DeputyHeadService deputyHeadService;
     private final UserToUserDto userToUserDto;
+    private final Integer pageSize = 15;
 
     @ModelAttribute
     public void addAuthenticatedUser(@AuthenticationPrincipal User user, Model model) {
@@ -55,8 +58,9 @@ public class DeputyHeadController {
     public String newClass(Model model) {
 
         model.addAttribute("schoolClass", deputyHeadService.initNewClass());
-        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass());
-        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
+        //just for now, random values
+        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass(1,2));
+        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass(1,2));
 
         return "deputyHead/newClass";
     }
@@ -104,48 +108,43 @@ public class DeputyHeadController {
     @GetMapping("/classes/{classId}/changeTeacher/{teacherId}")
     public String editTeacher(@PathVariable Long classId,
                               @PathVariable Long teacherId,
+                              @RequestParam(name = "page", required = false) Optional<Integer> page,
                               Model model) {
 
+        model.addAttribute("page", page);
         model.addAttribute("currentTeacher", deputyHeadService.findTeacher(teacherId, classId));
-        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
+        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass(page.orElse(0), pageSize));
         model.addAttribute("schoolClass", deputyHeadService.getSchoolClass(classId));
 
 
         return "deputyHead/editFormTutor";
     }
 
-    @PostMapping("/classes/{classId}/removeTeacher/{teacherId}")
-    public String removeFormTutorFromClass(@PathVariable Long teacherId,
-                                           @PathVariable Long classId,
-                                           Model model) {
-        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass());
-        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
-        model.addAttribute("schoolClass", deputyHeadService.removeFormTutorFromClass(classId, teacherId));
-
-        return "deputyHead/oneClass";
-    }
 
     @PostMapping("/classes/{classId}/removeStudent/{studentId}")
     public String removeStudentFromClass(@PathVariable Long studentId,
                                          @PathVariable Long classId,
-                                         @RequestParam(name = "addStudentsView") Boolean addStudentsView,
-                                         Model model) {
+                                         @RequestParam(name = "page", required = false) Optional<Integer> page,
+                                         @RequestParam(name = "addStudentsView", required = false) Boolean addStudentsView) {
 
-        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass());
-        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
-        model.addAttribute("schoolClass", deputyHeadService.removeStudentFromClass(classId, studentId));
+        ClassDto schoolClass = deputyHeadService.removeStudentFromClass(classId, studentId);
 
-        if (addStudentsView) {
-            return "redirect:/deputyHead/classes/" + classId + "/addStudents";
+        if (addStudentsView != null && addStudentsView) {
+            return "redirect:/deputyHead/classes/" + schoolClass.getId() + "/addStudents?page=" + page.orElse(0);
         }
 
-        return "redirect:/deputyHead/classes/" + classId;
+        return "redirect:/deputyHead/classes/" + schoolClass.getId();
     }
 
     @GetMapping("/classes/{classId}/addStudents")
-    public String addStudents(@PathVariable Long classId, Model model) {
+    public String addStudents(@PathVariable Long classId,
+                              @RequestParam(name = "page", required = false) Optional<Integer> page,
+                              Model model) {
 
-        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass());
+
+        model.addAttribute("page", page);
+        model.addAttribute("studentsCount", deputyHeadService.countStudentsWithoutClass());
+        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass(page.orElse(0), pageSize));
         model.addAttribute("schoolClass", deputyHeadService.getSchoolClass(classId));
 
         return "deputyHead/addStudents";
@@ -153,23 +152,22 @@ public class DeputyHeadController {
 
     @PostMapping("/classes/{classId}/addTeacher/{teacherId}")
     public String addFormTutorToClass(@PathVariable Long teacherId,
-                                      @PathVariable Long classId,
-                                      Model model) {
+                                      @PathVariable Long classId) {
 
-        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass());
-        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
-        model.addAttribute("schoolClass", deputyHeadService.addFormTutorToClass(classId, teacherId));
+        ClassDto schoolClass = deputyHeadService.addFormTutorToClass(classId, teacherId);
 
-        return "redirect:/deputyHead/classes/" + classId;
+        return "redirect:/deputyHead/classes/" + schoolClass.getId();
     }
 
     @PostMapping("/classes/{classId}/addStudent/{studentId}")
     public String addStudentToClass(@PathVariable Long studentId,
-                                    @PathVariable Long classId) {
+                                    @PathVariable Long classId,
+                                    @RequestParam(name = "page", required = false) Optional<Integer> page) {
 
-        deputyHeadService.addStudentToClass(classId, studentId);
+        ClassDto schoolClass = deputyHeadService.addStudentToClass(classId, studentId);
 
-        return "redirect:/deputyHead/classes/" + classId + "/addStudents";
+
+        return "redirect:/deputyHead/classes/" + schoolClass.getId() + "/addStudents?page=" + page.orElse(0);
     }
 
 

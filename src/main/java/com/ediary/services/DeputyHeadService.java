@@ -21,9 +21,10 @@ public interface DeputyHeadService {
     ClassDto addFormTutorToClass(Long classId, Long teacherId);
     ClassDto addStudentToClass(Long classId, Long studentId);
 
-    List<StudentDto> listAllStudentsWithoutClass();
+    List<StudentDto> listAllStudentsWithoutClass(Integer page, Integer size);
 
-    List<TeacherDto> listAllTeachersWithoutClass();
+    List<TeacherDto> listAllTeachersWithoutClass(Integer page, Integer size);
     TeacherDto findTeacher(Long teacherId, Long classId);
 
+    Integer countStudentsWithoutClass();
 }
