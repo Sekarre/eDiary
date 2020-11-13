@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
     List<Lesson> findAllBySubjectId(Long subjectId);
+    List<Lesson> findAllBySubject(Subject subject);
     List<Lesson> findAllBySubjectIdAndSchoolClassId(Long subjectId, Long classId);
     List<Lesson> findAllBySchoolClassId(Long classId);
     List<Lesson> findAllBySubjectAndDateAfterAndDateBefore(Subject subject, Date startTime, Date endTime);

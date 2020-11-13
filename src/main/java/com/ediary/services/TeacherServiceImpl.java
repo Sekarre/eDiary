@@ -11,6 +11,9 @@ import com.ediary.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.Transient;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +33,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
     private final TopicRepository topicRepository;
+    private final SchoolPeriodRepository schoolPeriodRepository;
 
     private final EventToEventDto eventToEventDto;
     private final EventDtoToEvent eventDtoToEvent;
@@ -227,6 +231,8 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    @Transactional
+    @Transient
     public Boolean deleteSubject(Long teacherId, Long subjectId) {
         Optional<Subject> subjectOptional = subjectRepository.findById(subjectId);
         if (!subjectOptional.isPresent()) {
@@ -234,9 +240,29 @@ public class TeacherServiceImpl implements TeacherService {
         }
         Subject subject = subjectOptional.get();
 
-        if (subject.getTeacher().getId() != teacherId) {
+        if (!subject.getTeacher().getId().equals(teacherId)) {
             return false;
         } else {
+            // Nullable in Topics
+            List<Topic> topics = topicRepository.findAllBySubjectOrderByNumber(subject);
+            topics.forEach(topic -> topic.setSubject(null));
+            topicRepository.saveAll(topics);
+
+            // Nullable in Grades
+            List<Grade> grades = gradeRepository.findAllBySubject(subject);
+            grades.forEach(grade -> grade.setSubject(null));
+            gradeRepository.saveAll(grades);
+
+            // Nullable in SchoolPeriods
+            List<SchoolPeriod> schoolPeriods = schoolPeriodRepository.findAllBySubject(subject);
+            schoolPeriods.forEach(schoolPeriod -> schoolPeriod.setSubject(null));
+            schoolPeriodRepository.saveAll(schoolPeriods);
+
+            // Nullable in Lessons
+            List<Lesson> lessons = lessonRepository.findAllBySubject(subject);
+            lessons.forEach(lesson -> lesson.setSubject(null));
+            lessonRepository.saveAll(lessons);
+
             subjectRepository.delete(subject);
             return true;
         }
