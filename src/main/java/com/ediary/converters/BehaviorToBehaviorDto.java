@@ -26,10 +26,12 @@ public class BehaviorToBehaviorDto implements Converter<Behavior, BehaviorDto> {
         behaviorDto.setPositive(source.isPositive());
 
         //Student
-        behaviorDto.setStudentId(source.getStudent().getId());
-        behaviorDto.setStudentName(
-                source.getStudent().getUser().getFirstName() + " " + source.getStudent().getUser().getLastName()
-        );
+        if (source.getStudent() != null) {
+            behaviorDto.setStudentId(source.getStudent().getId());
+            behaviorDto.setStudentName(
+                    source.getStudent().getUser().getFirstName() + " " + source.getStudent().getUser().getLastName()
+            );
+        }
 
         //Teacher
         behaviorDto.setTeacherId(source.getTeacher().getId());
