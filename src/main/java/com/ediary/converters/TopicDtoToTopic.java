@@ -25,14 +25,32 @@ public class TopicDtoToTopic implements Converter<TopicDto, Topic> {
         }
 
         final Topic topic = new Topic();
-
         topic.setId(source.getId());
         topic.setNumber(source.getNumber());
         topic.setName(source.getName());
         topic.setDescription(source.getDescription());
 
         //Subject
-        topic.setSubject(subjectRepository.findById(source.getId()).orElse(null));
+        topic.setSubject(subjectRepository.findById(source.getSubjectId()).orElse(null));
+
+        return topic;
+    }
+
+    @Nullable
+    @Synchronized
+    public Topic convertForSave(TopicDto source) {
+
+        if (source == null) {
+            return null;
+        }
+
+        final Topic topic = new Topic();
+
+        topic.setNumber(source.getNumber());
+        topic.setName(source.getName());
+        topic.setDescription(source.getDescription());
+
+        topic.setSubject(subjectRepository.findById(source.getSubjectId()).orElse(null));
 
         return topic;
     }

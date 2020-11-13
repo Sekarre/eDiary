@@ -154,8 +154,13 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Topic saveOrUpdateTopic(TopicDto topicDto) {
+    public Topic updateTopic(TopicDto topicDto) {
         return topicRepository.save(topicDtoToTopic.convert(topicDto));
+    }
+
+    @Override
+    public Topic saveTopic(TopicDto topicDto) {
+        return topicRepository.save(topicDtoToTopic.convertForSave(topicDto));
     }
 
     @Override
