@@ -75,7 +75,8 @@ The above copyright notice and this permission notice shall be included in all c
                         </div>
                         <div class="col-lg-4 col-md-6 col-sm-6">
                             <div class="card card-stats">
-                                <a href="">
+                                <a id="open-gradeDialogModal-deleteSubject" data-toggle="modal" class="open-gradeDialogModal" href="#deleteSubjectModal"
+                                   th:attr="data-subject=''+${subjectId}+'', data-target='#deleteSubjectModal'">
                                     <div class="card-header card-header-danger card-header-icon">
                                         <div class="card-icon">
                                             <i class="material-icons">delete_forever</i>
@@ -130,7 +131,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                 <i class="material-icons">edit</i>
                                             </button>
                                         </a>
-                                        <a data-toggle="modal" class="open-gradeDialogModal" href="#deleteTopicModal"
+                                        <a id="open-gradeDialogModal-deleteTopic" data-toggle="modal" class="open-gradeDialogModal" href="#deleteTopicModal"
                                            th:attr="data-topic=''+${topic.id}+'', data-target='#deleteTopicModal'">
                                             <button rel="tooltip" class="btn btn-primary btn-danger btn-fab-mini btn-round">
                                                 <i class="material-icons">close</i>
@@ -145,7 +146,7 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
             </div>
         </div>
-        <!-- Modal -->
+        <!-- Modal delete topic-->
         <div class="modal fade" id="deleteTopicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -159,7 +160,30 @@ The above copyright notice and this permission notice shall be included in all c
                         Usunąć temat?
                     </div>
                     <div class="modal-footer">
-                        <form id="deleteForm" method="post">
+                        <form id="deleteFormTopic" method="post">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
+                            <button type="submit" class="btn btn-danger" >Usuń</button>
+                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal delete subject -->
+        <div class="modal fade" id="deleteSubjectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteSubjectLabel"><i class="material-icons">delete</i></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Usunąć przedmiot?
+                    </div>
+                    <div class="modal-footer">
+                        <form id="deleteSubjectForm" method="post">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
                             <button type="submit" class="btn btn-danger" >Usuń</button>
                             <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
@@ -403,13 +427,23 @@ The above copyright notice and this permission notice shall be included in all c
 </script>
 
 <script>
-    $(document).on("click", ".open-gradeDialogModal", function () {
+    $(document).on("click", "#open-gradeDialogModal-deleteSubject", function () {
+
+        var subject = $(this).data('subject');
+
+        var deleteForm = document.getElementById("deleteSubjectForm");
+
+        deleteForm.setAttribute("action", subject + "/delete");
+    });
+</script>
+<script>
+    $(document).on("click", "#open-gradeDialogModal-deleteTopic", function () {
 
         var topic = $(this).data('topic');
 
-        var deleteForm = document.getElementById("deleteForm");
+        var deleteFormTopic = document.getElementById("deleteFormTopic");
 
-        deleteForm.setAttribute("action", "/teacher/" + teacherId + "/subject/" + subjectId + "/topic" + topic);
+        deleteFormTopic.setAttribute("action", "/teacher/" + teacherId + "/subject/" + subjectId + "/topic" + topic);
     });
 </script>
 

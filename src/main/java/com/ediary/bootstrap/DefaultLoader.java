@@ -643,6 +643,13 @@ public class DefaultLoader implements CommandLineRunner {
                     .subject(subjectRepository.findByName(subjectNames[0]))
                     .build());
         }
+
+        topicRepository.save(Topic.builder()
+                .number((topicRepository.count() + 1))
+                .name("Test Topic")
+                .description("How to in JPA")
+                .subject(subjectRepository.findByName(subjectNames[2]))
+                .build());
     }
 
     /** Creating maths' lessons : class id: 0 **/

@@ -1,6 +1,7 @@
 package com.ediary.repositories;
 
 import com.ediary.domain.Grade;
+import com.ediary.domain.Subject;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;
@@ -15,4 +16,5 @@ public interface GradeRepository extends JpaRepository<Grade, Long> {
     List<Grade> findAllByTeacherIdAndDateAfterAndDateBefore(Long teacherId, Date startTime, Date endTime);
     List<Grade> findAllBySubjectIdAndTeacherId(Long subjectId, Long teacherId);
     List<Grade> findAllByTeacherIdAndWeight(Long teacherId, Integer weight);
+    List<Grade> findAllBySubject(Subject subject);
 }

@@ -20,7 +20,7 @@ public class Topic {
     private String name;
     private String description;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "subject_id")
     private Subject subject;
 
