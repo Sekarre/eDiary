@@ -9,16 +9,17 @@ import com.ediary.converters.StudentToStudentDto;
 import com.ediary.converters.TeacherToTeacherDto;
 import com.ediary.domain.Class;
 import com.ediary.domain.Student;
+import com.ediary.domain.Teacher;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.ClassRepository;
 import com.ediary.repositories.StudentRepository;
 import com.ediary.repositories.TeacherRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -89,12 +90,19 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     @Override
     public ClassDto removeStudentFromClass(Long classId, Long studentId) {
         Class schoolClass = getSchoolCLass(classId);
+        Student studentToRemove = studentRepository.findById(studentId)
+                .orElseThrow(() -> new NotFoundException("Student not found"));
 
         if (schoolClass.getStudents().stream().anyMatch(student -> student.getId().equals(studentId))) {
             schoolClass.setStudents(schoolClass.getStudents()
                     .stream()
                     .filter((s) -> !(s.getId().equals(studentId)))
                     .collect(Collectors.toSet()));
+
+            studentToRemove.setSchoolClass(null);
+            studentRepository.save(studentToRemove);
+
+            classRepository.save(schoolClass);
         }
 
         return classToClassDto.convert(schoolClass);
@@ -104,28 +112,41 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     public ClassDto addFormTutorToClass(Long classId, Long teacherId) {
         Class schoolClass = getSchoolCLass(classId);
 
-        if (schoolClass.getTeacher() == null) {
-            schoolClass.setTeacher(teacherRepository.
-                    findById(teacherId).orElseThrow(() -> new NotFoundException("Teacher not found")));
+        Teacher teacher = teacherRepository.
+                findById(teacherId).orElseThrow(() -> new NotFoundException("Teacher not found"));
+
+        if (teacher.getSchoolClass() != null) {
+            throw new NotFoundException("Teacher is already form tutor");
+        } else {
+            schoolClass.setTeacher(teacher);
         }
 
-        return classToClassDto.convert(schoolClass);
+
+        return classToClassDto.convert(classRepository.save(schoolClass));
     }
 
     @Override
     public ClassDto addStudentToClass(Long classId, Long studentId) {
         Class schoolClass = getSchoolCLass(classId);
 
+        Student student = studentRepository
+                .findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
+
+        if (student == null || student.getSchoolClass() != null) {
+            throw new NotFoundException("Student has class already");
+        }
 
         if (schoolClass.getStudents().stream().noneMatch(s -> s.getId().equals(studentId))) {
 
             Set<Student> newStudentSet = new HashSet<>(){{
                 addAll(schoolClass.getStudents());
-                add(studentRepository.
-                        findById(studentId).orElseThrow(() -> new NotFoundException("Student not found")));
+                add(student);
             }};
 
             schoolClass.setStudents(newStudentSet);
+            student.setSchoolClass(schoolClass);
+
+            classRepository.save(schoolClass);
 
             return classToClassDto.convert(schoolClass);
         }
@@ -133,20 +154,38 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     }
 
     @Override
-    public List<StudentDto> listAllStudentsWithoutClass() {
+    public List<StudentDto> listAllStudentsWithoutClass(Integer page, Integer size) {
 
-        return studentRepository.findAllBySchoolClassIsNull()
+        Pageable pageable = PageRequest.of(page, size);
+
+        return studentRepository.findAllBySchoolClassIsNull(pageable)
                 .stream()
+                .sorted(Comparator.comparing(student -> student.getUser().getLastName()))
                 .map(studentToStudentDto::convert)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<TeacherDto> listAllTeachersWithoutClass() {
-        return teacherRepository.findAllBySchoolClassIsNull()
+    public List<TeacherDto> listAllTeachersWithoutClass(Integer page, Integer size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return teacherRepository.findAllBySchoolClassIsNull(pageable)
                 .stream()
+                .sorted(Comparator.comparing(teacher -> teacher.getUser().getLastName()))
                 .map(teacherToTeacherDto::convert)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public TeacherDto findTeacher(Long teacherId, Long classId) {
+        return teacherToTeacherDto.convert(teacherRepository.findByIdAndSchoolClassId(teacherId, classId)
+                .orElseThrow(() -> new NotFoundException("Form tutor not found")));
+    }
+
+    @Override
+    public Integer countStudentsWithoutClass() {
+        return  studentRepository.countStudentBySchoolClassIsNull().intValue();
     }
 
     private Class getSchoolCLass(Long classId) {

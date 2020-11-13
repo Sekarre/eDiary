@@ -2,6 +2,8 @@ package com.ediary.repositories;
 
 import com.ediary.domain.Student;
 import com.ediary.domain.security.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -13,5 +15,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     Student findByUserId(Long userId);
     Optional<Student> findByUser(User user);
     List<Student> findAllBySchoolClassId(Long schoolClassId);
-    List<Student> findAllBySchoolClassIsNull();//Not sure if working
+    Page<Student> findAllBySchoolClassIsNull(Pageable pageable);
+    Long countStudentBySchoolClassIsNull();
 }

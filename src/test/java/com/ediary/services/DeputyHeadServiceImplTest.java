@@ -17,6 +17,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -114,6 +116,7 @@ public class DeputyHeadServiceImplTest {
 
         when(classRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(schoolClass));
         when(classToClassDto.convert(any())).thenReturn(ClassDto.builder().build());
+        when(studentRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(Student.builder().build()));
 
         ClassDto newSchoolClass = deputyHeadService.removeStudentFromClass(classId, studentId);
 
@@ -172,16 +175,20 @@ public class DeputyHeadServiceImplTest {
 
         StudentDto studentDto = StudentDto.builder().build();
 
-        when(studentRepository.findAllBySchoolClassIsNull()).thenReturn(new ArrayList<>(){{
-            add(Student.builder().id(1L).build());
-            add(Student.builder().id(2L).build());
-        }});
+        List<Student> students = new ArrayList<>() {{
+            add(Student.builder().build());
+        }};
+
+        Page<Student> page = new PageImpl<>(students);
+
+
+        when(studentRepository.findAllBySchoolClassIsNull(any())).thenReturn(page);
         when(studentToStudentDto.convert(any())).thenReturn(studentDto);
 
-        List<StudentDto> students = deputyHeadService.listAllStudentsWithoutClass();
+        List<StudentDto> returnedStudents = deputyHeadService.listAllStudentsWithoutClass(0, 1);
 
-        assertNotNull(students);
-        verify(studentRepository, times(1)).findAllBySchoolClassIsNull();
+        assertNotNull(returnedStudents);
+        verify(studentRepository, times(1)).findAllBySchoolClassIsNull(any());
     }
 
 
@@ -190,16 +197,19 @@ public class DeputyHeadServiceImplTest {
     void listAllTeachersWithoutClass() {
         TeacherDto teacherDto = TeacherDto.builder().build();
 
-        when(teacherRepository.findAllBySchoolClassIsNull()).thenReturn(new ArrayList<>(){{
-            add(Teacher.builder().id(1L).build());
-            add(Teacher.builder().id(2L).build());
-        }});
+        List<Teacher> teachersPage = new ArrayList<>() {{
+            add(Teacher.builder().build());
+        }};
+
+        Page<Teacher> page = new PageImpl<>(teachersPage);
+
+        when(teacherRepository.findAllBySchoolClassIsNull(any())).thenReturn(page);
         when(teacherToTeacherDto.convert(any())).thenReturn(teacherDto);
 
-        List<TeacherDto> teachers = deputyHeadService.listAllTeachersWithoutClass();
+        List<TeacherDto> teachers = deputyHeadService.listAllTeachersWithoutClass(0, 1);
 
         assertNotNull(teachers);
-        verify(teacherRepository, times(1)).findAllBySchoolClassIsNull();
+        verify(teacherRepository, times(1)).findAllBySchoolClassIsNull(any());
     }
 
 

@@ -32,11 +32,11 @@ The above copyright notice and this permission notice shall be included in all c
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
 
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
-    <!--    <style>-->
-    <!--        tr:hover td{-->
-    <!--            background-color:#f5f5f5;;-->
-    <!--        }-->
-    <!--    </style>-->
+        <style>
+            .active a{
+                background-color: #9c27b0 !important;
+            }
+        </style>
 </head>
 
 <body class="">
@@ -49,7 +49,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <h3  th:text="'Klasa  ' + ${schoolClass.name}"></h3>
+                    <h3  th:text="'Klasa  ' + ${schoolClass.name} + ': Dodawanie uczniów'"></h3>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -65,92 +65,99 @@ The above copyright notice and this permission notice shall be included in all c
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h3 class="card-title" th:text="'Wychowawca: '">Wychowawca: </h3>
-                        <th:block th:if="${schoolClass.teacherName == null}">
-                            <button class="btn btn-primary btn-fab btn-fab-mini btn-round">
-                                <i class="material-icons">add</i>
-                            </button>
-                        </th:block>
+                        <h3 class="card-title" th:text="'Obecny skład klasy: '">Skład klasy: </h3>
                     </div>
-                        <div class="card-body">
-                            <div class='table-responsive'>
-                                <table class="table">
-                                    <thead>
-                                        <th>Imie i nazwisko</th>
-                                        <th>Zmień</th>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td th:text = "${schoolClass.teacherName}"></td>
-                                            <td>
-                                                <a th:href="@{'/deputyHead/classes/' + ${classId} + '/changeTeacher/' + ${schoolClass.teacherId} }">
-                                                    <i class="material-icons">swap_horiz</i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                    <div id="accordion">
+                        <!--/*@thymesVar id="timetable" type="com.ediary.domain.helpers.WeeklyAttendances"*/-->
+                        <div class="card">
+                            <div class="card-header" id="headingOne">
+                                <h3 class="mb-0">
+                                    <button type="button" class="btn btn-link" data-toggle="collapse" aria-expanded="true"
+                                            th:text="'Liczba uczniów:&nbsp;&nbsp' + ${schoolClass?.students?.size()}"
+                                            th:attr="data-target='#currentClass', aria-controls='currentClass'">
+                                        Collapsible Group Item #1
+                                    </button>
+
+                                </h3>
+                            </div>
+                            <!-- Dodac "show" do class, aby panele byly od poczatku odkryte -->
+                            <div th:attr="id='currentClass', aria-labelledby='currentClass'" class="collapse"
+                                 data-parent="#accordion">
+                                <div class="card-body">
+                                    <div class="card-body" th:if="${schoolClass?.students?.size() != 0}">
+                                        <div class="table-responsive">
+
+                                            <table class="table">
+                                                <thead class=" text-primary">
+                                                <th>Student:</th>
+                                                <th>Usuń</th>
+                                                </thead>
+                                                <tbody>
+
+                                                <tr  th:each="student : ${schoolClass?.students}">
+                                                    <form method="post" th:action="@{'/deputyHead/classes/' + ${schoolClass.id} +'/removeStudent/' + ${student.id}}">
+                                                        <td th:text="${student.userName}">
+                                                            Imie i nazwisko
+                                                        </td>
+                                                        <td>
+                                                            <button class="submit btn btn-primary btn-link">
+                                                                <i class="material-icons">delete</i>
+                                                            </button>
+                                                        </td>
+                                                        <input type="hidden" name="addStudentsView" th:value="true">
+                                                        <input type="hidden" th:value="${page.orElse(0)}" name="page">
+                                                    </form>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
                 </div>
 
 
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h3 class="card-title">Studenci :</h3>
-                        <a th:href="'/deputyHead/classes/' + ${schoolClass.id} + '/addStudents'" type="button" class="btn btn-primary btn-fab btn-fab-mini btn-round">
-                            <i class="material-icons">add</i>
-                        </a>
-
+                        <h3 class="card-title" th:text="'Dostępni studenci: ' + ${studentsCount}">Dostępni studenci :</h3>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
+
                             <table class="table">
                                 <thead class=" text-primary">
                                 <th>Imie i nazwisko</th>
-                                <th>Usuń</th>
+                                <th>Wybierz</th>
                                 </thead>
                                 <tbody>
 
-                                <tr th:each="student : ${schoolClass.students}">
-                                    <td th:text="${student.userName}">
-                                        Imie i nazwisko
-                                    </td>
-                                    <td>
-                                        <a data-toggle="modal" class="open-gradeDialogModal" href="#deleteStudentModal"
-                                           th:attr="data-student=''+${student.id}+'', data-studentname=''+${student.userName}+'', data-target='#deleteStudentModal', data-class =''+${schoolClass.id}+''">
-                                            <button rel="tooltip" class="submit btn btn-primary btn-link">
-                                                <i class="material-icons">delete</i>
+                                <tr th:each="student : ${students}">
+                                    <form method="post" th:action="@{'/deputyHead/classes/' + ${schoolClass.id} +'/addStudent/' + ${student.id}}">
+                                        <td th:text="${student.userName}">
+                                            Imie i nazwisko
+                                        </td>
+                                        <td>
+                                            <button class="submit btn btn-primary btn-link">
+                                                <i class="material-icons">add</i>
                                             </button>
-                                        </a>
-
-                                    </td>
+                                        </td>
+                                        <input type="hidden" th:value="${page.orElse(0)}" name="page">
+                                    </form>
                                 </tr>
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                </div>
-                <!-- Modal -->
-                <div class="modal fade" id="deleteStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel"><i class="material-icons">delete</i></h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body" id="modal-body">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item " th:classappend="${page.isPresent() && page.get() > 0} ? 'active' : 'disabled'">
+                                    <a class="page-link" th:href="@{/deputyHead/classes/{classId}/addStudents(classId = ${schoolClass.id}, page = ${page.orElse(1) - 1})}" th:text="'Poprzednia'"></a>
+                                </li>
+                                <li class="page-item" th:classappend="${students.size() < 15} ? 'disabled' : 'active'">
+                                    <a class="page-link" th:href="@{/deputyHead/classes/{classId}/addStudents(classId = ${schoolClass.id}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
 
-                            </div>
-                            <div class="modal-footer">
-                                <form id="deleteForm" method="post">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
-                                    <button type="submit" class="btn btn-danger" >Usuń</button>
-                                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                                </form>
-                            </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -379,23 +386,7 @@ The above copyright notice and this permission notice shall be included in all c
         md.initFormExtendedDatetimepickers();
     });
 </script>
-<script>
-    $(document).on("click", ".open-gradeDialogModal", function () {
 
-        var studentId = $(this).data('student');
-        var schoolClassId = $(this).data('class')
-        var studentName = $(this).data('studentname')
-
-        var gradeValueElem = document.getElementById("modal-body");
-
-        gradeValueElem.innerHTML = "Napewno chcesz usunąć ucznia: " + studentName + " z tej klasy?";
-
-
-        var deleteForm = document.getElementById("deleteForm");
-
-        deleteForm.setAttribute("action", "/deputyHead/classes/" + schoolClassId + "/removeStudent/" + studentId);
-    });
-</script>
 </body>
 
 </html>
