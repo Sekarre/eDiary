@@ -116,6 +116,7 @@ public class DeputyHeadServiceImplTest {
 
         when(classRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(schoolClass));
         when(classToClassDto.convert(any())).thenReturn(ClassDto.builder().build());
+        when(studentRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(Student.builder().build()));
 
         ClassDto newSchoolClass = deputyHeadService.removeStudentFromClass(classId, studentId);
 
