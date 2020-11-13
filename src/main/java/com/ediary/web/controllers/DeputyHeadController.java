@@ -102,6 +102,18 @@ public class DeputyHeadController {
         return "redirect:/deputyHead/classes";
     }
 
+    @GetMapping("/classes/{classId}/changeTeacher/{teacherId}")
+    public String editTeacher(@PathVariable Long classId,
+                              @PathVariable Long teacherId,
+                              Model model) {
+
+        model.addAttribute("currentTeacher", deputyHeadService.findTeacher(teacherId, classId));
+        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
+        model.addAttribute("schoolClass", deputyHeadService.getSchoolClass(classId));
+
+
+        return "deputyHead/editFormTutor";
+    }
 
     @PostMapping("/classes/{classId}/removeTeacher/{teacherId}")
     public String removeFormTutorFromClass(@PathVariable Long teacherId,
@@ -123,7 +135,7 @@ public class DeputyHeadController {
         model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
         model.addAttribute("schoolClass", deputyHeadService.removeStudentFromClass(classId, studentId));
 
-        return "deputyHead/oneClass";
+        return "redirect:/deputyHead/classes/" + classId;
     }
 
     @PostMapping("/classes/{classId}/addTeacher/{teacherId}")
@@ -135,7 +147,7 @@ public class DeputyHeadController {
         model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass());
         model.addAttribute("schoolClass", deputyHeadService.addFormTutorToClass(classId, teacherId));
 
-        return "deputyHead/oneClass";
+        return "redirect:/deputyHead/classes/" + classId;
     }
 
     @PostMapping("/classes/{classId}/addStudent/{studentId}")

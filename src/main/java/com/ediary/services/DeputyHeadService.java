@@ -15,6 +15,7 @@ public interface DeputyHeadService {
     List<ClassDto> listAllClasses();
     ClassDto getSchoolClass(Long classId);
 
+
     ClassDto removeFormTutorFromClass(Long classId, Long teacherId);
     ClassDto removeStudentFromClass(Long classId, Long studentId);
     ClassDto addFormTutorToClass(Long classId, Long teacherId);
@@ -23,4 +24,6 @@ public interface DeputyHeadService {
     List<StudentDto> listAllStudentsWithoutClass();
 
     List<TeacherDto> listAllTeachersWithoutClass();
+    TeacherDto findTeacher(Long teacherId, Long classId);
+
 }

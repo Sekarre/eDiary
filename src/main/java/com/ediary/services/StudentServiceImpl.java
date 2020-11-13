@@ -89,6 +89,10 @@ public class StudentServiceImpl implements StudentService {
 
         Student student = getStudentById(studentId);
 
+        if (student.getSchoolClass() == null) {
+            throw new NotFoundException("Class not found");
+        }
+
         Pageable pageable = PageRequest.of(page, size);
 
         return eventRepository.findAllBySchoolClassIdOrderByDate(student.getSchoolClass().getId(), pageable)
@@ -102,7 +106,12 @@ public class StudentServiceImpl implements StudentService {
 
         Student student = getStudentById(studentId);
 
+        if (student.getSchoolClass() == null) {
+            throw new NotFoundException("Class not found");
+        }
+
         return timetableService.getTimetableByClassId(student.getSchoolClass().getId());
+
     }
 
     @Override

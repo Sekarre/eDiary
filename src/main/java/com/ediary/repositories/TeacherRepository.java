@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     Teacher findByUserId(Long userId);
+    Optional<Teacher> findByIdAndSchoolClassId(Long id, Long schoolClassId);
     Teacher findBySchoolClass(Class schoolClass);
     Optional<Teacher> findByUser(User user);
     List<Teacher> findAllBySchoolClassIsNull();
