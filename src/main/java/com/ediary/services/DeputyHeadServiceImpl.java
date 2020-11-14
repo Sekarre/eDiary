@@ -7,13 +7,10 @@ import com.ediary.converters.ClassDtoToClass;
 import com.ediary.converters.ClassToClassDto;
 import com.ediary.converters.StudentToStudentDto;
 import com.ediary.converters.TeacherToTeacherDto;
+import com.ediary.domain.*;
 import com.ediary.domain.Class;
-import com.ediary.domain.Student;
-import com.ediary.domain.Teacher;
 import com.ediary.exceptions.NotFoundException;
-import com.ediary.repositories.ClassRepository;
-import com.ediary.repositories.StudentRepository;
-import com.ediary.repositories.TeacherRepository;
+import com.ediary.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +26,12 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     private final ClassRepository classRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
+    private final LessonRepository lessonRepository;
+    private final SchoolPeriodRepository schoolPeriodRepository;
+    private final StudentCouncilRepository studentCouncilRepository;
+    private final ParentCouncilRepository parentCouncilRepository;
+    private final EventRepository eventRepository;
+    private final SubjectRepository subjectRepository;
 
     private final StudentToStudentDto studentToStudentDto;
     private final TeacherToTeacherDto teacherToTeacherDto;
@@ -57,6 +60,70 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     @Override
     public Boolean deleteClass(Long schoolClassId) {
         Class schoolClass = getSchoolCLass(schoolClassId);
+
+        //Students - null
+        List<Student> students = studentRepository.findAllById(schoolClass.getStudents()
+                .stream()
+                .map(Student::getId)
+                .collect(Collectors.toList()));
+        students.forEach(s -> s.setSchoolClass(null));
+        studentRepository.saveAll(students);
+
+
+        //Teacher - null
+        Teacher teacher = teacherRepository.findById(schoolClass.getTeacher().getId()).orElse(null);
+
+        if (teacher != null) {
+            teacher.setSchoolClass(null);
+            teacherRepository.save(teacher);
+        }
+
+        //Lessons
+        List<Lesson> lessons = lessonRepository.findAllBySchoolClassId(schoolClass.getId());
+        lessons.forEach(l -> l.setSchoolClass(null));
+        lessonRepository.saveAll(lessons);
+
+
+        //School periods
+        List<SchoolPeriod> schoolPeriods = schoolPeriodRepository.findAllBySchoolClassId(schoolClass.getId());
+        schoolPeriods.forEach(s -> s.setSchoolClass(null));
+        schoolPeriodRepository.saveAll(schoolPeriods);
+
+        //StudentCouncil - delete
+        StudentCouncil studentCouncil = studentCouncilRepository.findById(schoolClass.getStudentCouncil().getId()).orElse(null);
+        if (studentCouncil != null) {
+            studentCouncil.setStudents(null);
+            studentCouncil.setSchoolClass(null);
+            studentCouncilRepository.save(studentCouncil);
+
+        }
+
+        //ParentCouncil - delete
+        ParentCouncil parentCouncil = parentCouncilRepository.findById(schoolClass.getParentCouncil().getId()).orElse(null);
+        if (parentCouncil != null) {
+            parentCouncil.setParents(null);
+            parentCouncil.setSchoolClass(null);
+            parentCouncilRepository.save(parentCouncil);
+
+        }
+
+        //Events - null
+        List<Event> events = eventRepository.findAllById(schoolClass.getEvents()
+                .stream()
+                .map(Event::getId)
+                .collect(Collectors.toList()));
+        events.forEach(event -> event.setSchoolClass(null));
+        eventRepository.saveAll(events);
+
+
+        List<Subject> subjects = subjectRepository.findAllById(schoolClass.getSubjects()
+                .stream()
+                .map(Subject::getId)
+                .collect(Collectors.toList()));
+        subjects.forEach(subject -> subject.setSchoolClass(null));
+        subjectRepository.saveAll(subjects);
+
+        schoolClass.setName(null);
 
         classRepository.delete(schoolClass);
 

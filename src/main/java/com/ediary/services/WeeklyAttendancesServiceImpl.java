@@ -3,8 +3,10 @@ package com.ediary.services;
 import com.ediary.DTO.AttendanceDto;
 import com.ediary.converters.AttendanceToAttendanceDto;
 import com.ediary.domain.Attendance;
+import com.ediary.domain.Student;
 import com.ediary.domain.helpers.WeeklyAttendances;
 import com.ediary.repositories.AttendanceRepository;
+import com.ediary.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,10 +23,17 @@ import java.util.stream.Collectors;
 public class WeeklyAttendancesServiceImpl implements WeeklyAttendancesService {
 
     private final AttendanceRepository attendanceRepository;
+    private final StudentRepository studentRepository;
     private final AttendanceToAttendanceDto attendanceToAttendanceDto;
 
     @Override
     public WeeklyAttendances getAttendancesByWeek(Long studentId, Integer daysNumber, Date date) {
+
+        Student student = studentRepository.findById(studentId).orElse(null);
+
+        if (student == null || student.getSchoolClass() == null) {
+            return WeeklyAttendances.builder().build();
+        }
 
         LocalDate localDate = date.toLocalDate();
 

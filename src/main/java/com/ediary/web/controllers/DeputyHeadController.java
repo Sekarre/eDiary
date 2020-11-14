@@ -97,7 +97,7 @@ public class DeputyHeadController {
     }
 
 
-    @DeleteMapping("/classes/{classId}")
+    @PostMapping("/classes/{classId}")
     public String deleteClass(@PathVariable Long classId) {
 
         deputyHeadService.deleteClass(classId);

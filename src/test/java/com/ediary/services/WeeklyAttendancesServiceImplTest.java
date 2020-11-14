@@ -6,6 +6,7 @@ import com.ediary.domain.Attendance;
 import com.ediary.domain.Event;
 import com.ediary.domain.helpers.WeeklyAttendances;
 import com.ediary.repositories.AttendanceRepository;
+import com.ediary.repositories.StudentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -23,16 +24,18 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WeeklyAttendancesServiceImplTest {
 
     @Mock
-    private AttendanceRepository attendanceRepository;
+    AttendanceRepository attendanceRepository;
     @Mock
-    private AttendanceToAttendanceDto attendanceToAttendanceDto;
+    StudentRepository studentRepository;
+    @Mock
+    AttendanceToAttendanceDto attendanceToAttendanceDto;
 
     WeeklyAttendancesService weeklyAttendancesService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        weeklyAttendancesService = new WeeklyAttendancesServiceImpl(attendanceRepository, attendanceToAttendanceDto);
+        weeklyAttendancesService = new WeeklyAttendancesServiceImpl(attendanceRepository, studentRepository, attendanceToAttendanceDto);
     }
 
     @Test

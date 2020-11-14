@@ -50,11 +50,11 @@ The above copyright notice and this permission notice shall be included in all c
                     <ul class="pagination justify-content-center">
                         <li class="page-item">
                             <a class="btn btn-primary btn-round"
-                               th:href="@{/student/{studentId}/attendance/{direction}/{dateValue}(studentId=${studentId}, direction='previous', dateValue = ${weeklyAttendances?.attendances?.keySet().stream().findFirst().toString().substring(9, 19)})}">Poprzednia</a>
+                               th:href="@{/student/{studentId}/attendance/{direction}/{dateValue}(studentId=${studentId}, direction='previous', dateValue = ${weeklyAttendances?.attendances?.keySet()?.stream()?.findFirst()?.toString()?.substring(9, 19)})}">Poprzednia</a>
                         </li>
                         <li class="page-item">
                             <a class="btn btn-primary btn-round"
-                               th:href="@{/student/{studentId}/attendance/{direction}/{dateValue}(studentId=${studentId}, direction='next', dateValue = ${weeklyAttendances?.attendances?.keySet().stream().findFirst().toString().substring(9, 19)})}">Następna</a>
+                               th:href="@{/student/{studentId}/attendance/{direction}/{dateValue}(studentId=${studentId}, direction='next', dateValue = ${weeklyAttendances?.attendances?.keySet()?.stream()?.findFirst()?.toString()?.substring(9, 19)})}">Następna</a>
                         </li>
                     </ul>
                 </nav>

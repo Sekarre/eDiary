@@ -10,9 +10,7 @@ import com.ediary.converters.StudentToStudentDto;
 import com.ediary.converters.TeacherToTeacherDto;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
-import com.ediary.repositories.ClassRepository;
-import com.ediary.repositories.StudentRepository;
-import com.ediary.repositories.TeacherRepository;
+import com.ediary.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -37,6 +35,18 @@ public class DeputyHeadServiceImplTest {
     StudentRepository studentRepository;
     @Mock
     TeacherRepository teacherRepository;
+    @Mock
+    LessonRepository lessonRepository;
+    @Mock
+    SchoolPeriodRepository schoolPeriodRepository;
+    @Mock
+    StudentCouncilRepository studentCouncilRepository;
+    @Mock
+    ParentCouncilRepository parentCouncilRepository;
+    @Mock
+    EventRepository eventRepository;
+    @Mock
+    SubjectRepository subjectRepository;
 
     @Mock
     StudentToStudentDto studentToStudentDto;
@@ -52,8 +62,9 @@ public class DeputyHeadServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        deputyHeadService = new DeputyHeadServiceImpl(classRepository, studentRepository, teacherRepository, studentToStudentDto,
-                teacherToTeacherDto, classToClassDto, classDtoToClass);
+        deputyHeadService = new DeputyHeadServiceImpl(classRepository, studentRepository, teacherRepository, lessonRepository,
+                schoolPeriodRepository, studentCouncilRepository, parentCouncilRepository, eventRepository, subjectRepository,
+                studentToStudentDto, teacherToTeacherDto, classToClassDto, classDtoToClass);
     }
 
 

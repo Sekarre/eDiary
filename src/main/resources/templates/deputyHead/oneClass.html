@@ -62,6 +62,22 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
+            <ul class="pagination justify-content-center">
+                <li>
+<!--                    <form  th:action="@{'/deputyHead/classes/' + ${schoolClass.id}}" th:method="delete">-->
+<!--                        <button class="submit btn btn-primary btn-link">-->
+<!--                            <i class="material-icons">delete</i>-->
+<!--                        </button>-->
+<!--                    </form>-->
+                    <a data-toggle="modal" class="open-gradeDialogModalClass" href="#deleteClassModal"
+                       th:attr="data-class=''+${schoolClass.id}+'', data-target='#deleteClassModal'">
+                        <button rel="tooltip" class="submit btn btn-primary btn-link">
+                            <i class="material-icons">delete</i>
+                        </button>
+                    </a>
+                </li>
+            </ul>
+
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header card-header-primary">
@@ -97,7 +113,7 @@ The above copyright notice and this permission notice shall be included in all c
 
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h3 class="card-title">Studenci :</h3>
+                        <h3 class="card-title" th:text="'Studenci: ' + ${schoolClass?.students.size()}">Studenci :</h3>
                         <a th:href="'/deputyHead/classes/' + ${schoolClass.id} + '/addStudents'" type="button" class="btn btn-primary btn-fab btn-fab-mini btn-round">
                             <i class="material-icons">add</i>
                         </a>
@@ -146,6 +162,29 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                             <div class="modal-footer">
                                 <form id="deleteForm" method="post">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
+                                    <button type="submit" class="btn btn-danger" >Usuń</button>
+                                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="deleteClassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="example2ModalLabel"><i class="material-icons">delete</i></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="modal-body-class">
+
+                            </div>
+                            <div class="modal-footer">
+                                <form id="deleteFormClass" method="post">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
                                     <button type="submit" class="btn btn-danger" >Usuń</button>
                                     <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
@@ -394,6 +433,22 @@ The above copyright notice and this permission notice shall be included in all c
         var deleteForm = document.getElementById("deleteForm");
 
         deleteForm.setAttribute("action", "/deputyHead/classes/" + schoolClassId + "/removeStudent/" + studentId);
+    });
+</script>
+
+<script>
+    $(document).on("click", ".open-gradeDialogModalClass", function () {
+
+        var schoolClassId = $(this).data('class')
+
+        var gradeValueElem = document.getElementById("modal-body-class");
+
+        gradeValueElem.innerHTML = "Napewno chcesz usunąć tą klasę?";
+
+
+        var deleteForm = document.getElementById("deleteFormClass");
+
+        deleteForm.setAttribute("action", "/deputyHead/classes/" + schoolClassId);
     });
 </script>
 </body>
