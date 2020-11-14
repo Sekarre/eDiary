@@ -13,6 +13,7 @@ import java.util.Set;
 public interface ClassRepository extends JpaRepository<Class, Long> {
 
     Class findByName(String name);
+    Long countAllByName(String name);
 
     //Not sure if works
     List<Class> findAllBySubjects(Subject subject);

@@ -11,6 +11,7 @@ public interface DeputyHeadService {
 
     ClassDto initNewClass();
     Class saveClass(ClassDto schoolClassDto, List<Long> studentsId);
+    Class saveClass(ClassDto schoolClassDto);
     Boolean deleteClass(Long schoolClassId);
     List<ClassDto> listAllClasses();
     ClassDto getSchoolClass(Long classId);

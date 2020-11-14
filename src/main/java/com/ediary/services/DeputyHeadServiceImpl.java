@@ -58,6 +58,23 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     }
 
     @Override
+    public Class saveClass(ClassDto schoolClassDto) {
+        Class schoolClass = classDtoToClass.convertForNewClass(schoolClassDto);
+
+        if (schoolClass != null) {
+            Teacher teacher = teacherRepository.findById(schoolClass.getTeacher().getId()).orElse(null);
+
+
+            if (classRepository.countAllByName(schoolClass.getName()).equals(0L)
+                    && teacher != null && teacher.getSchoolClass() == null) {
+
+                return classRepository.save(schoolClass);
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Boolean deleteClass(Long schoolClassId) {
         Class schoolClass = getSchoolCLass(schoolClassId);
 
@@ -90,38 +107,43 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
         schoolPeriodRepository.saveAll(schoolPeriods);
 
         //StudentCouncil - delete
-        StudentCouncil studentCouncil = studentCouncilRepository.findById(schoolClass.getStudentCouncil().getId()).orElse(null);
-        if (studentCouncil != null) {
-            studentCouncil.setStudents(null);
-            studentCouncil.setSchoolClass(null);
-            studentCouncilRepository.save(studentCouncil);
-
+        if (schoolClass.getStudentCouncil() != null) {
+            StudentCouncil studentCouncil = studentCouncilRepository.findById(schoolClass.getStudentCouncil().getId()).orElse(null);
+            if (studentCouncil != null) {
+                studentCouncil.setStudents(null);
+                studentCouncil.setSchoolClass(null);
+                studentCouncilRepository.save(studentCouncil);
+            }
         }
 
         //ParentCouncil - delete
-        ParentCouncil parentCouncil = parentCouncilRepository.findById(schoolClass.getParentCouncil().getId()).orElse(null);
-        if (parentCouncil != null) {
-            parentCouncil.setParents(null);
-            parentCouncil.setSchoolClass(null);
-            parentCouncilRepository.save(parentCouncil);
-
+        if (schoolClass.getParentCouncil() != null) {
+            ParentCouncil parentCouncil = parentCouncilRepository.findById(schoolClass.getParentCouncil().getId()).orElse(null);
+            if (parentCouncil != null) {
+                parentCouncil.setParents(null);
+                parentCouncil.setSchoolClass(null);
+                parentCouncilRepository.save(parentCouncil);
+            }
         }
 
         //Events - null
-        List<Event> events = eventRepository.findAllById(schoolClass.getEvents()
-                .stream()
-                .map(Event::getId)
-                .collect(Collectors.toList()));
-        events.forEach(event -> event.setSchoolClass(null));
-        eventRepository.saveAll(events);
+        if (schoolClass.getEvents() != null) {
+            List<Event> events = eventRepository.findAllById(schoolClass.getEvents()
+                    .stream()
+                    .map(Event::getId)
+                    .collect(Collectors.toList()));
+            events.forEach(event -> event.setSchoolClass(null));
+            eventRepository.saveAll(events);
+        }
 
-
-        List<Subject> subjects = subjectRepository.findAllById(schoolClass.getSubjects()
-                .stream()
-                .map(Subject::getId)
-                .collect(Collectors.toList()));
-        subjects.forEach(subject -> subject.setSchoolClass(null));
-        subjectRepository.saveAll(subjects);
+        if (schoolClass.getSubjects() != null) {
+            List<Subject> subjects = subjectRepository.findAllById(schoolClass.getSubjects()
+                    .stream()
+                    .map(Subject::getId)
+                    .collect(Collectors.toList()));
+            subjects.forEach(subject -> subject.setSchoolClass(null));
+            subjectRepository.saveAll(subjects);
+        }
 
         schoolClass.setName(null);
 
@@ -205,7 +227,7 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
 
         if (schoolClass.getStudents().stream().noneMatch(s -> s.getId().equals(studentId))) {
 
-            Set<Student> newStudentSet = new HashSet<>(){{
+            Set<Student> newStudentSet = new HashSet<>() {{
                 addAll(schoolClass.getStudents());
                 add(student);
             }};
@@ -252,7 +274,7 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
 
     @Override
     public Integer countStudentsWithoutClass() {
-        return  studentRepository.countStudentBySchoolClassIsNull().intValue();
+        return studentRepository.countStudentBySchoolClassIsNull().intValue();
     }
 
     private Class getSchoolCLass(Long classId) {

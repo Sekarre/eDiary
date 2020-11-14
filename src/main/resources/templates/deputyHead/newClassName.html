@@ -49,7 +49,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <h3  th:text="'Klasa  ' + ${schoolClass.name}"></h3>
+                    <h3  th:text="'Tworzenie klasy  '"></h3>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -62,138 +62,33 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <ul class="pagination justify-content-center">
-                <li>
-<!--                    <form  th:action="@{'/deputyHead/classes/' + ${schoolClass.id}}" th:method="delete">-->
-<!--                        <button class="submit btn btn-primary btn-link">-->
-<!--                            <i class="material-icons">delete</i>-->
-<!--                        </button>-->
-<!--                    </form>-->
-                    <a data-toggle="modal" class="open-gradeDialogModalClass" href="#deleteClassModal"
-                       th:attr="data-class=''+${schoolClass.id}+'', data-target='#deleteClassModal'">
-                        <button rel="tooltip" class="submit btn  btn-link btn-lg btn-danger">
-                            <i class="material-icons">delete</i>
-                        </button>
-                    </a>
-                </li>
-            </ul>
 
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h3 class="card-title" th:text="'Wychowawca: '">Wychowawca: </h3>
-                        <th:block th:if="${schoolClass.teacherName == null}">
-                            <button class="btn btn-primary btn-fab btn-fab-mini btn-round">
-                                <i class="material-icons">add</i>
-                            </button>
-                        </th:block>
+                        <h3 class="card-title" th:text="'Nazwa klasy'">Nazwa: </h3>
                     </div>
-                        <div class="card-body">
-                            <div class='table-responsive'>
-                                <table class="table">
-                                    <thead>
-                                        <th>Imie i nazwisko</th>
-                                        <th>Zmień</th>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td th:text = "${schoolClass.teacherName}"></td>
-                                            <td>
-                                                <a th:href="@{'/deputyHead/classes/' + ${classId} + '/changeTeacher/' + ${schoolClass.teacherId} }">
-                                                    <i class="material-icons">swap_horiz</i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                    <form method="post" th:action="@{'/deputyHead/newClass/name'}">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                              <span class="input-group-text">
+                                  <i class="material-icons">article</i>
+                              </span>
                         </div>
-                </div>
-
-
-                <div class="card">
-                    <div class="card-header card-header-primary">
-                        <h3 class="card-title" th:text="'Studenci: ' + ${schoolClass?.students?.size()}">Studenci :</h3>
-                        <a th:href="'/deputyHead/classes/' + ${schoolClass.id} + '/addStudents'" type="button" class="btn btn-primary btn-fab btn-fab-mini btn-round">
-                            <i class="material-icons">add</i>
-                        </a>
-
+                        <input th:name="'name'" th:id="'className'" class="form-control" placeholder="Nazwa klasy">
+                        <input type="hidden"
+                               th:name="'teacherId'" th:value="${schoolClass.teacherId}" th:id="'teacherId'" class="form-control" placeholder="Nazwa klasy">
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead class=" text-primary">
-                                <th>Imie i nazwisko</th>
-                                <th>Usuń</th>
-                                </thead>
-                                <tbody>
-
-                                <tr th:each="student : ${schoolClass.students}">
-                                    <td th:text="${student.userName}">
-                                        Imie i nazwisko
-                                    </td>
-                                    <td>
-                                        <a data-toggle="modal" class="open-gradeDialogModal" href="#deleteStudentModal"
-                                           th:attr="data-student=''+${student.id}+'', data-studentname=''+${student.userName}+'', data-target='#deleteStudentModal', data-class =''+${schoolClass.id}+''">
-                                            <button rel="tooltip" class="submit btn btn-primary btn-link">
-                                                <i class="material-icons">delete</i>
-                                            </button>
-                                        </a>
-
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <!-- Modal -->
-                <div class="modal fade" id="deleteStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel"><i class="material-icons">delete</i></h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
+                        <ul class="pagination justify-content-center">
+                            <li>
+                                <button class="submit btn btn-primary btn-round btn-link">
+                                   Stwórz
                                 </button>
-                            </div>
-                            <div class="modal-body" id="modal-body">
-
-                            </div>
-                            <div class="modal-footer">
-                                <form id="deleteForm" method="post">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
-                                    <button type="submit" class="btn btn-danger" >Usuń</button>
-                                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                            </li>
+                        </ul>
+                    </form>
                 </div>
-
-                <div class="modal fade" id="deleteClassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="example2ModalLabel"><i class="material-icons">delete</i></h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body" id="modal-body-class">
-
-                            </div>
-                            <div class="modal-footer">
-                                <form id="deleteFormClass" method="post">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
-                                    <button type="submit" class="btn btn-danger" >Usuń</button>
-                                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -418,39 +313,7 @@ The above copyright notice and this permission notice shall be included in all c
         md.initFormExtendedDatetimepickers();
     });
 </script>
-<script>
-    $(document).on("click", ".open-gradeDialogModal", function () {
 
-        var studentId = $(this).data('student');
-        var schoolClassId = $(this).data('class')
-        var studentName = $(this).data('studentname')
-
-        var gradeValueElem = document.getElementById("modal-body");
-
-        gradeValueElem.innerHTML = "Napewno chcesz usunąć ucznia: " + studentName + " z tej klasy?";
-
-
-        var deleteForm = document.getElementById("deleteForm");
-
-        deleteForm.setAttribute("action", "/deputyHead/classes/" + schoolClassId + "/removeStudent/" + studentId);
-    });
-</script>
-
-<script>
-    $(document).on("click", ".open-gradeDialogModalClass", function () {
-
-        var schoolClassId = $(this).data('class')
-
-        var gradeValueElem = document.getElementById("modal-body-class");
-
-        gradeValueElem.innerHTML = "Napewno chcesz usunąć tą klasę?";
-
-
-        var deleteForm = document.getElementById("deleteFormClass");
-
-        deleteForm.setAttribute("action", "/deputyHead/classes/" + schoolClassId);
-    });
-</script>
 </body>
 
 </html>

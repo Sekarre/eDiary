@@ -3,7 +3,6 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.ClassDto;
 import com.ediary.converters.UserToUserDto;
-import com.ediary.domain.Class;
 import com.ediary.domain.security.User;
 import com.ediary.services.DeputyHeadService;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +12,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -54,30 +51,41 @@ public class DeputyHeadController {
     }
 
 
-    @GetMapping("/newClass")
-    public String newClass(Model model) {
+    @GetMapping("/newClass/formTutor")
+    public String newClass(Model model,
+                           @RequestParam(name = "page", required = false) Optional<Integer> page
+                           ) {
 
+        model.addAttribute("page", page);
         model.addAttribute("schoolClass", deputyHeadService.initNewClass());
-        //just for now, random values
-        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass(1,2));
-        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass(1,2));
+        model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass(page.orElse(0),pageSize));
 
         return "deputyHead/newClass";
     }
 
-    @PostMapping("/newClass")
-    public String processNewClass(@Valid @ModelAttribute ClassDto classDto, BindingResult result,
-                                  @RequestParam(name = "studentsId") List<Long> studentsId) {
+    @PostMapping("/newClass/formTutor")
+    public String processNewClass(@Valid @ModelAttribute ClassDto schoolClass, Model model,
+                                  @RequestParam(name = "page", required = false) Optional<Integer> page) {
+
+        model.addAttribute("page", page);
+        model.addAttribute("schoolClass", schoolClass);
+        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass(page.orElse(0),pageSize));
+
+        return "deputyHead/newClassName";
+    }
+
+    @PostMapping("/newClass/name")
+    public String processNewClassName(@Valid @ModelAttribute ClassDto schoolClass, BindingResult result) {
 
         if (result.hasErrors()) {
-            //todo: path view
             return "";
         }
 
-        Class schoolClass = deputyHeadService.saveClass(classDto, studentsId);
+        deputyHeadService.saveClass(schoolClass);
 
-        return "redirect:/deputyHead/classes/" + schoolClass.getId();
+        return "redirect:/deputyHead/classes";
     }
+
 
 
     @GetMapping("/classes")
