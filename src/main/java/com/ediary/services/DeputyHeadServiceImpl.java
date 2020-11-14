@@ -107,43 +107,30 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
         schoolPeriodRepository.saveAll(schoolPeriods);
 
         //StudentCouncil - delete
-        if (schoolClass.getStudentCouncil() != null) {
-            StudentCouncil studentCouncil = studentCouncilRepository.findById(schoolClass.getStudentCouncil().getId()).orElse(null);
-            if (studentCouncil != null) {
-                studentCouncil.setStudents(null);
-                studentCouncil.setSchoolClass(null);
-                studentCouncilRepository.save(studentCouncil);
-            }
+        StudentCouncil studentCouncil = studentCouncilRepository.findBySchoolClassId(schoolClass.getId());
+        if (studentCouncil != null) {
+            studentCouncil.setStudents(null);
+            studentCouncil.setSchoolClass(null);
+            studentCouncilRepository.save(studentCouncil);
         }
 
         //ParentCouncil - delete
-        if (schoolClass.getParentCouncil() != null) {
-            ParentCouncil parentCouncil = parentCouncilRepository.findById(schoolClass.getParentCouncil().getId()).orElse(null);
-            if (parentCouncil != null) {
-                parentCouncil.setParents(null);
-                parentCouncil.setSchoolClass(null);
-                parentCouncilRepository.save(parentCouncil);
-            }
+        ParentCouncil parentCouncil = parentCouncilRepository.findBySchoolClassId(schoolClass.getId());
+        if (parentCouncil != null) {
+            parentCouncil.setParents(null);
+            parentCouncil.setSchoolClass(null);
+            parentCouncilRepository.save(parentCouncil);
         }
 
         //Events - null
-        if (schoolClass.getEvents() != null) {
-            List<Event> events = eventRepository.findAllById(schoolClass.getEvents()
-                    .stream()
-                    .map(Event::getId)
-                    .collect(Collectors.toList()));
-            events.forEach(event -> event.setSchoolClass(null));
-            eventRepository.saveAll(events);
-        }
+        List<Event> events = eventRepository.findAllBySchoolClassId(schoolClass.getId());
+        events.forEach(event -> event.setSchoolClass(null));
+        eventRepository.saveAll(events);
 
-        if (schoolClass.getSubjects() != null) {
-            List<Subject> subjects = subjectRepository.findAllById(schoolClass.getSubjects()
-                    .stream()
-                    .map(Subject::getId)
-                    .collect(Collectors.toList()));
-            subjects.forEach(subject -> subject.setSchoolClass(null));
-            subjectRepository.saveAll(subjects);
-        }
+        //Subjects - null
+        List<Subject> subjects = subjectRepository.findAllBySchoolClassId(schoolClass.getId());
+        subjects.forEach(subject -> subject.setSchoolClass(null));
+        subjectRepository.saveAll(subjects);
 
         schoolClass.setName(null);
 

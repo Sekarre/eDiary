@@ -48,10 +48,9 @@ public class DeputyHeadControllerTest {
         when(deputyHeadService.listAllTeachersWithoutClass(any(), any())).thenReturn(Collections.singletonList(TeacherDto.builder().build()));
 
 
-        mockMvc.perform(get("/deputyHead/newClass"))
+        mockMvc.perform(get("/deputyHead/newClass/formTutor"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("schoolClass"))
-                .andExpect(model().attributeExists("students"))
                 .andExpect(model().attributeExists("teachers"))
                 .andExpect(view().name("deputyHead/newClass"));
 
@@ -65,14 +64,28 @@ public class DeputyHeadControllerTest {
     void processNewClass() throws Exception {
         when(deputyHeadService.saveClass(any(), any())).thenReturn(Class.builder().id(1L).build());
 
-        mockMvc.perform(post("/deputyHead/newClass")
-                .param("studentsId", String.valueOf(1L))
+        mockMvc.perform(post("/deputyHead/newClass/formTutor")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(AbstractAsJsonControllerTest.asJsonString(StudentCouncilDto.builder().build())))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/deputyHead/classes/" + 1L));
+                .content(AbstractAsJsonControllerTest.asJsonString(ClassDto.builder().build())))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("page"))
+                .andExpect(model().attributeExists("schoolClass"))
+                .andExpect(model().attributeExists("students"))
+                .andExpect(view().name("deputyHead/newClassName"));
 
-        verify(deputyHeadService, times(1)).saveClass(any(), any());
+    }
+
+    @Test
+    void processNewClassName() throws Exception {
+        when(deputyHeadService.saveClass(any())).thenReturn(Class.builder().id(1L).build());
+
+        mockMvc.perform(post("/deputyHead/newClass/name")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(ClassDto.builder().build())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/deputyHead/classes"));
+
+        verify(deputyHeadService, times(1)).saveClass(any());
     }
 
     @Test
@@ -103,7 +116,7 @@ public class DeputyHeadControllerTest {
 
     @Test
     void deleteClass() throws Exception {
-        mockMvc.perform(delete("/deputyHead/classes/" + 1L))
+        mockMvc.perform(post("/deputyHead/classes/" + 1L))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/deputyHead/classes"));
 

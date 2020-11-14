@@ -13,6 +13,7 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findAllBySchoolClass(Class schoolClass);
+    List<Event> findAllBySchoolClassId(Long classId);
     Page<Event> findAllBySchoolClassIdOrderByDate(Long schoolClassId, Pageable pageable);
     List<Event> findAllByTeacher(Teacher teacher);
     List<Event> findAllByTeacherIdAndDateAfterAndDateBefore(Long teacherId, Date startTime, Date endTime);
