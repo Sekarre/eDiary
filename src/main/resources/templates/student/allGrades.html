@@ -45,7 +45,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <h3 class="card-title" th:text="${student.userName} + ' - Oceny: '"></h3>
+                    <a class="navbar-brand" th:text="${student.userName} + ' - Oceny: '"></a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -58,7 +58,12 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <div th:each="subject : ${subjects}" class="container-fluid">
+            <div th:if="${subjects == null || subjects?.size() == 0}" class="navbar-wrapper">
+                <div class="d-flex justify-content-center">
+                    <h2 class="navbar-brand">Nie znaleziono ocen</h2>
+                </div>
+            </div>
+            <div th:each="subject : ${subjects}" class="container-fluid" th:if="${subjects != null && subjects?.size() > 0}">
                 <div class="card">
                     <div class="card-header card-header-text card-header-primary">
                         <div class="card-text col-md-3" >

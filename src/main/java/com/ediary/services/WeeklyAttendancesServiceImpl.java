@@ -32,7 +32,7 @@ public class WeeklyAttendancesServiceImpl implements WeeklyAttendancesService {
         Student student = studentRepository.findById(studentId).orElse(null);
 
         if (student == null || student.getSchoolClass() == null) {
-            return WeeklyAttendances.builder().build();
+            return null;
         }
 
         LocalDate localDate = date.toLocalDate();

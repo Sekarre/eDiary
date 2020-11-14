@@ -76,6 +76,10 @@ public class ParentServiceImpl implements ParentService {
 
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
 
+        if (student.getSchoolClass() == null) {
+            return null;
+        }
+
         List<Subject> subjects = subjectRepository.findAllBySchoolClassIdOrderByName(student.getSchoolClass().getId());
 
 

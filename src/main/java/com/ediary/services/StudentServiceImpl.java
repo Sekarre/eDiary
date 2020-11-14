@@ -90,7 +90,7 @@ public class StudentServiceImpl implements StudentService {
         Student student = getStudentById(studentId);
 
         if (student.getSchoolClass() == null) {
-            throw new NotFoundException("Class not found");
+            return null;
         }
 
         Pageable pageable = PageRequest.of(page, size);
@@ -107,7 +107,7 @@ public class StudentServiceImpl implements StudentService {
         Student student = getStudentById(studentId);
 
         if (student.getSchoolClass() == null) {
-            throw new NotFoundException("Class not found");
+            return null;
         }
 
         return timetableService.getTimetableByClassId(student.getSchoolClass().getId());

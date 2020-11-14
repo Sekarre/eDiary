@@ -87,7 +87,12 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <div class="container-fluid">
+            <div th:if="${events == null || events?.size() == 0}" class="navbar-wrapper">
+                <div class="d-flex justify-content-center">
+                    <h2 class="navbar-brand">Nie znaleziono żadnych wydarzeń</h2>
+                </div>
+            </div>
+            <div class="container-fluid" th:if="${events != null && events.size() > 0}">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title ">Terminarz</h4>

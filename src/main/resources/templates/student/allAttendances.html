@@ -46,7 +46,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="navbar-wrapper">
                     <a class="navbar-brand">Frekwencja:</a>
                 </div>
-                <nav aria-label="Page navigation example">
+                <nav aria-label="Page navigation example" th:if="${weeklyAttendances != null}">
                     <ul class="pagination justify-content-center">
                         <li class="page-item">
                             <a class="btn btn-primary btn-round"
@@ -70,7 +70,12 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <div class="container-fluid">
+            <div th:if="${weeklyAttendances == null}" class="navbar-wrapper">
+                <div class="d-flex justify-content-center">
+                    <h2 class="navbar-brand">Nie znaleziono frekwencji</h2>
+                </div>
+            </div>
+            <div class="container-fluid" th:if="${weeklyAttendances != null}">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h3 class="card-title">Frekwencja :</h3>
