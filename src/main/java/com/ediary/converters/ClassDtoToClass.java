@@ -47,7 +47,7 @@ public class ClassDtoToClass implements Converter<ClassDto, Class> {
         schoolClass.setStudentCouncil(studentCouncilRepository.findById(source.getParentCouncilId()).orElse(null));
 
         //Teacher
-        schoolClass.setTeacher(teacherRepository.findByUserId(source.getTeacherId()));
+        schoolClass.setTeacher(teacherRepository.findById(source.getTeacherId()).orElse(null));
 
         //Parent Council
         schoolClass.setParentCouncil(parentCouncilRepository.findById(source.getParentCouncilId()).orElse(null));
@@ -69,4 +69,21 @@ public class ClassDtoToClass implements Converter<ClassDto, Class> {
 
         return schoolClass;
     }
+
+    @Nullable
+    @Synchronized
+    public Class convertForNewClass(ClassDto source) {
+        if (source == null) {
+            return null;
+        }
+
+
+        final Class schoolClass = new Class();
+
+        schoolClass.setName(source.getName());
+        schoolClass.setTeacher(teacherRepository.findById(source.getTeacherId()).orElse(null));
+
+        return schoolClass;
+    }
+
 }

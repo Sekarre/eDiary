@@ -35,14 +35,18 @@ public class ClassToClassDto implements Converter<Class, ClassDto> {
         classDto.setName(source.getName());
 
         //Student Council
-        classDto.setStudentCouncilId(source.getStudentCouncil().getId());
+        if (source.getStudentCouncil() != null) {
+            classDto.setStudentCouncilId(source.getStudentCouncil().getId());
+        }
 
         //Teacher
         classDto.setTeacherName(source.getTeacher().getUser().getFirstName() + " " + source.getTeacher().getUser().getLastName());
         classDto.setTeacherId(source.getTeacher().getId());
 
         //Parent Council
-        classDto.setParentCouncilId(source.getParentCouncil().getId());
+        if (source.getParentCouncil() != null) {
+            classDto.setParentCouncilId(source.getParentCouncil().getId());
+        }
 
         if (source.getStudents() != null) {
             //Students sorted by last name

@@ -7,13 +7,10 @@ import com.ediary.converters.ClassDtoToClass;
 import com.ediary.converters.ClassToClassDto;
 import com.ediary.converters.StudentToStudentDto;
 import com.ediary.converters.TeacherToTeacherDto;
+import com.ediary.domain.*;
 import com.ediary.domain.Class;
-import com.ediary.domain.Student;
-import com.ediary.domain.Teacher;
 import com.ediary.exceptions.NotFoundException;
-import com.ediary.repositories.ClassRepository;
-import com.ediary.repositories.StudentRepository;
-import com.ediary.repositories.TeacherRepository;
+import com.ediary.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +26,12 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     private final ClassRepository classRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
+    private final LessonRepository lessonRepository;
+    private final SchoolPeriodRepository schoolPeriodRepository;
+    private final StudentCouncilRepository studentCouncilRepository;
+    private final ParentCouncilRepository parentCouncilRepository;
+    private final EventRepository eventRepository;
+    private final SubjectRepository subjectRepository;
 
     private final StudentToStudentDto studentToStudentDto;
     private final TeacherToTeacherDto teacherToTeacherDto;
@@ -55,8 +58,81 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     }
 
     @Override
+    public Class saveClass(ClassDto schoolClassDto) {
+        Class schoolClass = classDtoToClass.convertForNewClass(schoolClassDto);
+
+        if (schoolClass != null) {
+            Teacher teacher = teacherRepository.findById(schoolClass.getTeacher().getId()).orElse(null);
+
+
+            if (classRepository.countAllByName(schoolClass.getName()).equals(0L)
+                    && teacher != null && teacher.getSchoolClass() == null) {
+
+                return classRepository.save(schoolClass);
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Boolean deleteClass(Long schoolClassId) {
         Class schoolClass = getSchoolCLass(schoolClassId);
+
+        //Students - null
+        List<Student> students = studentRepository.findAllById(schoolClass.getStudents()
+                .stream()
+                .map(Student::getId)
+                .collect(Collectors.toList()));
+        students.forEach(s -> s.setSchoolClass(null));
+        studentRepository.saveAll(students);
+
+
+        //Teacher - null
+        Teacher teacher = teacherRepository.findById(schoolClass.getTeacher().getId()).orElse(null);
+
+        if (teacher != null) {
+            teacher.setSchoolClass(null);
+            teacherRepository.save(teacher);
+        }
+
+        //Lessons
+        List<Lesson> lessons = lessonRepository.findAllBySchoolClassId(schoolClass.getId());
+        lessons.forEach(l -> l.setSchoolClass(null));
+        lessonRepository.saveAll(lessons);
+
+
+        //School periods
+        List<SchoolPeriod> schoolPeriods = schoolPeriodRepository.findAllBySchoolClassId(schoolClass.getId());
+        schoolPeriods.forEach(s -> s.setSchoolClass(null));
+        schoolPeriodRepository.saveAll(schoolPeriods);
+
+        //StudentCouncil - delete
+        StudentCouncil studentCouncil = studentCouncilRepository.findBySchoolClassId(schoolClass.getId());
+        if (studentCouncil != null) {
+            studentCouncil.setStudents(null);
+            studentCouncil.setSchoolClass(null);
+            studentCouncilRepository.save(studentCouncil);
+        }
+
+        //ParentCouncil - delete
+        ParentCouncil parentCouncil = parentCouncilRepository.findBySchoolClassId(schoolClass.getId());
+        if (parentCouncil != null) {
+            parentCouncil.setParents(null);
+            parentCouncil.setSchoolClass(null);
+            parentCouncilRepository.save(parentCouncil);
+        }
+
+        //Events - null
+        List<Event> events = eventRepository.findAllBySchoolClassId(schoolClass.getId());
+        events.forEach(event -> event.setSchoolClass(null));
+        eventRepository.saveAll(events);
+
+        //Subjects - null
+        List<Subject> subjects = subjectRepository.findAllBySchoolClassId(schoolClass.getId());
+        subjects.forEach(subject -> subject.setSchoolClass(null));
+        subjectRepository.saveAll(subjects);
+
+        schoolClass.setName(null);
 
         classRepository.delete(schoolClass);
 
@@ -138,7 +214,7 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
 
         if (schoolClass.getStudents().stream().noneMatch(s -> s.getId().equals(studentId))) {
 
-            Set<Student> newStudentSet = new HashSet<>(){{
+            Set<Student> newStudentSet = new HashSet<>() {{
                 addAll(schoolClass.getStudents());
                 add(student);
             }};
@@ -185,7 +261,7 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
 
     @Override
     public Integer countStudentsWithoutClass() {
-        return  studentRepository.countStudentBySchoolClassIsNull().intValue();
+        return studentRepository.countStudentBySchoolClassIsNull().intValue();
     }
 
     private Class getSchoolCLass(Long classId) {

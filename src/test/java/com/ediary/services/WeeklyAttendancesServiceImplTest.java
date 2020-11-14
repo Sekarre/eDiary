@@ -3,9 +3,12 @@ package com.ediary.services;
 import com.ediary.DTO.AttendanceDto;
 import com.ediary.converters.AttendanceToAttendanceDto;
 import com.ediary.domain.Attendance;
+import com.ediary.domain.Class;
 import com.ediary.domain.Event;
+import com.ediary.domain.Student;
 import com.ediary.domain.helpers.WeeklyAttendances;
 import com.ediary.repositories.AttendanceRepository;
+import com.ediary.repositories.StudentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -23,16 +26,18 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WeeklyAttendancesServiceImplTest {
 
     @Mock
-    private AttendanceRepository attendanceRepository;
+    AttendanceRepository attendanceRepository;
     @Mock
-    private AttendanceToAttendanceDto attendanceToAttendanceDto;
+    StudentRepository studentRepository;
+    @Mock
+    AttendanceToAttendanceDto attendanceToAttendanceDto;
 
     WeeklyAttendancesService weeklyAttendancesService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        weeklyAttendancesService = new WeeklyAttendancesServiceImpl(attendanceRepository, attendanceToAttendanceDto);
+        weeklyAttendancesService = new WeeklyAttendancesServiceImpl(attendanceRepository, studentRepository, attendanceToAttendanceDto);
     }
 
     @Test
@@ -43,7 +48,8 @@ public class WeeklyAttendancesServiceImplTest {
         ));
 
         when(attendanceToAttendanceDto.convert(any())).thenReturn(AttendanceDto.builder().id(1L).build());
-
+        when(studentRepository.findById(any()))
+                .thenReturn(java.util.Optional.ofNullable(Student.builder().schoolClass(Class.builder().build()).build()));
 
         WeeklyAttendances weeklyAttendances = weeklyAttendancesService.getAttendancesByWeek(1L, 7, Date.valueOf(LocalDate.now()));
 

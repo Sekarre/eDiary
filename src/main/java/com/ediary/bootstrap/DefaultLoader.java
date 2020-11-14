@@ -150,7 +150,7 @@ public class DefaultLoader implements CommandLineRunner {
         createMessages();
         createNotices();
         createClasses();
-        addStudentsToClasses();
+//        addStudentsToClasses();
         createSubjects();
 //        Uncomment for grades (takes time)
         createGrades();

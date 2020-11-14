@@ -10,9 +10,7 @@ import com.ediary.converters.StudentToStudentDto;
 import com.ediary.converters.TeacherToTeacherDto;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
-import com.ediary.repositories.ClassRepository;
-import com.ediary.repositories.StudentRepository;
-import com.ediary.repositories.TeacherRepository;
+import com.ediary.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -37,6 +35,18 @@ public class DeputyHeadServiceImplTest {
     StudentRepository studentRepository;
     @Mock
     TeacherRepository teacherRepository;
+    @Mock
+    LessonRepository lessonRepository;
+    @Mock
+    SchoolPeriodRepository schoolPeriodRepository;
+    @Mock
+    StudentCouncilRepository studentCouncilRepository;
+    @Mock
+    ParentCouncilRepository parentCouncilRepository;
+    @Mock
+    EventRepository eventRepository;
+    @Mock
+    SubjectRepository subjectRepository;
 
     @Mock
     StudentToStudentDto studentToStudentDto;
@@ -52,8 +62,9 @@ public class DeputyHeadServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        deputyHeadService = new DeputyHeadServiceImpl(classRepository, studentRepository, teacherRepository, studentToStudentDto,
-                teacherToTeacherDto, classToClassDto, classDtoToClass);
+        deputyHeadService = new DeputyHeadServiceImpl(classRepository, studentRepository, teacherRepository, lessonRepository,
+                schoolPeriodRepository, studentCouncilRepository, parentCouncilRepository, eventRepository, subjectRepository,
+                studentToStudentDto, teacherToTeacherDto, classToClassDto, classDtoToClass);
     }
 
 
@@ -62,6 +73,65 @@ public class DeputyHeadServiceImplTest {
         ClassDto newClassDto = deputyHeadService.initNewClass();
 
         assertNotNull(newClassDto);
+    }
+
+    @Test
+    void saveClass() {
+        Student student = Student.builder().id(1L).build();
+
+        when(studentRepository.findAllById(any())).thenReturn(Collections.singletonList(student));
+        when(classDtoToClass.convert(any())).thenReturn(Class.builder().build());
+        when(classRepository.save(any())).thenReturn(Class.builder().build());
+
+        Class savedClass = deputyHeadService
+                .saveClass(ClassDto.builder().build(),  new ArrayList<>(){{
+                    add(1L);
+                    add(2L);
+                }});
+
+        assertNotNull(savedClass);
+        verify(studentRepository, times(1)).findAllById(any());
+        verify(classDtoToClass, times(1)).convert(any());
+    }
+
+
+    @Test
+    void saveClassSecond() {
+        Student student = Student.builder().id(1L).build();
+        Class schoolClass = Class.builder()
+                .teacher(Teacher.builder().id(1L).build())
+                .name("name")
+                .build();
+
+        when(classDtoToClass.convertForNewClass(any())).thenReturn(schoolClass);
+        when(classRepository.countAllByName(any())).thenReturn(0L);
+        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(Teacher.builder().build()));
+        when(classRepository.save(any())).thenReturn(schoolClass);
+
+        Class savedClass = deputyHeadService
+                .saveClass(ClassDto.builder().build());
+
+        assertNotNull(savedClass);
+        verify(classRepository, times(1)).save(any());
+        verify(classDtoToClass, times(1)).convertForNewClass(any());
+    }
+
+
+    @Test
+    void deleteClass() {
+
+        Class schoolClass = Class.builder()
+                .id(1L)
+                .name("Test")
+                .students(new HashSet<>(Collections.singleton(Student.builder().build())))
+                .teacher(Teacher.builder().build())
+                .build();
+
+        when(classRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(schoolClass));
+
+        Boolean result = deputyHeadService.deleteClass(1L);
+
+        assertTrue(result);
     }
 
     @Test
@@ -213,22 +283,6 @@ public class DeputyHeadServiceImplTest {
     }
 
 
-    @Test
-    void saveClass() {
-        Student student = Student.builder().id(1L).build();
 
-        when(studentRepository.findAllById(any())).thenReturn(Collections.singletonList(student));
-        when(classDtoToClass.convert(any())).thenReturn(Class.builder().build());
-        when(classRepository.save(any())).thenReturn(Class.builder().build());
 
-        Class savedClass = deputyHeadService
-                .saveClass(ClassDto.builder().build(),  new ArrayList<>(){{
-                    add(1L);
-                    add(2L);
-                }});
-
-        assertNotNull(savedClass);
-        verify(studentRepository, times(1)).findAllById(any());
-        verify(classDtoToClass, times(1)).convert(any());
-    }
 }

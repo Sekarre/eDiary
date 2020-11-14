@@ -39,7 +39,12 @@ public class StudentToStudentDto implements Converter<Student, StudentDto> {
         final StudentDto studentDto = new StudentDto();
         studentDto.setId(source.getId());
         studentDto.setUserName(source.getUser().getFirstName() + " " + source.getUser().getLastName());
-        studentDto.setClassName(source.getSchoolClass().getName());
+
+
+        if (source.getSchoolClass() != null) {
+            studentDto.setClassName(source.getSchoolClass().getName());
+        }
+
 
         return studentDto;
 
