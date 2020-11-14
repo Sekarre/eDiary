@@ -596,9 +596,10 @@ public class TeacherController {
         }
     }
 
-    @PatchMapping("/{teacherId}/subject/{subjectId}/topic/{topicId}")
+    @PostMapping("/{teacherId}/subject/{subjectId}/topic/edit/{topicId}")
     public String updatePatchTopic(@PathVariable Long teacherId,
                                    @PathVariable Long subjectId,
+                                   @PathVariable Long topicId,
                                    @Valid @RequestBody TopicDto topicDto,
                                    BindingResult result) {
 
@@ -606,8 +607,9 @@ public class TeacherController {
             //TODO
             return "/";
         } else {
+            topicDto.setId(topicId);
             TopicDto topic = teacherService.updatePatchTopic(topicDto);
-            return "redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic";
+            return "redirect:/teacher/" + teacherId + "/subject/" + subjectId;
         }
     }
 

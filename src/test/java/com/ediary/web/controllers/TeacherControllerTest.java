@@ -818,9 +818,9 @@ class TeacherControllerTest {
         Long subjectId = 25L;
         Long topicId = 10L;
 
-        mockMvc.perform(delete("/teacher/" + teacherId + "/subject/" + subjectId + "/topic/" + topicId))
+        mockMvc.perform(post("/teacher/" + teacherId + "/subject/" + subjectId + "/topic/" + topicId))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic"));
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId));
 
         verify(teacherService, times(1)).deleteTopic(teacherId, subjectId, topicId);
     }
@@ -850,11 +850,11 @@ class TeacherControllerTest {
 
         when(teacherService.updatePatchTopic(any())).thenReturn(TopicDto.builder().build());
 
-        mockMvc.perform(patch("/teacher/" + teacherId + "/subject/" + subjectId + "/topic/" + topicId)
+        mockMvc.perform(post("/teacher/" + teacherId + "/subject/" + subjectId + "/topic/edit/" + topicId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(AbstractAsJsonControllerTest.asJsonString(TopicDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic"));
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId));
 
         verify(teacherService, times(1)).updatePatchTopic(any());
     }

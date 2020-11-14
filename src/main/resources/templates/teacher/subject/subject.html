@@ -126,7 +126,8 @@ The above copyright notice and this permission notice shall be included in all c
                                                 <i class="material-icons">read_more</i>
                                             </button>
                                         </a>
-                                        <a href="">
+                                        <a id="open-gradeDialogModal-editTopic" data-toggle="modal" class="open-gradeDialogModal" href="#editTopicModal"
+                                           th:attr="data-id=''+${topic.id}+'',data-number=''+${topic.number}+'', data-target='#editTopicModal', data-name=''+${topic.name}+'', data-desc=''+${topic.description}+''">
                                             <button rel="tooltip" class="btn btn-primary btn-warning btn-fab-mini btn-round">
                                                 <i class="material-icons">edit</i>
                                             </button>
@@ -254,8 +255,68 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
 
             </div>
-
         </div>
+
+        <!-- Modal edit topic -->
+        <div class="modal fade" id="editTopicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edytuj temat: </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+
+                        <div class="modal-body">
+                            <div class="content">
+                                <div class="container-fluid">
+                                    <div class="card">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <tr>
+                                                    <td id="topicEditNumber">
+                                                        <div class="form-group">
+                                                            <label class="bmd-label-static">Numer</label>
+                                                            <input  id="topicEditNumberVal" type="number" min="0" class="form-control" value="0">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="topicEditName">
+                                                        <div class="form-group">
+                                                            <label class="bmd-label-static">Nazwa</label>
+                                                            <input  id="topicEditNameVal" type="text" maxlength="40" class="form-control">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="topicEditDescription">
+                                                        <div class="form-group">
+                                                            <label class="bmd-label-static">Opis</label>
+                                                            <textarea  id="topicEditDescVal" class="form-control" maxlength="250" rows="5"></textarea>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <input id="topicEditIdVal" type="hidden"/>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                            <button id="editTopic" type="button" class="btn btn-warning" >Zapisz</button>
+
+                        </div>
+                </div>
+
+            </div>
+        </div>
+
+
     </div>
 </div>
 
@@ -517,6 +578,22 @@ The above copyright notice and this permission notice shall be included in all c
 </script>
 
 <script>
+    $(document).on("click", "#open-gradeDialogModal-editTopic", function () {
+
+        var id = $(this).data('id');
+        var number = $(this).data('number');
+        var name = $(this).data('name');
+        var desc = $(this).data('desc');
+
+        document.getElementById("topicEditIdVal").value = id;
+        document.getElementById("topicEditNumberVal").value = number;
+        document.getElementById("topicEditNameVal").value = name;
+        document.getElementById("topicEditDescVal").value = desc;
+
+    });
+</script>
+
+<script>
     $(document).on("click", "#sendTopic", function () {
         var csrf= $("#csrfVal").val();
         var subjectIdVal = $("#subjectIdVal").val();
@@ -533,6 +610,47 @@ The above copyright notice and this permission notice shall be included in all c
         // Creating a XHR object
         let xhr = new XMLHttpRequest();
         let url = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal + "/topic/new";
+
+        // open a connection
+        xhr.open("POST", url, true);
+
+        // Set the request header i.e. which type of content you are sending
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("_csrf", csrf);
+        xhr.setRequestHeader('x-csrf-token', csrf);
+
+        // Create a state change callback
+        xhr.onreadystatechange = function () {
+            location.href = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal;
+        };
+
+        // Converting JSON data to string
+        var data = JSON.stringify(topicDto);
+
+        // Sending data with the request
+        xhr.send(data);
+    });
+</script>
+
+<script>
+    $(document).on("click", "#editTopic", function () {
+        var csrf= $("#csrfVal").val();
+
+        var subjectIdVal = $("#subjectIdVal").val();
+        var teacherIdVal = $("#teacherIdVal").val();
+        var topicIdIdVal = $("#topicEditIdVal").val();
+
+        var topicDto = {
+            id: "",
+            number: $("#topicEditNumberVal").val(),
+            name: $("#topicEditNameVal").val(),
+            description: $("#topicEditDescVal").val(),
+            subjectId: subjectIdVal,
+        };
+
+        // Creating a XHR object
+        let xhr = new XMLHttpRequest();
+        let url = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal + "/topic/edit/" + topicIdIdVal;
 
         // open a connection
         xhr.open("POST", url, true);
