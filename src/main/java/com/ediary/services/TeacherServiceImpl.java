@@ -164,6 +164,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    @Transactional
     public Boolean deleteTopic(Long teacherId, Long subjectId, Long topicId) {
 
         Optional<Topic> topicOptional = topicRepository.findById(topicId);
@@ -174,6 +175,12 @@ public class TeacherServiceImpl implements TeacherService {
 
         Topic topic = topicOptional.get();
         if (topic.getSubject().getId().equals(subjectId) && topic.getSubject().getTeacher().getId().equals(teacherId)) {
+
+            // Nullable in Lessons
+            List<Lesson> lessons = lessonRepository.findAllByTopic(topic);
+            lessons.forEach(lesson -> lesson.setTopic(null));
+            lessonRepository.saveAll(lessons);
+
             topicRepository.delete(topic);
             return true;
         }
@@ -237,7 +244,6 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional
-    @Transient
     public Boolean deleteSubject(Long teacherId, Long subjectId) {
         Optional<Subject> subjectOptional = subjectRepository.findById(subjectId);
         if (!subjectOptional.isPresent()) {

@@ -572,13 +572,13 @@ public class TeacherController {
         }
     }
 
-    @DeleteMapping("/{teacherId}/subject/{subjectId}/topic/{topicId}")
+    @PostMapping("/{teacherId}/subject/{subjectId}/topic/{topicId}")
     public String deleteTopic(@PathVariable Long teacherId,
                               @PathVariable Long subjectId,
                               @PathVariable Long topicId) {
 
         teacherService.deleteTopic(teacherId, subjectId, topicId);
-        return "redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic";
+        return "redirect:/teacher/" + teacherId + "/subject/" + subjectId;
     }
 
     @PutMapping("/{teacherId}/subject/{subjectId}/topic/{topicId}")

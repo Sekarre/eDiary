@@ -217,7 +217,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="topicNumber">
                                                         <div class="form-group">
                                                             <label class="bmd-label-floating">Numer</label>
-                                                            <input  id="topicNumberVal" type="number" min="0" class="form-control">
+                                                            <input  id="topicNumberVal" type="number" min="0" class="form-control" value="0">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -504,11 +504,15 @@ The above copyright notice and this permission notice shall be included in all c
 <script>
     $(document).on("click", "#open-gradeDialogModal-deleteTopic", function () {
 
-        var topic = $(this).data('topic');
+        var subjectIdVal = $("#subjectIdVal").val();
+        var teacherIdVal = $("#teacherIdVal").val();
+
+        var topicId = $(this).data('topic');
+
 
         var deleteFormTopic = document.getElementById("deleteFormTopic");
 
-        deleteFormTopic.setAttribute("action", "/teacher/" + teacherId + "/subject/" + subjectId + "/topic" + topic);
+        deleteFormTopic.setAttribute("action", "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal + "/topic/" + topicId);
     });
 </script>
 

@@ -25,7 +25,7 @@ public class Lesson {
     @JoinColumn(name = "class_id")
     private Class schoolClass;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
