@@ -99,7 +99,7 @@ The above copyright notice and this permission notice shall be included in all c
                             <div th:attr="id=''+${weeklyAttendance?.key?.date}+'', aria-labelledby=''+${weeklyAttendance?.key?.date}+''" class="collapse show"
                                  data-parent="#accordion">
                                 <div class="card-body">
-                                    <div class="card-body" th:if="${weeklyAttendances?.attendancesNumber?.get(weeklyAttendance?.key) != 0}">
+                                    <div class="card-body">
                                         <div class="table-responsive">
 
                                             <table class="table">

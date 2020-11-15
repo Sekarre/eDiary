@@ -62,7 +62,12 @@
                         <p>Terminarz</p>
                     </a>
                 </li>
-
+                <li class="nav-item ">
+                    <a class="nav-link" th:href="@{'/parent/' + ${parent.id} + '/' + ${student.id} + '/attendance/extenuations'}">
+                        <i class="material-icons">library_books</i>
+                        <p>Usprawiedliwienia</p>
+                    </a>
+                </li>
 
                 <span th:replace="fragments/sidebarUser :: userRoleNav"></span>
 
