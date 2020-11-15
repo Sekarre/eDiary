@@ -201,6 +201,33 @@ public class TeacherController {
         }
     }
 
+    @GetMapping("{teacherId}/attendances")
+    public String getAttendances(@PathVariable Long teacherId) {
+        return "teacher/attendances/main";
+    }
+
+
+    @GetMapping("{teacherId}/attendances/extenuations")
+    public String getAllExtenuations(@PathVariable Long teacherId, Model model) {
+        model.addAttribute("extenuations", teacherService.listExtenuations(teacherId));
+
+        return "teacher/attendances/extenuations";
+    }
+
+
+    @PostMapping("{teacherId}/attendances/extenuation")
+    public String processNewExtenuation(@PathVariable Long teacherId,
+                                        @RequestParam(name = "accept", required = false) String accept,
+                                        @RequestParam(name = "reject", required = false) String reject,
+                                        @RequestParam(name = "extId", required = false) Long extenuationId ) {
+        if (accept != null) {
+            teacherService.acceptExtenuation(extenuationId);
+        } else {
+            teacherService.rejectExtenuation(extenuationId);
+        }
+
+        return "redirect:/teacher/" + teacherId + "/attendances/extenuations";
+    }
 
     @GetMapping("/{teacherId}/grade/subject")
     public String getAllSubjectsGrade(@PathVariable Long teacherId, Model model) {

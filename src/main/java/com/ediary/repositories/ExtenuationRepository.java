@@ -16,4 +16,5 @@ public interface ExtenuationRepository extends JpaRepository<Extenuation, Long> 
     Set<Extenuation> findAllByAttendancesId(Long attendanceId);
 
     List<Extenuation> findAllByParentId(Long parentId);
+    List<Extenuation> findAllByParentIdAndStatus(Long parentId, Extenuation.Status status);
 }

@@ -38,14 +38,14 @@ The above copyright notice and this permission notice shall be included in all c
 <body class="">
 <div class="wrapper ">
 
-    <div th:replace="fragments/sidebarParentStudent :: sidebar"></div>
+    <div th:replace="fragments/sidebarTeacher :: sidebar"></div>
 
     <div class="main-panel">
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" th:href="@{/parent/{id}/students(id=${parent.id})}">Usprawiedliwienia:</a>
+                    <a class="navbar-brand">Oczekujące usprawiedliwienia:</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -73,6 +73,15 @@ The above copyright notice and this permission notice shall be included in all c
                             <div class="card-header card-header-text card-header-primary">
                                 <div class="card-text">
                                     <h4 class="card-title" th:text="'Status:&nbsp;&nbsp;&nbsp;' + ${extenuation?.status}"></h4>
+                                    <form th:action="@{'/teacher/' + ${teacher.id} + '/attendances/extenuation'}" method="post">
+                                            <button class="submit btn btn-primary  btn-round" name="reject">
+                                                <i class="material-icons">highlight_off</i>
+                                            </button>
+                                            <button rel="tooltip" class="submit btn btn-primary btn-success btn-round" name="accept">
+                                                <i class="material-icons">add_task</i>
+                                            </button>
+                                            <input type="hidden" name="extId" th:value="${extenuation.id}">
+                                    </form>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -85,6 +94,7 @@ The above copyright notice and this permission notice shall be included in all c
                                         <th>Lekcja</th>
                                         <th>Data</th>
                                         <th>Status</th>
+
                                         </thead>
                                         <tbody>
 
@@ -99,6 +109,8 @@ The above copyright notice and this permission notice shall be included in all c
                                                 data
                                             </td>
                                             <td th:text="${att?.status?.translatedName}"></td>
+
+
                                         </tr>
                                         </tbody>
                                     </table>

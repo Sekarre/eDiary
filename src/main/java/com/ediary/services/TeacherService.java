@@ -70,4 +70,8 @@ public interface TeacherService {
     List<ClassDto> listAllClasses();
     List<ClassDto> listClassesByTeacherAndSubject(Long teacherId, Long subjectId);
     ClassDto getSchoolClassByTeacherAndSubject(Long classId, Long subjectId, Long teacherId);
+
+    List<ExtenuationDto> listExtenuations(Long teacherId);
+    Boolean acceptExtenuation(Long extenuationId);
+    Boolean rejectExtenuation(Long extenuationId);
 }

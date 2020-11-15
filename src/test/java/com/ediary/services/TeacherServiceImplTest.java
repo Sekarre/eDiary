@@ -45,6 +45,10 @@ class TeacherServiceImplTest {
     TopicRepository topicRepository;
     @Mock
     SchoolPeriodRepository schoolPeriodRepository;
+    @Mock
+    ExtenuationRepository extenuationRepository;
+    @Mock
+    ParentRepository parentRepository;
 
     @Mock
     EventToEventDto eventToEventDto;
@@ -80,6 +84,10 @@ class TeacherServiceImplTest {
     TopicToTopicDto topicToTopicDto;
     @Mock
     TopicDtoToTopic topicDtoToTopic;
+    @Mock
+    ExtenuationToExtenuationDto extenuationToExtenuationDto;
+    @Mock
+    ExtenuationDtoToExtenuation extenuationDtoToExtenuation;
 
     TeacherService teacherService;
 
@@ -88,11 +96,11 @@ class TeacherServiceImplTest {
         MockitoAnnotations.initMocks(this);
         teacherService = new TeacherServiceImpl(eventService, teacherRepository, classRepository, eventRepository,
                 behaviorRepository, lessonRepository, subjectRepository, gradeRepository, attendanceRepository, studentRepository,
-                topicRepository, schoolPeriodRepository,
+                topicRepository, schoolPeriodRepository, extenuationRepository, parentRepository,
                 eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto,
                 behaviorDtoToBehavior, lessonToLessonDto, lessonDtoToLesson, subjectToSubjectDto, subjectDtoToSubject,
                 gradeToGradeDto, gradeDtoToGrade, teacherToTeacherDto, attendanceDtoToAttendance, attendanceToAttendanceDto,
-                studentToStudentDto,topicToTopicDto,topicDtoToTopic);
+                studentToStudentDto,topicToTopicDto,topicDtoToTopic, extenuationToExtenuationDto, extenuationDtoToExtenuation);
     }
 
     @Test

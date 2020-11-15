@@ -34,6 +34,8 @@ public class TeacherServiceImpl implements TeacherService {
     private final StudentRepository studentRepository;
     private final TopicRepository topicRepository;
     private final SchoolPeriodRepository schoolPeriodRepository;
+    private final ExtenuationRepository extenuationRepository;
+    private final ParentRepository parentRepository;
 
     private final EventToEventDto eventToEventDto;
     private final EventDtoToEvent eventDtoToEvent;
@@ -52,6 +54,8 @@ public class TeacherServiceImpl implements TeacherService {
     private final StudentToStudentDto studentToStudentDto;
     private final TopicToTopicDto topicToTopicDto;
     private final TopicDtoToTopic topicDtoToTopic;
+    private final ExtenuationToExtenuationDto extenuationToExtenuationDto;
+    private final ExtenuationDtoToExtenuation extenuationDtoToExtenuation;
 
     @Override
     public TeacherDto findByUser(User user) {
@@ -647,6 +651,49 @@ public class TeacherServiceImpl implements TeacherService {
 
         return classToClassDto.convert(classRepository
                 .findById(classId).orElseThrow(() -> new NotFoundException("Class not found")));
+    }
+
+    @Override
+    public List<ExtenuationDto> listExtenuations(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        List<Extenuation> extenuations = new ArrayList<>();
+
+        List<Parent> parents = parentRepository.findAllByStudentsIn(teacher.getSchoolClass().getStudents());
+
+        parents.forEach(parent -> extenuations
+                .addAll(extenuationRepository.findAllByParentIdAndStatus(parent.getId(), Extenuation.Status.SENT)));
+
+        return extenuations
+                .stream()
+                .map(extenuationToExtenuationDto::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean acceptExtenuation(Long extenuationId) {
+        Extenuation extenuation = extenuationRepository
+                .findById(extenuationId).orElseThrow(() -> new NotFoundException("Extenuation not found"));
+
+        extenuation.getAttendances().forEach(attendance -> attendance.setStatus(Attendance.Status.EXCUSED));
+        extenuation.setStatus(Extenuation.Status.ACCEPT);
+
+        extenuationRepository.save(extenuation);
+
+        return true;
+    }
+
+    @Override
+    public Boolean rejectExtenuation(Long extenuationId) {
+        Extenuation extenuation = extenuationRepository
+                .findById(extenuationId).orElseThrow(() -> new NotFoundException("Extenuation not found"));
+
+        extenuation.getAttendances().forEach(attendance -> attendance.setStatus(Attendance.Status.UNEXCUSED));
+        extenuation.setStatus(Extenuation.Status.REJECT);
+
+        extenuationRepository.save(extenuation);
+
+        return true;
     }
 
     private Teacher getTeacherById(Long teacherId) {
