@@ -89,6 +89,9 @@ class TeacherServiceImplTest {
     @Mock
     ExtenuationDtoToExtenuation extenuationDtoToExtenuation;
 
+    @Mock
+    TimetableService timetableService;
+
     TeacherService teacherService;
 
     @BeforeEach
@@ -100,7 +103,8 @@ class TeacherServiceImplTest {
                 eventToEventDto, eventDtoToEvent, classToClassDto, behaviorToBehaviorDto,
                 behaviorDtoToBehavior, lessonToLessonDto, lessonDtoToLesson, subjectToSubjectDto, subjectDtoToSubject,
                 gradeToGradeDto, gradeDtoToGrade, teacherToTeacherDto, attendanceDtoToAttendance, attendanceToAttendanceDto,
-                studentToStudentDto,topicToTopicDto,topicDtoToTopic, extenuationToExtenuationDto, extenuationDtoToExtenuation);
+                studentToStudentDto,topicToTopicDto,topicDtoToTopic, extenuationToExtenuationDto, extenuationDtoToExtenuation,
+                timetableService);
     }
 
     @Test

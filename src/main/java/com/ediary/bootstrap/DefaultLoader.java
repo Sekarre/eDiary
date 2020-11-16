@@ -886,6 +886,10 @@ public class DefaultLoader implements CommandLineRunner {
 
         String schoolClass = classRepository.findAll().get(0).getName();
 
+        Teacher teacher1 = teacherRepository.findByUserId(userRepository.findByFirstNameAndLastName(teacherNames[0],
+                teacherLastNames[0]).getId());
+        Teacher teacher2 = teacherRepository.findByUserId(userRepository.findByFirstNameAndLastName(teacherNames[1],
+                teacherLastNames[1]).getId());
 
         for (int i = 0; i < numberOfDays; i++) {
             for (int j = 0; j < durationNumbers[i].length; j++)
@@ -895,7 +899,7 @@ public class DefaultLoader implements CommandLineRunner {
                     .duration(durationRepository.findByNumber(durationNumbers[i][j]))
                     .subject(subjectRepository.findByName(subjects[i][j]))
                     //todo: add rep method
-                    .teacher(null)
+                    .teacher(j % 2 == 0 ? teacher1 : teacher2)
                     .classroom(classroomRepository.findByNumber(i +""))
                     .schoolClass(classRepository.findByName(schoolClass))
                     .build());

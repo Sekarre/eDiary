@@ -10,4 +10,5 @@ public interface SchoolPeriodRepository extends JpaRepository<SchoolPeriod, Long
 
     List<SchoolPeriod> findAllBySchoolClassId(Long classId);
     List<SchoolPeriod> findAllBySubject(Subject subject);
+    List<SchoolPeriod> findAllByTeacherId(Long teacherId);
 }

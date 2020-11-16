@@ -3,6 +3,7 @@ package com.ediary.services;
 import com.ediary.DTO.*;
 import com.ediary.domain.*;
 import com.ediary.domain.security.User;
+import com.ediary.domain.timetable.Timetable;
 
 import java.util.List;
 
@@ -84,4 +85,6 @@ public interface TeacherService {
     Boolean isFormTutor(Long teacherId, Long classId);
 
     Boolean excuseAttendances(List<Long> ids, Long teacherId, Long studentId, Long classId);
+
+    Timetable getTimetableByTeacherId(Long teacherId);
 }

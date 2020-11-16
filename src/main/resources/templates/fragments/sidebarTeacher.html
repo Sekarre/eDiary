@@ -61,6 +61,12 @@
                         <p>Frekwencja</p>
                     </a>
                 </li>
+                <li class="nav-item ">
+                    <a class="nav-link" th:href="@{'/teacher/' + ${teacher.id} + '/timetable'}">
+                        <i class="material-icons">calendar_today</i>
+                        <p>Plan zajęć</p>
+                    </a>
+                </li>
 
 <!--                                                        test-->
                 <li class="nav-item ">
@@ -71,7 +77,7 @@
                 </li>
 
                 <li class="nav-item ">
-                    <a class="nav-link" th:href="@{'/headmaster/teacherReport/127/download/2019-11-01/2020-11-30'}">
+                    <a class="nav-link" th:href="@{'/headmaster/teacherReport/128/download/2019-11-01/2020-11-30'}">
                         <i class="material-icons">store</i>
                         <p>Raport (test)</p>
                     </a>

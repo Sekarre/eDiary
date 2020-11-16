@@ -264,7 +264,7 @@ public class TeacherController {
         return "teacher/attendances/studentAttendances";
     }
 
-    @PostMapping("/{teacherId}/class/{classId}/{studentId}/excuse")
+    @PostMapping("/{teacherId}/attendances/class/{classId}/{studentId}/excuse")
     public String processExcuseAttendancesFormTutor(@PathVariable Long teacherId,
                                                     @PathVariable Long classId,
                                                     @PathVariable Long studentId,
@@ -282,7 +282,6 @@ public class TeacherController {
 
         return "teacher/attendances/extenuations";
     }
-    //end of todo
 
     @PostMapping("{teacherId}/attendances/extenuation")
     public String processNewExtenuationStatus(@PathVariable Long teacherId,
@@ -297,6 +296,17 @@ public class TeacherController {
 
         return "redirect:/teacher/" + teacherId + "/attendances/extenuations";
     }
+
+
+    @GetMapping("{teacherId}/timetable")
+    public String getTeacherTimetable(@PathVariable Long teacherId, Model model) {
+        model.addAttribute("timetable", teacherService.getTimetableByTeacherId(teacherId));
+
+        return "teacher/timetable/timetable";
+    }
+
+    //end of todo
+
 
     @GetMapping("/{teacherId}/grade/subject")
     public String getAllSubjectsGrade(@PathVariable Long teacherId, Model model) {

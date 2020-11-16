@@ -1,16 +1,13 @@
 package com.ediary.services;
 
 import com.ediary.domain.SchoolPeriod;
-import com.ediary.domain.timetable.Day;
 import com.ediary.domain.timetable.Duration;
 import com.ediary.domain.timetable.Timetable;
 import com.ediary.repositories.SchoolPeriodRepository;
-import com.ediary.repositories.timetable.DayRepository;
 import com.ediary.repositories.timetable.DurationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,34 +18,36 @@ import java.util.stream.Stream;
 public class TimetableServiceImpl implements TimetableService {
 
     private final SchoolPeriodRepository schoolPeriodRepository;
-    private final DayRepository dayRepository;
     private final DurationRepository durationRepository;
 
 
     @Override
     public Timetable getTimetableByClassId(Long classId) {
 
-        List<Duration> durations = durationRepository.findAllByOrderByNumberAsc();
-        int durationsSize = durations.size();
+        List<SchoolPeriod> schoolPeriods = schoolPeriodRepository.findAllBySchoolClassId(classId);
 
-        List<Day> days = dayRepository.findAllByOrderByNumberAsc();
+        return createNewTimetable(schoolPeriods);
+
+    }
+
+    @Override
+    public Timetable getTimetableByTeacherId(Long teacherId) {
+
+        List<SchoolPeriod> schoolPeriods = schoolPeriodRepository.findAllByTeacherId(teacherId);
+
+       return createNewTimetable(schoolPeriods);
+    }
+
+
+    private Timetable createNewTimetable(List<SchoolPeriod> schoolPeriods) {
+        List<Duration> durations = durationRepository.findAllByOrderByNumberAsc();
 
         Set<Duration> durs = new HashSet<>(durationRepository.findAllByOrderByNumberAsc());
 
-        List<SchoolPeriod> schoolPeriods = schoolPeriodRepository.findAllBySchoolClassId(classId);
 
-        TreeMap<Duration, List<SchoolPeriod>> schedule = new TreeMap<>(new Comparator<Duration>() {
-            @Override
-            public int compare(Duration o1, Duration o2) {
+        int durationsSize = durations.size();
 
-                if (o1.getNumber() == o2.getNumber())
-                    return 0;
-                else if (o1.getNumber() > o2.getNumber())
-                    return 1;
-
-                return -1;
-            }
-        });
+        TreeMap<Duration, List<SchoolPeriod>> schedule = getSchedule();
 
         durs.forEach(duration -> {
             List<SchoolPeriod> arrayList = Stream
@@ -66,4 +65,15 @@ public class TimetableServiceImpl implements TimetableService {
         return Timetable.builder().durations(durations).schedule(schedule).build();
     }
 
+
+    private TreeMap<Duration, List<SchoolPeriod>> getSchedule() {
+        return new TreeMap<>((o1, o2) -> {
+            if (o1.getNumber() == o2.getNumber())
+                return 0;
+            else if (o1.getNumber() > o2.getNumber())
+                return 1;
+
+            return -1;
+        });
+    }
 }

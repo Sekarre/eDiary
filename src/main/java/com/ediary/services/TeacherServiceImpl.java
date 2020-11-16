@@ -5,6 +5,7 @@ import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
 import com.ediary.domain.security.User;
+import com.ediary.domain.timetable.Timetable;
 import com.ediary.exceptions.NoAccessException;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
@@ -56,6 +57,8 @@ public class TeacherServiceImpl implements TeacherService {
     private final TopicDtoToTopic topicDtoToTopic;
     private final ExtenuationToExtenuationDto extenuationToExtenuationDto;
     private final ExtenuationDtoToExtenuation extenuationDtoToExtenuation;
+
+    private final TimetableService timetableService;
 
     @Override
     public TeacherDto findByUser(User user) {
@@ -762,6 +765,18 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         return false;
+    }
+
+    @Override
+    public Timetable getTimetableByTeacherId(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        if (teacher.getSubjects() == null) {
+            return null;
+        }
+
+        return timetableService.getTimetableByTeacherId(teacher.getId());
+
     }
 
     private Subject getSubjectById(Long subjectId) {
