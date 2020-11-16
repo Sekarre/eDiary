@@ -51,7 +51,7 @@
 
                 <span th:fragment="userRoleNav">
                     <li class="nav-item active-pro ">
-                        <a sec:authorize="hasRole('ADMIN')" class="nav-link" href="#">
+                        <a sec:authorize="hasRole('ADMIN')" class="nav-link" th:href="@{'/admin/home'}">
                             <i class="material-icons">person</i>
                             <p>Admin</p>
                         </a>
