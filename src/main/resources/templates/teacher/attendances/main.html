@@ -58,12 +58,12 @@ The above copyright notice and this permission notice shall be included in all c
 
                     <div class="col-lg-3 col-md-6 col-sm-6">
                         <div class="card card-stats">
-                            <a th:href="'#'">
+                            <a th:href="@{'/teacher/' + ${teacher.id} + '/attendances/class'}">
                                 <div class="card-header card-header-primary card-header-icon">
                                     <div class="card-icon">
-                                        <i class="material-icons">delete</i>
+                                        <i class="material-icons">fact_check</i>
                                     </div>
-                                    <h3 class="card-title">Jeszcze nic</h3>
+                                    <h3 class="card-title">Frekwencja klas</h3>
                                 </div>
                             </a>
                             <div class="card-footer">

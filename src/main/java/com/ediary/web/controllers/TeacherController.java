@@ -6,6 +6,7 @@ import com.ediary.domain.*;
 import com.ediary.domain.security.User;
 import com.ediary.services.FormTutorService;
 import com.ediary.services.TeacherService;
+import com.ediary.services.WeeklyAttendancesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,7 @@ public class TeacherController {
 
     private final TeacherService teacherService;
     private final FormTutorService formTutorService;
+    private final WeeklyAttendancesService weeklyAttendancesService;
 
     private final UserToUserDto userToUserDto;
 
@@ -201,9 +203,65 @@ public class TeacherController {
         }
     }
 
+    //todo: tests
     @GetMapping("{teacherId}/attendances")
     public String getAttendances(@PathVariable Long teacherId) {
         return "teacher/attendances/main";
+    }
+
+
+    @GetMapping("{teacherId}/attendances/class")
+    public String getAttendancesClass(@PathVariable Long teacherId, Model model) {
+        model.addAttribute("classes", teacherService.listClassByTeacher(teacherId));
+
+        return "teacher/attendances/classes";
+    }
+
+    @GetMapping("{teacherId}/attendances/class/{classId}")
+    public String getAttendancesClassStudent(@PathVariable Long teacherId, @PathVariable Long classId, Model model) {
+
+        model.addAttribute("students", teacherService.listClassStudents(teacherId, classId));
+        model.addAttribute("classId", classId);
+
+        return "teacher/attendances/students";
+    }
+
+
+    @GetMapping("{teacherId}/attendances/class/{classId}/{studentId}")
+    public String getAtendancesClassSelectedStudent(@PathVariable Long teacherId,
+                                                    @PathVariable Long classId,
+                                                    @PathVariable Long studentId,
+                                                    Model model) {
+
+        model.addAttribute("weeklyAttendances",
+                weeklyAttendancesService.getAttendancesByWeek(studentId, 7, Date.valueOf(LocalDate.now().minusDays(6))));
+        model.addAttribute("isFormTutor", teacherService.isFormTutor(teacherId, classId));
+
+        return "teacher/attendances/studentAttendances";
+    }
+
+    @GetMapping("/{teacherId}/attendance/class/{classId}/{studentId}/{direction}/{dateValue}")
+    public String getAllAttendancesClasssSelectedStudentWithDate(@PathVariable Long studentId,
+                                            @PathVariable Long teacherId,
+                                            @PathVariable Long classId,
+                                            @PathVariable String direction,
+                                            @PathVariable String dateValue,
+                                            Model model) {
+        Date date;
+        if (direction.equals("next")) {
+            date = Date.valueOf(LocalDate.parse(dateValue).plusDays(7));
+        } else {
+            date = Date.valueOf(LocalDate.parse(dateValue).minusDays(7));
+        }
+
+        model.addAttribute("weeklyAttendances",
+                weeklyAttendancesService.getAttendancesByWeek(studentId, 7, date));
+        model.addAttribute("studentId", studentId);
+        model.addAttribute("classId", classId);
+        model.addAttribute("isFormTutor", teacherService.isFormTutor(teacherId, classId));
+
+
+        return "teacher/attendances/studentAttendances";
     }
 
 
@@ -213,7 +271,7 @@ public class TeacherController {
 
         return "teacher/attendances/extenuations";
     }
-
+    //end of todo
 
     @PostMapping("{teacherId}/attendances/extenuation")
     public String processNewExtenuation(@PathVariable Long teacherId,

@@ -36,6 +36,8 @@ public interface TeacherService {
 
     Attendance saveAttendance(AttendanceDto attendance);
     List<AttendanceDto> listAttendances(Long teacherId, Long subjectId, Long classId, Long lessonId);
+    List<AttendanceDto> listAttendancesByStudent(Long studentId);
+
 
     Grade saveClassGrade(Grade grade);
     Boolean deleteClassGrade(Long gradeId);
@@ -70,8 +72,14 @@ public interface TeacherService {
     List<ClassDto> listAllClasses();
     List<ClassDto> listClassesByTeacherAndSubject(Long teacherId, Long subjectId);
     ClassDto getSchoolClassByTeacherAndSubject(Long classId, Long subjectId, Long teacherId);
+    List<ClassDto> listClassByTeacher(Long teacherId);
+
 
     List<ExtenuationDto> listExtenuations(Long teacherId);
     Boolean acceptExtenuation(Long extenuationId);
     Boolean rejectExtenuation(Long extenuationId);
+
+    List<StudentDto> listClassStudents(Long teacherId, Long classId);
+
+    Boolean isFormTutor(Long teacherId, Long classId);
 }

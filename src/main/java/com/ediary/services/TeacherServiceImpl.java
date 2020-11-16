@@ -343,6 +343,14 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public List<AttendanceDto> listAttendancesByStudent(Long studentId) {
+        return attendanceRepository.findAllByStudentId(studentId)
+                .stream()
+                .map(attendanceToAttendanceDto::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Grade saveClassGrade(Grade grade) {
         return null;
     }
@@ -653,6 +661,20 @@ public class TeacherServiceImpl implements TeacherService {
                 .findById(classId).orElseThrow(() -> new NotFoundException("Class not found")));
     }
 
+
+    @Override
+    public List<ClassDto> listClassByTeacher(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+
+        return classRepository.findAllBySubjectsIn(teacher.getSubjects())
+                .stream()
+                .distinct()
+                .map(classToClassDto::convert)
+                .collect(Collectors.toList());
+
+    }
+
     @Override
     public List<ExtenuationDto> listExtenuations(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
@@ -694,6 +716,26 @@ public class TeacherServiceImpl implements TeacherService {
         extenuationRepository.save(extenuation);
 
         return true;
+    }
+
+    @Override
+    public List<StudentDto> listClassStudents(Long teacherId, Long classId) {
+        Teacher teacher = getTeacherById(teacherId);
+        Class schoolClass = getClassById(classId);
+
+
+        return studentRepository.findAllBySchoolClassId(schoolClass.getId())
+                .stream()
+                .map(studentToStudentDto::convert)
+                .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public Boolean isFormTutor(Long teacherId, Long classId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        return teacher.getSchoolClass().getId().equals(classId);
     }
 
     private Teacher getTeacherById(Long teacherId) {

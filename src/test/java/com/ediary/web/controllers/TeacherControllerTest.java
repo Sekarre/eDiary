@@ -6,6 +6,7 @@ import com.ediary.domain.*;
 import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.services.FormTutorService;
 import com.ediary.services.TeacherService;
+import com.ediary.services.WeeklyAttendancesService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -30,9 +31,10 @@ class TeacherControllerTest {
 
     @Mock
     TeacherService teacherService;
-
     @Mock
     FormTutorService formTutorService;
+    @Mock
+    WeeklyAttendancesService weeklyAttendancesService;
 
     @Mock
     UserToUserDto userToUserDto;
@@ -44,7 +46,7 @@ class TeacherControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        teacherController = new TeacherController(teacherService, formTutorService, userToUserDto);
+        teacherController = new TeacherController(teacherService, formTutorService, weeklyAttendancesService, userToUserDto);
         mockMvc = MockMvcBuilders.standaloneSetup(teacherController).build();
     }
 
