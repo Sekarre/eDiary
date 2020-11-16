@@ -748,6 +748,22 @@ public class TeacherServiceImpl implements TeacherService {
         return teacherOptional.get();
     }
 
+    @Override
+    public Boolean excuseAttendances(List<Long> ids, Long teacherId, Long studentId, Long classId) {
+        Teacher teacher = getTeacherById(teacherId);
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
+
+        if (student.getSchoolClass().equals(teacher.getSchoolClass())) {
+            List<Attendance> attendances = attendanceRepository.findAllById(ids);
+            attendances.forEach(attendance -> attendance.setStatus(Attendance.Status.EXCUSED));
+            attendanceRepository.saveAll(attendances);
+
+            return true;
+        }
+
+        return false;
+    }
+
     private Subject getSubjectById(Long subjectId) {
         return subjectRepository
                 .findById(subjectId).orElseThrow(() -> new NotFoundException("Subject not found"));

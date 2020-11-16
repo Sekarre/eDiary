@@ -82,4 +82,6 @@ public interface TeacherService {
     List<StudentDto> listClassStudents(Long teacherId, Long classId);
 
     Boolean isFormTutor(Long teacherId, Long classId);
+
+    Boolean excuseAttendances(List<Long> ids, Long teacherId, Long studentId, Long classId);
 }

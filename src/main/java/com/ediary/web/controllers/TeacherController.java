@@ -204,20 +204,20 @@ public class TeacherController {
     }
 
     //todo: tests
-    @GetMapping("{teacherId}/attendances")
+    @GetMapping("/{teacherId}/attendances")
     public String getAttendances(@PathVariable Long teacherId) {
         return "teacher/attendances/main";
     }
 
 
-    @GetMapping("{teacherId}/attendances/class")
+    @GetMapping("/{teacherId}/attendances/class")
     public String getAttendancesClass(@PathVariable Long teacherId, Model model) {
         model.addAttribute("classes", teacherService.listClassByTeacher(teacherId));
 
         return "teacher/attendances/classes";
     }
 
-    @GetMapping("{teacherId}/attendances/class/{classId}")
+    @GetMapping("/{teacherId}/attendances/class/{classId}")
     public String getAttendancesClassStudent(@PathVariable Long teacherId, @PathVariable Long classId, Model model) {
 
         model.addAttribute("students", teacherService.listClassStudents(teacherId, classId));
@@ -227,11 +227,11 @@ public class TeacherController {
     }
 
 
-    @GetMapping("{teacherId}/attendances/class/{classId}/{studentId}")
-    public String getAtendancesClassSelectedStudent(@PathVariable Long teacherId,
-                                                    @PathVariable Long classId,
-                                                    @PathVariable Long studentId,
-                                                    Model model) {
+    @GetMapping("/{teacherId}/attendances/class/{classId}/{studentId}")
+    public String getAttendancesClassSelectedStudent(@PathVariable Long teacherId,
+                                                     @PathVariable Long classId,
+                                                     @PathVariable Long studentId,
+                                                     Model model) {
 
         model.addAttribute("weeklyAttendances",
                 weeklyAttendancesService.getAttendancesByWeek(studentId, 7, Date.valueOf(LocalDate.now().minusDays(6))));
@@ -240,13 +240,13 @@ public class TeacherController {
         return "teacher/attendances/studentAttendances";
     }
 
-    @GetMapping("/{teacherId}/attendance/class/{classId}/{studentId}/{direction}/{dateValue}")
-    public String getAllAttendancesClasssSelectedStudentWithDate(@PathVariable Long studentId,
-                                            @PathVariable Long teacherId,
-                                            @PathVariable Long classId,
-                                            @PathVariable String direction,
-                                            @PathVariable String dateValue,
-                                            Model model) {
+    @GetMapping("/{teacherId}/attendances/class/{classId}/{studentId}/{direction}/{dateValue}")
+    public String getAllAttendancesClassSelectedStudentWithDate(@PathVariable Long studentId,
+                                                                @PathVariable Long teacherId,
+                                                                @PathVariable Long classId,
+                                                                @PathVariable String direction,
+                                                                @PathVariable String dateValue,
+                                                                Model model) {
         Date date;
         if (direction.equals("next")) {
             date = Date.valueOf(LocalDate.parse(dateValue).plusDays(7));
@@ -264,6 +264,17 @@ public class TeacherController {
         return "teacher/attendances/studentAttendances";
     }
 
+    @PostMapping("/{teacherId}/class/{classId}/{studentId}/excuse")
+    public String processExcuseAttendancesFormTutor(@PathVariable Long teacherId,
+                                                    @PathVariable Long classId,
+                                                    @PathVariable Long studentId,
+                                                    @RequestParam(name = "toExcuse", required = false) List<Long> ids) {
+
+        teacherService.excuseAttendances(ids, teacherId, studentId, classId);
+
+        return "redirect:/teacher/" + teacherId + "/attendances/class/" + classId + "/" + studentId;
+    }
+
 
     @GetMapping("{teacherId}/attendances/extenuations")
     public String getAllExtenuations(@PathVariable Long teacherId, Model model) {
@@ -274,10 +285,10 @@ public class TeacherController {
     //end of todo
 
     @PostMapping("{teacherId}/attendances/extenuation")
-    public String processNewExtenuation(@PathVariable Long teacherId,
-                                        @RequestParam(name = "accept", required = false) String accept,
-                                        @RequestParam(name = "reject", required = false) String reject,
-                                        @RequestParam(name = "extId", required = false) Long extenuationId ) {
+    public String processNewExtenuationStatus(@PathVariable Long teacherId,
+                                              @RequestParam(name = "accept", required = false) String accept,
+                                              @RequestParam(name = "reject", required = false) String reject,
+                                              @RequestParam(name = "extId", required = false) Long extenuationId) {
         if (accept != null) {
             teacherService.acceptExtenuation(extenuationId);
         } else {
@@ -511,9 +522,6 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId + "/lessons/" +
                 lessonId + "/students/" + studentId;
     }
-
-
-
 
 
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")
@@ -852,7 +860,7 @@ public class TeacherController {
 //        System.out.println(startTime.toString());
 //        System.out.println(endTime.toString());
 
-            //Not allowing to download via url typing
+        //Not allowing to download via url typing
         if (referer != null && !referer.isEmpty()) {
         }
 

@@ -50,13 +50,13 @@ The above copyright notice and this permission notice shall be included in all c
                     <ul class="pagination justify-content-center">
                         <li class="page-item">
                             <a class="btn btn-primary btn-round"
-                               th:href="@{/teacher/{teacherId}/attendance/class/{classId}/{studentId}/{direction}/{dateValue}(studentId=${studentId}, teacherId=${teacherId}, classId=${classId},
+                               th:href="@{/teacher/{teacherId}/attendances/class/{classId}/{studentId}/{direction}/{dateValue}(studentId=${studentId}, teacherId=${teacherId}, classId=${classId},
                                 direction='previous',
                                 dateValue = ${weeklyAttendances?.attendances?.keySet()?.stream()?.findFirst()?.toString()?.substring(9, 19)})}">Poprzednia</a>
                         </li>
                         <li class="page-item">
                             <a class="btn btn-primary btn-round"
-                               th:href="@{/teacher/{teacherId}/attendance/class/{classId}/{studentId}/{direction}/{dateValue}(studentId=${studentId}, teacherId=${teacherId}, classId=${classId},
+                               th:href="@{/teacher/{teacherId}/attendances/class/{classId}/{studentId}/{direction}/{dateValue}(studentId=${studentId}, teacherId=${teacherId}, classId=${classId},
                                 direction='next', dateValue = ${weeklyAttendances?.attendances?.keySet()?.stream()?.findFirst()?.toString()?.substring(9, 19)})}">Następna</a>
                         </li>
                     </ul>
@@ -73,6 +73,7 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
+            <form method="post" th:action="@{/teacher/{teacherId}/class/{classId}/{studentId}/excuse(teacherId=${teacherId}, studentId=${studentId}, classId=${classId})}">
             <div th:if="${weeklyAttendances == null}" class="navbar-wrapper">
                 <div class="d-flex justify-content-center">
                     <h2 class="navbar-brand">Nie znaleziono frekwencji</h2>
@@ -150,14 +151,17 @@ The above copyright notice and this permission notice shall be included in all c
                                                 </tr>
                                                 </tbody>
                                             </table>
+                                            <input type="hidden" th:value="${_csrf}">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <button th:if="${isFormTutor}" class="btn btn-primary accept" id="accept" type="submit" disabled>Usprawiedliw wybrane</button>
                 </div>
             </div>
+            </form>
         </div>
     </div>
 </div>
@@ -381,6 +385,20 @@ The above copyright notice and this permission notice shall be included in all c
     $(document).ready(function () {
         //init DateTimePickers
         md.initFormExtendedDatetimepickers();
+    });
+</script>
+<script>
+    $(document).ready(function () {
+
+        $(':checkbox').click(function () {
+            var total = $("input:checked").length;
+
+            if (total > 0) {
+                $('#accept').prop('disabled', false);
+            } else {
+                $('#accept').prop('disabled', true);
+            }
+        });
     });
 </script>
 
