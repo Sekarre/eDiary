@@ -88,7 +88,7 @@ class UserControllerTest {
                 .andExpect(model().attributeExists("readMessages"))
                 .andExpect(view().name("user/readMessages"));
 
-        verify(userService, times(1)).listReadMessage(1, 1, userId);
+        verify(userService, times(1)).listReadMessage(0, 15, userId);
         assertEquals(2, userService.listReadMessage(1, 1, userId).size());
 
     }
@@ -105,7 +105,7 @@ class UserControllerTest {
                 .andExpect(model().attributeExists("sendMessages"))
                 .andExpect(view().name("user/sendMessages"));
 
-        verify(userService, times(1)).listSendMessage(1, 1, userId);
+        verify(userService, times(1)).listSendMessage(0, 15, userId);
         assertEquals(2, userService.listSendMessage(1, 1, userId).size());
     }
 

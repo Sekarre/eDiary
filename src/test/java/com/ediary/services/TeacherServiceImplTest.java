@@ -10,6 +10,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 
@@ -562,23 +566,27 @@ class TeacherServiceImplTest {
                 .subjects(Collections.singleton(subject))
                 .build();
 
+        List<Lesson> lessons = new ArrayList<>(){{
+            add(Lesson.builder().build());
+        }};
+
+
+        Page<Lesson> page = new PageImpl<>(lessons);
+
+
         when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
 
         when(lessonToLessonDto.convert(any())).thenReturn(LessonDto.builder().id(1L).subjectId(subjectId).build());
 
-        when(lessonRepository.findAllBySubjectId(subjectId)).thenReturn(Arrays.asList(
-                Lesson.builder().id(1L).subject(subject).build(),
-                Lesson.builder().id(2L).subject(subject).build()
-        ));
+        when(lessonRepository.findAllBySubjectIdOrderByDateDesc(any(), any())).thenReturn(page);
 
-        List<LessonDto> lessons = teacherService.listLessons(1, 1, teacherId, subjectId);
+        List<LessonDto> lessons2 = teacherService.listLessons(0, 1, teacherId, subjectId);
 
-        assertEquals(2, lessons.size());
-        assertEquals(1L, lessons.get(0).getId());
-        assertEquals(new ArrayList<>(teacher.getSubjects()).get(0).getId(), lessons.get(0).getSubjectId());
+        assertEquals(1, lessons.size());
+        assertNotNull(lessons2);
         verify(teacherRepository, times(1)).findById(teacherId);
-        verify(lessonRepository, times(1)).findAllBySubjectId(subjectId);
-        verify(lessonToLessonDto, times(2)).convert(any());
+        verify(lessonRepository, times(1)).findAllBySubjectIdOrderByDateDesc(any(), any());
+        verify(lessonToLessonDto, times(1)).convert(any());
     }
 
 
