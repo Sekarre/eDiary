@@ -87,8 +87,17 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public LessonDto initNewLesson(Long subjectId) {
+
+        Subject subject = getSubjectById(subjectId);
+
+        Class schoolClass = classRepository.findAllBySubjects(subject)
+                .stream()
+                .findFirst()
+                .orElse(null);
+
         return lessonToLessonDto.convert(Lesson.builder()
-                .subject(getSubjectById(subjectId))
+                .subject(subject)
+                .schoolClass(schoolClass)
                 .build());
     }
 
