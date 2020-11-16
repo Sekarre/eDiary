@@ -389,7 +389,7 @@ class TeacherControllerTest {
 
         Long subjectId = 1L;
 
-        when(teacherService.listLessons(anyLong(), anyLong())).thenReturn(Arrays.asList(
+        when(teacherService.listLessons(anyLong(), anyLong(), any())).thenReturn(Arrays.asList(
                 LessonDto.builder().id(1L).build(),
                 LessonDto.builder().id(2L).build()
         ));
@@ -400,8 +400,8 @@ class TeacherControllerTest {
                 .andExpect(view().name("/teacher/lesson/allLessons"));
 
 
-        verify(teacherService, times(1)).listLessons(1L, 1L);
-        assertEquals(2, teacherService.listLessons(1L, 1L).size());
+        verify(teacherService, times(1)).listLessons(0, 15, 1L, 1L);
+        assertEquals(2, teacherService.listLessons(1L, 1L, 1L).size());
     }
 
     @Test
@@ -412,7 +412,7 @@ class TeacherControllerTest {
 
         mockMvc.perform(get("/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/new"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("lesson"))
+                .andExpect(model().attributeExists("newLesson"))
                 .andExpect(view().name("/teacher/lesson/newLesson"));
 
         verify(teacherService, times(1)).initNewLesson(subjectId);
@@ -433,7 +433,7 @@ class TeacherControllerTest {
                 .content(AbstractAsJsonControllerTest.asJsonString(BehaviorDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name(
-                        "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + lesson.getId()));
+                        "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId));
 
         verify(teacherService, times(1)).saveLesson(any());
     }

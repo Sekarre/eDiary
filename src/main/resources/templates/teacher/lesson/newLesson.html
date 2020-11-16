@@ -28,16 +28,15 @@ The above copyright notice and this permission notice shall be included in all c
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker-standalone.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" />
-
+    <!-- CSS Files -->
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
-
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
-    <!--    <style>-->
-    <!--        tr:hover td{-->
-    <!--            background-color:#f5f5f5;;-->
-    <!--        }-->
-    <!--    </style>-->
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
 </head>
 
 <body class="">
@@ -45,12 +44,13 @@ The above copyright notice and this permission notice shall be included in all c
 
     <div th:replace="fragments/sidebarTeacher :: sidebar"></div>
 
+
     <div class="main-panel">
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" href="#"> </a>
+                    <a class="navbar-brand" th:href="@{'/teacher/' + ${teacherId} + '/subject'}">Przedmioty</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -64,67 +64,74 @@ The above copyright notice and this permission notice shall be included in all c
         <!-- End Navbar -->
         <div class="content">
             <div class="container-fluid">
-                <div class="card">
-                    <div class="card-header card-header-primary">
-                        <h3 class="card-title" th:text="'Przedział: ' + ${timeInterval.startTime} + '&nbsp;&nbsp; - &nbsp;&nbsp;' +  ${timeInterval.endTime}">Przedział : </h3>
-                    </div>
+                <div class="row">
 
-                <form method="post" th:object="${timeInterval}" th:action="@{/teacher/{teacherId}/formTutor/studentCard(teacherId=${teacherId})}">
-                    <div class="container">
-                        <div class='col-md-5'>
-                            <label for="fromDate">Od: </label>
-                            <div class="form-group">
-                                <div class='input-group date' id='fromdate'>
-                                    <input type='text' class="form-control" name = "startTime" th:field="*{startTime}"/>
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                </div>
+                    <div class="col-md-8">
+
+                        <div class="card">
+                            <div class="card-header card-header-primary">
+                                <h4 class="card-title">Dodaj przedmiot</h4>
                             </div>
-                        </div>
-                        <div class='col-md-5'>
-                            <label for="todate">Do: </label>
-                            <div class="form-group">
-                                <div class='input-group date' id='todate'>
-                                    <input type='text' class="form-control" name = "endTime" th:field="*{endTime}"/>
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
+                            <form th:object="${newLesson}" th:action="@{'/teacher/' + ${teacher.id} + '/lesson/subject/' + ${newLesson.subjectId} + '/new'}" method="post">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <label class="bmd-label-floating">Przedmiot</label>
+                                            <input type="text" class="form-control" th:value="${newLesson.subjectName}" disabled>
+                                            <input type="hidden" th:field="*{subjectId}">
+                                        </div>
+                                    </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <label class="bmd-label-floating">Klasa</label>
+                                            <input type="text" class="form-control" th:value="${newLesson.className}" disabled>
+                                            <input type="hidden" th:field="*{classId}" >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <label class="bmd-label-floating">Nazwa</label>
+                                            <input type="text" class="form-control" th:field="*{name}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <label>Temat</label>
+                                            <div class="form-group">
+                                                <select id="selectTopic" class="selectpicker" data-live-search="true" th:field="*{topicId}">
+                                                    <option th:each="topic : ${topics}"
+                                                            th:value="${topic.id}"
+                                                            th:text="${topic.name}" th:selected="${topicStat.index == 0} ? 'selected' : ''">Temat</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class='col-md-5'>
+                                    <label for="todate">Data: </label>
+                                    <div class="form-group">
+                                        <div class='input-group date' id='todate'>
+                                            <input type='text' class="form-control" name = "endTime" th:field="*{date}"/>
+                                            <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <button class="submit btn btn-primary pull-right">Wyślij</button>
                             </div>
-                        </div>
-                        <button class="btn btn-primary" type="submit">Zmień przedział</button>
-
-                    </div>
-                </form>
-            </div>
-
-
-                <div class="card">
-                    <div class="card-header card-header-primary">
-                        <h3 class="card-title">Studenci :</h3>
-                    </div>
-                        <!--                    -->
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead class=" text-primary">
-                                <th>Imie i nazwisko</th>
-                                <th>Generuj karte:</th>
-                                </thead>
-                                <tbody>
-
-                                <!--/*@thymesVar id="subjects" type="com.ediary.DTO.BehaviorDto"*/-->
-                                <tr th:each="student : ${students}">
-                                    <td th:text="${student?.userName}">
-                                        Imie i nazwisko
-                                    </td>
-                                    <td>
-                                        <a th:href="@{'/teacher/studentCard/' + ${student.id} +'/download/' + ${timeInterval.startTime} + '/' + ${timeInterval.endTime}}" th:text="'Generuj'"></a>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -132,6 +139,7 @@ The above copyright notice and this permission notice shall be included in all c
         </div>
     </div>
 </div>
+
 
 <!--   Core JS Files   -->
 <script th:src="@{/js/core/jquery.min.js}"></script>
@@ -346,29 +354,24 @@ The above copyright notice and this permission notice shall be included in all c
         });
     });
 </script>
+
 <script>
-    $(document).ready(function() {
-        //init DateTimePickers
-        md.initFormExtendedDatetimepickers();
+    $(function() {
+
+        $('#selectTopic').on('change', function(){
+            var selected = $(this).find("option:selected").val();
+            $('#selectTopic').selectpicker("refresh");
+        });
+
     });
 </script>
 
 <script type="text/javascript">
     $(function () {
-        $('#fromdate').datetimepicker({
-            format: "MM/YYYY"
-        });
-        $('#todate').datetimepicker({
-            format: "MM/YYYY"
-        });
-        $("#fromdate").on("dp.change", function (e) {
-            $('#todate').data("DateTimePicker").minDate(e.date);
-        });
-        $("#todate").on("dp.change", function (e) {
-            $('#fromdate').data("DateTimePicker").maxDate(e.date);
-        });
+        $('#todate').datetimepicker();
     });
 </script>
+
 </body>
 
 </html>

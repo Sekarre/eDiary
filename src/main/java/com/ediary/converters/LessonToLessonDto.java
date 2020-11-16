@@ -29,8 +29,10 @@ public class LessonToLessonDto implements Converter<Lesson, LessonDto> {
         lessonDto.setClassName(source.getSchoolClass().getName());
 
         //Topic
-        lessonDto.setTopicId(source.getTopic().getId());
-        lessonDto.setTopicName(source.getTopic().getName());
+        if (source.getTopic() != null) {
+            lessonDto.setTopicId(source.getTopic().getId());
+            lessonDto.setTopicName(source.getTopic().getName());
+        }
 
         //Subject
         lessonDto.setSubjectId(source.getSubject().getId());

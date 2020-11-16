@@ -24,20 +24,16 @@ The above copyright notice and this permission notice shall be included in all c
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker-standalone.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" />
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- CSS Files -->
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
-
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
-    <!--    <style>-->
-    <!--        tr:hover td{-->
-    <!--            background-color:#f5f5f5;;-->
-    <!--        }-->
-    <!--    </style>-->
+    <style>
+        tr:hover td{
+            background-color:#f5f5f5;;
+        }
+    </style>
 </head>
 
 <body class="">
@@ -50,7 +46,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" href="#"> </a>
+                    <a class="navbar-brand">Lekcje:</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -63,73 +59,66 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <div class="container-fluid">
-                <div class="card">
-                    <div class="card-header card-header-primary">
-                        <h3 class="card-title" th:text="'Przedział: ' + ${timeInterval.startTime} + '&nbsp;&nbsp; - &nbsp;&nbsp;' +  ${timeInterval.endTime}">Przedział : </h3>
-                    </div>
-
-                <form method="post" th:object="${timeInterval}" th:action="@{/teacher/{teacherId}/formTutor/studentCard(teacherId=${teacherId})}">
-                    <div class="container">
-                        <div class='col-md-5'>
-                            <label for="fromDate">Od: </label>
-                            <div class="form-group">
-                                <div class='input-group date' id='fromdate'>
-                                    <input type='text' class="form-control" name = "startTime" th:field="*{startTime}"/>
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class='col-md-5'>
-                            <label for="todate">Do: </label>
-                            <div class="form-group">
-                                <div class='input-group date' id='todate'>
-                                    <input type='text' class="form-control" name = "endTime" th:field="*{endTime}"/>
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary" type="submit">Zmień przedział</button>
-
-                    </div>
-                </form>
+            <div th:if="${lessons == null || lessons?.size() == 0}" class="navbar-wrapper">
+                <div class="d-flex justify-content-center">
+                    <h2 class="navbar-brand">Nie znaleziono żadnych lekcji</h2>
+                </div>
             </div>
-
-
+            <div class="container-fluid" th:if="${lessons != null && lessons?.size() > 0}">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h3 class="card-title">Studenci :</h3>
+                        <div class="float-left">
+                            <h3 class="card-title">Wybierz lekcję:</h3>
+                        </div>
+                        <div class="float-right">
+                            <a th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/new(teacherId=${teacherId}, subjectId=${subjectId})}">
+                                <button rel="tooltip" class="btn btn-success add btn-fab btn-fab-mini btn-primary btn-round">
+                                    <i class="material-icons">add</i>
+                                </button>
+                            </a>
+                        </div>
                     </div>
-                        <!--                    -->
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
                                 <thead class=" text-primary">
-                                <th>Imie i nazwisko</th>
-                                <th>Generuj karte:</th>
+                                <th>Nazwa lekcji</th>
+                                <th>Temat</th>
+                                <th>Data</th>
                                 </thead>
                                 <tbody>
-
-                                <!--/*@thymesVar id="subjects" type="com.ediary.DTO.BehaviorDto"*/-->
-                                <tr th:each="student : ${students}">
-                                    <td th:text="${student?.userName}">
-                                        Imie i nazwisko
+                                <tr th:each="lesson : ${lessons}" style="cursor: pointer"
+                                    th:onclick="'javascript:rowClicked(\'' + ${teacher.id} + '\',\'' + ${lesson.subjectId} + '\');'">
+                                    <td th:text="${lesson.name}">
+                                        Nazwa klasy
                                     </td>
-                                    <td>
-                                        <a th:href="@{'/teacher/studentCard/' + ${student.id} +'/download/' + ${timeInterval.startTime} + '/' + ${timeInterval.endTime}}" th:text="'Generuj'"></a>
+                                    <td th:text="${lesson?.topicName}">
+                                        Temat
+                                    </td>
+                                    <td th:text="${#dates.format(lesson?.date,'dd-MM-yyyy HH:mm')}">
+                                        Data
                                     </td>
                                 </tr>
+
                                 </tbody>
                             </table>
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item " th:classappend="${page.isPresent() && page.get() > 0} ? 'active' : 'disabled'">
+                                    <a class="page-link" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}(teacherId = ${teacherId}, subjectId=${subjectId}, page = ${page.orElse(1) - 1})}" th:text="'Poprzednia'"></a>
+                                </li>
+                                <li class="page-item" th:classappend="${lessons.size() < 15} ? 'disabled' : 'active'">
+                                    <a class="page-link" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}(teacherId = ${teacherId}, subjectId=${subjectId}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
+
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+
+
     </div>
 </div>
 
@@ -353,20 +342,64 @@ The above copyright notice and this permission notice shall be included in all c
     });
 </script>
 
-<script type="text/javascript">
-    $(function () {
-        $('#fromdate').datetimepicker({
-            format: "MM/YYYY"
+<script>
+    function rowClicked(teacherId, classId) {
+
+        var url = "/teacher/" + teacherId + "/attendances/class/" + classId;
+        $(location).attr('href', url);
+    }
+</script>
+
+<script>
+    $(function() {
+
+        $('#selectTopic').on('change', function(){
+            var selected = $(this).find("option:selected").val();
+            $('#topicIdInput').val(selected);
+            $('#selectTopic').selectpicker("refresh");
         });
-        $('#todate').datetimepicker({
-            format: "MM/YYYY"
-        });
-        $("#fromdate").on("dp.change", function (e) {
-            $('#todate').data("DateTimePicker").minDate(e.date);
-        });
-        $("#todate").on("dp.change", function (e) {
-            $('#fromdate').data("DateTimePicker").maxDate(e.date);
-        });
+
+    });
+</script>
+
+<script>
+    $(document).on("click", "#sendLesson", function () {
+        var csrf= $("#csrfVal").val();
+        var subjectIdVal = $("#subjectIdVal").val();
+        var teacherIdVal = $("#teacherIdVal").val();
+        var classIdVal = $("#classIdVal").val();
+
+        var lessonDto = {
+            id: "",
+            name: $("#lessonNameVal").val(),
+            date: $("#lessonDateVal").val(),
+            topic: $("#topicIdInput").val(),
+            subjectId: subjectIdVal,
+            classId: classIdVal
+        };
+
+        // Creating a XHR object
+        let xhr = new XMLHttpRequest();
+        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/new";
+
+        // open a connection
+        xhr.open("POST", url, true);
+
+        // Set the request header i.e. which type of content you are sending
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("_csrf", csrf);
+        xhr.setRequestHeader('x-csrf-token', csrf);
+
+        // Create a state change callback
+        xhr.onreadystatechange = function () {
+            location.href = "redirect:/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal;
+        };
+
+        // Converting JSON data to string
+        var data = JSON.stringify(lessonDto);
+
+        // Sending data with the request
+        xhr.send(data);
     });
 </script>
 </body>

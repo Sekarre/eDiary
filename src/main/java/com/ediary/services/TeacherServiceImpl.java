@@ -10,6 +10,8 @@ import com.ediary.exceptions.NoAccessException;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -87,8 +89,17 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public LessonDto initNewLesson(Long subjectId) {
+
+        Subject subject = getSubjectById(subjectId);
+
+        Class schoolClass = classRepository.findAllBySubjects(subject)
+                .stream()
+                .findFirst()
+                .orElse(null);
+
         return lessonToLessonDto.convert(Lesson.builder()
-                .subject(getSubjectById(subjectId))
+                .subject(subject)
+                .schoolClass(schoolClass)
                 .build());
     }
 
@@ -104,7 +115,9 @@ public class TeacherServiceImpl implements TeacherService {
 
 
     @Override
-    public List<LessonDto> listLessons(Long teacherId, Long subjectId) {
+    public List<LessonDto> listLessons(Integer page, Integer size, Long teacherId, Long subjectId) {
+
+        Pageable pageable = PageRequest.of(page, size);
 
         Teacher teacher = getTeacherById(teacherId);
 
@@ -114,7 +127,7 @@ public class TeacherServiceImpl implements TeacherService {
                 .orElseThrow(() -> new NoAccessException("No such subject for teacher"));
 
 
-        return new ArrayList<>(lessonRepository.findAllBySubjectId(teacherSubject.getId()))
+        return lessonRepository.findAllBySubjectIdOrderByDateDesc(teacherSubject.getId(), pageable)
                 .stream()
                 .map(lessonToLessonDto::convert)
                 .collect(Collectors.toList());

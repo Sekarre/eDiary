@@ -13,6 +13,8 @@ import com.ediary.repositories.MessageRepository;
 import com.ediary.repositories.NoticeRepository;
 import com.ediary.repositories.security.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -61,19 +63,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<MessageDto> listReadMessage(Long userId) {
+    public List<MessageDto> listReadMessage(Integer page, Integer size, Long userId) {
+
+        Pageable pageable = PageRequest.of(page, size);
 
         User user = getUserById(userId);
 
-        return messageService.listReadMessageByUser(user).stream().map(messageToMessageDto::convert).collect(Collectors.toList());
+        return messageRepository.findAllByReadersOrderByDateDesc(user, pageable)
+                .stream()
+                .map(messageToMessageDto::convert)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<MessageDto> listSendMessage(Long userId) {
+    public List<MessageDto> listSendMessage(Integer page, Integer size, Long userId) {
+
+        Pageable pageable = PageRequest.of(page, size);
 
         User user = getUserById(userId);
 
-        return messageService.listSendMessageByUser(user).stream().map(messageToMessageDto::convertWithReaders).collect(Collectors.toList());
+        return messageRepository.findAllBySendersOrderByDateDesc(user, pageable)
+                .stream()
+                .map(messageToMessageDto::convertWithReaders)
+                .collect(Collectors.toList());
     }
 
     @Override

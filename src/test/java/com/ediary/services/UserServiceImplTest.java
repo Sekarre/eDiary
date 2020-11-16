@@ -4,10 +4,7 @@ import com.ediary.DTO.MessageDto;
 import com.ediary.DTO.NoticeDto;
 import com.ediary.DTO.UserDto;
 import com.ediary.converters.*;
-import com.ediary.domain.Message;
-import com.ediary.domain.Notice;
-import com.ediary.domain.Subject;
-import com.ediary.domain.Teacher;
+import com.ediary.domain.*;
 import com.ediary.domain.security.User;
 import com.ediary.repositories.MessageRepository;
 import com.ediary.repositories.NoticeRepository;
@@ -16,8 +13,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -126,41 +128,49 @@ class UserServiceImplTest {
     void listReadMessage() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(User.builder().id(userId).build()));
 
-        when(messageService.listReadMessageByUser(any())).thenReturn(Arrays.asList(
-                Message.builder().id(1L).build(),
-                Message.builder().id(2L).build()
-        ));
+        List<Message> messages = new ArrayList<>(){{
+            add(Message.builder().build());
+        }};
+
+
+        Page<Message> page = new PageImpl<>(messages);
+
+        when(messageRepository.findAllByReadersOrderByDateDesc(any(), any())).thenReturn(page);
 
         when(messageToMessageDto.convert(any())).thenReturn(MessageDto.builder().id(1L).build());
 
 
-        List<MessageDto> messagesDto = userService.listReadMessage(userId);
+        List<MessageDto> messagesDto = userService.listReadMessage(0, 15, userId);
 
-        assertEquals(2, messagesDto.size());
-        assertEquals(1L, messagesDto.get(0).getId());
-        verify(messageService, times(1)).listReadMessageByUser(any());
+        assertEquals(1, messagesDto.size());
+        assertNotNull(messagesDto);
         verify(userRepository, times(1)).findById(userId);
-        verify(messageToMessageDto, times(2)).convert(any());
+        verify(messageToMessageDto, times(1)).convert(any());
     }
 
     @Test
     void listSendMessage() {
+
+        List<Message> messages = new ArrayList<>(){{
+            add(Message.builder().build());
+        }};
+
+
+        Page<Message> page = new PageImpl<>(messages);
+
         when(userRepository.findById(userId)).thenReturn(Optional.of(User.builder().id(userId).build()));
 
-        when(messageService.listSendMessageByUser(any())).thenReturn(Arrays.asList(
-                Message.builder().id(1L).build(),
-                Message.builder().id(2L).build()
-        ));
+        when(messageRepository.findAllBySendersOrderByDateDesc(any(), any())).thenReturn(page);
+
 
         when(messageToMessageDto.convertWithReaders(any())).thenReturn(MessageDto.builder().id(1L).build());
 
-        List<MessageDto> messagesDto = userService.listSendMessage(userId);
+        List<MessageDto> messagesDto = userService.listSendMessage(0, 15, userId);
 
-        assertEquals(2, messagesDto.size());
-        assertEquals(1L, messagesDto.get(0).getId());
-        verify(messageService, times(1)).listSendMessageByUser(any());
+        assertEquals(1, messagesDto.size());
+        assertNotNull(messagesDto);
         verify(userRepository, times(1)).findById(userId);
-        verify(messageToMessageDto, times(2)).convertWithReaders(any());
+        verify(messageToMessageDto, times(1)).convertWithReaders(any());
     }
 
     @Test

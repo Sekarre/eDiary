@@ -106,6 +106,15 @@ The above copyright notice and this permission notice shall be included in all c
 
                       </tbody>
                     </table>
+                    <ul class="pagination justify-content-center">
+                      <li class="page-item " th:classappend="${page.isPresent() && page.get() > 0} ? 'active' : 'disabled'">
+                        <a class="page-link" th:href="@{/user/{userId}/readMessages(userId = ${userId}, page = ${page.orElse(1) - 1})}" th:text="'Poprzednia'"></a>
+                      </li>
+                      <li class="page-item" th:classappend="${readMessages.size() < 15} ? 'disabled' : 'active'">
+                        <a class="page-link" th:href="@{/user/{userId}/readMessages(userId = ${userId}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
+
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </div>

@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Controller
@@ -36,6 +37,9 @@ public class TeacherController {
     private final WeeklyAttendancesService weeklyAttendancesService;
 
     private final UserToUserDto userToUserDto;
+
+    private final Integer pageSize = 15;
+
 
     @ModelAttribute
     public void addAuthenticatedUserAndTeacher(@AuthenticationPrincipal User user, Model model) {
@@ -393,9 +397,13 @@ public class TeacherController {
 
 
     @GetMapping("/{teacherId}/lesson/subject/{subjectId}")
-    public String getAllLessonsBySubject(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
+    public String getAllLessonsBySubject(@PathVariable Long teacherId,
+                                         @RequestParam(name = "page", required = false) Optional<Integer> page,
+                                         @PathVariable Long subjectId, Model model) {
 
-        model.addAttribute("lessons", teacherService.listLessons(teacherId, subjectId));
+        model.addAttribute("page", page);
+        model.addAttribute("lessons", teacherService.listLessons(page.orElse(0), pageSize, teacherId, subjectId));
+        model.addAttribute("subjectId", subjectId);
 
         return "/teacher/lesson/allLessons";
     }
@@ -403,7 +411,9 @@ public class TeacherController {
 
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/new")
     public String newLesson(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
-        model.addAttribute("lesson", teacherService.initNewLesson(subjectId));
+
+        model.addAttribute("topics", teacherService.listTopics(teacherId, subjectId));
+        model.addAttribute("newLesson", teacherService.initNewLesson(subjectId));
 
         return "/teacher/lesson/newLesson";
     }
@@ -412,18 +422,20 @@ public class TeacherController {
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/new")
     public String processNewLesson(@PathVariable Long teacherId,
                                    @PathVariable Long subjectId,
-                                   @Valid @RequestBody LessonDto lessonDto,
+                                   @Valid @ModelAttribute LessonDto newLesson,
                                    BindingResult result) {
 
         if (result.hasErrors()) {
             //todo: add view path
             return "";
         } else {
-            Lesson savedLesson = teacherService.saveLesson(lessonDto);
-            return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + savedLesson.getId();
+            Lesson savedLesson = teacherService.saveLesson(newLesson);
         }
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId;
     }
 
+
+    //Nie potrzebne odkad kazdy przedmiot jest przypisany do oddzielnej klasy
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class")
     public String getAllClassesBySubject(@PathVariable Long teacherId,
                                          @PathVariable Long subjectId) {

@@ -13,8 +13,8 @@ public interface UserService {
 
     List<UserDto> listUsers();
     Boolean updatePassword(User user, String password, String oldPassword);
-    List<MessageDto> listReadMessage(Long userId);
-    List<MessageDto> listSendMessage(Long userId);
+    List<MessageDto> listReadMessage(Integer page, Integer size, Long userId);
+    List<MessageDto> listSendMessage(Integer page, Integer size, Long userId);
     MessageDto initNewMessage(Long userId);
     MessageDto replyMessage(Long userId, MessageDto messageDto);
     MessageDto addReaderToMessage(MessageDto messageDto, Long readerId);

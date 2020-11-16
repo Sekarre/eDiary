@@ -444,6 +444,18 @@ public class DefaultLoader implements CommandLineRunner {
             }
         }
 
+        for (int j = 0; j < 20; j++) {
+                messageRepository.save(Message.builder()
+                        .title(messageTitles[0])
+                        .content(messageContens[0])
+                        .status(Message.Status.READ)
+                        .date(new java.util.Date())
+                        .senders(userRepository.findByFirstNameAndLastName(teacherNames[1], teacherLastNames[1]))
+                        .reader(userRepository.findByFirstNameAndLastName(teacherNames[0], teacherLastNames[0]))
+                        .build());
+        }
+
+
         String loremIpsum = " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean convallis urna " +
                 "egestas dapibus condimentum. Ut vestibulum sem non ultricies elementum. Pellentesque accumsan tellus " +
                 "a libero mollis, et ornare mi maximus. Donec aliquet tempor posuere. Pellentesque laoreet tempus massa, " +
