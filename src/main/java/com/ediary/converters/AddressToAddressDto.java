@@ -30,7 +30,10 @@ public class AddressToAddressDto implements Converter<Address, AddressDto> {
         addressDto.setPhoneNumber(source.getPhoneNumber());
 
         //User
-        addressDto.setUserId(source.getUser().getId());
+        //Condition for school address
+        if (source.getUser() != null){
+            addressDto.setUserId(source.getUser().getId());
+        }
 
         return addressDto;
     }

@@ -95,6 +95,8 @@ The above copyright notice and this permission notice shall be included in all c
                   </div>
                 </div>
               </div>
+              </br>
+              </br>
 
               <input type="hidden" th:field="*{subject.id}" />
               <input type="hidden" th:field="*{subject.teacherId}" />
@@ -337,8 +339,9 @@ The above copyright notice and this permission notice shall be included in all c
 <script>
   $(function() {
 
-    $('#selectClass').on('change', function(){
+    $('#editSchool').on('change', function(){
       var selected = $(this).find("option:selected").val();
+
       $('#classIdInput').val(selected);
       $('#selectClass').selectpicker("refresh");
     });

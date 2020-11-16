@@ -1,8 +1,12 @@
 package com.ediary.web.controllers;
 
+import com.ediary.DTO.AddressDto;
 import com.ediary.DTO.EventDto;
+import com.ediary.DTO.SchoolDto;
 import com.ediary.DTO.UserDto;
 import com.ediary.converters.UserToUserDto;
+import com.ediary.domain.Address;
+import com.ediary.domain.School;
 import com.ediary.domain.security.User;
 import com.ediary.services.AdminService;
 import com.ediary.web.controllers.AdminController;
