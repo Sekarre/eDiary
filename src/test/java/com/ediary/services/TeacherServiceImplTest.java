@@ -571,7 +571,7 @@ class TeacherServiceImplTest {
                 Lesson.builder().id(2L).subject(subject).build()
         ));
 
-        List<LessonDto> lessons = teacherService.listLessons(teacherId, subjectId);
+        List<LessonDto> lessons = teacherService.listLessons(1, 1, teacherId, subjectId);
 
         assertEquals(2, lessons.size());
         assertEquals(1L, lessons.get(0).getId());

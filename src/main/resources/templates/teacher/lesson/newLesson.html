@@ -106,13 +106,12 @@ The above copyright notice and this permission notice shall be included in all c
                                         <div class="form-group">
                                             <label>Temat</label>
                                             <div class="form-group">
-                                                <select id="selectTopic" class="selectpicker" data-live-search="true">
+                                                <select id="selectTopic" class="selectpicker" data-live-search="true" th:field="*{topicId}">
                                                     <option th:each="topic : ${topics}"
                                                             th:value="${topic.id}"
-                                                            th:text="${topic.name}">Temat</option>
+                                                            th:text="${topic.name}" th:selected="${topicStat.index == 0} ? 'selected' : ''">Temat</option>
                                                 </select>
                                             </div>
-                                            <input type="hidden" id="topicid" th:field="*{topicId}" />
                                         </div>
                                     </div>
                                 </div>
@@ -361,7 +360,6 @@ The above copyright notice and this permission notice shall be included in all c
 
         $('#selectTopic').on('change', function(){
             var selected = $(this).find("option:selected").val();
-            $('#topicid').val(selected);
             $('#selectTopic').selectpicker("refresh");
         });
 

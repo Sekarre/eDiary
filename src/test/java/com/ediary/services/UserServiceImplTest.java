@@ -134,7 +134,7 @@ class UserServiceImplTest {
         when(messageToMessageDto.convert(any())).thenReturn(MessageDto.builder().id(1L).build());
 
 
-        List<MessageDto> messagesDto = userService.listReadMessage(userId);
+        List<MessageDto> messagesDto = userService.listReadMessage(1, 1, userId);
 
         assertEquals(2, messagesDto.size());
         assertEquals(1L, messagesDto.get(0).getId());
@@ -154,7 +154,7 @@ class UserServiceImplTest {
 
         when(messageToMessageDto.convertWithReaders(any())).thenReturn(MessageDto.builder().id(1L).build());
 
-        List<MessageDto> messagesDto = userService.listSendMessage(userId);
+        List<MessageDto> messagesDto = userService.listSendMessage(1, 1, userId);
 
         assertEquals(2, messagesDto.size());
         assertEquals(1L, messagesDto.get(0).getId());

@@ -389,7 +389,7 @@ class TeacherControllerTest {
 
         Long subjectId = 1L;
 
-        when(teacherService.listLessons(anyLong(), anyLong())).thenReturn(Arrays.asList(
+        when(teacherService.listLessons(anyLong(), anyLong(), any())).thenReturn(Arrays.asList(
                 LessonDto.builder().id(1L).build(),
                 LessonDto.builder().id(2L).build()
         ));
@@ -400,8 +400,8 @@ class TeacherControllerTest {
                 .andExpect(view().name("/teacher/lesson/allLessons"));
 
 
-        verify(teacherService, times(1)).listLessons(1L, 1L);
-        assertEquals(2, teacherService.listLessons(1L, 1L).size());
+        verify(teacherService, times(1)).listLessons(1L, 1L, 1L);
+        assertEquals(2, teacherService.listLessons(1L, 1L, 1L).size());
     }
 
     @Test

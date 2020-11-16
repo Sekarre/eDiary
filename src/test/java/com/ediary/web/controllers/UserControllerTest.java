@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -77,7 +78,7 @@ class UserControllerTest {
     @Test
     void getReadMessages() throws Exception {
 
-        when(userService.listReadMessage(userId)).thenReturn(Arrays.asList(
+        when(userService.listReadMessage(1, 1, userId)).thenReturn(Arrays.asList(
                 MessageDto.builder().id(1L).build(),
                 MessageDto.builder().id(2L).build()
         ));
@@ -87,14 +88,14 @@ class UserControllerTest {
                 .andExpect(model().attributeExists("readMessages"))
                 .andExpect(view().name("user/readMessages"));
 
-        verify(userService, times(1)).listReadMessage(userId);
-        assertEquals(2, userService.listReadMessage(userId).size());
+        verify(userService, times(1)).listReadMessage(1, 1, userId);
+        assertEquals(2, userService.listReadMessage(1, 1, userId).size());
 
     }
 
     @Test
     void getSendMessages() throws Exception {
-        when(userService.listSendMessage(userId)).thenReturn(Arrays.asList(
+        when(userService.listSendMessage(1, 1, userId)).thenReturn(Arrays.asList(
                 MessageDto.builder().id(1L).build(),
                 MessageDto.builder().id(2L).build()
         ));
@@ -104,14 +105,14 @@ class UserControllerTest {
                 .andExpect(model().attributeExists("sendMessages"))
                 .andExpect(view().name("user/sendMessages"));
 
-        verify(userService, times(1)).listSendMessage(userId);
-        assertEquals(2, userService.listSendMessage(userId).size());
+        verify(userService, times(1)).listSendMessage(1, 1, userId);
+        assertEquals(2, userService.listSendMessage(1, 1, userId).size());
     }
 
     @Test
     void newMessage() throws Exception {
         when(userService.initNewMessage(userId)).thenReturn(MessageDto.builder().build());
-        when(userService.listUsers()).thenReturn(Arrays.asList(UserDto.builder().build()));
+        when(userService.listUsers()).thenReturn(Collections.singletonList(UserDto.builder().build()));
 
         mockMvc.perform(get("/user/"+ userId +"/newMessages"))
                 .andExpect(status().isOk())

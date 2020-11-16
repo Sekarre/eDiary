@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Controller
@@ -36,6 +37,9 @@ public class TeacherController {
     private final WeeklyAttendancesService weeklyAttendancesService;
 
     private final UserToUserDto userToUserDto;
+
+    private final Integer pageSize = 15;
+
 
     @ModelAttribute
     public void addAuthenticatedUserAndTeacher(@AuthenticationPrincipal User user, Model model) {
@@ -382,9 +386,7 @@ public class TeacherController {
         }
     }
 
-    //Start
 
-    //ok
     @GetMapping("/{teacherId}/lesson/subject")
     public String getAllSubjects(@PathVariable Long teacherId, Model model) {
 
@@ -394,20 +396,22 @@ public class TeacherController {
     }
 
 
-    //ok
     @GetMapping("/{teacherId}/lesson/subject/{subjectId}")
-    public String getAllLessonsBySubject(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
+    public String getAllLessonsBySubject(@PathVariable Long teacherId,
+                                         @RequestParam(name = "page", required = false) Optional<Integer> page,
+                                         @PathVariable Long subjectId, Model model) {
 
-        model.addAttribute("lessons", teacherService.listLessons(teacherId, subjectId));
+        model.addAttribute("page", page);
+        model.addAttribute("lessons", teacherService.listLessons(page.orElse(0), pageSize, teacherId, subjectId));
         model.addAttribute("subjectId", subjectId);
 
         return "/teacher/lesson/allLessons";
     }
 
 
-    //ok
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/new")
     public String newLesson(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
+
         model.addAttribute("topics", teacherService.listTopics(teacherId, subjectId));
         model.addAttribute("newLesson", teacherService.initNewLesson(subjectId));
 
@@ -430,6 +434,8 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId;
     }
 
+
+    //Nie potrzebne odkad kazdy przedmiot jest przypisany do oddzielnej klasy
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class")
     public String getAllClassesBySubject(@PathVariable Long teacherId,
                                          @PathVariable Long subjectId) {

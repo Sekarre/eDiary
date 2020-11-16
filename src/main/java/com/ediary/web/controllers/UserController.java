@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Controller
@@ -25,6 +26,8 @@ public class UserController {
     private final UserService userService;
 
     private final UserToUserDto userToUserDto;
+
+    private final int pageSize = 15;
 
     @ModelAttribute
     public void addAuthenticatedUser(@AuthenticationPrincipal User user, Model model) {
@@ -64,17 +67,24 @@ public class UserController {
         return "user/messages";
     }
 
-    @GetMapping("/{userId}/readMessages")
-    public String getReadMessages(@PathVariable Long userId, Model model) {
 
-        model.addAttribute("readMessages", userService.listReadMessage(userId));
+    @GetMapping("/{userId}/readMessages")
+    public String getReadMessages(@PathVariable Long userId,
+                                  @RequestParam(name = "page", required = false) Optional<Integer> page,
+                                  Model model) {
+
+        model.addAttribute("page", page);
+        model.addAttribute("readMessages", userService.listReadMessage(page.orElse(0), pageSize, userId));
         return "user/readMessages";
     }
 
     @GetMapping("/{userId}/sendMessages")
-    public String getSendMessages(@PathVariable Long userId, Model model) {
+    public String getSendMessages(@PathVariable Long userId,
+                                  @RequestParam(name = "page", required = false) Optional<Integer> page,
+                                  Model model) {
 
-        model.addAttribute("sendMessages", userService.listSendMessage(userId));
+        model.addAttribute("page", page);
+        model.addAttribute("sendMessages", userService.listSendMessage(page.orElse(0), pageSize, userId));
         return "user/sendMessages";
     }
 
