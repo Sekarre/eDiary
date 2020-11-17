@@ -102,29 +102,6 @@ public class DeputyHeadServiceImplTest {
 
 
     @Test
-    void saveClassSecond() {
-        Student student = Student.builder().id(1L).build();
-        Class schoolClass = Class.builder()
-                .teacher(Teacher.builder().id(1L).build())
-                .name("name")
-                .build();
-        when(classDtoToClass.convertForNewClass(any())).thenReturn(schoolClass);
-        when(classRepository.countAllByName(any())).thenReturn(0L);
-        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(Teacher.builder().user(User.builder().id(1L).build()).build()));
-        when(classRepository.save(any())).thenReturn(schoolClass);
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).roles(Arrays.asList(Role.builder().name(DefaultLoader.TEACHER_ROLE).build())).build()));
-        when(roleRepository.findByName(anyString())).thenReturn(Optional.of(Role.builder().id(1L).name(DefaultLoader.FORM_TUTOR_ROLE).build()));
-
-        Class savedClass = deputyHeadService
-                .saveClass(ClassDto.builder().build());
-
-        assertNotNull(savedClass);
-        verify(classRepository, times(1)).save(any());
-        verify(classDtoToClass, times(1)).convertForNewClass(any());
-    }
-
-
-    @Test
     void deleteClass() {
 
         Class schoolClass = Class.builder()
