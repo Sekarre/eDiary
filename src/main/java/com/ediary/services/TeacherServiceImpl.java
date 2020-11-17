@@ -598,6 +598,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public Boolean deleteBehavior(Long teacherId, Long behaviorId) {
         Optional<Behavior> behaviorOptional = behaviorRepository.findById(behaviorId);
+
         if (!behaviorOptional.isPresent()) {
             return false;
         }
