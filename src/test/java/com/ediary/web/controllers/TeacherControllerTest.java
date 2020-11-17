@@ -229,7 +229,7 @@ class TeacherControllerTest {
     void deleteBehavior() throws Exception {
         Long behaviorId = 3L;
 
-        mockMvc.perform(delete("/teacher/" + teacherId + "/behavior/" + behaviorId))
+        mockMvc.perform(post("/teacher/" + teacherId + "/behavior/" + behaviorId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/behavior"));
 
