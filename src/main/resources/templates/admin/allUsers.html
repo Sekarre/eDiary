@@ -81,8 +81,8 @@ The above copyright notice and this permission notice shall be included in all c
                                 <tbody>
                                 <tr th:each="user : ${users}">
                                     <td>
-                                        <ul th:each="role : ${user.rolesNames}">
-                                            <li style="list-style-type:none;" th:switch="${role}">
+                                        <ul th:id="@{'roleUser' + ${user.id}}">
+                                            <li th:each="role : ${user.rolesNames}" style="list-style-type:none;" th:switch="${role}">
                                                 <button th:case="'ROLE_ADMIN'" type="button" class="btn btn-outline-danger">ADMINISTRATOR</button>
                                                 <button th:case="'ROLE_STUDENT'" type="button" class="btn btn-outline-primary">UCZEŃ</button>
                                                 <button th:case="'ROLE_PARENT'" type="button" class="btn btn-outline-secondary">RODZIC</button>
@@ -94,14 +94,19 @@ The above copyright notice and this permission notice shall be included in all c
                                         </ul>
                                     </td>
 
-                                    <td th:text="${user.name}">Imię i nazwisko</td>
-                                    <td th:text="${user.username}">Nazwa użytkownika</td>
-                                    <td th:text="${user.isEnabled} ? 'Aktywne' : 'Niekatywne'">Status</td>
+                                    <td th:text="${user?.name}">Imię i nazwisko</td>
+                                    <td th:text="${user?.username}">Nazwa użytkownika</td>
+                                    <td th:text="${user?.isEnabled} ? 'Aktywne' : 'Niekatywne'">Status</td>
 
                                     <td class="text-right">
-                                        <a >
-                                            <button class="btn btn-primary btn-primary btn-fab-mini btn-round">
-                                                <i class="material-icons">read_more</i>
+                                        <a id="open-gradeDialogModal-showUser" data-toggle="modal" class="open-gradeDialogModal" href="#showUserModal"
+                                           th:attr="data-name=''+${user.name}+'',data-username=''+${user.username}+'', data-target='#showUserModal'
+                                                ,data-status=''+${user.isEnabled}+'',data-id=''+${user?.id}+''+''
+                                                ,data-street=''+${user?.address?.getStreet()}+''+'',data-city=''+${user?.address?.city}+''+''
+                                                ,data-state=''+${user?.address?.state}+''+'',data-zip=''+${user?.address?.zip}+''+''
+                                                ,data-phoneNumber=''+${user?.address?.phoneNumber}+''">
+                                            <button rel="tooltip" class="btn btn-primary btn-primary btn-fab-mini btn-round">
+                                                <i class="material-icons">zoom_in</i>
                                             </button>
                                         </a>
                                         <a id="open-gradeDialogModal-editTopic" data-toggle="modal" class="open-gradeDialogModal" href="#editTopicModal">
@@ -124,6 +129,109 @@ The above copyright notice and this permission notice shall be included in all c
             </div>
         </div>
 
+        <!-- Modal show user -->
+        <div class="modal fade" id="showUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scroll" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Użytkownik: </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body modal-body-scroll">
+                        <div class="content">
+                            <div class="container-fluid">
+                                <div class="card">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <tr>
+                                                <td id="userName">
+                                                    <div class="form-group">
+                                                        <label class="bmd-label-static">Imię i nazwisko</label>
+                                                        <input disabled id="userNameVal" type="text" class="form-control">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td id="userUsername">
+                                                    <div class="form-group">
+                                                        <label class="bmd-label-static">Nazwa użytkownika</label>
+                                                        <input disabled id="userUsernameVal" type="text" class="form-control">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td id="userStatus">
+                                                    <div class="form-group">
+                                                        <label class="bmd-label-static">Status</label>
+                                                        <input disabled id="userStatusVal" type="text" class="form-control">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label class="bmd-label-static">Rola</label>
+                                                    <ul id="rolesUl"></ul>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td id="userAddressStreet">
+                                                    <div class="form-group">
+                                                        <label class="bmd-label-static">Ulica</label>
+                                                        <input disabled id="userAddressStreetVal" type="text" class="form-control">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td id="userAddressCity">
+                                                    <div class="form-group">
+                                                        <label class="bmd-label-static">Miasto</label>
+                                                        <input disabled id="userAddressCityVal" type="text" class="form-control">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td id="userAddressState">
+                                                    <div class="form-group">
+                                                        <label class="bmd-label-static">Województwo</label>
+                                                        <input disabled id="userAddressStateVal" type="text" class="form-control">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td id="userAddressZip">
+                                                    <div class="form-group">
+                                                        <label class="bmd-label-static">Adres pocztowy</label>
+                                                        <input disabled id="userAddressZipVal" type="text" class="form-control">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td id="userAddressPhoneNumber">
+                                                    <div class="form-group">
+                                                        <label class="bmd-label-static">Numer telefonu</label>
+                                                        <input disabled id="userAddressPhoneNumberVal" type="text" class="form-control">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
         <!-- Modal delete topic-->
         <div class="modal fade" id="deleteTopicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -285,13 +393,12 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
                             <button id="editTopic" type="button" class="btn btn-warning" >Zapisz</button>
-
                         </div>
                 </div>
-
             </div>
         </div>
 
+        <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
 
     </div>
 </div>
@@ -516,6 +623,53 @@ The above copyright notice and this permission notice shall be included in all c
     });
 </script>
 
+<script>
+    $(document).on("click", "#open-gradeDialogModal-showUser", function () {
+
+        var name = $(this).data('name');
+        var username = $(this).data('username');
+        var status = $(this).data('status');
+        var userId = $(this).data('id');
+
+        var street = $(this).data('street');
+        var city = $(this).data('city');
+        var state = $(this).data('state');
+        var zip = $(this).data('zip');
+        var phoneNumber = $(this).data('phoneNumber');
+
+
+        document.getElementById("userNameVal").value = name;
+        document.getElementById("userUsernameVal").value = username;
+        if(status.toString() == "true"){
+            document.getElementById("userStatusVal").value = "AKTYWNE";
+        } else {
+            document.getElementById("userStatusVal").value = "NIEAKTYWNE";
+        }
+
+        var roleUserId = "roleUser" + userId;
+        var ul = document.getElementById(roleUserId);
+        var items = ul.getElementsByTagName("li");
+        console.log(ul);
+        console.log(items);
+        $("#rolesUl").empty();
+        for (var i = 0; i < items.length; ++i) {
+            $("#rolesUl").append("<li>" + items[i].innerText + "</li>");
+        }
+
+        document.getElementById("userAddressStreetVal").value = street;
+        document.getElementById("userAddressCityVal").value = city;
+        document.getElementById("userAddressStateVal").value = state;
+        document.getElementById("userAddressZipVal").value = zip;
+        document.getElementById("userAddressPhoneNumberVal").value = phoneNumber;
+
+
+
+    });
+</script>
+
+
+
+<!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
 <script>
     function showHideContent(contentId) {
         var x = document.getElementById(contentId);
