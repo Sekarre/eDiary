@@ -4,13 +4,18 @@ import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.StudentCouncilDto;
 import com.ediary.DTO.StudentDto;
 import com.ediary.DTO.TeacherDto;
+import com.ediary.bootstrap.DefaultLoader;
 import com.ediary.converters.ClassDtoToClass;
 import com.ediary.converters.ClassToClassDto;
 import com.ediary.converters.StudentToStudentDto;
 import com.ediary.converters.TeacherToTeacherDto;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
+import com.ediary.domain.security.Role;
+import com.ediary.domain.security.User;
 import com.ediary.repositories.*;
+import com.ediary.repositories.security.RoleRepository;
+import com.ediary.repositories.security.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -18,10 +23,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,6 +49,10 @@ public class DeputyHeadServiceImplTest {
     EventRepository eventRepository;
     @Mock
     SubjectRepository subjectRepository;
+    @Mock
+    UserRepository userRepository;
+    @Mock
+    RoleRepository roleRepository;
 
     @Mock
     StudentToStudentDto studentToStudentDto;
@@ -63,7 +69,7 @@ public class DeputyHeadServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         deputyHeadService = new DeputyHeadServiceImpl(classRepository, studentRepository, teacherRepository, lessonRepository,
-                schoolPeriodRepository, studentCouncilRepository, parentCouncilRepository, eventRepository, subjectRepository,
+                schoolPeriodRepository, studentCouncilRepository, parentCouncilRepository, eventRepository, subjectRepository,userRepository, roleRepository,
                 studentToStudentDto, teacherToTeacherDto, classToClassDto, classDtoToClass);
     }
 
@@ -102,11 +108,12 @@ public class DeputyHeadServiceImplTest {
                 .teacher(Teacher.builder().id(1L).build())
                 .name("name")
                 .build();
-
         when(classDtoToClass.convertForNewClass(any())).thenReturn(schoolClass);
         when(classRepository.countAllByName(any())).thenReturn(0L);
-        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(Teacher.builder().build()));
+        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(Teacher.builder().user(User.builder().id(1L).build()).build()));
         when(classRepository.save(any())).thenReturn(schoolClass);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).roles(Arrays.asList(Role.builder().name(DefaultLoader.TEACHER_ROLE).build())).build()));
+        when(roleRepository.findByName(anyString())).thenReturn(Optional.of(Role.builder().id(1L).name(DefaultLoader.FORM_TUTOR_ROLE).build()));
 
         Class savedClass = deputyHeadService
                 .saveClass(ClassDto.builder().build());

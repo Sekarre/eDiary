@@ -73,8 +73,8 @@ public class DefaultLoader implements CommandLineRunner {
     private final String ADMIN_ROLE = "ROLE_ADMIN";
     private final String STUDENT_ROLE = "ROLE_STUDENT";
     private final String PARENT_ROLE = "ROLE_PARENT";
-    private final String TEACHER_ROLE = "ROLE_TEACHER";
-    private final String FORM_TUTOR_ROLE = "ROLE_FORM_TUTOR";
+    public static final String TEACHER_ROLE = "ROLE_TEACHER";
+    public static final String FORM_TUTOR_ROLE = "ROLE_FORM_TUTOR";
     private final String DEPUTY_HEAD_ROLE = "ROLE_DEPUTY_HEAD";
     private final String HEADMASTER_ROLE = "ROLE_HEADMASTER";
 
@@ -513,6 +513,14 @@ public class DefaultLoader implements CommandLineRunner {
                     .parentCouncil(parentCouncilRepository.findAll().get(i))
                     .studentCouncil(studentCouncilRepository.findAll().get(i))
                     .build());
+
+            User user = userRepository.findByFirstNameAndLastName(teacherNames[i], teacherLastNames[i]);
+
+            Set<Role> roles = user.getRoles();
+            roles.add(roleRepository.findByName(FORM_TUTOR_ROLE).orElse(null));
+
+            user.setRoles(roles);
+            userRepository.save(user);
         }
 
     }

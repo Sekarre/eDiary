@@ -3,14 +3,19 @@ package com.ediary.services;
 import com.ediary.DTO.ClassDto;
 import com.ediary.DTO.StudentDto;
 import com.ediary.DTO.TeacherDto;
+import com.ediary.bootstrap.DefaultLoader;
 import com.ediary.converters.ClassDtoToClass;
 import com.ediary.converters.ClassToClassDto;
 import com.ediary.converters.StudentToStudentDto;
 import com.ediary.converters.TeacherToTeacherDto;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
+import com.ediary.domain.security.Role;
+import com.ediary.domain.security.User;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
+import com.ediary.repositories.security.RoleRepository;
+import com.ediary.repositories.security.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +37,8 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     private final ParentCouncilRepository parentCouncilRepository;
     private final EventRepository eventRepository;
     private final SubjectRepository subjectRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     private final StudentToStudentDto studentToStudentDto;
     private final TeacherToTeacherDto teacherToTeacherDto;
@@ -67,6 +74,10 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
 
             if (classRepository.countAllByName(schoolClass.getName()).equals(0L)
                     && teacher != null && teacher.getSchoolClass() == null) {
+
+                User user = userRepository.findById(teacher.getUser().getId()).orElse(null);
+                Set<Role> roles = user.getRoles();
+                roles.add(roleRepository.findByName(DefaultLoader.FORM_TUTOR_ROLE).orElse(null));
 
                 return classRepository.save(schoolClass);
             }
