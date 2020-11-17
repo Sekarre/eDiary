@@ -13,14 +13,11 @@
 
  */
 /*     brand Colors              */
-.modal{
-  display: block;
-}
 
-.modal-dialog{
+.modal-dialog-scroll{
   overflow-y: initial;
 }
-.modal-body{
+.modal-body-scroll{
   height: 80vh;
   overflow-y: auto;
 }

@@ -81,8 +81,8 @@ The above copyright notice and this permission notice shall be included in all c
                                 <tbody>
                                 <tr th:each="user : ${users}">
                                     <td>
-                                        <ul th:each="role : ${user.rolesNames}">
-                                            <li style="list-style-type:none;" th:switch="${role}">
+                                        <ul th:id="@{'roleUser' + ${user.id}}">
+                                            <li th:each="role : ${user.rolesNames}" style="list-style-type:none;" th:switch="${role}">
                                                 <button th:case="'ROLE_ADMIN'" type="button" class="btn btn-outline-danger">ADMINISTRATOR</button>
                                                 <button th:case="'ROLE_STUDENT'" type="button" class="btn btn-outline-primary">UCZEŃ</button>
                                                 <button th:case="'ROLE_PARENT'" type="button" class="btn btn-outline-secondary">RODZIC</button>
@@ -101,7 +101,7 @@ The above copyright notice and this permission notice shall be included in all c
                                     <td class="text-right">
                                         <a id="open-gradeDialogModal-showUser" data-toggle="modal" class="open-gradeDialogModal" href="#showUserModal"
                                            th:attr="data-name=''+${user.name}+'',data-username=''+${user.username}+'', data-target='#showUserModal'
-                                                ,data-status=''+${user.isEnabled}+'',data-roles=''+${user.rolesNames}+''+''
+                                                ,data-status=''+${user.isEnabled}+'',data-id=''+${user?.id}+''+''
                                                 ,data-street=''+${user?.address?.getStreet()}+''+'',data-city=''+${user?.address?.city}+''+''
                                                 ,data-state=''+${user?.address?.state}+''+'',data-zip=''+${user?.address?.zip}+''+''
                                                 ,data-phoneNumber=''+${user?.address?.phoneNumber}+''">
@@ -131,7 +131,7 @@ The above copyright notice and this permission notice shall be included in all c
 
         <!-- Modal show user -->
         <div class="modal fade" id="showUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-dialog-scroll" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Użytkownik: </h5>
@@ -139,7 +139,7 @@ The above copyright notice and this permission notice shall be included in all c
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body modal-body-scroll">
                         <div class="content">
                             <div class="container-fluid">
                                 <div class="card">
@@ -171,6 +171,7 @@ The above copyright notice and this permission notice shall be included in all c
                                             </tr>
                                             <tr>
                                                 <td>
+                                                    <label class="bmd-label-static">Rola</label>
                                                     <ul id="rolesUl"></ul>
                                                 </td>
                                             </tr>
@@ -221,8 +222,7 @@ The above copyright notice and this permission notice shall be included in all c
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-<!--                        <button id="editTopic" type="button" class="btn btn-warning" >Zapisz</button>-->
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
                     </div>
                 </div>
             </div>
@@ -393,10 +393,8 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
                             <button id="editTopic" type="button" class="btn btn-warning" >Zapisz</button>
-
                         </div>
                 </div>
-
             </div>
         </div>
 
@@ -631,7 +629,7 @@ The above copyright notice and this permission notice shall be included in all c
         var name = $(this).data('name');
         var username = $(this).data('username');
         var status = $(this).data('status');
-        var roles = $(this).data('roles');
+        var userId = $(this).data('id');
 
         var street = $(this).data('street');
         var city = $(this).data('city');
@@ -648,10 +646,15 @@ The above copyright notice and this permission notice shall be included in all c
             document.getElementById("userStatusVal").value = "NIEAKTYWNE";
         }
 
-        var array = ["slide 1", "slide 2"];
-        array.forEach(function(item) {
-            $("#rolesUl").append("<li>" + item + "</li>");
-        });
+        var roleUserId = "roleUser" + userId;
+        var ul = document.getElementById(roleUserId);
+        var items = ul.getElementsByTagName("li");
+        console.log(ul);
+        console.log(items);
+        $("#rolesUl").empty();
+        for (var i = 0; i < items.length; ++i) {
+            $("#rolesUl").append("<li>" + items[i].innerText + "</li>");
+        }
 
         document.getElementById("userAddressStreetVal").value = street;
         document.getElementById("userAddressCityVal").value = city;
@@ -661,11 +664,10 @@ The above copyright notice and this permission notice shall be included in all c
 
 
 
-
-
-
     });
 </script>
+
+
 
 <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
 <script>
