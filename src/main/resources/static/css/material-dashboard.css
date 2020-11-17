@@ -13,6 +13,17 @@
 
  */
 /*     brand Colors              */
+.modal{
+  display: block;
+}
+
+.modal-dialog{
+  overflow-y: initial;
+}
+.modal-body{
+  height: 80vh;
+  overflow-y: auto;
+}
 
 .textOverflowCustom {
   overflow: hidden;
