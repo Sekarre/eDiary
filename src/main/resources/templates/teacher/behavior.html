@@ -110,8 +110,8 @@ The above copyright notice and this permission notice shall be included in all c
                                                             <i class="material-icons">edit</i>
                                                         </button>
                                                     </a>
-                                                    <a data-toggle="modal" class="open-gradeDialogModal" href="#deleteNoticeModal"
-                                                       th:attr="data-notice=''+${behavior.id}+'', data-target='#deleteNoticeModal', data-user=''+${user.id}+''">
+                                                    <a data-toggle="modal" class="open-gradeDialogModal" href="#deleteBehaviorModal"
+                                                       th:attr="data-behavior=''+${behavior.id}+'', data-target='#deleteBehaviorModal', data-teacher=''+${teacher.id}+''">
                                                         <button rel="tooltip" class="btn btn-primary btn-danger btn-fab-mini btn-round">
                                                             <i class="material-icons">close</i>
                                                         </button>
@@ -128,7 +128,7 @@ The above copyright notice and this permission notice shall be included in all c
             </footer>
 
             <!-- Modal -->
-            <div class="modal fade" id="deleteNoticeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="deleteBehaviorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -141,7 +141,7 @@ The above copyright notice and this permission notice shall be included in all c
                             Usunąć uwage ?
                         </div>
                         <div class="modal-footer">
-                            <form id="deleteForm" method="post">
+                            <form id="deleteBehavior" method="post">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
                                 <button type="submit" class="btn btn-danger" >Usuń</button>
                                 <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
@@ -381,13 +381,12 @@ The above copyright notice and this permission notice shall be included in all c
     <script>
         $(document).on("click", ".open-gradeDialogModal", function () {
 
-            var notice = $(this).data('notice');
-            var user = $(this).data('user');
+            var behavior = $(this).data('behavior');
+            var teacher = $(this).data('teacher');
 
-            var deleteForm = document.getElementById("deleteForm");
+            var deleteBehavior = document.getElementById("deleteBehavior");
 
-            deleteForm.setAttribute("action", "/user/" + user + "/deleteNotice/" + notice);
-
+            deleteBehavior.setAttribute("action", "/teacher/" + teacher + "/behavior/" + behavior);
         });
     </script>
 </body>

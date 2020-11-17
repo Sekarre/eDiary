@@ -35,7 +35,6 @@ The above copyright notice and this permission notice shall be included in all c
 
     <div th:replace="fragments/sidebarTeacher :: sidebar"></div>
 
-
     <div class="main-panel">
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
@@ -54,11 +53,78 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
 
-    </div>
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+
+                    <div class="col-md-8">
+
+                        <div class="card">
+                            <div class="card-header card-header-primary">
+                                <h4 class="card-title">Wystaw uwagę</h4>
+                            </div>
+                            <div class="card-body">
+                                <form th:object="${behavior}" th:action="@{'/teacher/' + ${behavior.teacherId} + '/behavior/new'}" method="post">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Klasa</label>
+                                        <div class="form-group">
+                                            <select id="selectStudent" class="selectpicker" data-live-search="true">
+                                                <option>Wybierz ucznia</option>
+                                                <option th:each="behavior : ${behavior}"
+                                                        th:value="${behavior.studentId}"
+                                                        th:text="${behavior.studentName}">Uczeń</option>
+                                            </select>
+                                        </div>
+                                        <label>Typ Uwagi</label>
+                                        <div class="form-group">
+                                            <button type="radio" id="pozytywna" name="behaviorType" value="pozytywna" class="btn btn-success">Pozytywna</button>
+                                            <button type="radio" id="negatywna" name="behaviorType" value="negatywna" class="btn btn-danger">Negatywna</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Treść uwagi</label>
+                                <div class="form-group">
+                                    <label class="bmd-label-floating"> </label>
+                                    <textarea class="form-control" rows="5" th:field="*{behavior.content}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" th:field="*{behavior.id}" />
+                    <input type="hidden" th:field="*{behavior.positive}" />
+                    <input type="hidden" id="studentIdInput" th:field="*{behavior.studentId}" />
+                    <input type="hidden" th:field="*{behavior.teacherId}" />
+
+                    <button type="submit" class="btn btn-primary pull-right">Wystaw</button>
+                    <div class="clearfix"></div>
+                    </form>
+
+                </div>
+                    </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card card-profile">
+
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
     <footer class="footer">
     </footer>
 </div>
 </div>
+
 
 <!--   Core JS Files   -->
 <script th:src="@{/js/core/jquery.min.js}"></script>
@@ -294,6 +360,18 @@ The above copyright notice and this permission notice shall be included in all c
             }
         }
     }
+</script>
+<script>
+    $(function() {
+
+        $('#editSchool').on('change', function(){
+            var selected = $(this).find("option:selected").val();
+
+            $('#studentIdInput').val(selected);
+            $('#selectStudent').selectpicker("refresh");
+        });
+
+    });
 </script>
 
 </body>
