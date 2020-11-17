@@ -172,7 +172,7 @@ public class TeacherController {
         }
     }
 
-    @DeleteMapping("/{teacherId}/behavior/{behaviorId}")
+    @PostMapping("/{teacherId}/behavior/{behaviorId}")
     public String deleteBehavior(@PathVariable Long teacherId, @PathVariable Long behaviorId) {
 
         teacherService.deleteBehavior(teacherId, behaviorId);
