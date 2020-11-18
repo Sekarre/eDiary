@@ -55,7 +55,7 @@ public class AdminController {
 
     @PostMapping("/newUser")
     public String processNewUser(@Valid @ModelAttribute UserDto userDto,
-                                 @RequestParam(name = "roleId") List<Long> rolesId,
+                                 @RequestParam(name = "selectedRoles") List<Long> rolesId,
                                  BindingResult result) {
 
         if (result.hasErrors()) {
@@ -65,8 +65,7 @@ public class AdminController {
 
         User user = adminService.saveUser(userDto, rolesId);
 
-        //todo: change to redirect to single user
-        return "admin/users";
+        return "redirect:/admin/users";
     }
 
     @GetMapping("/users/{userId}")

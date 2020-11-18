@@ -31,7 +31,12 @@ public class UserDtoToUser implements Converter<UserDto, User> {
         user.setUsername(source.getUsername());
         user.setPassword(source.getPassword());
         user.setFirstName(firstAndLastName[0]);
-        user.setLastName(firstAndLastName[1]);
+        try {
+            user.setLastName(firstAndLastName[1]);
+        } catch (Exception e){
+
+        }
+
 
         //Address
         user.setAddress(addressDtoToAddress.convert(source.getAddress()));

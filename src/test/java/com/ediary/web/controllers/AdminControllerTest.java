@@ -82,9 +82,9 @@ public class AdminControllerTest {
         mockMvc.perform(post("/admin/newUser")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(UserDto.builder().build()))
-                .param("roleId", "1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin/users"));
+                .param("selectedRoles", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/admin/users"));
 
         assertNotNull(adminService.saveUser(any(), any()));
 

@@ -7,13 +7,14 @@ import com.ediary.converters.*;
 import com.ediary.domain.School;
 import com.ediary.domain.security.Role;
 import com.ediary.domain.security.User;
-import com.ediary.repositories.SchoolRepository;
+import com.ediary.repositories.*;
 import com.ediary.repositories.security.RoleRepository;
 import com.ediary.repositories.security.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 import java.util.Collections;
@@ -25,22 +26,22 @@ import static org.mockito.ArgumentMatchers.any;
 
 public class AdminServiceImplTest {
 
+    @Mock UserRepository userRepository;
+    @Mock RoleRepository roleRepository;
+    @Mock SchoolRepository schoolRepository;
+    @Mock AddressRepository addressRepository;
+    @Mock StudentRepository studentRepository;
+    @Mock ParentRepository parentRepository;
+    @Mock TeacherRepository teacherRepository;
+
+    @Mock UserToUserDto userToUserDto;
+    @Mock UserDtoToUser userDtoToUser;
+    @Mock RoleToRoleDto roleToRoleDto;
+    @Mock SchoolToSchoolDto schoolToSchoolDto;
+    @Mock SchoolDtoToSchool schoolDtoToSchool;
+
     @Mock
-    UserRepository userRepository;
-    @Mock
-    RoleRepository roleRepository;
-    @Mock
-    SchoolRepository schoolRepository;
-    @Mock
-    UserToUserDto userToUserDto;
-    @Mock
-    UserDtoToUser userDtoToUser;
-    @Mock
-    RoleToRoleDto roleToRoleDto;
-    @Mock
-    SchoolToSchoolDto schoolToSchoolDto;
-    @Mock
-    SchoolDtoToSchool schoolDtoToSchool;
+    PasswordEncoder passwordEncoder;
 
 
     AdminService adminService;
@@ -49,8 +50,9 @@ public class AdminServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        adminService = new AdminServiceImpl(userRepository, roleRepository, schoolRepository,  userToUserDto, userDtoToUser,
-                roleToRoleDto, schoolToSchoolDto, schoolDtoToSchool);
+        adminService = new AdminServiceImpl(userRepository, roleRepository, schoolRepository, addressRepository,
+                studentRepository, parentRepository, teacherRepository,
+                userToUserDto, userDtoToUser, roleToRoleDto, schoolToSchoolDto, schoolDtoToSchool,passwordEncoder);
     }
 
     @Test
