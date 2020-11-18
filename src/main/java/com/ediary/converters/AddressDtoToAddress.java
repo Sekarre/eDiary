@@ -29,7 +29,9 @@ public class AddressDtoToAddress implements Converter<AddressDto, Address> {
         address.setPhoneNumber(source.getPhoneNumber());
 
         //User
-        address.setUser(userRepository.findById(source.getId()).orElse(null));
+        if(source.getId() != null) {
+            address.setUser(userRepository.findById(source.getId()).orElse(null));
+        }
 
         return address;
     }

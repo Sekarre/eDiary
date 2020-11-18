@@ -60,7 +60,7 @@ The above copyright notice and this permission notice shall be included in all c
                             <h3 class="card-title">Użytkownicy</h3>
                         </div>
                         <div class="float-right">
-                            <a id="open-gradeDialogModal-addTopic" data-toggle="modal" class="open-gradeDialogModal text-right" href="#addTopicModal">
+                            <a th:href="@{'/admin/newUser'}" class="text-right">
                                 <button rel="tooltip" class="btn btn-primary btn-success btn-fab-mini btn-round">
                                     <i class="material-icons">add</i>
                                 </button>
@@ -104,7 +104,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                 ,data-status=''+${user.isEnabled}+'',data-id=''+${user?.id}+''+''
                                                 ,data-street=''+${user?.address?.getStreet()}+''+'',data-city=''+${user?.address?.city}+''+''
                                                 ,data-state=''+${user?.address?.state}+''+'',data-zip=''+${user?.address?.zip}+''+''
-                                                ,data-phoneNumber=''+${user?.address?.phoneNumber}+''">
+                                                ,data-phonenumber=''+${user?.address?.phoneNumber}+''">
                                             <button rel="tooltip" class="btn btn-primary btn-primary btn-fab-mini btn-round">
                                                 <i class="material-icons">zoom_in</i>
                                             </button>
@@ -277,67 +277,6 @@ The above copyright notice and this permission notice shall be included in all c
                         </form>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Modal add topic -->
-        <div class="modal fade" id="addTopicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Dodaj temat: </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    <form id="addTopicForm" method="post" >
-                        <div class="modal-body">
-                            <div class="content">
-                                <div class="container-fluid">
-                                    <div class="card">
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <tr>
-                                                    <td id="topicNumber">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-floating">Numer</label>
-                                                            <input  id="topicNumberVal" type="number" min="0" class="form-control" value="0">
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td id="topicName">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-floating">Nazwa</label>
-                                                            <input  id="topicNameVal" type="text" maxlength="40" class="form-control">
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td id="topicDescription">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-floating">Opis</label>
-                                                            <textarea  id="topicDescVal" class="form-control" maxlength="250" rows="5"></textarea>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-                            <button id="sendTopic" type="button" class="btn btn-success" >Dodaj</button>
-                            <input id="csrfVal" type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-<!--                            <input id="subjectIdVal" type="hidden" th:value="${subjectId}"/>-->
-<!--                            <input id="teacherIdVal" type="hidden" th:value="${teacherId}"/>-->
-                        </div>
-                    </form>
-                </div>
-
             </div>
         </div>
 
@@ -635,7 +574,7 @@ The above copyright notice and this permission notice shall be included in all c
         var city = $(this).data('city');
         var state = $(this).data('state');
         var zip = $(this).data('zip');
-        var phoneNumber = $(this).data('phoneNumber');
+        var phoneNumber = $(this).data('phonenumber');
 
 
         document.getElementById("userNameVal").value = name;
@@ -720,45 +659,6 @@ The above copyright notice and this permission notice shall be included in all c
         document.getElementById("topicEditNameVal").value = name;
         document.getElementById("topicEditDescVal").value = desc;
 
-    });
-</script>
-
-<script>
-    $(document).on("click", "#sendTopic", function () {
-        var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
-
-        var topicDto = {
-            id: "",
-            number: $("#topicNumberVal").val(),
-            name: $("#topicNameVal").val(),
-            description: $("#topicDescVal").val(),
-            subjectId: subjectIdVal,
-        };
-
-        // Creating a XHR object
-        let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal + "/topic/new";
-
-        // open a connection
-        xhr.open("POST", url, true);
-
-        // Set the request header i.e. which type of content you are sending
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.setRequestHeader("_csrf", csrf);
-        xhr.setRequestHeader('x-csrf-token', csrf);
-
-        // Create a state change callback
-        xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal;
-        };
-
-        // Converting JSON data to string
-        var data = JSON.stringify(topicDto);
-
-        // Sending data with the request
-        xhr.send(data);
     });
 </script>
 

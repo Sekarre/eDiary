@@ -70,13 +70,13 @@ public class DefaultLoader implements CommandLineRunner {
     private Long firstUserAsTeacherId;
     private final int classSize = 15;
 
-    private final String ADMIN_ROLE = "ROLE_ADMIN";
-    private final String STUDENT_ROLE = "ROLE_STUDENT";
-    private final String PARENT_ROLE = "ROLE_PARENT";
+    public static final String ADMIN_ROLE = "ROLE_ADMIN";
+    public static final String STUDENT_ROLE = "ROLE_STUDENT";
+    public static final String PARENT_ROLE = "ROLE_PARENT";
     public static final String TEACHER_ROLE = "ROLE_TEACHER";
     public static final String FORM_TUTOR_ROLE = "ROLE_FORM_TUTOR";
-    private final String DEPUTY_HEAD_ROLE = "ROLE_DEPUTY_HEAD";
-    private final String HEADMASTER_ROLE = "ROLE_HEADMASTER";
+    public static final String DEPUTY_HEAD_ROLE = "ROLE_DEPUTY_HEAD";
+    public static final String HEADMASTER_ROLE = "ROLE_HEADMASTER";
 
     private final String[] streetNames = {"Odrodzenia", "Jagiellońska", "Kaszubska", "Jana Pawła", "Borysza",
             "Wielkopolska", "Podhalańska", "Odrodzenia", "Borysza", "Mazowiecka",
