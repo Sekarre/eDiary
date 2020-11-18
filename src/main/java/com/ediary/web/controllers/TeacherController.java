@@ -443,6 +443,7 @@ public class TeacherController {
 
         model.addAttribute("attendances", teacherService.listAttendances(teacherId, subjectId, classId, lessonId));
         model.addAttribute("studentsWithGrades", teacherService.listStudentsLessonGrades(teacherId, lessonId));
+        model.addAttribute("studentsWithAttendances", teacherService.listStudentsLessonAttendances(teacherId, lessonId));
         model.addAttribute("maxGrades", teacherService.maxGradesCount(teacherId, lessonId));
         model.addAttribute("subjectId", subjectId);
         model.addAttribute("lessonId", lessonId);

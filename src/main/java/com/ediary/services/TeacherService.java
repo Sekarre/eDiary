@@ -91,6 +91,7 @@ public interface TeacherService {
     Timetable getTimetableByTeacherId(Long teacherId);
 
     Map<StudentDto, List<GradeDto>> listStudentsLessonGrades(Long teacherId, Long lessonId);
+    Map<StudentDto, AttendanceDto> listStudentsLessonAttendances(Long teacherId, Long lessonId);
 
     List<Long> maxGradesCount(Long teacherId, Long lessonId);
 }

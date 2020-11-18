@@ -715,15 +715,15 @@ public class DefaultLoader implements CommandLineRunner {
                     .build());
         }
 
-        //Adding attendances to lesson (studentId = 0)
-        for (int i = 0; i < 4; i++) {
-            attendanceRepository.save(Attendance.builder()
-                    .student(studentRepository
-                            .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId()))
-                    .status(status[i])
-                    .lesson(lessonRepository.findAllBySchoolClassId(classRepository.findByName(classNames[0]).getId()).get(i))
-                    .build());
-        }
+//        //Adding attendances to lesson (studentId = 0)
+//        for (int i = 0; i < 4; i++) {
+//            attendanceRepository.save(Attendance.builder()
+//                    .student(studentRepository
+//                            .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId()))
+//                    .status(status[i])
+//                    .lesson(lessonRepository.findAllBySchoolClassId(classRepository.findByName(classNames[0]).getId()).get(i))
+//                    .build());
+//        }
 
 
     }

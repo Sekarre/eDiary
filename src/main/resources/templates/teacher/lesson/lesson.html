@@ -40,7 +40,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand">Lekcje:</a>
+                    <a class="navbar-brand">Lekcja:</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -75,17 +75,19 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
                 <!--end tabs-->
 
-                <!-- Grades -->
                 <div class="card" >
                     <div class="tab-content">
+
+                        <!-- Grades -->
+
                         <div class="tab-pane show active" id="grades" role="tabpanel" aria-labelledby="nav-home">
                             <div class="card-body float-left">
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class=" text-primary">
-                                        <th scope="row">Nr. </th>
-                                        <th scope="row">Imie</th>
-                                        <th colspan="10" class="text-center">Ocena</th>
+                                        <th>Nr. </th>
+                                        <th>Imie</th>
+                                        <th th:colspan="${maxGrades.size()}" class="text-center">Oceny</th>
                                         </thead>
                                         <tbody>
                                         <tr th:each="student : ${studentsWithGrades.keySet()}" >
@@ -118,23 +120,42 @@ The above copyright notice and this permission notice shall be included in all c
                                 </div>
                             </div>
                         </div>
+
                         <!-- end grades -->
 
-                        <div class="tab-pane" id="attendances" role="tabpanel" aria-labelledby="nav-profile">
-                            <div class="card-body">
+                        <!-- Attendances -->
+
+                        <div class="tab-pane show" id="attendances" role="tabpanel" aria-labelledby="nav-home">
+                            <div class="card-body float-left">
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class=" text-primary">
-                                        <th>Student</th>
-                                        <th>Status</th>
+                                        <th>Nr. </th>
+                                        <th>Imie</th>
+                                        <th class="text-center">Status</th>
                                         </thead>
                                         <tbody>
-                                        <tr th:each="att : ${attendances}" >
-                                            <td th:text="${att.studentName}">
+                                        <tr th:each="student : ${studentsWithAttendances?.keySet()}" >
+                                            <td th:text="${studentStat.index + 1}">
                                                 Nr.
                                             </td>
-                                            <td th:text="${att.status}">
+                                            <td th:text="${student?.userName}">
                                                 Imie
+                                            </td>
+
+                                            <td th:text="${studentsWithAttendances?.get(student)?.status?.translatedName}">
+                                                Status
+                                            </td>
+                                            <th:block th:each="field : ${maxGrades}">
+                                                <td th:if="${(fieldStat.index % 2) == 0}" th:text="' '">
+                                                </td>
+                                            </th:block>
+                                            <td>
+                                                <a href="#">
+                                                    <button rel="tooltip" class="btn">
+                                                        <i class="material-icons">add_task</i>
+                                                    </button>
+                                                </a>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -149,6 +170,9 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
             </div>
         </div>
+
+        <!-- end attendances -->
+
 
         <!-- Modal add grade -->
         <div class="modal fade" id="addGradeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

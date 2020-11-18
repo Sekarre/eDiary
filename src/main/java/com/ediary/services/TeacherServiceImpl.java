@@ -829,6 +829,30 @@ public class TeacherServiceImpl implements TeacherService {
         return studentGradesListMap;
     }
 
+
+    @Override
+    public Map<StudentDto, AttendanceDto> listStudentsLessonAttendances(Long teacherId, Long lessonId) {
+        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(() -> new NotFoundException("Lesson not found"));
+
+        Class schoolClass = lesson.getSchoolClass();
+
+        Map<StudentDto, AttendanceDto> studentAttendancesListMap = new TreeMap<>(
+                ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
+                        .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
+
+        schoolClass.getStudents().forEach(student -> {
+            studentAttendancesListMap.put(
+                    studentToStudentDto.convert(student),
+                    attendanceToAttendanceDto.convert(attendanceRepository.findDistinctByStudentIdAndLesson(student.getId(), lesson)));
+        });
+
+
+        if (studentAttendancesListMap.keySet().isEmpty())
+            return null;
+
+        return studentAttendancesListMap;
+    }
+
     @Override
     public List<Long> maxGradesCount(Long teacherId, Long lessonId) {
         Long[] maxCount = {Long.MIN_VALUE};
