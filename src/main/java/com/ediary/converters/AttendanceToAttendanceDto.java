@@ -32,19 +32,25 @@ public class AttendanceToAttendanceDto implements Converter<Attendance, Attendan
 
         //Lesson
         attendanceDto.setLessonDto(lessonToLessonDto.convert(source.getLesson()));
+        attendanceDto.setLessonId(source.getLesson().getId());
 
         //Student
-        attendanceDto.setStudentId(source.getStudent().getId());
-        attendanceDto.setStudentName(
-                source.getStudent().getUser().getFirstName() + " " + source.getStudent().getUser().getLastName()
-        );
-        attendanceDto.setStudentClass(source.getStudent().getClass().getName());
+        if (source.getStudent() != null) {
+            attendanceDto.setStudentId(source.getStudent().getId());
+            attendanceDto.setStudentName(
+                    source.getStudent().getUser().getFirstName() + " " + source.getStudent().getUser().getLastName()
+            );
+            attendanceDto.setStudentClass(source.getStudent().getClass().getName());
+
+        }
 
         //Extenuation
-        attendanceDto.setIsExcuseSent(!source.getExtenuations().isEmpty());
-        attendanceDto.setExtenuationStatus(source.getExtenuations().stream()
-                .map(Extenuation::getStatus)
-                .collect(Collectors.toList()));
+        if (source.getExtenuations() != null) {
+            attendanceDto.setIsExcuseSent(!source.getExtenuations().isEmpty());
+            attendanceDto.setExtenuationStatus(source.getExtenuations().stream()
+                    .map(Extenuation::getStatus)
+                    .collect(Collectors.toList()));
+        }
 
         return attendanceDto;
     }

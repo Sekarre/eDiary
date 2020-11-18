@@ -1,5 +1,6 @@
 package com.ediary.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,9 +20,15 @@ public class Attendance {
     private Long id;
 
     public enum Status {
+        @JsonProperty("present")
         PRESENT("Obecny"),
+
+        @JsonProperty("absent")
         ABSENT("Nieobecny"),
+
+        @JsonProperty("late")
         LATE("Spóźniony"),
+
         EXCUSED("Usprawiedliwiony"),
         UNEXCUSED("Nieusprawiedliwiony");
 

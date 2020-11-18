@@ -61,7 +61,7 @@ The above copyright notice and this permission notice shall be included in all c
             <!--Tabs-->
             <div class="container-fluid" th:if="${studentsWithGrades != null}">
                 <div class="justify-content-center">
-                    <ul class="nav nav-pills nav-pills-primary" id="nav-tab" role="tablist">
+                    <ul class="nav tab nav-pills-primary tab-links" id="nav-tab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" th:text="'Oceny'" data-toggle="tab" href="#grades" role="tablist" aria-selected="true">Home</a>
                         </li>
@@ -74,20 +74,19 @@ The above copyright notice and this permission notice shall be included in all c
                     </ul>
                 </div>
                 <!--end tabs-->
-
-                <div class="card" >
+                <div class="card " >
                     <div class="tab-content">
 
                         <!-- Grades -->
 
                         <div class="tab-pane show active" id="grades" role="tabpanel" aria-labelledby="nav-home">
-                            <div class="card-body float-left">
+                            <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class=" text-primary">
                                         <th>Nr. </th>
                                         <th>Imie</th>
-                                        <th th:colspan="${maxGrades.size()}" class="text-center">Oceny</th>
+                                        <th  class="text-center" th:colspan="${maxGrades.size()}">Oceny</th>
                                         </thead>
                                         <tbody>
                                         <tr th:each="student : ${studentsWithGrades.keySet()}" >
@@ -98,8 +97,12 @@ The above copyright notice and this permission notice shall be included in all c
                                                 Imie
                                             </td>
 
-                                            <td th:each="grade : ${studentsWithGrades?.get(student)}" th:text="${grade?.value}">
-                                                Ocena
+                                            <td th:each="grade : ${studentsWithGrades?.get(student)}">
+                                                <a data-toggle="modal" id="open-gradeDialogModal-editGrade" class="open-gradeDialogModal btn btn-info" href="#editGradeModal"
+                                                   th:attr="data-date=''+${grade.date}+'', data-target='#editGradeModal', data-value=''+${grade.value}+'', data-weight=''+${grade.weight}+'',
+                                                       data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+'', data-id=''+${student.id}+''"
+                                                   th:text="${grade?.value}">
+                                                </a>
                                             </td>
                                             <th:block th:each="field : ${maxGrades}">
                                                 <td th:if="${(fieldStat.index - studentsWithGrades?.get(student).size()) != 0}" th:text="' '">
@@ -108,8 +111,8 @@ The above copyright notice and this permission notice shall be included in all c
                                             <td>
                                                 <a id="open-gradeDialogModal" data-toggle="modal" class="open-gradeDialogModal" href="#addGradeModal"
                                                    th:attr="data-id=''+${student.id}+'', data-target='#addGradeModal', data-name=''+${student.userName}+''">
-                                                    <button rel="tooltip" class="btn">
-                                                        <i class="material-icons">add_circle</i>
+                                                    <button class="btn btn-fab-mini btn-round">
+                                                        <i class="material-icons">add_circle</i>&nbsp;Dodaj
                                                     </button>
                                                 </a>
                                             </td>
@@ -126,7 +129,7 @@ The above copyright notice and this permission notice shall be included in all c
                         <!-- Attendances -->
 
                         <div class="tab-pane show" id="attendances" role="tabpanel" aria-labelledby="nav-home">
-                            <div class="card-body float-left">
+                            <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class=" text-primary">
@@ -143,7 +146,9 @@ The above copyright notice and this permission notice shall be included in all c
                                                 Imie
                                             </td>
 
-                                            <td th:text="${studentsWithAttendances?.get(student)?.status?.translatedName}">
+                                            <td th:text="${studentsWithAttendances?.get(student)?.status?.translatedName}"
+                                                th:style="${studentsWithAttendances?.get(student)?.status?.name() eq 'PRESENT' || studentsWithAttendances?.get(student)?.status?.name() eq 'EXCUSED'} ? 'color: green' : ''"
+                                                th:styleappend="${studentsWithAttendances?.get(student)?.status?.name() eq 'ABSENT' || studentsWithAttendances?.get(student)?.status?.name() eq 'UNEXCUSED'} ? 'color: red' : ''" >
                                                 Status
                                             </td>
                                             <th:block th:each="field : ${maxGrades}">
@@ -151,11 +156,25 @@ The above copyright notice and this permission notice shall be included in all c
                                                 </td>
                                             </th:block>
                                             <td>
-                                                <a href="#">
-                                                    <button rel="tooltip" class="btn">
-                                                        <i class="material-icons">add_task</i>
+                                                    <button  id="present" th:onclick="'javascript:sendAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + ${student.id} + '\',\'' + 'present' + '\');'" class="btn btn-fab-mini btn-round"
+                                                    th:classappend="${studentsWithAttendances?.get(student)?.status == null || studentsWithAttendances?.get(student)?.status?.name() != 'PRESENT'} ? '' : 'disabled'">
+                                                        <i class="material-icons">add_task</i>&nbsp;Obecny
                                                     </button>
-                                                </a>
+                                            </td>
+                                            <td>
+                                                <button  id="absent" th:onclick="'javascript:sendAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + ${student.id} + '\',\'' + 'absent' + '\');'" class="btn btn-fab-mini btn-round"
+                                                         th:classappend="${studentsWithAttendances?.get(student)?.status == null || studentsWithAttendances?.get(student)?.status?.name() != 'ABSENT'} ? '' : 'disabled'">
+                                                    <i class="material-icons">unpublished</i>&nbsp;Nieobecny
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button id="late" th:onclick="'javascript:sendAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + ${student.id} + '\',\'' + 'late' + '\');'" class="btn btn-fab-mini btn-round"
+                                                        th:classappend="${studentsWithAttendances?.get(student)?.status == null || studentsWithAttendances?.get(student)?.status?.name() != 'LATE'} ? '' : 'disabled'">
+                                                    <i class="material-icons">watch_later</i>&nbsp;Spóźniony
+                                                </button>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -254,6 +273,86 @@ The above copyright notice and this permission notice shall be included in all c
 
             </div>
         </div>
+        <!-- end of add grade modal -->
+
+        <!-- Modal add grade -->
+        <div class="modal fade" id="editGradeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Ocena: </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <form id="editGradeForm" method="post" >
+                        <div class="modal-body">
+                            <div class="content">
+                                <div class="container-fluid">
+                                    <div class="card">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <tr>
+                                                    <td id="gradeStudentEdit">
+                                                        <div class="form-group">
+                                                            <label class="bmd-label-floating"> </label>
+                                                            <input  id="studentNameValEdit" type="text" class="form-control" disabled>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="gradeValueEdit">
+                                                        <div class="form-group">
+                                                            <label class="bmd-label-floating"> </label>
+                                                            <input  id="gradeValueValEdit" type="number" max="6" class="form-control">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="gradeWeightEdit">
+                                                        <div class="form-group">
+                                                            <label class="bmd-label-floating"></label>
+                                                            <input  id="gradeWeightValEdit" class="form-control" type="number"/>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="gradeDescriptionEdit">
+                                                        <div class="form-group">
+                                                            <label class="bmd-label-floating"></label>
+                                                            <textarea  id="gradeDescValEdit" class="form-control" rows="3"></textarea>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="gradeDateEdit">
+                                                        <div class="form-group">
+                                                            <label class="bmd-label-floating"></label>
+                                                            <input  id="gradeDateValEdit" class="form-control" type="text" th:value="${grade.date}" disabled/>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <input id="studentIdValEdit" type="hidden"/>
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                            <button type="button" class="btn btn-danger ">Usuń</button>
+                            <button type="button" class="btn btn-success" >Zapisz</button>
+                            <!--                                    id="editGrade" -->
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- end edit grade -->
 
     </div>
 </div>
@@ -477,6 +576,7 @@ The above copyright notice and this permission notice shall be included in all c
         md.initFormExtendedDatetimepickers();
     });
 </script>
+<!--New grade modal-->
 
 <script>
     $(document).on("click", ".open-gradeDialogModal", function () {
@@ -532,6 +632,7 @@ The above copyright notice and this permission notice shall be included in all c
             location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
         };
 
+
         // Converting JSON data to string
         var data = JSON.stringify(gradeDto);
 
@@ -539,6 +640,132 @@ The above copyright notice and this permission notice shall be included in all c
         xhr.send(data);
     });
 </script>
+
+<!--new Attendance-->
+<script>
+    function sendAtt(teacherIdVal, subjectIdVal, classIdVal, lessonIdVal, studentIdVal, status) {
+
+
+        var csrf= $("#csrfVal").val();
+
+        var attendanceDto = {
+            id: "",
+            status: status,
+            lessonId: lessonIdVal,
+            studentId: studentIdVal,
+        };
+
+        // Creating a XHR object
+        let xhr = new XMLHttpRequest();
+        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/newAttendance";
+
+        // open a connection
+        xhr.open("POST", url, true);
+
+        // Set the request header i.e. which type of content you are sending
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("_csrf", csrf);
+        xhr.setRequestHeader('x-csrf-token', csrf);
+
+        // Create a state change callback
+            xhr.onreadystatechange = function () {
+                location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
+        };
+
+
+        // Converting JSON data to string
+        var data = JSON.stringify(attendanceDto);
+
+        // Sending data with the request
+        xhr.send(data);
+    }
+</script>
+
+<!--Edit grade modal-->
+<script>
+    $(document).on("click", "#open-gradeDialogModal-editGrade", function () {
+
+        var studentId = $(this).data('id');
+        var studentName = $(this).data('student');
+        var value = $(this).data('value');
+        var weight = $(this).data('weight');
+        var desc = $(this).data('desc');
+        var date = $(this).data('date');
+
+        var gradeStudentId = document.getElementById("studentIdValEdit");
+
+        gradeStudentId.value = studentId;
+
+        document.getElementById("studentNameValEdit").value = studentName;
+        document.getElementById("gradeWeightValEdit").value = weight;
+        document.getElementById("gradeValueEdit").value = value;
+        document.getElementById("gradeDescEdit").value = desc;
+        document.getElementById("gradeDateValEdit").value = date;
+
+    });
+</script>
+<script>
+    $(document).on("click", "#editGrade", function () {
+        var csrf= $("#csrfVal").val();
+        var subjectIdVal = $("#subjectIdVal").val();
+        var teacherIdVal = $("#teacherIdVal").val();
+        var studentIdVal = document.getElementById("studentIdValEdit").value;
+        var lessonIdVal = $("#lessonIdVal").val();
+        var classIdVal = $("#classIdVal").val();
+
+
+        var gradeDto = {
+            id: "",
+            value: $("#gradeValueValEdit").val(),
+            weight: $("#gradeWeightValEdit").val(),
+            description: $("#gradeDescValEdit").val(),
+            date: $("#gradeDateValEdit").val(),
+            teacherId: teacherIdVal,
+            subjectId: subjectIdVal,
+            studentId: studentIdVal,
+        };
+
+        // Creating a XHR object
+        let xhr = new XMLHttpRequest();
+        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/newGrade";
+
+        // open a connection
+        xhr.open("POST", url, true);
+
+        // Set the request header i.e. which type of content you are sending
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("_csrf", csrf);
+        xhr.setRequestHeader('x-csrf-token', csrf);
+
+        // Create a state change callback
+        xhr.onreadystatechange = function () {
+            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
+        };
+
+
+        // Converting JSON data to string
+        var data = JSON.stringify(gradeDto);
+
+        // Sending data with the request
+        xhr.send(data);
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        var activeTab = localStorage.getItem('activeTab');
+        if(activeTab){
+            $('.tab-links a[href="' + activeTab + '"]').tab('show');
+        }
+        $('.content .tab-links a').on('click', function(e)  {
+            var currentAttrValue = jQuery(this).attr('href');
+            localStorage.setItem('activeTab', currentAttrValue);
+            jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
+            e.preventDefault();
+        });
+    });
+</script>
+
 </body>
 
 </html>

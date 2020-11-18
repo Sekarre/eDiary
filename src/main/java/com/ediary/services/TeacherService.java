@@ -39,6 +39,7 @@ public interface TeacherService {
     Attendance saveAttendance(AttendanceDto attendance);
     List<AttendanceDto> listAttendances(Long teacherId, Long subjectId, Long classId, Long lessonId);
     List<AttendanceDto> listAttendancesByStudent(Long studentId);
+    AttendanceDto initNewLessonAttendance(Long teacherId, Long subjectId, Long lessonId);
 
 
     Grade saveClassGrade(Grade grade);
@@ -94,4 +95,5 @@ public interface TeacherService {
     Map<StudentDto, AttendanceDto> listStudentsLessonAttendances(Long teacherId, Long lessonId);
 
     List<Long> maxGradesCount(Long teacherId, Long lessonId);
+
 }
