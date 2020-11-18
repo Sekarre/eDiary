@@ -19,6 +19,7 @@ public class AttendanceDto {
 
     //Lesson
     private LessonDto lessonDto;
+    private Long lessonId;
 
     //Student
     private Long studentId;

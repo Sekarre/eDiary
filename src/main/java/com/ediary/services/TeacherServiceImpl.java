@@ -339,8 +339,17 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Attendance saveAttendance(AttendanceDto attendance) {
+
+        Attendance existingAtt = attendanceRepository.findDistinctByStudentIdAndLessonId(attendance.getStudentId(),
+                attendance.getLessonId());
+
+        if (existingAtt != null) {
+            attendanceRepository.delete(existingAtt);
+        }
+
         return attendanceRepository.save(attendanceDtoToAttendance.convert(attendance));
     }
+
 
     @Override
     public List<AttendanceDto> listAttendances(Long teacherId, Long subjectId, Long classId, Long lessonId) {
@@ -364,6 +373,14 @@ public class TeacherServiceImpl implements TeacherService {
                 .stream()
                 .map(attendanceToAttendanceDto::convert)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public AttendanceDto initNewLessonAttendance(Long teacherId, Long subjectId, Long lessonId) {
+        return attendanceToAttendanceDto.convert(Attendance.builder()
+                .lesson(lessonRepository
+                        .findById(lessonId).orElseThrow(() -> new NotFoundException("Lesson not found")))
+                .build());
     }
 
     @Override

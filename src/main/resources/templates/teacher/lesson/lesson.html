@@ -61,7 +61,7 @@ The above copyright notice and this permission notice shall be included in all c
             <!--Tabs-->
             <div class="container-fluid" th:if="${studentsWithGrades != null}">
                 <div class="justify-content-center">
-                    <ul class="nav nav-pills nav-pills-primary" id="nav-tab" role="tablist">
+                    <ul class="nav tab nav-pills-primary tab-links" id="nav-tab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" th:text="'Oceny'" data-toggle="tab" href="#grades" role="tablist" aria-selected="true">Home</a>
                         </li>
@@ -74,20 +74,19 @@ The above copyright notice and this permission notice shall be included in all c
                     </ul>
                 </div>
                 <!--end tabs-->
-
-                <div class="card" >
+                <div class="card " >
                     <div class="tab-content">
 
                         <!-- Grades -->
 
                         <div class="tab-pane show active" id="grades" role="tabpanel" aria-labelledby="nav-home">
-                            <div class="card-body float-left">
+                            <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class=" text-primary">
                                         <th>Nr. </th>
                                         <th>Imie</th>
-                                        <th th:colspan="${maxGrades.size()}" class="text-center">Oceny</th>
+                                        <th  class="text-center" th:colspan="${maxGrades.size()}">Oceny</th>
                                         </thead>
                                         <tbody>
                                         <tr th:each="student : ${studentsWithGrades.keySet()}" >
@@ -108,7 +107,7 @@ The above copyright notice and this permission notice shall be included in all c
                                             <td>
                                                 <a id="open-gradeDialogModal" data-toggle="modal" class="open-gradeDialogModal" href="#addGradeModal"
                                                    th:attr="data-id=''+${student.id}+'', data-target='#addGradeModal', data-name=''+${student.userName}+''">
-                                                    <button rel="tooltip" class="btn">
+                                                    <button class="btn btn-fab-mini btn-round">
                                                         <i class="material-icons">add_circle</i>
                                                     </button>
                                                 </a>
@@ -126,7 +125,7 @@ The above copyright notice and this permission notice shall be included in all c
                         <!-- Attendances -->
 
                         <div class="tab-pane show" id="attendances" role="tabpanel" aria-labelledby="nav-home">
-                            <div class="card-body float-left">
+                            <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class=" text-primary">
@@ -151,11 +150,25 @@ The above copyright notice and this permission notice shall be included in all c
                                                 </td>
                                             </th:block>
                                             <td>
-                                                <a href="#">
-                                                    <button rel="tooltip" class="btn">
+                                                    <button  name="present" id="sendAttendancePresent" th:onclick="'javascript:sendAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + ${student.id} + '\',\'' + 'present' + '\');'" class="btn"
+                                                    th:classappend="${studentsWithAttendances?.get(student)?.status == null || studentsWithAttendances?.get(student)?.status?.name() != 'PRESENT'} ? '' : 'disabled'">
                                                         <i class="material-icons">add_task</i>
                                                     </button>
-                                                </a>
+                                            </td>
+                                            <td>
+                                                <button  name="present" id="sendAttAbsent" th:onclick="'javascript:sendAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + ${student.id} + '\',\'' + 'absent' + '\');'" class="btn"
+                                                         th:classappend="${studentsWithAttendances?.get(student)?.status == null || studentsWithAttendances?.get(student)?.status?.name() != 'ABSENT'} ? '' : 'disabled'">
+                                                    <i class="material-icons">add_task</i>
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button  name="absent" id="sendAttendanceLate" th:onclick="'javascript:sendAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + ${student.id} + '\',\'' + 'late' + '\');'" class="btn"
+                                                        th:classappend="${studentsWithAttendances?.get(student)?.status == null || studentsWithAttendances?.get(student)?.status?.name() != 'LATE'} ? '' : 'disabled'">
+                                                    <i class="material-icons">add_task</i>
+                                                </button>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -532,6 +545,7 @@ The above copyright notice and this permission notice shall be included in all c
             location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
         };
 
+
         // Converting JSON data to string
         var data = JSON.stringify(gradeDto);
 
@@ -539,6 +553,64 @@ The above copyright notice and this permission notice shall be included in all c
         xhr.send(data);
     });
 </script>
+<script>
+    function sendAtt(teacherIdVal, subjectIdVal, classIdVal, lessonIdVal, studentIdVal, status) {
+
+        if ($(this).is(':disabled')){
+            return ;
+        }
+
+        var csrf= $("#csrfVal").val();
+
+        var attendanceDto = {
+            id: "",
+            status: status,
+            lessonId: lessonIdVal,
+            studentId: studentIdVal,
+        };
+
+        // Creating a XHR object
+        let xhr = new XMLHttpRequest();
+        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/newAttendance";
+
+        // open a connection
+        xhr.open("POST", url, true);
+
+        // Set the request header i.e. which type of content you are sending
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("_csrf", csrf);
+        xhr.setRequestHeader('x-csrf-token', csrf);
+
+        // Create a state change callback
+            xhr.onreadystatechange = function () {
+                location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
+        };
+
+
+        // Converting JSON data to string
+        var data = JSON.stringify(attendanceDto);
+
+        // Sending data with the request
+        xhr.send(data);
+    }
+</script>
+<script>
+    $(document).ready(function() {
+        var activeTab = localStorage.getItem('activeTab');
+        if(activeTab){
+            $('.tab-links a[href="' + activeTab + '"]').tab('show');
+        }
+        $('.content .tab-links a').on('click', function(e)  {
+            var currentAttrValue = jQuery(this).attr('href');
+            localStorage.setItem('activeTab', currentAttrValue);
+            jQuery('.tabs ' + currentAttrValue).siblings().slideUp(400);
+            jQuery('.tabs ' + currentAttrValue).delay(400).slideDown(400);
+            jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
+            e.preventDefault();
+        });
+    });
+</script>
+
 </body>
 
 </html>

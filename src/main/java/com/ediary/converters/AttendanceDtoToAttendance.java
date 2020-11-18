@@ -4,6 +4,7 @@ import com.ediary.DTO.AttendanceDto;
 import com.ediary.domain.Attendance;
 import com.ediary.domain.Student;
 import com.ediary.repositories.ExtenuationRepository;
+import com.ediary.repositories.LessonRepository;
 import com.ediary.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
@@ -11,6 +12,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -18,6 +20,7 @@ import java.util.Optional;
 public class AttendanceDtoToAttendance implements Converter<AttendanceDto, Attendance> {
 
     private final LessonDtoToLesson lessonDtoToLesson;
+    private final LessonRepository lessonRepository;
     private final StudentRepository studentRepository;
     private final ExtenuationRepository extenuationRepository;
 
@@ -35,7 +38,7 @@ public class AttendanceDtoToAttendance implements Converter<AttendanceDto, Atten
         attendance.setStatus(source.getStatus());
 
         //Lesson
-        attendance.setLesson(lessonDtoToLesson.convert(source.getLessonDto()));
+        attendance.setLesson(lessonRepository.findById(source.getLessonId()).orElse(null));
 
         //Student
         Optional<Student> studentOptional = studentRepository.findById(source.getStudentId());
@@ -43,8 +46,9 @@ public class AttendanceDtoToAttendance implements Converter<AttendanceDto, Atten
             attendance.setStudent(studentOptional.get());
         }
 
+
         //Extenuation
-        attendance.setExtenuations(extenuationRepository.findAllByAttendancesId(source.getId()));
+        attendance.setExtenuations(new HashSet<>(extenuationRepository.findAllByAttendancesId(source.getId())));
 
         return attendance;
     }

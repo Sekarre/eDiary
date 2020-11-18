@@ -33,8 +33,11 @@ public class GradeToGradeDto implements Converter<Grade, GradeDto> {
         );
 
         //Subject
-        gradeDto.setSubjectId(source.getSubject().getId());
-        gradeDto.setSubjectName(source.getSubject().getName());
+        if (source.getSubject() != null) {
+            gradeDto.setSubjectId(source.getSubject().getId());
+            gradeDto.setSubjectName(source.getSubject().getName());
+
+        }
 
         //Student
         if (source.getStudent() != null) {

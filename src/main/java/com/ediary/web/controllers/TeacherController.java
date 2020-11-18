@@ -441,7 +441,6 @@ public class TeacherController {
                             @PathVariable Long lessonId,
                             Model model) {
 
-        model.addAttribute("attendances", teacherService.listAttendances(teacherId, subjectId, classId, lessonId));
         model.addAttribute("studentsWithGrades", teacherService.listStudentsLessonGrades(teacherId, lessonId));
         model.addAttribute("studentsWithAttendances", teacherService.listStudentsLessonAttendances(teacherId, lessonId));
         model.addAttribute("maxGrades", teacherService.maxGradesCount(teacherId, lessonId));
@@ -449,32 +448,25 @@ public class TeacherController {
         model.addAttribute("lessonId", lessonId);
         model.addAttribute("classId", classId);
         model.addAttribute("grade", teacherService.initNewLessonGrade(teacherId, subjectId, lessonId));
+        model.addAttribute("attendance", teacherService.initNewLessonAttendance(teacherId, subjectId, lessonId));
 
         return "/teacher/lesson/lesson";
     }
 
 
-    //todo: Modyfikuj frekwencje ucznia
-    @PostMapping("{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/newAttendance")
+    @PostMapping("{teacherId}/lesson/subject/{subjectId}/{lessonId}/newAttendance")
     public String newLessonAttendance(@PathVariable Long teacherId,
                                       @PathVariable Long subjectId,
-                                      @PathVariable Long classId,
                                       @PathVariable Long lessonId,
-                                      @Valid @RequestBody AttendanceDto attendanceDto,
-                                      BindingResult result) {
+                                      @Valid @RequestBody AttendanceDto attendanceDto) {
 
-        if (result.hasErrors()) {
-            //todo: add path
-            return "";
-        } else {
-            teacherService.saveAttendance(attendanceDto);
-            return "";
-        }
 
+        Attendance attendance = teacherService.saveAttendance(attendanceDto);
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId +  "/" + attendance.getLesson().getSchoolClass().getId() + "/" +
+                lessonId;
     }
 
 
-    //todo: Grades
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/{lessonId}/newGrade")
     public String processNewLessonGrade(@PathVariable Long teacherId,
                                         @PathVariable Long subjectId,
