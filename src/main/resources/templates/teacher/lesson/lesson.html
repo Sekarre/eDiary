@@ -24,16 +24,10 @@ The above copyright notice and this permission notice shall be included in all c
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <!-- CSS Files -->
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
-    <style>
-        tr:hover td{
-            background-color:#f5f5f5;;
-        }
-    </style>
 </head>
 
 <body class="">
@@ -59,70 +53,183 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <div th:if="${lessons == null || lessons?.size() == 0}" class="navbar-wrapper">
+            <div th:if="${studentsWithGrades == null}" class="navbar-wrapper">
                 <div class="d-flex justify-content-center">
-                    <h2 class="navbar-brand">Nie znaleziono żadnych lekcji</h2>
-                        <a th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/new(teacherId=${teacherId}, subjectId=${subjectId})}">
-                            <button rel="tooltip" class="btn btn-success add btn-fab btn-lg btn-primary btn-round">
-                                <i class="material-icons">add</i>
-                            </button>
-                        </a>
+                    <h2 class="navbar-brand">Nie znaleziono żadnych studentów</h2>
                 </div>
             </div>
-            <div class="container-fluid" th:if="${lessons != null && lessons?.size() > 0}">
-                <div class="card">
-                    <div class="card-header card-header-primary">
-                        <div class="float-left">
-                            <h3 class="card-title">Wybierz lekcję:</h3>
-                        </div>
-                        <div class="float-right">
-                            <a th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/new(teacherId=${teacherId}, subjectId=${subjectId})}">
-                                <button rel="tooltip" class="btn btn-success add btn-fab btn-fab-mini btn-primary btn-round">
-                                    <i class="material-icons">add</i>
-                                </button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead class=" text-primary">
-                                <th>Nazwa lekcji</th>
-                                <th>Temat</th>
-                                <th>Data</th>
-                                </thead>
-                                <tbody>
-                                <tr th:each="lesson : ${lessons}" style="cursor: pointer"
-                                    th:onclick="'javascript:rowClicked(\'' + ${teacher.id} + '\',\'' + ${lesson.subjectId} + '\',\'' + ${lesson.classId} + '\',\'' + ${lesson.id} + '\');'">
-                                    <td th:text="${lesson.name}">
-                                        Nazwa klasy
-                                    </td>
-                                    <td th:text="${lesson?.topicName}">
-                                        Temat
-                                    </td>
-                                    <td th:text="${#dates.format(lesson?.date,'dd-MM-yyyy HH:mm')}">
-                                        Data
-                                    </td>
-                                </tr>
+            <!--Tabs-->
+            <div class="container-fluid" th:if="${studentsWithGrades != null}">
+                <div class="justify-content-center">
+                    <ul class="nav nav-pills nav-pills-primary" id="nav-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" th:text="'Oceny'" data-toggle="tab" href="#grades" role="tablist" aria-selected="true">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:text="'Frekwencja'"  data-toggle="tab" href="#attendances" role="tablist"  aria-selected="false">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:text="'Terminarz'" data-toggle="tab" href="#events" role="tablist"  aria-selected="false">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+                <!--end tabs-->
 
-                                </tbody>
-                            </table>
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item " th:classappend="${page.isPresent() && page.get() > 0} ? 'active' : 'disabled'">
-                                    <a class="page-link" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}(teacherId = ${teacherId}, subjectId=${subjectId}, page = ${page.orElse(1) - 1})}" th:text="'Poprzednia'"></a>
-                                </li>
-                                <li class="page-item" th:classappend="${lessons.size() < 15} ? 'disabled' : 'active'">
-                                    <a class="page-link" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}(teacherId = ${teacherId}, subjectId=${subjectId}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
+                <!-- Grades -->
+                <div class="card" >
+                    <div class="tab-content">
+                        <div class="tab-pane show active" id="grades" role="tabpanel" aria-labelledby="nav-home">
+                            <div class="card-body float-left">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class=" text-primary">
+                                        <th scope="row">Nr. </th>
+                                        <th scope="row">Imie</th>
+                                        <th colspan="10" class="text-center">Ocena</th>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="student : ${studentsWithGrades.keySet()}" >
+                                            <td th:text="${studentStat.index + 1}">
+                                                Nr.
+                                            </td>
+                                            <td th:text="${student?.userName}">
+                                                Imie
+                                            </td>
 
-                                </li>
-                            </ul>
+                                            <td th:each="grade : ${studentsWithGrades?.get(student)}" th:text="${grade?.value}">
+                                                Ocena
+                                            </td>
+                                            <th:block th:each="field : ${maxGrades}">
+                                                <td th:if="${(fieldStat.index - studentsWithGrades?.get(student).size()) != 0}" th:text="' '">
+                                                </td>
+                                            </th:block>
+                                            <td>
+                                                <a id="open-gradeDialogModal" data-toggle="modal" class="open-gradeDialogModal" href="#addGradeModal"
+                                                   th:attr="data-id=''+${student.id}+'', data-target='#addGradeModal', data-name=''+${student.userName}+''">
+                                                    <button rel="tooltip" class="btn">
+                                                        <i class="material-icons">add_circle</i>
+                                                    </button>
+                                                </a>
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end grades -->
+
+                        <div class="tab-pane" id="attendances" role="tabpanel" aria-labelledby="nav-profile">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class=" text-primary">
+                                        <th>Student</th>
+                                        <th>Status</th>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="att : ${attendances}" >
+                                            <td th:text="${att.studentName}">
+                                                Nr.
+                                            </td>
+                                            <td th:text="${att.status}">
+                                                Imie
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="events" role="tabpanel" aria-labelledby="nav-contact">
+                            ...
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Modal add grade -->
+        <div class="modal fade" id="addGradeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Dodaj Ocene: </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
 
+                    <form id="addGradeForm" method="post" >
+                        <div class="modal-body">
+                            <div class="content">
+                                <div class="container-fluid">
+                                    <div class="card">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <tr>
+                                                    <td id="gradeStudent">
+                                                        <div class="form-group">
+                                                            <label class="bmd-label-floating">Uczeń: </label>
+                                                            <input  id="studentNameVal" type="text" class="form-control" disabled>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="gradeValue">
+                                                        <div class="form-group">
+                                                            <label class="bmd-label-floating">Ocena: </label>
+                                                            <input  id="gradeValueVal" type="number" max="6" class="form-control">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="gradeWeight">
+                                                        <div class="form-group">
+                                                            <label class="bmd-label-floating">Waga</label>
+                                                            <input  id="gradeWeightVal" class="form-control" type="number"/>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="gradeDescription">
+                                                        <div class="form-group">
+                                                            <label class="bmd-label-floating">Opis</label>
+                                                            <textarea  id="gradeDescVal" class="form-control" rows="3"></textarea>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td id="gradeDate">
+                                                        <div class="form-group">
+                                                            <label class="bmd-label-floating">Data</label>
+                                                            <input  id="gradeDateVal" class="form-control" type="text" th:value="${grade.date}" disabled/>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <input id="studentIdVal" type="hidden"/>
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                            <button id="sendGrade" type="button" class="btn btn-success" >Dodaj</button>
+                            <input id="csrfVal" type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                            <input id="subjectIdVal" type="hidden" th:value="${grade.subjectId}"/>
+                            <input id="teacherIdVal" type="hidden" th:value="${grade.teacherId}"/>
+                            <input id="lessonIdVal" type="hidden" th:value="${lessonId}"/>
+                            <input id="classIdVal" type="hidden" th:value="${classId}"/>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
 
     </div>
 </div>
@@ -348,44 +455,45 @@ The above copyright notice and this permission notice shall be included in all c
 </script>
 
 <script>
-    function rowClicked(teacherId, subjectId, classId, lessonId) {
+    $(document).on("click", ".open-gradeDialogModal", function () {
 
-        var url = "/teacher/" + teacherId + "/lesson/subject/" + subjectId + '/' + classId + '/' + lessonId;
-        $(location).attr('href', url);
-    }
-</script>
+        var studentId = $(this).data('id');
+        var studentName = $(this).data('name');
 
-<script>
-    $(function() {
+        var gradeStudentElem = document.getElementById("gradeStudent");
+        var gradeStudentId = document.getElementById("studentIdVal");
 
-        $('#selectTopic').on('change', function(){
-            var selected = $(this).find("option:selected").val();
-            $('#topicIdInput').val(selected);
-            $('#selectTopic').selectpicker("refresh");
-        });
+        gradeStudentElem.innerHTML = studentName;
+        gradeStudentId.value = studentId;
 
     });
 </script>
 
 <script>
-    $(document).on("click", "#sendLesson", function () {
+    $(document).on("click", "#sendGrade", function () {
         var csrf= $("#csrfVal").val();
         var subjectIdVal = $("#subjectIdVal").val();
         var teacherIdVal = $("#teacherIdVal").val();
+        var studentIdVal = document.getElementById("studentIdVal").value;
+        var lessonIdVal = $("#lessonIdVal").val();
         var classIdVal = $("#classIdVal").val();
 
-        var lessonDto = {
+
+
+        var gradeDto = {
             id: "",
-            name: $("#lessonNameVal").val(),
-            date: $("#lessonDateVal").val(),
-            topic: $("#topicIdInput").val(),
+            value: $("#gradeValueVal").val(),
+            weight: $("#gradeWeightVal").val(),
+            description: $("#gradeDescVal").val(),
+            date: $("#gradeDateVal").val(),
+            teacherId: teacherIdVal,
             subjectId: subjectIdVal,
-            classId: classIdVal
+            studentId: studentIdVal,
         };
 
         // Creating a XHR object
         let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/new";
+        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/newGrade";
 
         // open a connection
         xhr.open("POST", url, true);
@@ -397,11 +505,11 @@ The above copyright notice and this permission notice shall be included in all c
 
         // Create a state change callback
         xhr.onreadystatechange = function () {
-            location.href = "redirect:/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal;
+            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
         };
 
         // Converting JSON data to string
-        var data = JSON.stringify(lessonDto);
+        var data = JSON.stringify(gradeDto);
 
         // Sending data with the request
         xhr.send(data);

@@ -37,10 +37,12 @@ public class GradeToGradeDto implements Converter<Grade, GradeDto> {
         gradeDto.setSubjectName(source.getSubject().getName());
 
         //Student
-        gradeDto.setStudentId(source.getStudent().getId());
-        gradeDto.setStudentName(
-                source.getStudent().getUser().getFirstName() + " " + source.getStudent().getUser().getLastName()
-        );
+        if (source.getStudent() != null) {
+            gradeDto.setStudentId(source.getStudent().getId());
+            gradeDto.setStudentName(
+                    source.getStudent().getUser().getFirstName() + " " + source.getStudent().getUser().getLastName()
+            );
+        }
 
         return gradeDto;
     }

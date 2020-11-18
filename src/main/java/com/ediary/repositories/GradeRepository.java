@@ -10,6 +10,7 @@ import java.util.List;
 public interface GradeRepository extends JpaRepository<Grade, Long> {
 
     List<Grade> findAllByStudentId(Long studentId);
+    List<Grade> findAllByStudentIdAndDate(Long studentId, Date date);
     List<Grade> findAllByStudentIdAndSubjectId(Long studentId, Long subjectId);
     List<Grade> findAllByStudentIdAndSubjectIdAndDateAfterAndDateBefore(Long studentId, Long subjectId,
                                                                         java.util.Date startDate, java.util.Date endDate);
@@ -17,4 +18,6 @@ public interface GradeRepository extends JpaRepository<Grade, Long> {
     List<Grade> findAllBySubjectIdAndTeacherId(Long subjectId, Long teacherId);
     List<Grade> findAllByTeacherIdAndWeight(Long teacherId, Integer weight);
     List<Grade> findAllBySubject(Subject subject);
+
+    Long countAllByStudentIdAndDate(Long studentId, Date date);
 }

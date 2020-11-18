@@ -454,7 +454,10 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Grade saveGrade(GradeDto grade) {
-            return gradeRepository.save(gradeDtoToGrade.convert(grade));
+
+        Grade savedGrade = gradeRepository.save(gradeDtoToGrade.convert(grade));
+
+        return savedGrade;
     }
 
     @Override
@@ -467,6 +470,15 @@ public class TeacherServiceImpl implements TeacherService {
         return gradeToGradeDto.convert(grade);
     }
 
+    @Override
+    public GradeDto initNewLessonGrade(Long teacherId, Long subjectId, Long lessonId) {
+        return gradeToGradeDto.convert(Grade.builder()
+                .teacher(getTeacherById(teacherId))
+                .subject(getSubjectById(subjectId))
+                .date(lessonRepository
+                        .findById(lessonId).orElseThrow(() -> new NotFoundException("Lesson not found")).getDate())
+                .build());
+    }
 
     @Override
     public Event saveEvent(EventDto eventDto) {
@@ -790,6 +802,52 @@ public class TeacherServiceImpl implements TeacherService {
 
         return timetableService.getTimetableByTeacherId(teacher.getId());
 
+    }
+
+    @Override
+    public Map<StudentDto, List<GradeDto>> listStudentsLessonGrades(Long teacherId, Long lessonId) {
+        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(() -> new NotFoundException("Lesson not found"));
+
+        Class schoolClass = lesson.getSchoolClass();
+
+        Map<StudentDto, List<GradeDto>> studentGradesListMap = new TreeMap<>(
+                ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
+                                .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
+
+        schoolClass.getStudents().forEach(student -> {
+            studentGradesListMap.put(studentToStudentDto.convert(student),
+                    gradeRepository.findAllByStudentIdAndDate(student.getId(), lesson.getDate())
+                            .stream()
+                            .map(gradeToGradeDto::convert)
+                            .collect(Collectors.toList()));
+        });
+
+
+        if (studentGradesListMap.keySet().isEmpty())
+            return null;
+
+        return studentGradesListMap;
+    }
+
+    @Override
+    public List<Long> maxGradesCount(Long teacherId, Long lessonId) {
+        Long[] maxCount = {Long.MIN_VALUE};
+
+        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(() -> new NotFoundException("Lesson not found"));
+
+        Class schoolClass = lesson.getSchoolClass();
+
+        schoolClass.getStudents().forEach(student -> {
+            Long count = gradeRepository.countAllByStudentIdAndDate(student.getId(), lesson.getDate());
+            if (count > maxCount[0])
+                maxCount[0] = count;
+        });
+
+        return new ArrayList<>(){{
+            for (int i = 0; i <= maxCount[0]; i++){
+                add(null);
+            }
+        }};
     }
 
     private Subject getSubjectById(Long subjectId) {

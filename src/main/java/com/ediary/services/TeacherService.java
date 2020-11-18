@@ -6,6 +6,7 @@ import com.ediary.domain.security.User;
 import com.ediary.domain.timetable.Timetable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TeacherService {
 
@@ -51,6 +52,7 @@ public interface TeacherService {
     Boolean deleteGrade(Long teacherId, Long subjectId, Long gradeId);
     Grade saveGrade(GradeDto grade);
     GradeDto initNewGrade(Long teacherId, Long subjectId);
+    GradeDto initNewLessonGrade(Long teacherId, Long subjectId, Long lessonId);
 
     Event saveEvent(EventDto eventDto);
     EventDto initNewEvent(Long teacherId);
@@ -87,4 +89,8 @@ public interface TeacherService {
     Boolean excuseAttendances(List<Long> ids, Long teacherId, Long studentId, Long classId);
 
     Timetable getTimetableByTeacherId(Long teacherId);
+
+    Map<StudentDto, List<GradeDto>> listStudentsLessonGrades(Long teacherId, Long lessonId);
+
+    List<Long> maxGradesCount(Long teacherId, Long lessonId);
 }

@@ -386,7 +386,7 @@ public class TeacherController {
         }
     }
 
-
+    //Start
     @GetMapping("/{teacherId}/lesson/subject")
     public String getAllSubjects(@PathVariable Long teacherId, Model model) {
 
@@ -434,64 +434,27 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId;
     }
 
-
-    //Nie potrzebne odkad kazdy przedmiot jest przypisany do oddzielnej klasy
-    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class")
-    public String getAllClassesBySubject(@PathVariable Long teacherId,
-                                         @PathVariable Long subjectId) {
-
-        ClassDto schoolClass = teacherService.listClassesByTeacherAndSubject(teacherId, subjectId).get(0);
-
-        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + schoolClass.getId();
-    }
-
-    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}")
-    public String getClassBySubject(@PathVariable Long teacherId,
-                                    @PathVariable Long subjectId,
-                                    @PathVariable Long classId,
-                                    Model model) {
-        model.addAttribute("class", teacherService.getSchoolClassByTeacherAndSubject(classId, subjectId, teacherId));
-
-        return "/teacher/lesson/class";
-    }
-
-    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons")
-    public String getAllLessonsBySubjectAndClass(@PathVariable Long teacherId,
-                                                 @PathVariable Long subjectId,
-                                                 @PathVariable Long classId,
-                                                 Model model) {
-
-        model.addAttribute("lessons", teacherService.listLessons(teacherId, subjectId, classId));
-
-        return "/teacher/lesson/allClassLessons";
-    }
-
-    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}")
+    @GetMapping("{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}")
     public String getLesson(@PathVariable Long teacherId,
                             @PathVariable Long subjectId,
                             @PathVariable Long classId,
                             @PathVariable Long lessonId,
                             Model model) {
 
-        model.addAttribute("lesson", teacherService.getLesson(lessonId));
-
-        return "/teacher/lesson/singleLesson";
-    }
-
-    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}/attendances")
-    public String getLessonAttendances(@PathVariable Long teacherId,
-                                       @PathVariable Long subjectId,
-                                       @PathVariable Long classId,
-                                       @PathVariable Long lessonId,
-                                       Model model) {
-
         model.addAttribute("attendances", teacherService.listAttendances(teacherId, subjectId, classId, lessonId));
+        model.addAttribute("studentsWithGrades", teacherService.listStudentsLessonGrades(teacherId, lessonId));
+        model.addAttribute("maxGrades", teacherService.maxGradesCount(teacherId, lessonId));
+        model.addAttribute("subjectId", subjectId);
+        model.addAttribute("lessonId", lessonId);
+        model.addAttribute("classId", classId);
+        model.addAttribute("grade", teacherService.initNewLessonGrade(teacherId, subjectId, lessonId));
 
-        return "/teacher/lesson/attendances";
+        return "/teacher/lesson/lesson";
     }
+
 
     //todo: Modyfikuj frekwencje ucznia
-    @PostMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}/attendances/new")
+    @PostMapping("{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/newAttendance")
     public String newLessonAttendance(@PathVariable Long teacherId,
                                       @PathVariable Long subjectId,
                                       @PathVariable Long classId,
@@ -510,27 +473,12 @@ public class TeacherController {
     }
 
 
-    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}/students")
-    public String getLessonStudents(@PathVariable Long teacherId,
-                                    @PathVariable Long subjectId,
-                                    @PathVariable Long classId,
-                                    @PathVariable Long lessonId,
-                                    Model model) {
-
-        model.addAttribute("students", teacherService.listLessonStudents(teacherId, subjectId, classId, lessonId));
-        model.addAttribute("grade", teacherService.initNewGrade(teacherId, subjectId));
-        return "/teacher/lesson/students";
-    }
-
-
     //todo: Grades
-    @PostMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/lessons/{lessonId}/students/{studentId}")
+    @PostMapping("{teacherId}/lesson/subject/{subjectId}/{lessonId}/newGrade")
     public String processNewLessonGrade(@PathVariable Long teacherId,
                                         @PathVariable Long subjectId,
-                                        @PathVariable Long classId,
                                         @PathVariable Long lessonId,
-                                        @PathVariable Long studentId,
-                                        @Valid @ModelAttribute GradeDto gradeDto,
+                                        @Valid @RequestBody GradeDto gradeDto,
                                         BindingResult result) {
 
         if (result.hasErrors()) {
@@ -539,10 +487,10 @@ public class TeacherController {
         }
 
         Grade grade = teacherService.saveGrade(gradeDto);
+        Long classId = grade.getSubject().getSchoolClass().getId();
 
-        //XD?
-        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId + "/lessons/" +
-                lessonId + "/students/" + studentId;
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId +  "/" + classId + "/" +
+                lessonId;
     }
 
 

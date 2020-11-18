@@ -563,7 +563,7 @@ public class DefaultLoader implements CommandLineRunner {
         //Grades for first subject -> Matematyka
         int[][] gradesPerStudent = {
                 {2, 4, 6, 2, 4, 1, 2, 2},
-                {3, 3, 4, 5, 3, 2, 4, 6, 3, 1},
+                {3, 3, 4, 5, 3, 2, 4, 6, 3, 1, 4, 5},
                 {5, 2, 5, 1, 5, 2, 5, 5},
                 {2, 4, 4, 2, 4},
                 {4, 2, 1, 2, 4, 2, 1, 3, 3},
@@ -582,10 +582,10 @@ public class DefaultLoader implements CommandLineRunner {
         int[] gradeWeight = {1,2,3};
 
         String[] descriptions = {"Kartkówka", "Kartkówka", "Sprawdzian", "Aktywność", "Aktywność",
-                "Kartkówka", "Sprawdzian", "Aktywność", "Aktywność", "Kartkówka"};
+                "Kartkówka", "Sprawdzian", "Aktywność", "Aktywność", "Kartkówka", "Aktywność", "Aktywność"};
 
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 2; i++) {
             for (int j = 0; j < gradesPerStudent[i].length; j++) {
 
                 gradeRepository.save(Grade.builder()
