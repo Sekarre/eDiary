@@ -344,7 +344,8 @@ public class TeacherServiceImpl implements TeacherService {
                 attendance.getLessonId());
 
         if (existingAtt != null) {
-            attendanceRepository.delete(existingAtt);
+            existingAtt.setStatus(attendance.getStatus());
+            return attendanceRepository.save(existingAtt);
         }
 
         return attendanceRepository.save(attendanceDtoToAttendance.convert(attendance));

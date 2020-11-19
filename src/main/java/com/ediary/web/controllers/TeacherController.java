@@ -386,7 +386,7 @@ public class TeacherController {
         }
     }
 
-    //Start
+
     @GetMapping("/{teacherId}/lesson/subject")
     public String getAllSubjects(@PathVariable Long teacherId, Model model) {
 
