@@ -46,6 +46,8 @@ public interface TeacherService {
     Boolean deleteClassGrade(Long gradeId);
     List<GradeDto> listClassGrades(Long teacherId, Long schoolClassId);
     List<GradeDto> listStudentGrades(Long teacherId, Long studentId);
+    Boolean deleteLessonGrade(Long studentId, Long gradeId);
+
 
     List<GradeDto> listGradesBySubject(Long teacherId, Long subjectId);
     GradeDto updatePutGrade(GradeDto gradeDto);

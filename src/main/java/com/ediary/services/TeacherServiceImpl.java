@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Transient;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -405,6 +406,37 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public Boolean deleteLessonGrade(Long studentId, Long gradeId) {
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
+        Grade grade = gradeRepository.findById(gradeId).orElse(null);
+
+        if (grade != null && grade.getStudent().equals(student)) {
+
+            //Student - null
+            Student gradeStudent = grade.getStudent();
+            gradeStudent.setGrades(gradeRepository.findAllByStudentId(studentId)
+                    .stream()
+                    .filter(grade1 -> !grade1.equals(grade))
+                    .collect(Collectors.toSet()));
+            studentRepository.save(student);
+
+            //Teacher - null
+            Teacher teacher = grade.getTeacher();
+            teacher.setGrades(gradeRepository.findAllByTeacherIdAndDate(teacher.getId(), grade.getDate())
+                    .stream()
+                    .filter(grade1 -> !grade1.equals(grade))
+                    .collect(Collectors.toSet()));
+            teacherRepository.save(teacher);
+
+            gradeRepository.delete(grade);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public List<GradeDto> listGradesBySubject(Long teacherId, Long subjectId) {
 
         Teacher teacher = getTeacherById(teacherId);
@@ -644,7 +676,7 @@ public class TeacherServiceImpl implements TeacherService {
         }
         Behavior behavior = behaviorOptional.get();
 
-        if (behavior.getTeacher().getId() != teacherId) {
+        if (!behavior.getTeacher().getId().equals(teacherId)) {
             return false;
         } else {
             behaviorRepository.delete(behavior);

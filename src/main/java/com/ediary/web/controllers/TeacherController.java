@@ -486,6 +486,19 @@ public class TeacherController {
                 lessonId;
     }
 
+    @PostMapping("{teacherId}/lesson/subject/{subjectId}/{lessonId}/{classId}/{studentId}/{gradeId}/delete")
+    public String deleteGrade(@PathVariable Long teacherId,
+                              @PathVariable Long subjectId,
+                              @PathVariable Long lessonId,
+                              @PathVariable Long classId,
+                              @PathVariable Long studentId,
+                              @PathVariable Long gradeId) {
+
+        teacherService.deleteLessonGrade(studentId, gradeId);
+
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId +  "/" + classId + "/" +
+                lessonId;
+    }
 
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")
     public String newLessonEvent(@PathVariable Long teacherId,
