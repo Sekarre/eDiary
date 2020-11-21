@@ -135,7 +135,25 @@ The above copyright notice and this permission notice shall be included in all c
                                         <thead class=" text-primary">
                                         <th>Nr. </th>
                                         <th>Imie</th>
-                                        <th class="text-center">Status</th>
+                                        <th>Status</th>
+                                        <th>
+                                            <button  id="allPresent" th:onclick="'javascript:sendAllAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + 'present' + '\');'" class="btn btn-fab-mini btn-round">
+                                                <i class="material-icons">add_task</i>&nbsp;
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <button  id="allAbsent" th:onclick="'javascript:sendAllAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + 'absent' + '\');'" class="btn btn-fab-mini btn-round">
+                                                <i class="material-icons">unpublished</i>&nbsp;
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <button  id="allLate" th:onclick="'javascript:sendAllAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + 'late' + '\');'" class="btn btn-fab-mini btn-round">
+                                                <i class="material-icons">watch_later</i>&nbsp;
+                                            </button>
+                                        </th>
                                         </thead>
                                         <tbody>
                                         <tr th:each="student : ${studentsWithAttendances?.keySet()}" >
@@ -151,10 +169,10 @@ The above copyright notice and this permission notice shall be included in all c
                                                 th:styleappend="${studentsWithAttendances?.get(student)?.status?.name() eq 'ABSENT' || studentsWithAttendances?.get(student)?.status?.name() eq 'UNEXCUSED'} ? 'color: red' : ''" >
                                                 Status
                                             </td>
-                                            <th:block th:each="field : ${maxGrades}">
-                                                <td th:if="${(fieldStat.index % 2) == 0}" th:text="' '">
-                                                </td>
-                                            </th:block>
+<!--                                            <th:block th:each="field : ${maxGrades}">-->
+<!--                                                <td th:if="${(fieldStat.index % 2) == 0}" th:text="' '">-->
+<!--                                                </td>-->
+<!--                                            </th:block>-->
                                             <td>
                                                     <button  id="present" th:onclick="'javascript:sendAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
                                                     + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + ${student.id} + '\',\'' + 'present' + '\');'" class="btn btn-fab-mini btn-round"
@@ -263,10 +281,6 @@ The above copyright notice and this permission notice shall be included in all c
                             <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
                             <button id="sendGrade" type="button" class="btn btn-success" >Dodaj</button>
                             <input id="csrfVal" type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-<!--                            <input id="subjectIdVal" type="hidden" th:value="${grade.subjectId}"/>-->
-<!--                            <input id="teacherIdVal" type="hidden" th:value="${grade.teacherId}"/>-->
-<!--                            <input id="lessonIdVal" type="hidden" th:value="${lessonId}"/>-->
-<!--                            <input id="classIdVal" type="hidden" th:value="${classId}"/>-->
                         </div>
                     </form>
                 </div>
@@ -673,6 +687,44 @@ The above copyright notice and this permission notice shall be included in all c
         // Create a state change callback
             xhr.onreadystatechange = function () {
                 location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
+        };
+
+
+        // Converting JSON data to string
+        var data = JSON.stringify(attendanceDto);
+
+        // Sending data with the request
+        xhr.send(data);
+    }
+</script>
+
+<!--New attendances for whole class-->
+<script>
+    function sendAllAtt(teacherIdVal, subjectIdVal, classIdVal, lessonIdVal, status) {
+
+        var csrf= $("#csrfVal").val();
+
+        var attendanceDto = {
+            id: "",
+            status: status,
+            lessonId: lessonIdVal,
+        };
+
+        // Creating a XHR object
+        let xhr = new XMLHttpRequest();
+        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" +classIdVal + "/" + lessonIdVal + "/newAttendancesClass";
+
+        // open a connection
+        xhr.open("POST", url, true);
+
+        // Set the request header i.e. which type of content you are sending
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("_csrf", csrf);
+        xhr.setRequestHeader('x-csrf-token', csrf);
+
+        // Create a state change callback
+        xhr.onreadystatechange = function () {
+            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
         };
 
 

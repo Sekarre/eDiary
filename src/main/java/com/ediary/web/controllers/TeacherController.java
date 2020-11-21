@@ -467,6 +467,19 @@ public class TeacherController {
                 lessonId;
     }
 
+    @PostMapping("{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/newAttendancesClass")
+    public String newLessonAttendancesForClass(@PathVariable Long teacherId,
+                                      @PathVariable Long subjectId,
+                                      @PathVariable Long classId,
+                                      @PathVariable Long lessonId,
+                                      @Valid @RequestBody AttendanceDto attendanceDto) {
+
+
+        List<Attendance> attendance = teacherService.saveAttendancesForClass(attendanceDto, classId, teacherId);
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId +  "/" + classId + "/" +
+                lessonId;
+    }
+
 
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/{lessonId}/newGrade")
     public String processNewLessonGrade(@PathVariable Long teacherId,

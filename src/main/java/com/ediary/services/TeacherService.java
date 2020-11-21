@@ -37,6 +37,7 @@ public interface TeacherService {
     SubjectDto updatePatchSubject(SubjectDto subjectUpdated);
 
     Attendance saveAttendance(AttendanceDto attendance);
+    List<Attendance> saveAttendancesForClass(AttendanceDto attendanceDto, Long classId, Long teacherId);
     List<AttendanceDto> listAttendances(Long teacherId, Long subjectId, Long classId, Long lessonId);
     List<AttendanceDto> listAttendancesByStudent(Long studentId);
     AttendanceDto initNewLessonAttendance(Long teacherId, Long subjectId, Long lessonId);

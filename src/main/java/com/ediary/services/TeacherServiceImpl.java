@@ -345,7 +345,7 @@ public class TeacherServiceImpl implements TeacherService {
                 attendance.getLessonId());
 
         if (existingAtt != null) {
-            //if double click, delete attendance
+            //if clicked same again, delete attendance
             if (attendance.getStatus().equals(existingAtt.getStatus())) {
                 deleteLessonAttendance(existingAtt);
             }
@@ -354,6 +354,34 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         return attendanceRepository.save(attendanceDtoToAttendance.convert(attendance));
+    }
+
+    @Override
+    public List<Attendance> saveAttendancesForClass(AttendanceDto attendanceDto, Long classId, Long teacherId) {
+        Class schoolClass = getClassById(classId);
+        Lesson lesson = lessonRepository.findById(attendanceDto.getLessonId()).orElse(null);
+
+        if (lesson == null) {
+            return null;
+        }
+
+
+        List<Student> students = new ArrayList<>(schoolClass.getStudents());
+
+        for (Student s: students) {
+            Attendance attendanceToSave = attendanceRepository.findByStudentIdAndLessonId(s.getId(), lesson.getId());
+
+            if (attendanceToSave == null) {
+                attendanceToSave = new Attendance();
+                attendanceToSave.setStudent(s);
+                attendanceToSave.setLesson(lessonRepository.findById(attendanceDto.getLessonId()).orElse(null));
+            }
+
+            attendanceToSave.setStatus(attendanceDto.getStatus());
+            attendanceRepository.save(attendanceToSave);
+        }
+
+        return new ArrayList<>(attendanceRepository.findAllByLesson_Id(attendanceDto.getLessonId()));
     }
 
     private void deleteLessonAttendance(Attendance existingAtt) {
@@ -934,7 +962,7 @@ public class TeacherServiceImpl implements TeacherService {
         });
 
         return new ArrayList<>(){{
-            for (int i = 0; i <= maxCount[0]; i++){
+            for (int i = 0; i < maxCount[0]; i++){
                 add(null);
             }
         }};
