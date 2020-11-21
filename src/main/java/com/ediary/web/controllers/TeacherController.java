@@ -344,7 +344,7 @@ public class TeacherController {
             //todo: add view path
             return "/";
         } else {
-            teacherService.saveGrade(gradeDto);
+            teacherService.saveOrUpdateGrade(gradeDto);
             return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
         }
     }
@@ -479,7 +479,7 @@ public class TeacherController {
             return "";
         }
 
-        Grade grade = teacherService.saveGrade(gradeDto);
+        Grade grade = teacherService.saveOrUpdateGrade(gradeDto);
         Long classId = grade.getSubject().getSchoolClass().getId();
 
         return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId +  "/" + classId + "/" +

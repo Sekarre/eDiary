@@ -100,7 +100,7 @@ The above copyright notice and this permission notice shall be included in all c
                                             <td th:each="grade : ${studentsWithGrades?.get(student)}">
                                                 <a data-toggle="modal" id="open-gradeDialogModal-editGrade" class="open-gradeDialogModal btn btn-info" href="#editGradeModal"
                                                    th:attr="data-date=''+${grade.date}+'', data-target='#editGradeModal', data-value=''+${grade.value}+'', data-weight=''+${grade.weight}+'',
-                                                       data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+'', data-id=''+${student.id}+''"
+                                                       data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+'', data-id=''+${student.id}+'', data-grade=''+${grade.id}+''"
                                                    th:text="${grade?.value}">
                                                 </a>
                                             </td>
@@ -263,10 +263,10 @@ The above copyright notice and this permission notice shall be included in all c
                             <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
                             <button id="sendGrade" type="button" class="btn btn-success" >Dodaj</button>
                             <input id="csrfVal" type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                            <input id="subjectIdVal" type="hidden" th:value="${grade.subjectId}"/>
-                            <input id="teacherIdVal" type="hidden" th:value="${grade.teacherId}"/>
-                            <input id="lessonIdVal" type="hidden" th:value="${lessonId}"/>
-                            <input id="classIdVal" type="hidden" th:value="${classId}"/>
+<!--                            <input id="subjectIdVal" type="hidden" th:value="${grade.subjectId}"/>-->
+<!--                            <input id="teacherIdVal" type="hidden" th:value="${grade.teacherId}"/>-->
+<!--                            <input id="lessonIdVal" type="hidden" th:value="${lessonId}"/>-->
+<!--                            <input id="classIdVal" type="hidden" th:value="${classId}"/>-->
                         </div>
                     </form>
                 </div>
@@ -275,7 +275,7 @@ The above copyright notice and this permission notice shall be included in all c
         </div>
         <!-- end of add grade modal -->
 
-        <!-- Modal add grade -->
+        <!-- Modal edit grade -->
         <div class="modal fade" id="editGradeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
@@ -343,8 +343,9 @@ The above copyright notice and this permission notice shall be included in all c
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-                            <button type="button" class="btn btn-danger ">Usuń</button>
-                            <button type="button" class="btn btn-success" >Zapisz</button>
+                            <input id="gradeIdValue" type="hidden"/>
+                            <button id="deleteGrade" type="button" class="btn btn-danger ">Usuń</button>
+                            <button id="editGrade" type="button" class="btn btn-success" >Zapisz</button>
                             <!--                                    id="editGrade" -->
                         </div>
                     </form>
@@ -353,7 +354,10 @@ The above copyright notice and this permission notice shall be included in all c
             </div>
         </div>
         <!-- end edit grade -->
-
+        <input id="subjectIdVal" type="hidden" th:value="${grade.subjectId}"/>
+        <input id="teacherIdVal" type="hidden" th:value="${grade.teacherId}"/>
+        <input id="lessonIdVal" type="hidden" th:value="${lessonId}"/>
+        <input id="classIdVal" type="hidden" th:value="${classId}"/>
     </div>
 </div>
 
@@ -603,7 +607,6 @@ The above copyright notice and this permission notice shall be included in all c
         var classIdVal = $("#classIdVal").val();
 
 
-
         var gradeDto = {
             id: "",
             value: $("#gradeValueVal").val(),
@@ -691,15 +694,21 @@ The above copyright notice and this permission notice shall be included in all c
         var weight = $(this).data('weight');
         var desc = $(this).data('desc');
         var date = $(this).data('date');
+        var gradeId = $(this).data('grade');
+
+        if (desc == null) {
+            desc = "";
+        }
 
         var gradeStudentId = document.getElementById("studentIdValEdit");
 
         gradeStudentId.value = studentId;
 
+        document.getElementById("gradeIdValue").value = gradeId;
         document.getElementById("studentNameValEdit").value = studentName;
         document.getElementById("gradeWeightValEdit").value = weight;
-        document.getElementById("gradeValueEdit").value = value;
-        document.getElementById("gradeDescEdit").value = desc;
+        document.getElementById("gradeValueValEdit").value = value;
+        document.getElementById("gradeDescValEdit").value = desc;
         document.getElementById("gradeDateValEdit").value = date;
 
     });
@@ -712,10 +721,14 @@ The above copyright notice and this permission notice shall be included in all c
         var studentIdVal = document.getElementById("studentIdValEdit").value;
         var lessonIdVal = $("#lessonIdVal").val();
         var classIdVal = $("#classIdVal").val();
+        var gradeIdVal = $("#gradeIdValue").val();
 
+        if (gradeIdVal == null) {
+            gradeIdVal = "";
+        }
 
         var gradeDto = {
-            id: "",
+            id: gradeIdVal,
             value: $("#gradeValueValEdit").val(),
             weight: $("#gradeWeightValEdit").val(),
             description: $("#gradeDescValEdit").val(),

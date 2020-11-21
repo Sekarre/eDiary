@@ -471,7 +471,18 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Grade saveGrade(GradeDto grade) {
+    public Grade saveOrUpdateGrade(GradeDto grade) {
+
+        if (grade.getId() != null) {
+            Grade gradeToUpdate = gradeRepository.findById(grade.getId()).orElse(null);
+
+            if (gradeToUpdate != null) {
+                gradeToUpdate.setWeight(grade.getWeight());
+                gradeToUpdate.setValue(grade.getValue());
+                gradeToUpdate.setDescription(grade.getDescription());
+                return gradeRepository.save(gradeToUpdate);
+            }
+        }
 
         Grade savedGrade = gradeRepository.save(gradeDtoToGrade.convert(grade));
 

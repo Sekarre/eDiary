@@ -309,7 +309,7 @@ class TeacherControllerTest {
     void processNewGrade() throws Exception {
         Long subjectId = 1L;
 
-        when(teacherService.saveGrade(any())).thenReturn(Grade.builder().build());
+        when(teacherService.saveOrUpdateGrade(any())).thenReturn(Grade.builder().build());
 
         mockMvc.perform(post("/teacher/" + teacherId + "/grade/subject/" + subjectId + "/new")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -317,7 +317,7 @@ class TeacherControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId));
 
-        verify(teacherService, times(1)).saveGrade(any());
+        verify(teacherService, times(1)).saveOrUpdateGrade(any());
     }
 
     @Test
@@ -509,7 +509,7 @@ class TeacherControllerTest {
         Long studentId = 1L;
 
 
-        when(teacherService.saveGrade(any())).thenReturn(Grade.builder()
+        when(teacherService.saveOrUpdateGrade(any())).thenReturn(Grade.builder()
                 .subject(Subject.builder().schoolClass(Class.builder().id(1L).build()).build()).build());
 
         mockMvc.perform(post(
@@ -522,7 +522,7 @@ class TeacherControllerTest {
                         "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + classId + "/" +
                                 lessonId));
 
-        assertNotNull(teacherService.saveGrade(any()));
+        assertNotNull(teacherService.saveOrUpdateGrade(any()));
     }
 
     @Test

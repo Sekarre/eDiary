@@ -1082,7 +1082,7 @@ class TeacherServiceImplTest {
     }
 
     @Test
-    void saveGrade() {
+    void saveOrUpdateGrade() {
         Grade grade = Grade.builder()
                 .id(1L)
                 .build();
@@ -1092,7 +1092,7 @@ class TeacherServiceImplTest {
         when(gradeRepository.save(any())).thenReturn(grade);
         when(gradeDtoToGrade.convert(any())).thenReturn(grade);
 
-        Grade savedGrade = teacherService.saveGrade(gradeDto);
+        Grade savedGrade = teacherService.saveOrUpdateGrade(gradeDto);
 
         assertNotNull(savedGrade);
         verify(gradeRepository, times(1)).save(grade);
