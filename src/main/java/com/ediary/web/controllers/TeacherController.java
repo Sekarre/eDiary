@@ -454,15 +454,16 @@ public class TeacherController {
     }
 
 
-    @PostMapping("{teacherId}/lesson/subject/{subjectId}/{lessonId}/newAttendance")
+    @PostMapping("{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/newAttendance")
     public String newLessonAttendance(@PathVariable Long teacherId,
                                       @PathVariable Long subjectId,
+                                      @PathVariable Long classId,
                                       @PathVariable Long lessonId,
                                       @Valid @RequestBody AttendanceDto attendanceDto) {
 
 
         Attendance attendance = teacherService.saveAttendance(attendanceDto);
-        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId +  "/" + attendance.getLesson().getSchoolClass().getId() + "/" +
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId +  "/" + classId + "/" +
                 lessonId;
     }
 

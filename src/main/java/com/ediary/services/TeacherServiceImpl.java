@@ -345,11 +345,27 @@ public class TeacherServiceImpl implements TeacherService {
                 attendance.getLessonId());
 
         if (existingAtt != null) {
+            //if double click, delete attendance
+            if (attendance.getStatus().equals(existingAtt.getStatus())) {
+                deleteLessonAttendance(existingAtt);
+            }
             existingAtt.setStatus(attendance.getStatus());
             return attendanceRepository.save(existingAtt);
         }
 
         return attendanceRepository.save(attendanceDtoToAttendance.convert(attendance));
+    }
+
+    private void deleteLessonAttendance(Attendance existingAtt) {
+
+        if (existingAtt != null) {
+            existingAtt.setExtenuations(null);
+            existingAtt.setLesson(null);
+            existingAtt.setStudent(null);
+            attendanceRepository.save(existingAtt);
+
+            attendanceRepository.delete(existingAtt);
+        }
     }
 
 
@@ -412,21 +428,10 @@ public class TeacherServiceImpl implements TeacherService {
 
         if (grade != null && grade.getStudent().equals(student)) {
 
-            //Student - null
-            Student gradeStudent = grade.getStudent();
-            gradeStudent.setGrades(gradeRepository.findAllByStudentId(studentId)
-                    .stream()
-                    .filter(grade1 -> !grade1.equals(grade))
-                    .collect(Collectors.toSet()));
-            studentRepository.save(student);
-
-            //Teacher - null
-            Teacher teacher = grade.getTeacher();
-            teacher.setGrades(gradeRepository.findAllByTeacherIdAndDate(teacher.getId(), grade.getDate())
-                    .stream()
-                    .filter(grade1 -> !grade1.equals(grade))
-                    .collect(Collectors.toSet()));
-            teacherRepository.save(teacher);
+            grade.setTeacher(null);
+            grade.setStudent(null);
+            grade.setSubject(null);
+            gradeRepository.save(grade);
 
             gradeRepository.delete(grade);
 
@@ -571,7 +576,7 @@ public class TeacherServiceImpl implements TeacherService {
         }
         Event event = optionalEvent.get();
 
-        if (event.getTeacher().getId() != teacherId) {
+        if (!event.getTeacher().getId().equals(teacherId)) {
             return false;
         } else {
             eventRepository.delete(event);

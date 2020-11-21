@@ -660,7 +660,7 @@ The above copyright notice and this permission notice shall be included in all c
 
         // Creating a XHR object
         let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/newAttendance";
+        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" +classIdVal + "/" + lessonIdVal + "/newAttendance";
 
         // open a connection
         xhr.open("POST", url, true);
@@ -788,7 +788,7 @@ The above copyright notice and this permission notice shall be included in all c
         xhr.onreadystatechange = function () {
             location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
         };
-        
+
 
         // Sending data with the request
         xhr.send();
