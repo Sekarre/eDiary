@@ -12,13 +12,12 @@ import com.ediary.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Transient;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -66,7 +65,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public TeacherDto findByUser(User user) {
         Optional<Teacher> teacherOptional = teacherRepository.findByUser(user);
-        if (!teacherOptional.isPresent()) {
+        if (teacherOptional.isEmpty()) {
             throw new NotFoundException("Teacher Not Found.");
         }
 
@@ -81,7 +80,7 @@ public class TeacherServiceImpl implements TeacherService {
                 .filter(s -> s.getSchoolClass().getLessons()
                         .stream()
                         .anyMatch(lesson -> lesson.getId().equals(lessonId)))
-                .findAny().orElseThrow(() -> new NoAccessException("Class -> Lesson"));
+                .findAny().orElseThrow(() -> new AccessDeniedException("Class -> Lesson"));
 
         return studentRepository.findAllBySchoolClassId(classId).stream()
                 .map(studentToStudentDto::convert)
@@ -175,7 +174,7 @@ public class TeacherServiceImpl implements TeacherService {
         Subject teacherSubject = teacher.getSubjects().stream()
                 .filter(subject -> subject.getId().equals(subjectId))
                 .findFirst()
-                .orElseThrow(() -> new NoAccessException("No such subject for teacher"));
+                .orElseThrow(() -> new AccessDeniedException("No such subject for teacher"));
 
 
         return lessonRepository.findAllBySubjectIdOrderByDateDesc(teacherSubject.getId(), pageable)
@@ -184,10 +183,6 @@ public class TeacherServiceImpl implements TeacherService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<LessonDto> listLessons(Long teacherId) {
-        return null;
-    }
 
     @Override
     public List<LessonDto> listLessons(Long teacherId, Long subjectId, Long classId) {
@@ -463,7 +458,7 @@ public class TeacherServiceImpl implements TeacherService {
                 .filter(s -> s.getSchoolClass().getLessons()
                         .stream()
                         .anyMatch(lesson -> lesson.getId().equals(lessonId)))
-                .findAny().orElseThrow(() -> new NoAccessException("Class -> Lesson"));
+                .findAny().orElseThrow(() -> new AccessDeniedException("Class -> Lesson"));
 
         return attendanceRepository.findAllByLesson_Id(lessonId).stream()
                 .map(attendanceToAttendanceDto::convert)
@@ -607,9 +602,7 @@ public class TeacherServiceImpl implements TeacherService {
             }
         }
 
-        Grade savedGrade = gradeRepository.save(gradeDtoToGrade.convert(grade));
-
-        return savedGrade;
+        return gradeRepository.save(gradeDtoToGrade.convert(grade));
     }
 
     @Override
@@ -861,6 +854,10 @@ public class TeacherServiceImpl implements TeacherService {
 
         List<Extenuation> extenuations = new ArrayList<>();
 
+        if (teacher.getSchoolClass() == null) {
+            return null;
+        }
+
         List<Parent> parents = parentRepository.findAllByStudentsIn(teacher.getSchoolClass().getStudents());
 
         parents.forEach(parent -> extenuations
@@ -1040,13 +1037,13 @@ public class TeacherServiceImpl implements TeacherService {
     private void checkIfSubjectHasClass(Long classId, Teacher teacher) {
         teacher.getSubjects().stream()
                 .filter(s -> s.getSchoolClass().getId().equals(classId))
-                .findAny().orElseThrow(() -> new NoAccessException("Subject -> Class"));
+                .findAny().orElseThrow(() -> new AccessDeniedException("Subject -> Class"));
     }
 
     private void checkIfTeacherHasSubject(Long subjectId, Teacher teacher) {
         teacher.getSubjects().stream()
                 .filter(s -> s.getId().equals(subjectId))
-                .findAny().orElseThrow(() -> new NoAccessException("Teacher -> Subject"));
+                .findAny().orElseThrow(() -> new AccessDeniedException("Teacher -> Subject"));
     }
 
 

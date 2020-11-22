@@ -18,7 +18,6 @@ public interface TeacherService {
     Lesson saveLesson(LessonDto lesson);
     Boolean deleteLesson(Long lessonId);
     List<LessonDto> listLessons(Integer page, Integer size, Long teacherId, Long subjectId);
-    List<LessonDto> listLessons(Long teacherId);
     List<LessonDto> listLessons(Long teacherId, Long subjectId, Long classId);
     LessonDto getLesson(Long lessonId);
 

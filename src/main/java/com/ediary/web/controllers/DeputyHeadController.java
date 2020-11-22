@@ -66,19 +66,18 @@ public class DeputyHeadController {
         return "deputyHead/newClass";
     }
 
-    @PreAuthorize("hasRole('DEPUTY_HEAD')")
+    @DeputyHeadPermission
     @PostMapping("/newClass/formTutor")
     public String processNewClass(@Valid @ModelAttribute ClassDto schoolClass, Model model,
                                   @RequestParam(name = "page", required = false) Optional<Integer> page) {
 
         model.addAttribute("page", page);
         model.addAttribute("schoolClass", schoolClass);
-        model.addAttribute("students", deputyHeadService.listAllStudentsWithoutClass(page.orElse(0),pageSize));
 
         return "deputyHead/newClassName";
     }
 
-    @PreAuthorize("hasRole('DEPUTY_HEAD')")
+    @DeputyHeadPermission
     @PostMapping("/newClass/name")
     public String processNewClassName(@Valid @ModelAttribute ClassDto schoolClass, BindingResult result) {
 

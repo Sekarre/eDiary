@@ -4,12 +4,16 @@ import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.*;
 import com.ediary.domain.security.User;
+import com.ediary.repositories.TeacherRepository;
+import com.ediary.security.perms.FormTutorPermission;
+import com.ediary.security.perms.TeacherPermission;
 import com.ediary.services.FormTutorService;
 import com.ediary.services.TeacherService;
 import com.ediary.services.WeeklyAttendancesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,12 +72,14 @@ public class TeacherController {
         });
     }
 
+    @PreAuthorize("hasRole('TEACHER')")
     @GetMapping("/home")
     public String home() {
 
         return "/teacher/index";
     }
 
+    @TeacherPermission
     @GetMapping("/{teacherId}/event")
     public String getAllEvents(@PathVariable Long teacherId, Model model) {
 
@@ -81,6 +87,8 @@ public class TeacherController {
         return "/teacher/allEvents";
     }
 
+    //todo: hmm
+    @TeacherPermission
     @GetMapping("/{teacherId}/event/{eventId}")
     public String getEvent(@PathVariable Long teacherId, @PathVariable Long eventId, Model model) {
 
@@ -88,6 +96,7 @@ public class TeacherController {
         return "/teacher/event";
     }
 
+    @TeacherPermission
     @GetMapping("/{teacherId}/event/new")
     public String newEvent(@PathVariable Long teacherId, Model model) {
 
@@ -95,6 +104,7 @@ public class TeacherController {
         return "/teacher/newEvent";
     }
 
+    @TeacherPermission
     @PostMapping("/{teacherId}/event/new")
     public String processNewEvent(@Valid @RequestBody EventDto eventDto, BindingResult result) {
         if (result.hasErrors()) {
@@ -106,6 +116,8 @@ public class TeacherController {
         }
     }
 
+    //todo: hmm
+    @TeacherPermission
     @DeleteMapping("/{teacherId}/event/{eventId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public String deleteEvent(@PathVariable Long teacherId, @PathVariable Long eventId) {
@@ -114,6 +126,7 @@ public class TeacherController {
         return "/" + teacherId + "/event";
     }
 
+    @TeacherPermission //todo: hmm
     @PutMapping("/{teacherId}/event/update")
     public String updatePutEvent(@PathVariable Long teacherId,
                                  @Valid @RequestBody EventDto eventDto, BindingResult result) {
@@ -126,6 +139,7 @@ public class TeacherController {
         }
     }
 
+    @TeacherPermission //todo: hmm
     @PatchMapping("/{teacherId}/event/update")
     public String updatePatchEvent(@PathVariable Long teacherId,
                                    @Valid @RequestBody EventDto eventDto, BindingResult result) {
@@ -138,6 +152,7 @@ public class TeacherController {
         }
     }
 
+    @TeacherPermission
     @GetMapping("/{teacherId}/classes")
     public String getAllClasses(@PathVariable Long teacherId, Model model) {
 
@@ -146,7 +161,7 @@ public class TeacherController {
         return "/teacher/allClasses";
     }
 
-
+    @TeacherPermission
     @GetMapping("/{teacherId}/behavior")
     public String getAllBehaviorsByTeacher(@PathVariable Long teacherId, Model model) {
 
@@ -154,6 +169,7 @@ public class TeacherController {
         return "/teacher/behavior";
     }
 
+    @TeacherPermission
     @GetMapping("/{teacherId}/behavior/new")
     public String newBehavior(@PathVariable Long teacherId, Model model) {
 
@@ -161,6 +177,7 @@ public class TeacherController {
         return "/teacher/newBehavior";
     }
 
+    @TeacherPermission
     @PostMapping("/{teacherId}/behavior/new")
     public String processNewBehavior(@Valid @RequestBody BehaviorDto behaviorDto, BindingResult result) {
         if (result.hasErrors()) {
@@ -172,6 +189,7 @@ public class TeacherController {
         }
     }
 
+    @TeacherPermission //todo: hmm
     @PostMapping("/{teacherId}/behavior/{behaviorId}")
     public String deleteBehavior(@PathVariable Long teacherId, @PathVariable Long behaviorId) {
 
@@ -193,7 +211,8 @@ public class TeacherController {
         }
     }
 
-    @PatchMapping("/{teacherId}/behavior/update")
+    @TeacherPermission //todo: hmm
+    @PostMapping("/{teacherId}/behavior/update")
     public String updatePatchBehavior(@PathVariable Long teacherId,
                                       @Valid @RequestBody BehaviorDto behaviorDto, BindingResult result) {
         if (result.hasErrors()) {
@@ -207,13 +226,13 @@ public class TeacherController {
         }
     }
 
-    //todo: tests
+    @TeacherPermission
     @GetMapping("/{teacherId}/attendances")
     public String getAttendances(@PathVariable Long teacherId) {
         return "teacher/attendances/main";
     }
 
-
+    @TeacherPermission
     @GetMapping("/{teacherId}/attendances/class")
     public String getAttendancesClass(@PathVariable Long teacherId, Model model) {
         model.addAttribute("classes", teacherService.listClassByTeacher(teacherId));
@@ -221,6 +240,7 @@ public class TeacherController {
         return "teacher/attendances/classes";
     }
 
+    @TeacherPermission
     @GetMapping("/{teacherId}/attendances/class/{classId}")
     public String getAttendancesClassStudent(@PathVariable Long teacherId, @PathVariable Long classId, Model model) {
 
@@ -230,7 +250,7 @@ public class TeacherController {
         return "teacher/attendances/students";
     }
 
-
+    @TeacherPermission
     @GetMapping("/{teacherId}/attendances/class/{classId}/{studentId}")
     public String getAttendancesClassSelectedStudent(@PathVariable Long teacherId,
                                                      @PathVariable Long classId,
@@ -244,6 +264,7 @@ public class TeacherController {
         return "teacher/attendances/studentAttendances";
     }
 
+    @TeacherPermission
     @GetMapping("/{teacherId}/attendances/class/{classId}/{studentId}/{direction}/{dateValue}")
     public String getAllAttendancesClassSelectedStudentWithDate(@PathVariable Long studentId,
                                                                 @PathVariable Long teacherId,
@@ -268,40 +289,9 @@ public class TeacherController {
         return "teacher/attendances/studentAttendances";
     }
 
-    @PostMapping("/{teacherId}/attendances/class/{classId}/{studentId}/excuse")
-    public String processExcuseAttendancesFormTutor(@PathVariable Long teacherId,
-                                                    @PathVariable Long classId,
-                                                    @PathVariable Long studentId,
-                                                    @RequestParam(name = "toExcuse", required = false) List<Long> ids) {
-
-        teacherService.excuseAttendances(ids, teacherId, studentId, classId);
-
-        return "redirect:/teacher/" + teacherId + "/attendances/class/" + classId + "/" + studentId;
-    }
 
 
-    @GetMapping("{teacherId}/attendances/extenuations")
-    public String getAllExtenuations(@PathVariable Long teacherId, Model model) {
-        model.addAttribute("extenuations", teacherService.listExtenuations(teacherId));
-
-        return "teacher/attendances/extenuations";
-    }
-
-    @PostMapping("{teacherId}/attendances/extenuation")
-    public String processNewExtenuationStatus(@PathVariable Long teacherId,
-                                              @RequestParam(name = "accept", required = false) String accept,
-                                              @RequestParam(name = "reject", required = false) String reject,
-                                              @RequestParam(name = "extId", required = false) Long extenuationId) {
-        if (accept != null) {
-            teacherService.acceptExtenuation(extenuationId);
-        } else {
-            teacherService.rejectExtenuation(extenuationId);
-        }
-
-        return "redirect:/teacher/" + teacherId + "/attendances/extenuations";
-    }
-
-
+    @TeacherPermission
     @GetMapping("{teacherId}/timetable")
     public String getTeacherTimetable(@PathVariable Long teacherId, Model model) {
         model.addAttribute("timetable", teacherService.getTimetableByTeacherId(teacherId));
@@ -311,7 +301,7 @@ public class TeacherController {
 
     //end of todo
 
-
+    @TeacherPermission
     @GetMapping("/{teacherId}/grade/subject")
     public String getAllSubjectsGrade(@PathVariable Long teacherId, Model model) {
 
@@ -320,7 +310,7 @@ public class TeacherController {
         return "teacher/grade/subject";
     }
 
-
+    @TeacherPermission
     @GetMapping("/{teacherId}/grade/subject/{subjectId}")
     public String getAllGradesBySubject(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
 
@@ -329,6 +319,7 @@ public class TeacherController {
         return "/teacher/grade/allGrades";
     }
 
+    @TeacherPermission
     @GetMapping("/{teacherId}/grade/subject/{subjectId}/new")
     public String newGrade(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
 
@@ -336,6 +327,7 @@ public class TeacherController {
         return "/teacher/grade/newGrade";
     }
 
+    @TeacherPermission
     @PostMapping("/{teacherId}/grade/subject/{subjectId}/new")
     public String processNewGrade(@PathVariable Long teacherId,
                                   @PathVariable Long subjectId,
@@ -349,6 +341,7 @@ public class TeacherController {
         }
     }
 
+    @TeacherPermission
     @DeleteMapping("/{teacherId}/grade/subject/{subjectId}/{gradeId}")
     public String deleteGrade(@PathVariable Long teacherId,
                               @PathVariable Long subjectId, @PathVariable Long gradeId) {
@@ -357,7 +350,7 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
     }
 
-
+    @TeacherPermission
     @PutMapping("/{teacherId}/grade/subject/{subjectId}/update")
     public String updatePutGrade(@PathVariable Long teacherId,
                                  @PathVariable Long subjectId,
@@ -372,6 +365,7 @@ public class TeacherController {
         }
     }
 
+    @TeacherPermission
     @PatchMapping("/{teacherId}/grade/subject/{subjectId}/update")
     public String updatePatchGrade(@PathVariable Long teacherId,
                                    @PathVariable Long subjectId,
@@ -386,7 +380,7 @@ public class TeacherController {
         }
     }
 
-
+    @TeacherPermission
     @GetMapping("/{teacherId}/lesson/subject")
     public String getAllSubjects(@PathVariable Long teacherId, Model model) {
 
@@ -395,7 +389,7 @@ public class TeacherController {
         return "/teacher/lesson/subject";
     }
 
-
+    @TeacherPermission
     @GetMapping("/{teacherId}/lesson/subject/{subjectId}")
     public String getAllLessonsBySubject(@PathVariable Long teacherId,
                                          @RequestParam(name = "page", required = false) Optional<Integer> page,
@@ -408,7 +402,7 @@ public class TeacherController {
         return "/teacher/lesson/allLessons";
     }
 
-
+    @TeacherPermission
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/new")
     public String newLesson(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
 
@@ -418,7 +412,7 @@ public class TeacherController {
         return "/teacher/lesson/newLesson";
     }
 
-
+    @TeacherPermission
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/new")
     public String processNewLesson(@PathVariable Long teacherId,
                                    @PathVariable Long subjectId,
@@ -434,6 +428,7 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId;
     }
 
+    @TeacherPermission
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}")
     public String getLesson(@PathVariable Long teacherId,
                             @PathVariable Long subjectId,
@@ -453,6 +448,7 @@ public class TeacherController {
         return "/teacher/lesson/lesson";
     }
 
+    @TeacherPermission
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/delete")
     public String deleteLesson(@PathVariable Long teacherId,
                                @PathVariable Long subjectId,
@@ -464,7 +460,7 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId;
     }
 
-
+    @TeacherPermission
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/newAttendance")
     public String newLessonAttendance(@PathVariable Long teacherId,
                                       @PathVariable Long subjectId,
@@ -478,6 +474,7 @@ public class TeacherController {
                 lessonId;
     }
 
+    @TeacherPermission
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/newAttendancesClass")
     public String newLessonAttendancesForClass(@PathVariable Long teacherId,
                                       @PathVariable Long subjectId,
@@ -491,7 +488,7 @@ public class TeacherController {
                 lessonId;
     }
 
-
+    @TeacherPermission
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/{lessonId}/newGrade")
     public String processNewLessonGrade(@PathVariable Long teacherId,
                                         @PathVariable Long subjectId,
@@ -511,6 +508,7 @@ public class TeacherController {
                 lessonId;
     }
 
+    @TeacherPermission
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/{lessonId}/{classId}/{studentId}/{gradeId}/delete")
     public String deleteGrade(@PathVariable Long teacherId,
                               @PathVariable Long subjectId,
@@ -525,6 +523,7 @@ public class TeacherController {
                 lessonId;
     }
 
+    @TeacherPermission
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")
     public String newLessonEvent(@PathVariable Long teacherId,
                                  @PathVariable Long subjectId,
@@ -536,6 +535,7 @@ public class TeacherController {
         return "/teacher/lesson/newLessonEvent";
     }
 
+    @TeacherPermission
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")
     public String processNewLessonEvent(@PathVariable Long teacherId,
                                         @PathVariable Long subjectId,
@@ -552,7 +552,7 @@ public class TeacherController {
         }
     }
 
-
+    @TeacherPermission
     @GetMapping("/{teacherId}/subject")
     public String getSubjects(@PathVariable Long teacherId, Model model) {
 
@@ -560,6 +560,7 @@ public class TeacherController {
         return "/teacher/subject/allSubject";
     }
 
+    @TeacherPermission
     @GetMapping("/{teacherId}/subject/{subjectId}")
     public String getSubject(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
 
@@ -568,6 +569,7 @@ public class TeacherController {
         return "/teacher/subject/subject";
     }
 
+    @TeacherPermission
     @GetMapping("/{teacherId}/subject/new")
     public String newSubject(@PathVariable Long teacherId, Model model) {
 
@@ -576,6 +578,7 @@ public class TeacherController {
         return "/teacher/subject/newSubject";
     }
 
+    @TeacherPermission
     @PostMapping("/{teacherId}/subject/new")
     public String processNewSubject(@PathVariable Long teacherId,
                                     @Valid @ModelAttribute SubjectDto subject,
@@ -589,6 +592,7 @@ public class TeacherController {
         }
     }
 
+    @TeacherPermission
     @PostMapping("/{teacherId}/subject/{subjectId}/delete")
     public String deleteSubject(@PathVariable Long teacherId, @PathVariable Long subjectId) {
 
@@ -596,6 +600,7 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/subject";
     }
 
+    @TeacherPermission
     @GetMapping("/{teacherId}/subject/{subjectId}/update")
     public String updateSubject(@PathVariable Long teacherId,
                                 @PathVariable Long subjectId, Model model) {
@@ -606,6 +611,7 @@ public class TeacherController {
 
     }
 
+    @TeacherPermission
     @PutMapping("/{teacherId}/subject/update")
     public String updatePutSubject(@PathVariable Long teacherId,
                                    @Valid @RequestBody SubjectDto subjectDto, BindingResult result) {
@@ -619,6 +625,7 @@ public class TeacherController {
         }
     }
 
+    @TeacherPermission
     @PostMapping("/{teacherId}/subject/{subjectId}/update")
     public String updatePatchSubject(@PathVariable Long teacherId,
                                      @PathVariable Long subjectId,
@@ -635,6 +642,7 @@ public class TeacherController {
         }
     }
 
+    @TeacherPermission
     @GetMapping("/{teacherId}/subject/{subjectId}/topic")
     public String getTopicsBySubject(@PathVariable Long teacherId,
                                      @PathVariable Long subjectId,
@@ -643,6 +651,7 @@ public class TeacherController {
         return "/teacher/subject/topic";
     }
 
+    @TeacherPermission
     @GetMapping("/{teacherId}/subject/{subjectId}/topic/new")
     public String newTopic(@PathVariable Long teacherId,
                            @PathVariable Long subjectId,
@@ -652,6 +661,7 @@ public class TeacherController {
         return "/teacher/subject/topic/new";
     }
 
+    @TeacherPermission
     @PostMapping("/{teacherId}/subject/{subjectId}/topic/new")
     public String processNewTopic(@PathVariable Long teacherId,
                                   @PathVariable Long subjectId,
@@ -666,6 +676,7 @@ public class TeacherController {
         }
     }
 
+    @TeacherPermission
     @PostMapping("/{teacherId}/subject/{subjectId}/topic/{topicId}")
     public String deleteTopic(@PathVariable Long teacherId,
                               @PathVariable Long subjectId,
@@ -675,6 +686,7 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/subject/" + subjectId;
     }
 
+    @TeacherPermission
     @PutMapping("/{teacherId}/subject/{subjectId}/topic/{topicId}")
     public String updatePutTopic(@PathVariable Long teacherId,
                                  @PathVariable Long subjectId,
@@ -690,6 +702,7 @@ public class TeacherController {
         }
     }
 
+    @TeacherPermission
     @PostMapping("/{teacherId}/subject/{subjectId}/topic/edit/{topicId}")
     public String updatePatchTopic(@PathVariable Long teacherId,
                                    @PathVariable Long subjectId,
@@ -709,6 +722,42 @@ public class TeacherController {
 
     //FormTutor
 
+    @FormTutorPermission
+    @PostMapping("/{teacherId}/attendances/class/{classId}/{studentId}/excuse")
+    public String processExcuseAttendancesFormTutor(@PathVariable Long teacherId,
+                                                    @PathVariable Long classId,
+                                                    @PathVariable Long studentId,
+                                                    @RequestParam(name = "toExcuse", required = false) List<Long> ids) {
+
+        teacherService.excuseAttendances(ids, teacherId, studentId, classId);
+
+        return "redirect:/teacher/" + teacherId + "/attendances/class/" + classId + "/" + studentId;
+    }
+
+    @FormTutorPermission
+    @GetMapping("{teacherId}/attendances/extenuations")
+    public String getAllExtenuations(@PathVariable Long teacherId, Model model) {
+        model.addAttribute("extenuations", teacherService.listExtenuations(teacherId));
+
+        return "teacher/attendances/extenuations";
+    }
+
+    @FormTutorPermission
+    @PostMapping("{teacherId}/attendances/extenuation")
+    public String processNewExtenuationStatus(@PathVariable Long teacherId,
+                                              @RequestParam(name = "accept", required = false) String accept,
+                                              @RequestParam(name = "reject", required = false) String reject,
+                                              @RequestParam(name = "extId", required = false) Long extenuationId) {
+        if (accept != null) {
+            teacherService.acceptExtenuation(extenuationId);
+        } else {
+            teacherService.rejectExtenuation(extenuationId);
+        }
+
+        return "redirect:/teacher/" + teacherId + "/attendances/extenuations";
+    }
+
+    @FormTutorPermission
     @GetMapping("/{teacherId}/formTutor/studentCouncil")
     public String getStudentCouncil(@PathVariable Long teacherId, Model model) {
 
@@ -722,7 +771,7 @@ public class TeacherController {
 
     }
 
-
+    @FormTutorPermission
     @PostMapping("/{teacherId}/formTutor/studentCouncil/new")
     public String processNewStudentCouncil(@PathVariable Long teacherId,
                                            @RequestParam(name = "studentId") List<Long> studentsId,
@@ -738,6 +787,7 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/formTutor/studentCouncil";
     }
 
+    @FormTutorPermission
     @DeleteMapping("/{teacherId}/formTutor/studentCouncil/delete")
     public String deleteStudentCouncil(@PathVariable Long teacherId) {
 
@@ -745,7 +795,7 @@ public class TeacherController {
         return "teacher/formTutor/studentCouncil";
     }
 
-
+    @FormTutorPermission
     @PostMapping("/{teacherId}/formTutor/studentCouncil/remove/{studentId}")
     public String removeStudentFromCouncil(@PathVariable Long teacherId,
                                            @PathVariable Long studentId,
@@ -758,6 +808,7 @@ public class TeacherController {
         return "teacher/formTutor/studentCouncil";
     }
 
+    @FormTutorPermission
     @GetMapping("/{teacherId}/formTutor/parentCouncil")
     public String getParentCouncil(@PathVariable Long teacherId, Model model) {
 
@@ -771,7 +822,7 @@ public class TeacherController {
 
     }
 
-
+    @FormTutorPermission
     @PostMapping("/{teacherId}/formTutor/parentCouncil/new")
     public String processNewParentCouncil(@PathVariable Long teacherId,
                                           @RequestParam(name = "parentId") List<Long> parentsId,
@@ -787,6 +838,7 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/formTutor/parentCouncil";
     }
 
+    @FormTutorPermission
     @DeleteMapping("/{teacherId}/formTutor/parentCouncil/delete")
     public String deleteParentCouncil(@PathVariable Long teacherId) {
 
@@ -795,6 +847,7 @@ public class TeacherController {
         return "teacher/formTutor/parentCouncil";
     }
 
+    @FormTutorPermission
     @PostMapping("/{teacherId}/formTutor/parentCouncil/remove/{parentId}")
     public String removeParentFromCouncil(@PathVariable Long teacherId,
                                           @PathVariable Long parentId,
@@ -807,6 +860,7 @@ public class TeacherController {
         return "teacher/formTutor/parentCouncil";
     }
 
+    @FormTutorPermission
     @GetMapping("/{teacherId}/formTutor/behaviorGrade")
     public String getClassBehaviorGrades(@PathVariable Long teacherId, Model model) {
 
@@ -815,7 +869,7 @@ public class TeacherController {
         return "teacher/formTutor/behaviorGrades";
     }
 
-
+    @FormTutorPermission
     @PostMapping("/{teacherId}/formTutor/behaviorGrade/new")
     public String processNewClassBehaviorGrade(@PathVariable Long teacherId,
                                                @Valid @RequestBody GradeDto gradeDto,
@@ -830,6 +884,7 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/formTutor/behaviorGrade";
     }
 
+    @FormTutorPermission
     @GetMapping("/{teacherId}/formTutor/studentCard")
     public String getStudentCard(@PathVariable Long teacherId, Model model) {
 
@@ -839,6 +894,7 @@ public class TeacherController {
         return "teacher/formTutor/studentCards";
     }
 
+    @FormTutorPermission
     @PostMapping("/{teacherId}/formTutor/studentCard")
     public String processNewTimeInterval(@PathVariable Long teacherId, Model model,
                                          @RequestParam(name = "startTime") @DateTimeFormat(pattern = "MM/yyyy") LocalDate startTime,
@@ -851,15 +907,13 @@ public class TeacherController {
     }
 
     //todo: tests
+    @FormTutorPermission
     @RequestMapping("/studentCard/{studentId}/download/{startTime}/{endTime}")
     public void downloadStudentCardPdf(HttpServletResponse response,
                                        @PathVariable Date startTime,
                                        @PathVariable Date endTime,
                                        @RequestHeader String referer,
                                        @PathVariable Long studentId) throws Exception {
-
-//        System.out.println(startTime.toString());
-//        System.out.println(endTime.toString());
 
         //Not allowing to download via url typing
         if (referer != null && !referer.isEmpty()) {

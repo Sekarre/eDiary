@@ -199,6 +199,14 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     public ClassDto addFormTutorToClass(Long classId, Long teacherId) {
         Class schoolClass = getSchoolCLass(classId);
 
+        Teacher currentTeacher = schoolClass.getTeacher();
+        currentTeacher.setSchoolClass(null);
+        currentTeacher.getUser().setRoles(currentTeacher.getUser().getRoles()
+                .stream()
+                .filter(role -> !role.getName().equals(DefaultLoader.FORM_TUTOR_ROLE))
+                .collect(Collectors.toSet()));
+        teacherRepository.save(currentTeacher);
+
         Teacher teacher = teacherRepository.
                 findById(teacherId).orElseThrow(() -> new NotFoundException("Teacher not found"));
 
@@ -206,6 +214,9 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
             throw new NotFoundException("Teacher is already form tutor");
         } else {
             schoolClass.setTeacher(teacher);
+            User user = userRepository.findById(teacher.getUser().getId()).orElse(null);
+            Set<Role> roles = user.getRoles();
+            roles.add(roleRepository.findByName(DefaultLoader.FORM_TUTOR_ROLE).orElse(null));
         }
 
 

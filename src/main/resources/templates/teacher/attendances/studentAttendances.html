@@ -10,7 +10,7 @@ Coded by Creative Tim
 =========================================================
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="utf-8"/>
@@ -158,7 +158,7 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                         </div>
                     </div>
-                    <button th:if="${isFormTutor}" class="btn btn-primary accept" id="accept" type="submit" disabled>Usprawiedliw wybrane</button>
+                    <button sec:authorize="hasRole('FORM_TUTOR')" th:if="${isFormTutor}" class="btn btn-primary accept" id="accept" type="submit" disabled>Usprawiedliw wybrane</button>
                 </div>
             </div>
             </form>
