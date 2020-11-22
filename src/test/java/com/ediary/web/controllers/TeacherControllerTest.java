@@ -490,7 +490,7 @@ class TeacherControllerTest {
         when(teacherService.saveAttendance(any())).thenReturn(attendance);
 
         mockMvc.perform(post(
-                "/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + lessonId + "/newAttendance")
+                "/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + classId + "/" + lessonId + "/newAttendance")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(AttendanceDto.builder().build())))
                 .andExpect(status().is3xxRedirection())

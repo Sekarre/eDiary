@@ -41,6 +41,13 @@ The above copyright notice and this permission notice shall be included in all c
             <div class="container-fluid">
                 <div class="navbar-wrapper">
                     <a class="navbar-brand">Lekcja:</a>
+                    <a data-toggle="modal" class="open-gradeDialogModalLessonDelete" href="#deleteLessonModal"
+                       th:attr="data-lesson=''+${lessonId}+'', data-teacher=''+${teacherId}+'',data-subject=''+${subjectId}+'',
+                        data-class=''+${classId}+'', data-target='#deleteLessonModal'">
+                        <button rel="tooltip" class="submit btn  btn-link btn-lg btn-danger">
+                            <i class="material-icons">delete</i>
+                        </button>
+                    </a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -372,6 +379,31 @@ The above copyright notice and this permission notice shall be included in all c
         <input id="teacherIdVal" type="hidden" th:value="${grade.teacherId}"/>
         <input id="lessonIdVal" type="hidden" th:value="${lessonId}"/>
         <input id="classIdVal" type="hidden" th:value="${classId}"/>
+
+<!--        Modal delete lesson-->
+        <div class="modal fade" id="deleteLessonModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><i class="material-icons">delete</i></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="modal-body-class">
+
+                    </div>
+                    <div class="modal-footer">
+                        <form id="deleteFormLesson" method="post">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
+                            <button type="submit" class="btn btn-danger" >Usuń</button>
+                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!--        end modal delete lesson -->
     </div>
 </div>
 
@@ -594,6 +626,7 @@ The above copyright notice and this permission notice shall be included in all c
         md.initFormExtendedDatetimepickers();
     });
 </script>
+
 <!--New grade modal-->
 
 <script>
@@ -610,6 +643,8 @@ The above copyright notice and this permission notice shall be included in all c
 
     });
 </script>
+
+<!--New grade-->
 
 <script>
     $(document).on("click", "#sendGrade", function () {
@@ -658,6 +693,124 @@ The above copyright notice and this permission notice shall be included in all c
     });
 </script>
 
+<!--Edit grade modal-->
+<script>
+    $(document).on("click", "#open-gradeDialogModal-editGrade", function () {
+
+        var studentId = $(this).data('id');
+        var studentName = $(this).data('student');
+        var value = $(this).data('value');
+        var weight = $(this).data('weight');
+        var desc = $(this).data('desc');
+        var date = $(this).data('date');
+        var gradeId = $(this).data('grade');
+
+        if (desc == null) {
+            desc = "";
+        }
+
+        var gradeStudentId = document.getElementById("studentIdValEdit");
+
+        gradeStudentId.value = studentId;
+
+        document.getElementById("gradeIdValue").value = gradeId;
+        document.getElementById("studentNameValEdit").value = studentName;
+        document.getElementById("gradeWeightValEdit").value = weight;
+        document.getElementById("gradeValueValEdit").value = value;
+        document.getElementById("gradeDescValEdit").value = desc;
+        document.getElementById("gradeDateValEdit").value = date;
+
+    });
+</script>
+
+<!--Edit grade-->
+
+<script>
+    $(document).on("click", "#editGrade", function () {
+        var csrf= $("#csrfVal").val();
+        var subjectIdVal = $("#subjectIdVal").val();
+        var teacherIdVal = $("#teacherIdVal").val();
+        var studentIdVal = document.getElementById("studentIdValEdit").value;
+        var lessonIdVal = $("#lessonIdVal").val();
+        var classIdVal = $("#classIdVal").val();
+        var gradeIdVal = $("#gradeIdValue").val();
+
+
+        var gradeDto = {
+            id: gradeIdVal,
+            value: $("#gradeValueValEdit").val(),
+            weight: $("#gradeWeightValEdit").val(),
+            description: $("#gradeDescValEdit").val(),
+            date: $("#gradeDateValEdit").val(),
+            teacherId: teacherIdVal,
+            subjectId: subjectIdVal,
+            studentId: studentIdVal,
+        };
+
+        // Creating a XHR object
+        let xhr = new XMLHttpRequest();
+        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/newGrade";
+
+        // open a connection
+        xhr.open("POST", url, true);
+
+        // Set the request header i.e. which type of content you are sending
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("_csrf", csrf);
+        xhr.setRequestHeader('x-csrf-token', csrf);
+
+        // Create a state change callback
+        xhr.onreadystatechange = function () {
+            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
+        };
+
+
+        // Converting JSON data to string
+        var data = JSON.stringify(gradeDto);
+
+        // Sending data with the request
+        xhr.send(data);
+    });
+</script>
+
+<!--Delete grade-->
+
+<script>
+    $(document).on("click", "#deleteGrade", function () {
+        var csrf= $("#csrfVal").val();
+        var subjectIdVal = $("#subjectIdVal").val();
+        var teacherIdVal = $("#teacherIdVal").val();
+        var studentIdVal = document.getElementById("studentIdValEdit").value;
+        var lessonIdVal = $("#lessonIdVal").val();
+        var classIdVal = $("#classIdVal").val();
+        var gradeIdVal = $("#gradeIdValue").val();
+
+
+
+        // Creating a XHR object
+        let xhr = new XMLHttpRequest();
+        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/" + classIdVal
+            + "/" + studentIdVal + "/" + gradeIdVal + "/delete";
+
+        // open a connection
+        xhr.open("POST", url, true);
+
+        // Set the request header i.e. which type of content you are sending
+        xhr.setRequestHeader("_csrf", csrf);
+        xhr.setRequestHeader('x-csrf-token', csrf);
+
+        // Create a state change callback
+        xhr.onreadystatechange = function () {
+            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
+        };
+
+
+        // Sending data with the request
+        xhr.send();
+    });
+</script>
+
+
 <!--new Attendance-->
 <script>
     function sendAtt(teacherIdVal, subjectIdVal, classIdVal, lessonIdVal, studentIdVal, status) {
@@ -685,8 +838,8 @@ The above copyright notice and this permission notice shall be included in all c
         xhr.setRequestHeader('x-csrf-token', csrf);
 
         // Create a state change callback
-            xhr.onreadystatechange = function () {
-                location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
+        xhr.onreadystatechange = function () {
+            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
         };
 
 
@@ -736,117 +889,29 @@ The above copyright notice and this permission notice shall be included in all c
     }
 </script>
 
-<!--Edit grade modal-->
+<!--Delete lesson modal action-->
 <script>
-    $(document).on("click", "#open-gradeDialogModal-editGrade", function () {
+    $(document).on("click", ".open-gradeDialogModalLessonDelete", function () {
 
-        var studentId = $(this).data('id');
-        var studentName = $(this).data('student');
-        var value = $(this).data('value');
-        var weight = $(this).data('weight');
-        var desc = $(this).data('desc');
-        var date = $(this).data('date');
-        var gradeId = $(this).data('grade');
+        var lessonId = $(this).data('lesson');
+        var teacherId = $(this).data('teacher');
+        var subjectId = $(this).data('subject');
+        var classId = $(this).data('class')
 
-        if (desc == null) {
-            desc = "";
-        }
+        var lessonInfo = document.getElementById("modal-body-class");
 
-        var gradeStudentId = document.getElementById("studentIdValEdit");
-
-        gradeStudentId.value = studentId;
-
-        document.getElementById("gradeIdValue").value = gradeId;
-        document.getElementById("studentNameValEdit").value = studentName;
-        document.getElementById("gradeWeightValEdit").value = weight;
-        document.getElementById("gradeValueValEdit").value = value;
-        document.getElementById("gradeDescValEdit").value = desc;
-        document.getElementById("gradeDateValEdit").value = date;
-
-    });
-</script>
-<script>
-    $(document).on("click", "#editGrade", function () {
-        var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
-        var studentIdVal = document.getElementById("studentIdValEdit").value;
-        var lessonIdVal = $("#lessonIdVal").val();
-        var classIdVal = $("#classIdVal").val();
-        var gradeIdVal = $("#gradeIdValue").val();
+        lessonInfo.innerHTML = "Napewno chcesz usunąć tą lekcje?";
 
 
-        var gradeDto = {
-            id: gradeIdVal,
-            value: $("#gradeValueValEdit").val(),
-            weight: $("#gradeWeightValEdit").val(),
-            description: $("#gradeDescValEdit").val(),
-            date: $("#gradeDateValEdit").val(),
-            teacherId: teacherIdVal,
-            subjectId: subjectIdVal,
-            studentId: studentIdVal,
-        };
+        var deleteForm = document.getElementById("deleteFormLesson");
 
-        // Creating a XHR object
-        let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/newGrade";
-
-        // open a connection
-        xhr.open("POST", url, true);
-
-        // Set the request header i.e. which type of content you are sending
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.setRequestHeader("_csrf", csrf);
-        xhr.setRequestHeader('x-csrf-token', csrf);
-
-        // Create a state change callback
-        xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
-        };
-
-
-        // Converting JSON data to string
-        var data = JSON.stringify(gradeDto);
-
-        // Sending data with the request
-        xhr.send(data);
-    });
-</script>
-<script>
-    $(document).on("click", "#deleteGrade", function () {
-        var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
-        var studentIdVal = document.getElementById("studentIdValEdit").value;
-        var lessonIdVal = $("#lessonIdVal").val();
-        var classIdVal = $("#classIdVal").val();
-        var gradeIdVal = $("#gradeIdValue").val();
-
-
-
-        // Creating a XHR object
-        let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/" + classIdVal
-            + "/" + studentIdVal + "/" + gradeIdVal + "/delete";
-
-        // open a connection
-        xhr.open("POST", url, true);
-
-        // Set the request header i.e. which type of content you are sending
-        xhr.setRequestHeader("_csrf", csrf);
-        xhr.setRequestHeader('x-csrf-token', csrf);
-
-        // Create a state change callback
-        xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
-        };
-
-
-        // Sending data with the request
-        xhr.send();
+        deleteForm.setAttribute("action", "/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + classId
+            + "/" + lessonId + "/delete");
     });
 </script>
 
+
+<!--Storing active card-->
 <script>
     $(document).ready(function() {
         var activeTab = localStorage.getItem('activeTab');

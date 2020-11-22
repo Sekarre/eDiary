@@ -111,7 +111,57 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Boolean deleteLesson(Long lessonId) {
-        return null;
+        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(() -> new NotFoundException("Lesson not found"));
+
+
+        //"Deleting" lesson from class
+        Class schoolClass = classRepository
+                .findById(lesson.getSchoolClass().getId()).orElseThrow(() -> new NotFoundException("School Class not found"));
+        schoolClass.setLessons(lessonRepository
+                .findAllBySubjectId(lesson.getSubject().getId())
+                .stream()
+                .filter(l -> !l.equals(lesson))
+                .collect(Collectors.toSet()));
+        classRepository.save(schoolClass);
+
+        //"deleting" lesson from subjects
+        List<Subject> subjects = subjectRepository.findAllByLessonsIn(Collections.singleton(lesson));
+        subjects.forEach(subject -> subject.setLessons(lessonRepository
+                .findAllBySubjectId(lesson.getSubject().getId())
+                .stream()
+                .filter(l -> !l.equals(lesson))
+                .collect(Collectors.toSet())));
+        subjectRepository.saveAll(subjects);
+
+        //null in attendances
+        List<Attendance> attendances = new ArrayList<>(attendanceRepository.findAllByLesson_Id(lessonId));
+        attendances.forEach(attendance -> attendance.setLesson(null));
+        attendanceRepository.saveAll(attendances);
+
+        //null in topic
+        lesson.setTopic(null);
+        lessonRepository.save(lesson);
+
+
+        List<Grade> grades = gradeRepository.findAllByTeacherIdAndDate(lesson.getSubject().getTeacher().getId(), lesson.getDate());
+        grades.forEach(grade -> deleteLessonGrade(grade.getId()));
+
+        lessonRepository.delete(lesson);
+
+        return true;
+    }
+
+    private void deleteLessonGrade(Long gradeId) {
+        Grade grade = gradeRepository.findById(gradeId).orElse(null);
+
+        if (grade != null) {
+            grade.setTeacher(null);
+            grade.setStudent(null);
+            grade.setSubject(null);
+            gradeRepository.save(grade);
+
+            gradeRepository.delete(grade);
+        }
     }
 
 
@@ -375,9 +425,17 @@ public class TeacherServiceImpl implements TeacherService {
                 attendanceToSave = new Attendance();
                 attendanceToSave.setStudent(s);
                 attendanceToSave.setLesson(lessonRepository.findById(attendanceDto.getLessonId()).orElse(null));
+                attendanceToSave.setStatus(attendanceDto.getStatus());
+
             }
 
-            attendanceToSave.setStatus(attendanceDto.getStatus());
+//            Unexcused and excused attendances stay same
+            Attendance attendance = attendanceRepository.findByStudentIdAndLessonId(s.getId(), lesson.getId());
+            if ((attendance != null && attendance.getStatus() != null) && (attendance.getStatus() != Attendance.Status.UNEXCUSED)
+                    && (attendance.getStatus() != Attendance.Status.EXCUSED)) {
+                attendanceToSave.setStatus(attendanceDto.getStatus());
+            }
+
             attendanceRepository.save(attendanceToSave);
         }
 
