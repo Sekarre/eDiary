@@ -70,7 +70,6 @@ public class DeputyHeadControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("page"))
                 .andExpect(model().attributeExists("schoolClass"))
-                .andExpect(model().attributeExists("students"))
                 .andExpect(view().name("deputyHead/newClassName"));
 
     }

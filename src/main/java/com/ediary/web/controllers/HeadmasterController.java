@@ -18,6 +18,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Controller
@@ -60,25 +61,26 @@ public class HeadmasterController {
 
 
     @HeadmasterPermission
-    @GetMapping("/teacherReport/{page}")
-    public String getTeacherReport(Model model, @PathVariable Integer page) {
+    @GetMapping("/teacherReport")
+    public String getTeacherReport(Model model,
+                                   @RequestParam(name = "page", required = false) Optional<Integer> page) {
 
-        model.addAttribute("teachers", headmasterService.listAllTeachers(page, 20));
-        model.addAttribute("currentPage", page);
+        model.addAttribute("teachers", headmasterService.listAllTeachers(page.orElse(0), 20));
+        model.addAttribute("page", page);
         model.addAttribute("timeInterval", headmasterService.initNewTimeInterval());
 
         return "headmaster/teacherReport";
     }
 
     @HeadmasterPermission
-    @PostMapping("/teacherReport/{page}")
+    @PostMapping("/teacherReport")
     public String processNewTimeInterval(Model model,
-                                         @PathVariable Integer page,
+                                         @RequestParam(name = "page", required = false) Optional<Integer> page,
                                          @RequestParam(name = "startTime") @DateTimeFormat(pattern = "MM/yyyy") LocalDate startTime,
                                          @RequestParam(name = "endTime") @DateTimeFormat(pattern = "MM/yyyy") LocalDate endTime) {
 
-        model.addAttribute("teachers", headmasterService.listAllTeachers(page, 20));
-        model.addAttribute("currentPage", page);
+        model.addAttribute("teachers", headmasterService.listAllTeachers(page.orElse(0), 20));
+        model.addAttribute("page", page);
         model.addAttribute("timeInterval", headmasterService.setTimeInterval(startTime, endTime));
 
         return "headmaster/teacherReport";

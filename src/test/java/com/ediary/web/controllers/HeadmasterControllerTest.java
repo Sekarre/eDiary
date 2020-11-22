@@ -55,11 +55,11 @@ public class HeadmasterControllerTest {
 
         when(headmasterService.initNewTimeInterval()).thenReturn(TimeInterval.builder().build());
 
-        mockMvc.perform(get("/headmaster/teacherReport/" + page))
+        mockMvc.perform(get("/headmaster/teacherReport"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("teachers"))
                 .andExpect(model().attributeExists("timeInterval"))
-                .andExpect(model().attributeExists("currentPage"))
+                .andExpect(model().attributeExists("page"))
                 .andExpect(view().name("headmaster/teacherReport"));
 
         assertEquals(2, headmasterService.listAllTeachers(page, 20).size());
@@ -77,13 +77,13 @@ public class HeadmasterControllerTest {
 
         when(headmasterService.setTimeInterval(any(), any())).thenReturn(TimeInterval.builder().build());
 
-        mockMvc.perform(post("/headmaster/teacherReport/" + page)
+        mockMvc.perform(post("/headmaster/teacherReport")
                 .param("startTime", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                 .param("endTime", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("teachers"))
                 .andExpect(model().attributeExists("timeInterval"))
-                .andExpect(model().attributeExists("currentPage"))
+                .andExpect(model().attributeExists("page"))
                 .andExpect(view().name("headmaster/teacherReport"));
 
         assertEquals(2, headmasterService.listAllTeachers(page, 20).size());

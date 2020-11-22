@@ -13,6 +13,7 @@ import com.ediary.domain.*;
 import com.ediary.domain.Class;
 import com.ediary.domain.security.Role;
 import com.ediary.domain.security.User;
+import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
 import com.ediary.repositories.security.RoleRepository;
 import com.ediary.repositories.security.UserRepository;
@@ -184,18 +185,27 @@ public class DeputyHeadServiceImplTest {
         Long teacherId = 1L;
         Long classId = 1L;
 
+        User user = User.builder().id(1L)
+                .role(Role.builder().name("Role").build())
+                .build();
+
         Class schoolClass = Class.builder()
+                .teacher(Teacher.builder()
+                        .user(user)
+                        .build())
                 .id(classId)
                 .build();
 
 
-        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(Teacher.builder().build()));
+        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(Teacher.builder()
+                .schoolClass(schoolClass).user(user).build()));
+        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(User.builder().build()));
         when(classRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(schoolClass));
         when(classToClassDto.convert(any())).thenReturn(ClassDto.builder().build());
+        when(roleRepository.findByName(any())).thenReturn(Optional.ofNullable(Role.builder().build()));
 
-        ClassDto newSchoolClass = deputyHeadService.addFormTutorToClass(classId, teacherId);
-
-        assertNotNull(newSchoolClass);
+        assertThrows(NotFoundException.class, () -> deputyHeadService.addFormTutorToClass(classId, teacherId));
+        
         verify(classRepository, times(1)).findById(classId);
         verify(teacherRepository, times(1)).findById(teacherId);
     }

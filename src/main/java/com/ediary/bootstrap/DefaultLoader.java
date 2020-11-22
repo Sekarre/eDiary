@@ -257,12 +257,20 @@ public class DefaultLoader implements CommandLineRunner {
                     .build());
         }
 
+        //DeputyHead + Headmaster
         userRepository.save(User.builder()
                 .firstName("DeputyHead")
                 .lastName("DeputyHead")
                 .role(roleRepository.findByName(DEPUTY_HEAD_ROLE).orElse(null))
                 .username("deputy")
                 .password(passwordEncoder.encode("deputy")).build());
+
+        userRepository.save(User.builder()
+                .firstName("Headmaster")
+                .lastName("Headmaster")
+                .role(roleRepository.findByName(HEADMASTER_ROLE).orElse(null))
+                .username("headmaster")
+                .password(passwordEncoder.encode("headmaster")).build());
 
 
         firstUserAsStudentId = userRepository.findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId();

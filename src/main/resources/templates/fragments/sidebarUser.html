@@ -71,6 +71,10 @@
                             <i class="material-icons">person</i>
                             <p>Wicedyrektor</p>
                         </a>
+                        <a sec:authorize="hasRole('HEADMASTER')" class="nav-link" th:href="@{'/deputyHead/home'}">
+                            <i class="material-icons">person</i>
+                            <p>Dyrektor</p>
+                        </a>
                     </li>
                 </span>
 

@@ -262,7 +262,7 @@ class TeacherControllerTest {
 
         when(teacherService.updatePatchBehavior(any())).thenReturn(BehaviorDto.builder().id(behaviorId).build());
 
-        mockMvc.perform(patch("/teacher/" + teacherId + "/behavior/update")
+        mockMvc.perform(post("/teacher/" + teacherId + "/behavior/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(behaviorDto)))
                 .andExpect(status().is3xxRedirection())

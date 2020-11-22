@@ -912,6 +912,10 @@ public class TeacherServiceImpl implements TeacherService {
     public Boolean isFormTutor(Long teacherId, Long classId) {
         Teacher teacher = getTeacherById(teacherId);
 
+        if (teacher.getSchoolClass() == null) {
+            return false;
+        }
+
         return teacher.getSchoolClass().getId().equals(classId);
     }
 

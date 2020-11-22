@@ -6,6 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasRole('DEPUTY_HEAD')")
-public @interface DeputyHeadPermission {
+@PreAuthorize("hasAnyRole('DEPUTY_HEAD', 'HEADMASTER')")
+public @interface DeputyHeadHeadmasterPermission {
 }
