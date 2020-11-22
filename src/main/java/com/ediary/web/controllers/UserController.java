@@ -4,6 +4,8 @@ import com.ediary.DTO.MessageDto;
 import com.ediary.DTO.NoticeDto;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.security.User;
+import com.ediary.security.perms.NewNoticePermission;
+import com.ediary.security.perms.UserPermission;
 import com.ediary.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -46,11 +48,13 @@ public class UserController {
         });
     }
 
+    @UserPermission
     @GetMapping("/{userId}/updatePassword")
     public String updatePassword(@PathVariable Long userId) {
         return "user/updatePassword";
     }
 
+    @UserPermission
     @PostMapping("/{userId}/updatePassword")
     public String processUpdatePassword(@PathVariable Long userId,
                                         @RequestParam("password") String password,
@@ -62,12 +66,14 @@ public class UserController {
         return "/";
     }
 
+    @UserPermission
     @GetMapping("/{userId}/messages")
     public String mainMessages(@PathVariable Long userId, Model model) {
         return "user/messages";
     }
 
 
+    @UserPermission
     @GetMapping("/{userId}/readMessages")
     public String getReadMessages(@PathVariable Long userId,
                                   @RequestParam(name = "page", required = false) Optional<Integer> page,
@@ -78,6 +84,7 @@ public class UserController {
         return "user/readMessages";
     }
 
+    @UserPermission
     @GetMapping("/{userId}/sendMessages")
     public String getSendMessages(@PathVariable Long userId,
                                   @RequestParam(name = "page", required = false) Optional<Integer> page,
@@ -88,6 +95,7 @@ public class UserController {
         return "user/sendMessages";
     }
 
+    @UserPermission
     @GetMapping("/{userId}/newMessages")
     public String newMessage(@PathVariable Long userId, Model model) {
 
@@ -96,6 +104,7 @@ public class UserController {
         return "user/newMessages";
     }
 
+    @UserPermission
     @PostMapping("/{userId}/newMessages")
     public String processNewMessage(@Valid @ModelAttribute MessageDto message, BindingResult result) {
         if (result.hasErrors()){
@@ -107,6 +116,7 @@ public class UserController {
         }
     }
 
+    @UserPermission
     @PostMapping("/{userId}/newMessages/addReader/{readerId}")
     public String addReaderToMessage(@PathVariable Long userId,
                                      @PathVariable Long readerId,
@@ -118,6 +128,7 @@ public class UserController {
 
     }
 
+    @UserPermission
     @GetMapping("/{userId}/readMessages/{messageId}")
     public String viewReadMessage(@PathVariable Long userId, @PathVariable Long messageId, Model model) {
 
@@ -125,6 +136,7 @@ public class UserController {
         return "/user/viewReadMessage";
     }
 
+    @UserPermission
     @PostMapping("/{userId}/readMessages/{messageId}")
     public String replyReadMessage(@PathVariable Long userId,
                                    @PathVariable Long messageId,
@@ -136,6 +148,7 @@ public class UserController {
         return "/user/newMessages";
     }
 
+    @UserPermission
     @GetMapping("/{userId}/sendMessages/{messageId}")
     public String viewSendMessage(@PathVariable Long userId, @PathVariable Long messageId, Model model) {
 
@@ -149,12 +162,14 @@ public class UserController {
         return "user/notices";
     }
 
+    @UserPermission
     @GetMapping("/{userId}/readNotices")
     public String getReadNotices(@PathVariable Long userId, Model model) {
         model.addAttribute("notices", userService.listNotices());
         return "user/readNotices";
     }
 
+    @NewNoticePermission
     @GetMapping("/{userId}/newNotice")
     public String newNotice(@PathVariable Long userId, Model model) {
 
@@ -162,6 +177,7 @@ public class UserController {
         return "user/newNotice";
     }
 
+    @UserPermission
     @PostMapping("/{userId}/newNotice")
     public String processNewNotice(@PathVariable Long userId,
                                    @Valid @ModelAttribute NoticeDto notice, BindingResult result) {
@@ -174,6 +190,7 @@ public class UserController {
         }
     }
 
+    @UserPermission
     @GetMapping("/{userId}/editNotice/{noticeId}")
     public String editNotice(@PathVariable Long userId,
                              @PathVariable Long noticeId,
@@ -183,6 +200,7 @@ public class UserController {
         return "user/editNotice";
     }
 
+    @UserPermission
     @PostMapping("/{userId}/updateNotice/{noticeId}")
     public String updatePatchNotice(@PathVariable Long userId,
                                     @PathVariable Long noticeId,
@@ -196,6 +214,7 @@ public class UserController {
         }
     }
 
+    @UserPermission
     @PostMapping("/{userId}/deleteNotice/{noticeId}")
     public String deleteNotice(@PathVariable Long userId,
                                @PathVariable Long noticeId) {
@@ -203,10 +222,6 @@ public class UserController {
             userService.deleteNotice(userId, noticeId);
             return "redirect:/user/" + userId + "/readNotices";
     }
-
-
-
-
 
 
 }

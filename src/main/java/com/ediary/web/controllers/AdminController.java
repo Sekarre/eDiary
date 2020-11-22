@@ -4,6 +4,7 @@ import com.ediary.DTO.SchoolDto;
 import com.ediary.DTO.UserDto;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.security.User;
+import com.ediary.security.perms.AdminPermission;
 import com.ediary.services.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,11 +31,14 @@ public class AdminController {
     }
 
 
+    @AdminPermission
     @GetMapping("/home")
     public String home() {
         return "admin/index";
     }
 
+
+    @AdminPermission
     @GetMapping("/users")
     public String getAllUsers(Model model) {
         model.addAttribute("users", adminService.getAllUsers());
@@ -42,7 +46,7 @@ public class AdminController {
         return "admin/allUsers";
     }
 
-
+    @AdminPermission
     @GetMapping("/newUser")
     public String initNewUser(Model model) {
 
@@ -52,7 +56,7 @@ public class AdminController {
         return "admin/newUser";
     }
 
-
+    @AdminPermission
     @PostMapping("/newUser")
     public String processNewUser(@Valid @ModelAttribute UserDto userDto,
                                  @RequestParam(name = "selectedRoles") List<Long> rolesId,
@@ -68,6 +72,7 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
+    @AdminPermission
     @GetMapping("/users/{userId}")
     public String getUser(@PathVariable Long userId, Model model) {
 
@@ -76,6 +81,7 @@ public class AdminController {
         return "admin/user";
     }
 
+    @AdminPermission
     @DeleteMapping("/users/{userId}/delete")
     public String deleteUser(@PathVariable Long userId) {
 
@@ -84,6 +90,7 @@ public class AdminController {
         return "admin/users";
     }
 
+    @AdminPermission
     @GetMapping("/users/{userId}/edit")
     public String editUser(@PathVariable Long userId, Model model) {
 
@@ -92,6 +99,7 @@ public class AdminController {
         return "admin/editUser";
     }
 
+    @AdminPermission
     @PostMapping("/users/{userId}/update")
     public String updateUser(@PathVariable Long userId,
                              @RequestParam(name = "roleId") List<Long> rolesId,
@@ -108,6 +116,7 @@ public class AdminController {
         return "redirect:/admin/users/" + updatedUser.getId();
     }
 
+    @AdminPermission
     @GetMapping("/school")
     public String getSchoolInfo(Model model) {
 
@@ -116,6 +125,7 @@ public class AdminController {
         return "admin/school";
     }
 
+    @AdminPermission
     @GetMapping("/school/edit")
     public String editSchool(Model model) {
         model.addAttribute("school", adminService.getSchool());
@@ -123,6 +133,7 @@ public class AdminController {
         return "admin/editSchool";
     }
 
+    @AdminPermission
     @PostMapping("/school/{schoolId}/{addressId}/update")
     public String updateSchool(@PathVariable Long schoolId,
                                @PathVariable Long addressId,
