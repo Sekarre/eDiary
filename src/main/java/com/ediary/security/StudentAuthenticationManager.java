@@ -19,11 +19,6 @@ public class StudentAuthenticationManager {
     public boolean studentIdMatches(Authentication authentication, Long studentId) {
         User authenticatedUser = (User) authentication.getPrincipal();
 
-        Student student = studentRepository.findByUserId(authenticatedUser.getId());
-
-        log.debug(student.getId() + "");
-        log.debug(studentId + "");
-
         return studentRepository.findByUserId(authenticatedUser.getId()).getId().equals(studentId);
     }
 }

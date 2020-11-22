@@ -4,11 +4,13 @@ import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.Extenuation;
 import com.ediary.domain.security.User;
+import com.ediary.security.perms.ParentReadStudentPermission;
 import com.ediary.services.ParentService;
 import com.ediary.services.StudentService;
 import com.ediary.services.SubjectService;
 import com.ediary.services.WeeklyAttendancesService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,18 +65,21 @@ public class ParentController {
         });
     }
 
+    @PreAuthorize("hasRole('PARENT')")
     @GetMapping("/home")
     public String home() {
 
         return "/parent/index";
     }
 
+    @PreAuthorize("hasRole('PARENT')")
     @GetMapping("/home/student")
     public String homeStudent() {
 
         return "/parent/indexStudent";
     }
 
+    @PreAuthorize("hasRole('PARENT')")
     @GetMapping("/students")
     public String getAllStudents(@PathVariable Long parentId, Model model) {
 
@@ -83,6 +88,7 @@ public class ParentController {
         return "parent/allStudents";
     }
 
+    @ParentReadStudentPermission
     @GetMapping("/{studentId}")
     public String getStudentIndex(@PathVariable Long parentId, @PathVariable Long studentId, Model model) {
 
@@ -91,6 +97,7 @@ public class ParentController {
         return "parent/index";
     }
 
+    @ParentReadStudentPermission
     @GetMapping("/{studentId}/grade")
     public String getAllGrades(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
 
@@ -102,7 +109,7 @@ public class ParentController {
         return "parent/allGrades";
     }
 
-
+    @ParentReadStudentPermission
     @GetMapping("/{studentId}/grade/subject/{subjectId}")
     public String getAllGradesBySubject(@PathVariable Long studentId,
                                         @PathVariable Long subjectId, Model model) {
@@ -112,6 +119,7 @@ public class ParentController {
         return "parent/allGradesBySubject";
     }
 
+    @ParentReadStudentPermission
     @GetMapping("/{studentId}/attendance")
     public String getAllAttendances(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
 
@@ -121,7 +129,7 @@ public class ParentController {
         return "parent/allAttendances";
     }
 
-
+    @ParentReadStudentPermission
     @GetMapping("/{studentId}/attendance/{direction}/{dateValue}")
     public String getAllAttendancesWithDate(@PathVariable Long studentId,
                                             @PathVariable Long parentId,
@@ -142,6 +150,7 @@ public class ParentController {
         return "parent/allAttendances";
     }
 
+    @ParentReadStudentPermission
     @PostMapping("/{studentId}/attendance/extenuation")
     public String newExtenuation(@PathVariable Long parentId,
                                  @PathVariable Long studentId,
@@ -154,6 +163,7 @@ public class ParentController {
         return "parent/newExtenuation";
     }
 
+    @ParentReadStudentPermission
     @PostMapping("/{studentId}/attendance/extenuation/save")
     public String processNewExtenuation(@PathVariable Long studentId, @PathVariable Long parentId,
                                         @Valid @ModelAttribute ExtenuationDto extenuation,
@@ -170,6 +180,7 @@ public class ParentController {
         return "redirect:/parent/" + parentId + "/" + studentId + "/attendance/extenuations";
     }
 
+    @ParentReadStudentPermission
     @GetMapping("/{studentId}/attendance/extenuations")
     public String getAllExtenuations(@PathVariable Long parentId, @PathVariable Long studentId, Model model) {
 
@@ -178,6 +189,7 @@ public class ParentController {
         return "parent/allExtenuations";
     }
 
+    @ParentReadStudentPermission
     @GetMapping("/{studentId}/behavior")
     public String getAllBehaviors(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
 
@@ -185,6 +197,7 @@ public class ParentController {
         return "parent/allBehaviors";
     }
 
+    @ParentReadStudentPermission
     @GetMapping("/{studentId}/event")
     public String getAllEvents(@PathVariable Long studentId,
                                @PathVariable Long parentId,
@@ -197,6 +210,7 @@ public class ParentController {
         return "parent/allEvents";
     }
 
+    @ParentReadStudentPermission
     @GetMapping("/{studentId}/timetable")
     public String getTimetable(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
 
