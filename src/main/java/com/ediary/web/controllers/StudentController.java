@@ -1,10 +1,12 @@
 package com.ediary.web.controllers;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.security.User;
+import com.ediary.security.perms.StudentReadPermission;
 import com.ediary.services.SubjectService;
 import com.ediary.services.WeeklyAttendancesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,12 +51,14 @@ public class StudentController {
         });
     }
 
+    @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/home")
     public String home() {
 
         return "/student/index";
     }
 
+    @StudentReadPermission
     @GetMapping("/{studentId}/grade")
     public String getAllGrades(@PathVariable Long studentId, Model model) {
 
@@ -63,7 +67,7 @@ public class StudentController {
         return "student/allGrades";
     }
 
-
+    @StudentReadPermission
     @GetMapping("/{studentId}/grade/subject/{subjectId}")
     public String getAllGradesBySubject(@PathVariable Long studentId,
                                         @PathVariable Long subjectId, Model model) {
@@ -73,6 +77,7 @@ public class StudentController {
         return "student/allGradesBySubject";
     }
 
+    @StudentReadPermission
     @GetMapping("/{studentId}/attendance")
     public String getAllAttendances(@PathVariable Long studentId, Model model) {
 
@@ -82,6 +87,7 @@ public class StudentController {
         return "student/allAttendances";
     }
 
+    @StudentReadPermission
     @GetMapping("/{studentId}/attendance/{direction}/{dateValue}")
     public String getAllAttendancesWithDate(@PathVariable Long studentId,
                                             @PathVariable String direction,
@@ -101,6 +107,7 @@ public class StudentController {
         return "student/allAttendances";
     }
 
+    @StudentReadPermission
     @GetMapping("/{studentId}/behavior")
     public String getAllBehaviors(@PathVariable Long studentId, Model model) {
 
@@ -108,6 +115,7 @@ public class StudentController {
         return "student/allBehaviors";
     }
 
+    @StudentReadPermission
     @GetMapping("/{studentId}/event")
     public String getAllEvents(@PathVariable Long studentId,
                                @RequestParam(name = "page", required = false) Optional<Integer> page,
@@ -118,6 +126,7 @@ public class StudentController {
         return "student/allEvents";
     }
 
+    @StudentReadPermission
     @GetMapping("/{studentId}/timetable")
     public String getTimetable(@PathVariable Long studentId, Model model){
 
