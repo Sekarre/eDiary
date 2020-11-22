@@ -4,8 +4,10 @@ package com.ediary.web.controllers;
 import com.ediary.DTO.ClassDto;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.security.User;
+import com.ediary.security.perms.DeputyHeadPermission;
 import com.ediary.services.DeputyHeadService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,13 +46,14 @@ public class DeputyHeadController {
         });
     }
 
+    @DeputyHeadPermission
     @GetMapping("/home")
     public String home() {
 
         return "deputyHead/index";
     }
 
-
+    @DeputyHeadPermission
     @GetMapping("/newClass/formTutor")
     public String newClass(Model model,
                            @RequestParam(name = "page", required = false) Optional<Integer> page
@@ -63,6 +66,7 @@ public class DeputyHeadController {
         return "deputyHead/newClass";
     }
 
+    @PreAuthorize("hasRole('DEPUTY_HEAD')")
     @PostMapping("/newClass/formTutor")
     public String processNewClass(@Valid @ModelAttribute ClassDto schoolClass, Model model,
                                   @RequestParam(name = "page", required = false) Optional<Integer> page) {
@@ -74,6 +78,7 @@ public class DeputyHeadController {
         return "deputyHead/newClassName";
     }
 
+    @PreAuthorize("hasRole('DEPUTY_HEAD')")
     @PostMapping("/newClass/name")
     public String processNewClassName(@Valid @ModelAttribute ClassDto schoolClass, BindingResult result) {
 
@@ -87,7 +92,7 @@ public class DeputyHeadController {
     }
 
 
-
+    @DeputyHeadPermission
     @GetMapping("/classes")
     public String getClasses(Model model) {
 
@@ -96,6 +101,7 @@ public class DeputyHeadController {
         return "deputyHead/classes";
     }
 
+    @DeputyHeadPermission
     @GetMapping("/classes/{classId}")
     public String getOneClass(@PathVariable Long classId, Model model) {
 
@@ -103,7 +109,6 @@ public class DeputyHeadController {
 
         return "deputyHead/oneClass";
     }
-
 
     @PostMapping("/classes/{classId}")
     public String deleteClass(@PathVariable Long classId) {
@@ -113,12 +118,12 @@ public class DeputyHeadController {
         return "redirect:/deputyHead/classes";
     }
 
+    @DeputyHeadPermission
     @GetMapping("/classes/{classId}/changeTeacher/{teacherId}")
     public String editTeacher(@PathVariable Long classId,
                               @PathVariable Long teacherId,
                               @RequestParam(name = "page", required = false) Optional<Integer> page,
                               Model model) {
-
         model.addAttribute("page", page);
         model.addAttribute("currentTeacher", deputyHeadService.findTeacher(teacherId, classId));
         model.addAttribute("teachers", deputyHeadService.listAllTeachersWithoutClass(page.orElse(0), pageSize));
@@ -128,7 +133,7 @@ public class DeputyHeadController {
         return "deputyHead/editFormTutor";
     }
 
-
+    @DeputyHeadPermission
     @PostMapping("/classes/{classId}/removeStudent/{studentId}")
     public String removeStudentFromClass(@PathVariable Long studentId,
                                          @PathVariable Long classId,
@@ -137,6 +142,7 @@ public class DeputyHeadController {
 
         ClassDto schoolClass = deputyHeadService.removeStudentFromClass(classId, studentId);
 
+
         if (addStudentsView != null && addStudentsView) {
             return "redirect:/deputyHead/classes/" + schoolClass.getId() + "/addStudents?page=" + page.orElse(0);
         }
@@ -144,6 +150,7 @@ public class DeputyHeadController {
         return "redirect:/deputyHead/classes/" + schoolClass.getId();
     }
 
+    @DeputyHeadPermission
     @GetMapping("/classes/{classId}/addStudents")
     public String addStudents(@PathVariable Long classId,
                               @RequestParam(name = "page", required = false) Optional<Integer> page,
@@ -158,6 +165,7 @@ public class DeputyHeadController {
         return "deputyHead/addStudents";
     }
 
+    @DeputyHeadPermission
     @PostMapping("/classes/{classId}/addTeacher/{teacherId}")
     public String addFormTutorToClass(@PathVariable Long teacherId,
                                       @PathVariable Long classId) {
@@ -167,6 +175,7 @@ public class DeputyHeadController {
         return "redirect:/deputyHead/classes/" + schoolClass.getId();
     }
 
+    @DeputyHeadPermission
     @PostMapping("/classes/{classId}/addStudent/{studentId}")
     public String addStudentToClass(@PathVariable Long studentId,
                                     @PathVariable Long classId,

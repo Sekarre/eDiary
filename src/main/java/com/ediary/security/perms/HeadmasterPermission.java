@@ -6,7 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasRole('STUDENT') " +
-        " AND @studentAuthenticationManager.studentIdMatches(authentication, #studentId)")
-public @interface StudentReadPermission {
+@PreAuthorize("hasRole('HEADMASTER')")
+public @interface HeadmasterPermission {
 }

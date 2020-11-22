@@ -2,6 +2,7 @@ package com.ediary.web.controllers;
 
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.security.User;
+import com.ediary.security.perms.HeadmasterPermission;
 import com.ediary.services.HeadmasterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -51,12 +52,14 @@ public class HeadmasterController {
         });
     }
 
+    @HeadmasterPermission
     @GetMapping("/home")
     public String home() {
         return "headmaster/index";
     }
 
 
+    @HeadmasterPermission
     @GetMapping("/teacherReport/{page}")
     public String getTeacherReport(Model model, @PathVariable Integer page) {
 
@@ -67,6 +70,7 @@ public class HeadmasterController {
         return "headmaster/teacherReport";
     }
 
+    @HeadmasterPermission
     @PostMapping("/teacherReport/{page}")
     public String processNewTimeInterval(Model model,
                                          @PathVariable Integer page,
@@ -80,7 +84,7 @@ public class HeadmasterController {
         return "headmaster/teacherReport";
     }
 
-    //todo: tests
+    @HeadmasterPermission
     @RequestMapping("/teacherReport/{teacherId}/download/{startTime}/{endTime}")
     public void downloadStudentCardPdf(HttpServletResponse response,
                                        @PathVariable Date startTime,
