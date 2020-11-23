@@ -8,5 +8,5 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @PreAuthorize("hasAnyRole('TEACHER', 'DEPUTY_HEAD', 'HEADMASTER')" +
         " AND @userAuthenticationManager.userIdMatches(authentication, #userId)")
-public @interface NewNoticePermission {
+public @interface NoticePermission {
 }

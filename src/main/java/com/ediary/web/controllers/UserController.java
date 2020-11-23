@@ -4,7 +4,7 @@ import com.ediary.DTO.MessageDto;
 import com.ediary.DTO.NoticeDto;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.security.User;
-import com.ediary.security.perms.NewNoticePermission;
+import com.ediary.security.perms.NoticePermission;
 import com.ediary.security.perms.UserPermission;
 import com.ediary.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -106,7 +106,7 @@ public class UserController {
 
     @UserPermission
     @PostMapping("/{userId}/newMessages")
-    public String processNewMessage(@Valid @ModelAttribute MessageDto message, BindingResult result) {
+    public String processNewMessage(@Valid @ModelAttribute MessageDto message, @PathVariable Long userId, BindingResult result) {
         if (result.hasErrors()){
             //TODO
             return "/";
@@ -169,7 +169,7 @@ public class UserController {
         return "user/readNotices";
     }
 
-    @NewNoticePermission
+    @NoticePermission
     @GetMapping("/{userId}/newNotice")
     public String newNotice(@PathVariable Long userId, Model model) {
 
@@ -177,7 +177,7 @@ public class UserController {
         return "user/newNotice";
     }
 
-    @UserPermission
+    @NoticePermission
     @PostMapping("/{userId}/newNotice")
     public String processNewNotice(@PathVariable Long userId,
                                    @Valid @ModelAttribute NoticeDto notice, BindingResult result) {
@@ -190,7 +190,7 @@ public class UserController {
         }
     }
 
-    @UserPermission
+    @NoticePermission
     @GetMapping("/{userId}/editNotice/{noticeId}")
     public String editNotice(@PathVariable Long userId,
                              @PathVariable Long noticeId,
@@ -200,7 +200,7 @@ public class UserController {
         return "user/editNotice";
     }
 
-    @UserPermission
+    @NoticePermission
     @PostMapping("/{userId}/updateNotice/{noticeId}")
     public String updatePatchNotice(@PathVariable Long userId,
                                     @PathVariable Long noticeId,
@@ -214,7 +214,7 @@ public class UserController {
         }
     }
 
-    @UserPermission
+    @NoticePermission
     @PostMapping("/{userId}/deleteNotice/{noticeId}")
     public String deleteNotice(@PathVariable Long userId,
                                @PathVariable Long noticeId) {
