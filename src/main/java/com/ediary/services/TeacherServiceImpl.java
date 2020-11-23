@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -637,10 +639,17 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public EventDto initNewClassEvent(Long teacherId, Long classId) {
+    public EventDto initNewClassEvent(Long teacherId, Long subjectId) {
+        Teacher teacher = getTeacherById(teacherId);
+        Subject subject = getSubjectById(subjectId);
+
+        checkIfTeacherHasSubject(subjectId, teacher);
+
+
         Event event = Event.builder()
                 .teacher(getTeacherById(teacherId))
-                .schoolClass(getClassById(classId))
+                .createDate(new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()))
+                .schoolClass(subject.getSchoolClass())
                 .build();
 
         return eventToEventDto.convert(event);

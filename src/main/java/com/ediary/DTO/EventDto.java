@@ -2,6 +2,7 @@ package com.ediary.DTO;
 
 import com.ediary.domain.Event;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -14,6 +15,8 @@ public class EventDto {
 
     private Long id;
     private String description;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date createDate;
     private Date date;
     private Event.Type type;

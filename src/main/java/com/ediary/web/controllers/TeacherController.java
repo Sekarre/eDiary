@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -70,6 +71,7 @@ public class TeacherController {
 
 
         });
+
     }
 
     @PreAuthorize("hasRole('TEACHER')")
@@ -441,6 +443,32 @@ public class TeacherController {
         return "/teacher/lesson/events";
     }
 
+
+    @TeacherPermission
+    @GetMapping("/{teacherId}/lesson/subject/{subjectId}/newEvent")
+    public String newClassEvent(@PathVariable Long teacherId,
+                                @PathVariable Long subjectId,
+                                Model model) {
+
+        model.addAttribute("newEvent", teacherService.initNewClassEvent(teacherId, subjectId));
+        model.addAttribute("subjectId", subjectId);
+
+        return "/teacher/lesson/newEvent";
+    }
+
+    @TeacherPermission
+    @PostMapping("{teacherId}/lesson/subject/{subjectId}/newEvent")
+    public String processNewClassEvent(@PathVariable Long teacherId,
+                                        @PathVariable Long subjectId,
+                                        @ModelAttribute EventDto newEvent) {
+
+
+        Event event = teacherService.saveEvent(newEvent);
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/events";
+
+    }
+
+
     @TeacherPermission
     @GetMapping("{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}")
     public String getLesson(@PathVariable Long teacherId,
@@ -536,34 +564,6 @@ public class TeacherController {
                 lessonId;
     }
 
-    @TeacherPermission
-    @GetMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")
-    public String newLessonEvent(@PathVariable Long teacherId,
-                                 @PathVariable Long subjectId,
-                                 @PathVariable Long classId,
-                                 Model model) {
-
-        model.addAttribute("event", teacherService.initNewClassEvent(teacherId, classId));
-
-        return "/teacher/lesson/newLessonEvent";
-    }
-
-    @TeacherPermission
-    @PostMapping("{teacherId}/lesson/subject/{subjectId}/class/{classId}/newEvent")
-    public String processNewLessonEvent(@PathVariable Long teacherId,
-                                        @PathVariable Long subjectId,
-                                        @PathVariable Long classId,
-                                        @Valid @RequestBody EventDto eventDto,
-                                        BindingResult result) {
-
-        if (result.hasErrors()) {
-            //todo: add view path
-            return "";
-        } else {
-            Event event = teacherService.saveEvent(eventDto);
-            return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + event.getId();
-        }
-    }
 
     @TeacherPermission
     @GetMapping("/{teacherId}/subject")

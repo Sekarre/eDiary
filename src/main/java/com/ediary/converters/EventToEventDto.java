@@ -19,23 +19,23 @@ public class EventToEventDto implements Converter<Event, EventDto> {
             return null;
         }
 
-        final EventDto eventdTO = new EventDto();
-        eventdTO.setId(source.getId());
-        eventdTO.setDescription(source.getDescription());
-        eventdTO.setCreateDate(source.getCreateDate());
-        eventdTO.setDate(source.getDate());
-        eventdTO.setType(source.getType());
+        final EventDto eventDto = new EventDto();
+        eventDto.setId(source.getId());
+        eventDto.setDescription(source.getDescription());
+        eventDto.setCreateDate(source.getCreateDate());
+        eventDto.setDate(source.getDate());
+        eventDto.setType(source.getType());
 
         //Class
-        eventdTO.setClassId(source.getSchoolClass().getId());
-        eventdTO.setClassName(source.getSchoolClass().getName());
+        eventDto.setClassId(source.getSchoolClass().getId());
+        eventDto.setClassName(source.getSchoolClass().getName());
 
         //Teacher
-        eventdTO.setTeacherId(source.getTeacher().getId());
-        eventdTO.setTeacherName(
+        eventDto.setTeacherId(source.getTeacher().getId());
+        eventDto.setTeacherName(
                 source.getTeacher().getUser().getFirstName() + " " + source.getTeacher().getUser().getLastName()
         );
 
-        return eventdTO;
+        return eventDto;
     }
 }
