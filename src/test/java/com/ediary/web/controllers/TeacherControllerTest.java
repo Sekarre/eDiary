@@ -283,12 +283,9 @@ class TeacherControllerTest {
 
         mockMvc.perform(get("/teacher/" + teacherId + "/grade/subject/" + subjectId))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("grades"))
-                .andExpect(view().name("/teacher/grade/allGrades"));
-
-
-        verify(teacherService, times(1)).listGradesBySubject(1L, 1L);
-        assertEquals(2, teacherService.listGradesBySubject(1L, 1L).size());
+                .andExpect(model().attributeExists("studentsWithGrades"))
+                .andExpect(model().attributeExists("maxGrades"))
+                .andExpect(view().name("/teacher/grades/allGrades"));
     }
 
     @Test
@@ -300,7 +297,7 @@ class TeacherControllerTest {
         mockMvc.perform(get("/teacher/" + teacherId + "/grade/subject/" + subjectId + "/new"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("grade"))
-                .andExpect(view().name("/teacher/grade/newGrade"));
+                .andExpect(view().name("/teacher/grades/newGrade"));
 
         verify(teacherService, times(1)).initNewGrade(teacherId, subjectId);
     }
@@ -526,23 +523,23 @@ class TeacherControllerTest {
     }
 
     @Test
-    void newLessonEvent() throws Exception {
+    void newClassEvent() throws Exception {
         Long subjectId = 1L;
         Long classId = 1l;
 
         when(teacherService.initNewClassEvent(teacherId, classId)).thenReturn(EventDto.builder().build());
 
         mockMvc.perform(get(
-                "/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId + "/newEvent"))
+                "/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/newEvent"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("event"))
-                .andExpect(view().name("/teacher/lesson/newLessonEvent"));
+                .andExpect(model().attributeExists("newEvent"))
+                .andExpect(view().name("/teacher/lesson/newEvent"));
 
         verify(teacherService, times(1)).initNewClassEvent(subjectId, classId);
     }
 
     @Test
-    void processNewLessonEvent() throws Exception {
+    void processNewClassEvent() throws Exception {
         Long classId = 1L;
         Long subjectId = 1L;
 
@@ -553,12 +550,12 @@ class TeacherControllerTest {
         when(teacherService.saveEvent(any())).thenReturn(event);
 
         mockMvc.perform(post(
-                "/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/class/" + classId + "/newEvent")
+                "/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/newEvent")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(BehaviorDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name(
-                        "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + event.getId()));
+                        "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/events"));
 
         verify(teacherService, times(1)).saveEvent(any());
     }

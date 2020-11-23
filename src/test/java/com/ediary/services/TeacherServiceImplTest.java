@@ -266,18 +266,19 @@ class TeacherServiceImplTest {
     void initNewClassEvent() {
         Long classId = 1L;
 
-        Teacher teacher = Teacher.builder().id(1L).build();
+        Teacher teacher = Teacher.builder().id(1L).subjects(new HashSet<>(){{add(Subject.builder().id(1L).build());}}).build();
         Class schoolClass = Class.builder().id(classId).build();
 
         when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
         when(classRepository.findById(1L)).thenReturn(Optional.of(schoolClass));
+        when(subjectRepository.findById(any())).thenReturn(Optional.ofNullable(Subject.builder().build()));
 
         when(eventToEventDto.convert(any())).thenReturn(EventDto.builder().id(1L).build());
 
         EventDto newEvent = teacherService.initNewClassEvent(teacherId, classId);
 
         assertEquals(1L, newEvent.getId());
-        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(teacherRepository, times(2)).findById(teacherId);
         verify(eventToEventDto, times(1)).convert(any());
     }
 

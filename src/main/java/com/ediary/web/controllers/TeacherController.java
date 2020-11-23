@@ -303,22 +303,26 @@ public class TeacherController {
 
     //end of todo
 
+
+    //start
     @TeacherPermission
     @GetMapping("/{teacherId}/grade/subject")
     public String getAllSubjectsGrade(@PathVariable Long teacherId, Model model) {
 
         model.addAttribute("subjects", teacherService.listSubjects(teacherId));
 
-        return "teacher/grade/subject";
+        return "teacher/grades/subject";
     }
 
     @TeacherPermission
     @GetMapping("/{teacherId}/grade/subject/{subjectId}")
     public String getAllGradesBySubject(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
 
-        model.addAttribute("grades", teacherService.listGradesBySubject(teacherId, subjectId));
+        model.addAttribute("studentsWithGrades", teacherService.listStudentsGrades(teacherId, subjectId));
+        model.addAttribute("maxGrades", teacherService.maxGradesCountBySubject(teacherId, subjectId));
+        model.addAttribute("grade", teacherService.initNewGrade(teacherId, subjectId));
 
-        return "/teacher/grade/allGrades";
+        return "/teacher/grades/allGrades";
     }
 
     @TeacherPermission
@@ -326,7 +330,7 @@ public class TeacherController {
     public String newGrade(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
 
         model.addAttribute("grade", teacherService.initNewGrade(teacherId, subjectId));
-        return "/teacher/grade/newGrade";
+        return "/teacher/grades/newGrade";
     }
 
     @TeacherPermission
@@ -381,6 +385,8 @@ public class TeacherController {
             return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
         }
     }
+
+
 
     @TeacherPermission
     @GetMapping("/{teacherId}/lesson/subject")

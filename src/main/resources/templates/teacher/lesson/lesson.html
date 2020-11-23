@@ -76,7 +76,7 @@ The above copyright notice and this permission notice shall be included in all c
                             <a class="nav-link" th:text="'Frekwencja'"  data-toggle="tab" href="#attendances" role="tablist"  aria-selected="false">Profile</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" th:text="'Terminarz'" data-toggle="tab" href="#events" role="tablist"  aria-selected="false">Contact</a>
+                            <a class="nav-link" th:text="'Dodatkowe'" data-toggle="tab" href="#events" role="tablist"  aria-selected="false">Contact</a>
                         </li>
                     </ul>
                 </div>
@@ -208,7 +208,16 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                         </div>
                         <div class="tab-pane" id="events" role="tabpanel" aria-labelledby="nav-contact">
-                            ...
+                            <div class="card card-nav-tabs text-center">
+                                <div class="card-header card-header-primary">
+                                    Informacje o lekcji
+                                </div>
+                                <div class="card-body">
+                                    <h4 class="card-title">Generuj pdf dotyczący danej lekcji</h4>
+                                    <p class="card-text">W skład pdf wchodzą najważniejsze informacje dotyczące lekcji, takie jak frekwencja, czy oceny.</p>
+                                    <a href="#0" class="btn btn-primary">Generuj i pobierz</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

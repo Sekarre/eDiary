@@ -117,7 +117,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td th:text="${attendance?.lessonDto?.name}">
                                                         Lekcja
                                                     </td>
-                                                    <td th:text="${attendance?.lessonDto?.date}">
+                                                    <td th:text="${#dates.format(attendance?.lessonDto?.date, 'dd-MM-yyyy HH:mm')}">
                                                         Data
                                                     </td>
                                                     <td th:text="${attendance?.status?.getTranslatedName()}" th:styleappend="${attendance.status.name() eq 'ABSENT'} ? 'color: red' : ''"></td>

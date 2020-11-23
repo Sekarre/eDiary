@@ -9,6 +9,7 @@ import com.ediary.domain.timetable.Timetable;
 import com.ediary.exceptions.NoAccessException;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
+import com.ediary.services.pdf.PdfService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -498,10 +500,6 @@ public class TeacherServiceImpl implements TeacherService {
         return null;
     }
 
-    @Override
-    public List<GradeDto> listStudentGrades(Long teacherId, Long studentId) {
-        return null;
-    }
 
     @Override
     public Boolean deleteLessonGrade(Long studentId, Long gradeId) {
@@ -611,6 +609,7 @@ public class TeacherServiceImpl implements TeacherService {
         Grade grade = Grade.builder()
                 .teacher(getTeacherById(teacherId))
                 .subject(getSubjectById(subjectId))
+                .date(new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()))
                 .build();
 
         return gradeToGradeDto.convert(grade);
@@ -992,31 +991,6 @@ public class TeacherServiceImpl implements TeacherService {
 
     }
 
-    @Override
-    public Map<StudentDto, List<GradeDto>> listStudentsLessonGrades(Long teacherId, Long lessonId) {
-        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(() -> new NotFoundException("Lesson not found"));
-
-        Class schoolClass = lesson.getSchoolClass();
-
-        Map<StudentDto, List<GradeDto>> studentGradesListMap = new TreeMap<>(
-                ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
-                                .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
-
-        schoolClass.getStudents().forEach(student -> {
-            studentGradesListMap.put(studentToStudentDto.convert(student),
-                    gradeRepository.findAllByStudentIdAndDate(student.getId(), lesson.getDate())
-                            .stream()
-                            .map(gradeToGradeDto::convert)
-                            .collect(Collectors.toList()));
-        });
-
-
-        if (studentGradesListMap.keySet().isEmpty())
-            return null;
-
-        return studentGradesListMap;
-    }
-
 
     @Override
     public Map<StudentDto, AttendanceDto> listStudentsLessonAttendances(Long teacherId, Long lessonId) {
@@ -1035,10 +1009,68 @@ public class TeacherServiceImpl implements TeacherService {
         });
 
 
-        if (studentAttendancesListMap.keySet().isEmpty())
+        if (studentAttendancesListMap.keySet().isEmpty()) {
             return null;
+        }
 
         return studentAttendancesListMap;
+    }
+
+    @Override
+    public Map<StudentDto, List<GradeDto>> listStudentsLessonGrades(Long teacherId, Long lessonId) {
+        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(() -> new NotFoundException("Lesson not found"));
+
+        Class schoolClass = lesson.getSchoolClass();
+
+        Map<StudentDto, List<GradeDto>> studentGradesListMap = new TreeMap<>(
+                ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
+                        .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
+
+        schoolClass.getStudents().forEach(student -> {
+            studentGradesListMap.put(studentToStudentDto.convert(student),
+                    gradeRepository.findAllByStudentIdAndDate(student.getId(), lesson.getDate())
+                            .stream()
+                            .map(gradeToGradeDto::convert)
+                            .collect(Collectors.toList()));
+        });
+
+
+        if (studentGradesListMap.keySet().isEmpty()) {
+            return null;
+        }
+
+        return studentGradesListMap;
+    }
+
+
+    @Override
+    public Map<StudentDto, List<GradeDto>> listStudentsGrades(Long teacherId, Long subjectId) {
+
+        Teacher teacher = getTeacherById(teacherId);
+        Subject subject = getSubjectById(subjectId);
+
+        Class schoolClass = subject.getSchoolClass();
+
+        checkIfTeacherHasSubject(subjectId, teacher);
+
+        Map<StudentDto, List<GradeDto>> studentGradesListMap = new TreeMap<>(
+                ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
+                        .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
+
+        schoolClass.getStudents().forEach(student -> {
+            studentGradesListMap.put(studentToStudentDto.convert(student),
+                    gradeRepository.findAllByTeacherIdAndSubjectIdAndStudentId(teacherId, subjectId, student.getId())
+                            .stream()
+                            .map(gradeToGradeDto::convert)
+                            .collect(Collectors.toList()));
+        });
+
+
+        if (studentGradesListMap.keySet().isEmpty()) {
+            return null;
+        }
+
+        return studentGradesListMap;
     }
 
     @Override
@@ -1051,6 +1083,27 @@ public class TeacherServiceImpl implements TeacherService {
 
         schoolClass.getStudents().forEach(student -> {
             Long count = gradeRepository.countAllByStudentIdAndDate(student.getId(), lesson.getDate());
+            if (count > maxCount[0])
+                maxCount[0] = count;
+        });
+
+        return new ArrayList<>(){{
+            for (int i = 0; i < maxCount[0]; i++){
+                add(null);
+            }
+        }};
+    }
+
+    @Override
+    public List<Long> maxGradesCountBySubject(Long teacherId, Long subjectId) {
+        Long[] maxCount = {Long.MIN_VALUE};
+
+        Subject subject = getSubjectById(subjectId);
+
+        Class schoolClass = subject.getSchoolClass();
+
+        schoolClass.getStudents().forEach(student -> {
+            Long count = gradeRepository.countAllByTeacherIdAndSubjectIdAndStudentId(teacherId, subjectId, student.getId());
             if (count > maxCount[0])
                 maxCount[0] = count;
         });

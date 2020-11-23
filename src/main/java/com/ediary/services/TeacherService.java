@@ -5,6 +5,7 @@ import com.ediary.domain.*;
 import com.ediary.domain.security.User;
 import com.ediary.domain.timetable.Timetable;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +46,6 @@ public interface TeacherService {
     Grade saveClassGrade(Grade grade);
     Boolean deleteClassGrade(Long gradeId);
     List<GradeDto> listClassGrades(Long teacherId, Long schoolClassId);
-    List<GradeDto> listStudentGrades(Long teacherId, Long studentId);
     Boolean deleteLessonGrade(Long studentId, Long gradeId);
 
 
@@ -94,9 +94,11 @@ public interface TeacherService {
 
     Timetable getTimetableByTeacherId(Long teacherId);
 
-    Map<StudentDto, List<GradeDto>> listStudentsLessonGrades(Long teacherId, Long lessonId);
     Map<StudentDto, AttendanceDto> listStudentsLessonAttendances(Long teacherId, Long lessonId);
+    Map<StudentDto, List<GradeDto>> listStudentsLessonGrades(Long teacherId, Long lessonId);
+    Map<StudentDto, List<GradeDto>> listStudentsGrades(Long teacherId, Long subjectId);
 
     List<Long> maxGradesCount(Long teacherId, Long lessonId);
+    List<Long> maxGradesCountBySubject(Long teacherId, Long subjectId);
 
 }
