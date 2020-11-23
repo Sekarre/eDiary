@@ -10,8 +10,7 @@ import com.ediary.exceptions.NoAccessException;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -669,6 +668,24 @@ public class TeacherServiceImpl implements TeacherService {
         Teacher teacher = getTeacherById(teacherId);
 
         return eventService.listEventsByTeacher(teacher)
+                .stream()
+                .map(eventToEventDto::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventDto> listClassEvents(Long teacherId, Long subjectId, Integer page, Integer size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate"));
+
+        Teacher teacher = getTeacherById(teacherId);
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new NotFoundException("Subject not found"));
+
+        if (!subject.getTeacher().equals(teacher)) {
+            throw new AccessDeniedException("Teacher -> Subject");
+        }
+
+        return eventRepository.findAllByTeacherIdAndSchoolClassId(teacherId, subject.getSchoolClass().getId(), pageable)
                 .stream()
                 .map(eventToEventDto::convert)
                 .collect(Collectors.toList());

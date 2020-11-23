@@ -17,4 +17,5 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findAllBySchoolClassIdOrderByDate(Long schoolClassId, Pageable pageable);
     List<Event> findAllByTeacher(Teacher teacher);
     List<Event> findAllByTeacherIdAndDateAfterAndDateBefore(Long teacherId, Date startTime, Date endTime);
+    List<Event> findAllByTeacherIdAndSchoolClassId(Long teacherId, Long classId, Pageable pageable);
 }

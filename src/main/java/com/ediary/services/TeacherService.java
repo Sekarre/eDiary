@@ -62,6 +62,7 @@ public interface TeacherService {
     EventDto initNewClassEvent(Long teacherId, Long classId);
     Boolean deleteEvent(Long teacherId, Long eventId);
     List<EventDto> listEvents(Long teacherId);
+    List<EventDto> listClassEvents(Long teacherId, Long subjectId, Integer page, Integer size);
     EventDto updatePutEvent(EventDto eventDto);
     EventDto updatePatchEvent(EventDto eventDto);
     EventDto getEvent(Long eventId);
