@@ -683,9 +683,9 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<EventDto> listClassEvents(Long teacherId, Long subjectId, Integer page, Integer size) {
+    public List<EventDto> listClassEvents(Long teacherId, Long subjectId, Integer page, Integer size, Boolean includeHistory) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by("date"));
 
         Teacher teacher = getTeacherById(teacherId);
         Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new NotFoundException("Subject not found"));
@@ -694,10 +694,19 @@ public class TeacherServiceImpl implements TeacherService {
             throw new AccessDeniedException("Teacher -> Subject");
         }
 
-        return eventRepository.findAllByTeacherIdAndSchoolClassId(teacherId, subject.getSchoolClass().getId(), pageable)
-                .stream()
-                .map(eventToEventDto::convert)
-                .collect(Collectors.toList());
+        if (includeHistory) {
+            return eventRepository.findAllByTeacherIdAndSchoolClassIdAndDateBefore(teacherId, subject.getSchoolClass().getId(),
+                    new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()), pageable)
+                    .stream()
+                    .map(eventToEventDto::convert)
+                    .collect(Collectors.toList());
+        } else {
+            return eventRepository.findAllByTeacherIdAndSchoolClassIdAndDateAfter(teacherId, subject.getSchoolClass().getId(),
+                    new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()), pageable)
+                    .stream()
+                    .map(eventToEventDto::convert)
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override

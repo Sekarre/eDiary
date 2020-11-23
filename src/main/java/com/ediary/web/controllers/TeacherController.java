@@ -436,11 +436,24 @@ public class TeacherController {
                                  @PathVariable Long subjectId,
                                  @RequestParam(name = "page", required = false) Optional<Integer> page,
                                  Model model) {
-        model.addAttribute("events", teacherService.listClassEvents(teacherId, subjectId, page.orElse(0), 10));
+        model.addAttribute("events", teacherService.listClassEvents(teacherId, subjectId, page.orElse(0), 10, false));
         model.addAttribute("subjectId", subjectId);
         model.addAttribute("page", page);
 
         return "/teacher/lesson/events";
+    }
+
+    @TeacherPermission
+    @GetMapping("/{teacherId}/lesson/subject/{subjectId}/eventsHistory")
+    public String getClassEventsHistory(@PathVariable Long teacherId,
+                                        @PathVariable Long subjectId,
+                                        @RequestParam(name = "page", required = false) Optional<Integer> page,
+                                        Model model) {
+        model.addAttribute("events", teacherService.listClassEvents(teacherId, subjectId, page.orElse(0), 10, true));
+        model.addAttribute("subjectId", subjectId);
+        model.addAttribute("page", page);
+
+        return "/teacher/lesson/eventsHistory";
     }
 
 

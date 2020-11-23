@@ -24,15 +24,41 @@ The above copyright notice and this permission notice shall be included in all c
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <!-- CSS Files -->
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
+
     <style>
-        tr:hover td{
-            background-color:#f5f5f5;;
+        .agenda {  }
+
+        /* Dates */
+        .agenda .agenda-date { width: 170px; }
+        .agenda .agenda-date .dayofmonth {
+            width: 40px;
+            font-size: 36px;
+            line-height: 36px;
+            float: left;
+            text-align: right;
+            margin-right: 10px;
         }
+        .agenda .agenda-date .shortdate {
+            font-size: 0.75em;
+        }
+
+
+        /* Times */
+        .agenda .agenda-time { width: 140px; }
+
+
+        /* Events */
+        .agenda .agenda-events {  }
+        .agenda .agenda-events .agenda-event {  }
+
+        .active a{
+            background-color: #9c27b0 !important;
+        }
+
     </style>
 </head>
 
@@ -46,7 +72,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand">Lekcje:</a>
+                    <a class="navbar-brand">Terminarz - historia</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -58,92 +84,74 @@ The above copyright notice and this permission notice shall be included in all c
             </div>
         </nav>
         <!-- End Navbar -->
-
         <div class="content">
-
-                <div class="col-md-12">
-                    <div class="card">
-                        <a th:href="@{'/teacher/' + ${teacherId} + '/lesson/subject/' + ${subjectId} + '/events'}">
-                        <div class="card-header card-header-icon card-header-rose">
-                            <div class="card-icon">
-                                <i class="material-icons">date_range</i>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h3 class="card-title">Terminarz klasy</h3>
-<!--                            Można dać opis-->
-                        </div>
-                        </a>
-                    </div>
-                </div>
-
-            <div th:if="${lessons == null || lessons?.size() == 0}" class="navbar-wrapper">
+            <div th:if="${events == null || events.size() == 0}" class="navbar-wrapper">
                 <div class="d-flex justify-content-center">
-                    <h2 class="navbar-brand">Nie znaleziono żadnych lekcji</h2>
-                        <a th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/new(teacherId=${teacherId}, subjectId=${subjectId})}">
-                            <button rel="tooltip" class="btn btn-success add btn-fab btn-lg btn-primary btn-round">
-                                <i class="material-icons">add</i>
-                            </button>
-                        </a>
+                    <h2 class="navbar-brand">Nie znaleziono historii wydarzeń</h2>
                 </div>
             </div>
-            <div class="container-fluid" th:if="${lessons != null && lessons?.size() > 0}">
+            <div class="container-fluid" th:if="${events != null && events.size() > 0}">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <div class="float-left">
-                            <h3 class="card-title">Wybierz lekcję:</h3>
-                        </div>
-                        <div class="float-right">
-                            <a th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/new(teacherId=${teacherId}, subjectId=${subjectId})}">
-                                <button rel="tooltip" class="btn btn-success add btn-fab btn-fab-mini btn-primary btn-round">
-                                    <i class="material-icons">add</i>
-                                </button>
-                            </a>
-                        </div>
+                            <h3 class="card-title ">Terminarz (historia)</h3>
                     </div>
+
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table">
-                                <thead class=" text-primary">
-                                <th>Nazwa lekcji</th>
-                                <th>Temat</th>
-                                <th>Data</th>
-                                </thead>
-                                <tbody>
-                                <tr th:each="lesson : ${lessons}" style="cursor: pointer"
-                                    th:onclick="'javascript:rowClicked(\'' + ${teacher.id} + '\',\'' + ${lesson.subjectId} + '\',\'' + ${lesson.classId} + '\',\'' + ${lesson.id} + '\');'">
-                                    <td th:text="${lesson.name}">
-                                        Nazwa klasy
-                                    </td>
-                                    <td th:text="${lesson?.topicName}">
-                                        Temat
-                                    </td>
-                                    <td th:text="${#dates.format(lesson?.date,'dd-MM-yyyy HH:mm')}">
-                                        Data
-                                    </td>
-                                </tr>
+                            <div class="agenda">
+                                <div class="table-responsive">
+                                    <table class="table table-condensed table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Data wydarzenia</th>
+                                            <th>Godzina</th>
+                                            <th>Klasa</th>
+                                            <th>Rodzaj</th>
+                                            <th>Wydarzenie</th>
+                                            <th>Data utworzenia</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <!-- Single event in a single day -->
+                                        <tr th:each="event : ${events}">
+                                            <td class="agenda-date active" rowspan="1">
+                                                <div class="dayofmonth" th:text="${event.date.getDate()}"></div>
+                                                <div class="dayofweek" th:text="${#dates.dayOfWeekName(event.date).substring(0, 1).toUpperCase() + #dates.dayOfWeekName(event.date).substring(1)}">Saturday</div>
+                                                <div class="shortdate text-muted" th:text="${(#dates.monthName(event.date).substring(0, 1).toUpperCase() + #dates.monthName(event.date).substring(1)) + ', ' + (event.date.getYear() + 1900)}">Miesiac, 2020</div>
+                                            </td>
+                                            <td class="agenda-time" th:text="${#dates.format(event.date, 'HH:mm')}">
+                                                15:30
+                                            </td>
+                                            <td class="agenda-time" th:text="${event.className}">Nauczyciel</td>
+                                            <td class="agenda-time" th:text="${event.type.getTranslatedName()}">Rodzaj</td>
+                                            <td class="agenda-events">
+                                                <div class="agenda-event">
+                                                    <i class="glyphicon glyphicon-repeat" th:text="${event.description}"></i>
+                                                </div>
+                                            </td>
+                                            <td class="agenda-time" th:text="${#dates.format(event?.createDate, 'dd-MM-yyyy HH:mm')}"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item " th:classappend="${page.isPresent() && page.get() > 0} ? 'active' : 'disabled'">
+                                            <a class="page-link" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/eventsHistory(teacherId = ${teacher.id}, subjectId=${subjectId}, page = ${page.orElse(0) - 1})}" th:text="'Poprzednia'"></a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${events.size() < 10} ? 'disabled' : 'active'">
+                                            <a class="page-link" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/eventsHistory(teacherId = ${teacher.id}, subjectId=${subjectId}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
 
-                                </tbody>
-                            </table>
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item " th:classappend="${page.isPresent() && page.get() > 0} ? 'active' : 'disabled'">
-                                    <a class="page-link" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}(teacherId = ${teacherId}, subjectId=${subjectId}, page = ${page.orElse(1) - 1})}" th:text="'Poprzednia'"></a>
-                                </li>
-                                <li class="page-item" th:classappend="${lessons.size() < 15} ? 'disabled' : 'active'">
-                                    <a class="page-link" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}(teacherId = ${teacherId}, subjectId=${subjectId}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
-
-                                </li>
-                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
     </div>
 </div>
+
 
 <!--   Core JS Files   -->
 <script th:src="@{/js/core/jquery.min.js}"></script>
@@ -356,73 +364,6 @@ The above copyright notice and this permission notice shall be included in all c
 
             });
         });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        //init DateTimePickers
-        md.initFormExtendedDatetimepickers();
-    });
-</script>
-
-<script>
-    function rowClicked(teacherId, subjectId, classId, lessonId) {
-
-        var url = "/teacher/" + teacherId + "/lesson/subject/" + subjectId + '/' + classId + '/' + lessonId;
-        $(location).attr('href', url);
-    }
-</script>
-
-<script>
-    $(function() {
-
-        $('#selectTopic').on('change', function(){
-            var selected = $(this).find("option:selected").val();
-            $('#topicIdInput').val(selected);
-            $('#selectTopic').selectpicker("refresh");
-        });
-
-    });
-</script>
-
-<script>
-    $(document).on("click", "#sendLesson", function () {
-        var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
-        var classIdVal = $("#classIdVal").val();
-
-        var lessonDto = {
-            id: "",
-            name: $("#lessonNameVal").val(),
-            date: $("#lessonDateVal").val(),
-            topic: $("#topicIdInput").val(),
-            subjectId: subjectIdVal,
-            classId: classIdVal
-        };
-
-        // Creating a XHR object
-        let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/new";
-
-        // open a connection
-        xhr.open("POST", url, true);
-
-        // Set the request header i.e. which type of content you are sending
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.setRequestHeader("_csrf", csrf);
-        xhr.setRequestHeader('x-csrf-token', csrf);
-
-        // Create a state change callback
-        xhr.onreadystatechange = function () {
-            location.href = "redirect:/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal;
-        };
-
-        // Converting JSON data to string
-        var data = JSON.stringify(lessonDto);
-
-        // Sending data with the request
-        xhr.send(data);
     });
 </script>
 </body>
