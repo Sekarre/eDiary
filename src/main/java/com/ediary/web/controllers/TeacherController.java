@@ -325,6 +325,58 @@ public class TeacherController {
         return "/teacher/grades/allGrades";
     }
 
+
+
+    @TeacherPermission
+    @PostMapping("{teacherId}/grade/subject/{subjectId}/newGrade")
+    public String processNewGrade(@PathVariable Long teacherId,
+                                        @PathVariable Long subjectId,
+                                        @Valid @RequestBody GradeDto gradeDto,
+                                        BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo: view path
+            return "";
+        }
+
+        Grade grade = teacherService.saveOrUpdateGrade(gradeDto);
+
+        return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
+    }
+
+    @TeacherPermission
+    @PostMapping("{teacherId}/grade/subject/{subjectId}/updateGrade")
+    public String updateGrade(@PathVariable Long teacherId,
+                                  @PathVariable Long subjectId,
+                                  @Valid @RequestBody GradeDto gradeDto,
+                                  BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo: view path
+            return "";
+        }
+
+        Grade grade = teacherService.saveOrUpdateGrade(gradeDto);
+
+        return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
+    }
+
+    @TeacherPermission
+    @PostMapping("{teacherId}/grade/subject/{subjectId}/{studentId}/{gradeId}/deleteGrade")
+    public String deleteGrade(@PathVariable Long teacherId,
+                              @PathVariable Long subjectId,
+                              @PathVariable Long studentId,
+                              @PathVariable Long gradeId) {
+
+        teacherService.deleteLessonGrade(studentId, gradeId);
+
+        return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
+    }
+
+    //end
+
+
+
     @TeacherPermission
     @GetMapping("/{teacherId}/grade/subject/{subjectId}/new")
     public String newGrade(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
@@ -332,60 +384,6 @@ public class TeacherController {
         model.addAttribute("grade", teacherService.initNewGrade(teacherId, subjectId));
         return "/teacher/grades/newGrade";
     }
-
-    @TeacherPermission
-    @PostMapping("/{teacherId}/grade/subject/{subjectId}/new")
-    public String processNewGrade(@PathVariable Long teacherId,
-                                  @PathVariable Long subjectId,
-                                  @Valid @RequestBody GradeDto gradeDto, BindingResult result) {
-        if (result.hasErrors()) {
-            //todo: add view path
-            return "/";
-        } else {
-            teacherService.saveOrUpdateGrade(gradeDto);
-            return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
-        }
-    }
-
-    @TeacherPermission
-    @DeleteMapping("/{teacherId}/grade/subject/{subjectId}/{gradeId}")
-    public String deleteGrade(@PathVariable Long teacherId,
-                              @PathVariable Long subjectId, @PathVariable Long gradeId) {
-
-        teacherService.deleteGrade(teacherId, subjectId, gradeId);
-        return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
-    }
-
-    @TeacherPermission
-    @PutMapping("/{teacherId}/grade/subject/{subjectId}/update")
-    public String updatePutGrade(@PathVariable Long teacherId,
-                                 @PathVariable Long subjectId,
-                                 @Valid @RequestBody GradeDto gradeDto,
-                                 BindingResult result) {
-        if (result.hasErrors()) {
-            //todo: add view path
-            return "";
-        } else {
-            teacherService.updatePutGrade(gradeDto);
-            return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
-        }
-    }
-
-    @TeacherPermission
-    @PatchMapping("/{teacherId}/grade/subject/{subjectId}/update")
-    public String updatePatchGrade(@PathVariable Long teacherId,
-                                   @PathVariable Long subjectId,
-                                   @Valid @RequestBody GradeDto gradeDto,
-                                   BindingResult result) {
-        if (result.hasErrors()) {
-            //todo: add view path
-            return "";
-        } else {
-            teacherService.updatePatchGrade(gradeDto);
-            return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
-        }
-    }
-
 
 
     @TeacherPermission

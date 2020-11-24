@@ -91,16 +91,16 @@ The above copyright notice and this permission notice shall be included in all c
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class=" text-primary">
-                                        <th>Nr. </th>
-                                        <th>Imie</th>
-                                        <th  class="text-center" th:colspan="${maxGrades.size()}">Oceny</th>
+                                        <th class="col-lg-1">Nr. </th>
+                                        <th class="col-lg-2">Imie</th>
+                                        <th  class="text-center" th:colspan="${maxGrades.size() + 1}">Oceny</th>
                                         </thead>
                                         <tbody>
                                         <tr th:each="student : ${studentsWithGrades.keySet()}" >
                                             <td th:text="${studentStat.index + 1}">
                                                 Nr.
                                             </td>
-                                            <td th:text="${student?.userName}">
+                                            <td th:text="${student?.userName}" class="border-right">
                                                 Imie
                                             </td>
 
@@ -111,8 +111,9 @@ The above copyright notice and this permission notice shall be included in all c
                                                    th:text="${grade?.value}">
                                                 </a>
                                             </td>
-                                            <th:block th:each="field : ${maxGrades}">
-                                                <td th:if="${(fieldStat.index - studentsWithGrades?.get(student).size()) != 0}" th:text="' '">
+                                            <th:block th:each="field : ${maxGrades}" th:if="${(maxGrades.size() != studentsWithGrades?.get(student).size())}">
+                                                <td th:if="${(fieldStat.index - studentsWithGrades?.get(student).size()) != -1}" th:text="' '">
+
                                                 </td>
                                             </th:block>
                                             <td>
@@ -167,7 +168,7 @@ The above copyright notice and this permission notice shall be included in all c
                                             <td th:text="${studentStat.index + 1}">
                                                 Nr.
                                             </td>
-                                            <td th:text="${student?.userName}">
+                                            <td th:text="${student?.userName}" class="border-right">
                                                 Imie
                                             </td>
 

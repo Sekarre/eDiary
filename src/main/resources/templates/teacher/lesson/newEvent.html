@@ -125,7 +125,7 @@ The above copyright notice and this permission notice shall be included in all c
                                         <label for="d">Data utworzenia: </label>
                                         <div class="form-group">
                                             <div class='input-group date' id="d">
-                                                <input type="text" class="form-control"  th:value="${#dates.format(newEvent.createDate, 'dd-MM-yyyy HH:mm')}" />
+                                                <input type="text" class="form-control"  th:value="${#dates.format(newEvent.createDate, 'dd-MM-yyyy HH:mm')}" disabled />
                                                 <input type="hidden" class="form-control"  th:field="*{createDate}" >
                                                 <span class="input-group-addon">
                                             </span>

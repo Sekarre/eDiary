@@ -12,6 +12,7 @@ import com.ediary.repositories.*;
 import com.ediary.services.pdf.PdfService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -108,6 +110,12 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Lesson saveLesson(LessonDto lesson) {
+
+        //If lesson with same date exist, dont save it
+        if (lessonRepository.findAllByDateAndSubjectId(lesson.getDate(), lesson.getSubjectId()) != null) {
+            return null;
+        }
+
         return lessonRepository.save(lessonDtoToLesson.convert(lesson));
     }
 
@@ -606,6 +614,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public GradeDto initNewGrade(Long teacherId, Long subjectId) {
+
         Grade grade = Grade.builder()
                 .teacher(getTeacherById(teacherId))
                 .subject(getSubjectById(subjectId))
@@ -694,6 +703,7 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         if (includeHistory) {
+            pageable = PageRequest.of(page, size, Sort.by("date").descending());
             return eventRepository.findAllByTeacherIdAndSchoolClassIdAndDateBefore(teacherId, subject.getSchoolClass().getId(),
                     new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()), pageable)
                     .stream()

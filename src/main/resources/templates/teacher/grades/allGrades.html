@@ -28,11 +28,11 @@ The above copyright notice and this permission notice shall be included in all c
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
-    <style>
-        tr:hover td{
-            background-color:#f5f5f5;;
-        }
-    </style>
+<!--    <style>-->
+<!--        tr:hover td{-->
+<!--            background-color:#f5f5f5;;-->
+<!--        }-->
+<!--    </style>-->
 </head>
 
 <body class="">
@@ -70,16 +70,17 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="table-responsive">
                             <table class="table">
                                 <thead class=" text-primary">
-                                <th>Nr. </th>
-                                <th>Imie</th>
-                                <th  class="text-center" th:colspan="${maxGrades.size()}">Oceny</th>
+                                <th class="col-lg-1">Nr. </th>
+                                <th class="col-lg-2">Imie</th>
+                                <th  class="text-center" th:colspan="${maxGrades.size() + 1}">Oceny</th>
+                                <th  class="text-center">Ocena końcowa</th>
                                 </thead>
                                 <tbody>
                                 <tr th:each="student : ${studentsWithGrades.keySet()}" >
                                     <td th:text="${studentStat.index + 1}">
                                         Nr.
                                     </td>
-                                    <td th:text="${student?.userName}">
+                                    <td th:text="${student?.userName}" class="border-right">
                                         Imie
                                     </td>
 
@@ -90,8 +91,9 @@ The above copyright notice and this permission notice shall be included in all c
                                            th:text="${grade?.value}">
                                         </a>
                                     </td>
-                                    <th:block th:each="field : ${maxGrades}">
-                                        <td th:if="${(fieldStat.index - studentsWithGrades?.get(student).size()) != 0}" th:text="' '">
+                                    <th:block th:each="field : ${maxGrades}" th:if="${(maxGrades.size() != studentsWithGrades?.get(student).size())}">
+                                        <td th:if="${(fieldStat.index - studentsWithGrades?.get(student).size()) != -1}" th:text="' '">
+
                                         </td>
                                     </th:block>
                                     <td>
@@ -101,6 +103,9 @@ The above copyright notice and this permission notice shall be included in all c
                                                 <i class="material-icons">add_circle</i>&nbsp;Dodaj
                                             </button>
                                         </a>
+                                    </td>
+                                    <td class="border-left">
+                                        xD
                                     </td>
                                 </tr>
 
@@ -163,11 +168,11 @@ The above copyright notice and this permission notice shall be included in all c
                                                                 <td id="gradeDate">
                                                                     <div class="form-group">
                                                                         <label class="bmd-label-floating">Data</label>
-                                                                        <input  id="gradeDateVal" class="form-control" type="text" th:value="${grade.date}" disabled/>
+                                                                        <input  id="gradeDateVal" class="form-control" th:value="${#dates.format(grade.date , 'dd-MM-yyyy HH:mm:ss')}" disabled/>
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                            <input id="studentIdVal" type="hidden"/>
+                                                            <input id="studentIdVal" type="hidden" disabled/>
 
                                                         </table>
                                                     </div>
@@ -208,7 +213,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                             <tr>
                                                                 <td id="gradeStudentEdit">
                                                                     <div class="form-group">
-                                                                        <label class="bmd-label-floating"> </label>
+                                                                        <label class="bmd-label-floating" disabled=""> </label>
                                                                         <input  id="studentNameValEdit" type="text" class="form-control" disabled>
                                                                     </div>
                                                                 </td>
@@ -241,11 +246,12 @@ The above copyright notice and this permission notice shall be included in all c
                                                                 <td id="gradeDateEdit">
                                                                     <div class="form-group">
                                                                         <label class="bmd-label-floating"></label>
-                                                                        <input  id="gradeDateValEdit" class="form-control" type="text" th:value="${grade.date}" disabled/>
+                                                                        <input  id="gradeDateValEditD" class="form-control" type="text" th:value="${#dates.format(grade.date , 'dd-MM-yyyy HH:mm:ss')}" disabled/>
+                                                                        <input type="hidden" id="gradeDateValEdit" th:value="${#dates.format(grade.date , 'yyyy-MM-dd HH:mm:ss')}">
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                            <input id="studentIdValEdit" type="hidden"/>
+                                                            <input id="studentIdValEdit" type="hidden" disabled/>
 
                                                         </table>
                                                     </div>
@@ -255,7 +261,7 @@ The above copyright notice and this permission notice shall be included in all c
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-                                        <input id="gradeIdValue" type="hidden"/>
+                                        <input id="gradeIdValue" type="hidden" disabled/>
                                         <button id="deleteGrade" type="button" class="btn btn-danger ">Usuń</button>
                                         <button id="editGrade" type="button" class="btn btn-success" >Zapisz</button>
                                         <!--                                    id="editGrade" -->
@@ -268,7 +274,6 @@ The above copyright notice and this permission notice shall be included in all c
                     <!-- end edit grade -->
                     <input id="subjectIdVal" type="hidden" th:value="${grade.subjectId}"/>
                     <input id="teacherIdVal" type="hidden" th:value="${grade.teacherId}"/>
-<!--                    <input id="classIdVal" type="hidden" th:value="${classId}"/>-->
                 </div>
             </div>
         </div>
@@ -495,14 +500,182 @@ The above copyright notice and this permission notice shall be included in all c
         md.initFormExtendedDatetimepickers();
     });
 </script>
+<!--New grade modal-->
 
 <script>
-    function rowClicked(teacherId, subjectId) {
+    $(document).on("click", ".open-gradeDialogModal", function () {
 
-        var url = "/teacher/" + teacherId + "/grade/subject/" + subjectId;
-        $(location).attr('href', url);
-    }
+        var studentId = $(this).data('id');
+        var studentName = $(this).data('name');
+
+        var gradeStudentElem = document.getElementById("gradeStudent");
+        var gradeStudentId = document.getElementById("studentIdVal");
+
+        gradeStudentElem.innerHTML = studentName;
+        gradeStudentId.value = studentId;
+
+    });
 </script>
+
+<!--New grade-->
+
+<script>
+    $(document).on("click", "#sendGrade", function () {
+        var csrf= $("#csrfVal").val();
+        var subjectIdVal = $("#subjectIdVal").val();
+        var teacherIdVal = $("#teacherIdVal").val();
+        var studentIdVal = document.getElementById("studentIdVal").value;
+
+
+        var gradeDto = {
+            id: "",
+            value: $("#gradeValueVal").val(),
+            weight: $("#gradeWeightVal").val(),
+            description: $("#gradeDescVal").val(),
+            date: $("#gradeDateVal").val(),
+            teacherId: teacherIdVal,
+            subjectId: subjectIdVal,
+            studentId: studentIdVal,
+        };
+
+        // Creating a XHR object
+        let xhr = new XMLHttpRequest();
+        let url = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal + "/newGrade";
+
+        // open a connection
+        xhr.open("POST", url, true);
+
+        // Set the request header i.e. which type of content you are sending
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("_csrf", csrf);
+        xhr.setRequestHeader('x-csrf-token', csrf);
+
+        // Create a state change callback
+        xhr.onreadystatechange = function () {
+            location.href = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal;
+        };
+
+
+        // Converting JSON data to string
+        var data = JSON.stringify(gradeDto);
+
+        // Sending data with the request
+        xhr.send(data);
+    });
+</script>
+
+<!--Edit grade modal-->
+<script>
+    $(document).on("click", "#open-gradeDialogModal-editGrade", function () {
+
+        var studentId = $(this).data('id');
+        var studentName = $(this).data('student');
+        var value = $(this).data('value');
+        var weight = $(this).data('weight');
+        var desc = $(this).data('desc');
+        var date = $(this).data('date');
+        var gradeId = $(this).data('grade');
+
+        if (desc == null) {
+            desc = "";
+        }
+
+        var gradeStudentId = document.getElementById("studentIdValEdit");
+
+        gradeStudentId.value = studentId;
+
+        document.getElementById("gradeIdValue").value = gradeId;
+        document.getElementById("studentNameValEdit").value = studentName;
+        document.getElementById("gradeWeightValEdit").value = weight;
+        document.getElementById("gradeValueValEdit").value = value;
+        document.getElementById("gradeDescValEdit").value = desc;
+        document.getElementById("gradeDateValEdit").value = date;
+
+    });
+</script>
+
+<!--Edit grade-->
+
+<script>
+    $(document).on("click", "#editGrade", function () {
+        var csrf= $("#csrfVal").val();
+        var subjectIdVal = $("#subjectIdVal").val();
+        var teacherIdVal = $("#teacherIdVal").val();
+        var studentIdVal = document.getElementById("studentIdValEdit").value;
+        var gradeIdVal = $("#gradeIdValue").val();
+
+
+        var gradeDto = {
+            id: gradeIdVal,
+            value: $("#gradeValueValEdit").val(),
+            weight: $("#gradeWeightValEdit").val(),
+            description: $("#gradeDescValEdit").val(),
+            date: $("#gradeDateValEdit").val(),
+            teacherId: teacherIdVal,
+            subjectId: subjectIdVal,
+            studentId: studentIdVal,
+        };
+
+        // Creating a XHR object
+        let xhr = new XMLHttpRequest();
+        let url = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal + "/updateGrade";
+
+        // open a connection
+        xhr.open("POST", url, true);
+
+        // Set the request header i.e. which type of content you are sending
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("_csrf", csrf);
+        xhr.setRequestHeader('x-csrf-token', csrf);
+
+        // Create a state change callback
+        xhr.onreadystatechange = function () {
+            location.href = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal;
+        };
+
+
+        // Converting JSON data to string
+        var data = JSON.stringify(gradeDto);
+
+        // Sending data with the request
+        xhr.send(data);
+    });
+</script>
+
+<!--Delete grade-->
+
+<script>
+    $(document).on("click", "#deleteGrade", function () {
+        var csrf= $("#csrfVal").val();
+        var subjectIdVal = $("#subjectIdVal").val();
+        var teacherIdVal = $("#teacherIdVal").val();
+        var studentIdVal = document.getElementById("studentIdValEdit").value;
+        var gradeIdVal = $("#gradeIdValue").val();
+
+
+
+        // Creating a XHR object
+        let xhr = new XMLHttpRequest();
+        let url = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal + "/" + studentIdVal + "/" + gradeIdVal + "/deleteGrade";
+
+        // open a connection
+        xhr.open("POST", url, true);
+
+        // Set the request header i.e. which type of content you are sending
+        xhr.setRequestHeader("_csrf", csrf);
+        xhr.setRequestHeader('x-csrf-token', csrf);
+
+        // Create a state change callback
+        xhr.onreadystatechange = function () {
+            location.href = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal;
+        };
+
+
+        // Sending data with the request
+        xhr.send();
+    });
+</script>
+
 </body>
 
 </html>
