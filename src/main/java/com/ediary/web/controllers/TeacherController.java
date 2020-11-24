@@ -319,8 +319,10 @@ public class TeacherController {
     public String getAllGradesBySubject(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
 
         model.addAttribute("studentsWithGrades", teacherService.listStudentsGrades(teacherId, subjectId));
+        model.addAttribute("studentsWithFinalGrades", teacherService.listStudentsFinalGrades(teacherId, subjectId));
         model.addAttribute("maxGrades", teacherService.maxGradesCountBySubject(teacherId, subjectId));
         model.addAttribute("grade", teacherService.initNewGrade(teacherId, subjectId));
+        model.addAttribute("finalGrade", teacherService.initNewFinalGrade(teacherId, subjectId));
 
         return "/teacher/grades/allGrades";
     }
@@ -373,6 +375,23 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
     }
 
+
+    @TeacherPermission
+    @PostMapping("{teacherId}/grade/subject/{subjectId}/newFinalGrade")
+    public String processNewFinalGrade(@PathVariable Long teacherId,
+                                  @PathVariable Long subjectId,
+                                  @Valid @RequestBody GradeDto gradeDto,
+                                  BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo: view path
+            return "";
+        }
+
+        Grade grade = teacherService.saveOrUpdateFinalGrade(gradeDto);
+
+        return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
+    }
     //end
 
 

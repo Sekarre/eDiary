@@ -111,8 +111,8 @@ The above copyright notice and this permission notice shall be included in all c
                                                    th:text="${grade?.value}">
                                                 </a>
                                             </td>
-                                            <th:block th:each="field : ${maxGrades}" th:if="${(maxGrades.size() != studentsWithGrades?.get(student).size())}">
-                                                <td th:if="${(fieldStat.index - studentsWithGrades?.get(student).size()) != -1}" th:text="' '">
+                                            <th:block th:each="field : ${maxGrades}">
+                                                <td th:if="${fieldStat.index} < ${maxGrades.size() - studentsWithGrades?.get(student).size()}" th:text="' '">
 
                                                 </td>
                                             </th:block>
@@ -258,7 +258,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="gradeValue">
                                                         <div class="form-group">
                                                             <label class="bmd-label-floating">Ocena: </label>
-                                                            <input  id="gradeValueVal" type="number" max="6" class="form-control">
+                                                            <input  id="gradeValueVal" type="number" min="0" max="6" step="0.5" class="form-control">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -266,7 +266,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="gradeWeight">
                                                         <div class="form-group">
                                                             <label class="bmd-label-floating">Waga</label>
-                                                            <input  id="gradeWeightVal" class="form-control" type="number"/>
+                                                            <input  id="gradeWeightVal" class="form-control" min="0" type="number"/>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -336,7 +336,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="gradeValueEdit">
                                                         <div class="form-group">
                                                             <label class="bmd-label-floating"> </label>
-                                                            <input  id="gradeValueValEdit" type="number" max="6" class="form-control">
+                                                            <input  id="gradeValueValEdit" type="number" min="0" max="6" step="0.5" class="form-control">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -344,7 +344,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="gradeWeightEdit">
                                                         <div class="form-group">
                                                             <label class="bmd-label-floating"></label>
-                                                            <input  id="gradeWeightValEdit" class="form-control" type="number"/>
+                                                            <input  id="gradeWeightValEdit" class="form-control" min="0" type="number"/>
                                                         </div>
                                                     </td>
                                                 </tr>

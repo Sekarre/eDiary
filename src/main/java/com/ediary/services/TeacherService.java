@@ -54,7 +54,9 @@ public interface TeacherService {
     GradeDto updatePatchGrade(GradeDto gradeDto);
     Boolean deleteGrade(Long teacherId, Long subjectId, Long gradeId);
     Grade saveOrUpdateGrade(GradeDto grade);
+    Grade saveOrUpdateFinalGrade(GradeDto grade);
     GradeDto initNewGrade(Long teacherId, Long subjectId);
+    GradeDto initNewFinalGrade(Long teacherId, Long subjectId);
     GradeDto initNewLessonGrade(Long teacherId, Long subjectId, Long lessonId);
 
     Event saveEvent(EventDto eventDto);
@@ -97,6 +99,7 @@ public interface TeacherService {
     Map<StudentDto, AttendanceDto> listStudentsLessonAttendances(Long teacherId, Long lessonId);
     Map<StudentDto, List<GradeDto>> listStudentsLessonGrades(Long teacherId, Long lessonId);
     Map<StudentDto, List<GradeDto>> listStudentsGrades(Long teacherId, Long subjectId);
+    Map<StudentDto, GradeDto> listStudentsFinalGrades(Long teacherId, Long subjectId);
 
     List<Long> maxGradesCount(Long teacherId, Long lessonId);
     List<Long> maxGradesCountBySubject(Long teacherId, Long subjectId);

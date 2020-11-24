@@ -4,6 +4,7 @@ import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
+import com.ediary.domain.helpers.GradeWeight;
 import com.ediary.domain.security.User;
 import com.ediary.domain.timetable.Timetable;
 import com.ediary.exceptions.NoAccessException;
@@ -613,12 +614,38 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public Grade saveOrUpdateFinalGrade(GradeDto grade) {
+        if (grade.getWeight() != null && grade.getWeight() != 100) {
+            grade.setWeight(100);
+        }
+
+        return saveOrUpdateGrade(grade);
+    }
+
+    @Override
     public GradeDto initNewGrade(Long teacherId, Long subjectId) {
 
         Grade grade = Grade.builder()
                 .teacher(getTeacherById(teacherId))
                 .subject(getSubjectById(subjectId))
                 .date(new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()))
+                .build();
+
+        return gradeToGradeDto.convert(grade);
+    }
+
+    @Override
+    public GradeDto initNewFinalGrade(Long teacherId, Long subjectId) {
+
+        Subject subject = getSubjectById(subjectId);
+
+
+        Grade grade = Grade.builder()
+                .teacher(getTeacherById(teacherId))
+                .subject(subject)
+                .date(new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()))
+                .description("Ocena końcowa z przedmiotu: " + subject.getName())
+                .weight(100)
                 .build();
 
         return gradeToGradeDto.convert(grade);
@@ -1069,7 +1096,8 @@ public class TeacherServiceImpl implements TeacherService {
 
         schoolClass.getStudents().forEach(student -> {
             studentGradesListMap.put(studentToStudentDto.convert(student),
-                    gradeRepository.findAllByTeacherIdAndSubjectIdAndStudentId(teacherId, subjectId, student.getId())
+                    gradeRepository.findAllByTeacherIdAndSubjectIdAndStudentIdAndWeightNotIn(teacherId, subjectId,
+                            student.getId(), Arrays.asList(GradeWeight.FINAL_GRADE.getWeight(), GradeWeight.BEHAVIOR_GRADE.getWeight()))
                             .stream()
                             .map(gradeToGradeDto::convert)
                             .collect(Collectors.toList()));
@@ -1081,6 +1109,34 @@ public class TeacherServiceImpl implements TeacherService {
         }
 
         return studentGradesListMap;
+    }
+
+    @Override
+    public Map<StudentDto, GradeDto> listStudentsFinalGrades(Long teacherId, Long subjectId) {
+        Teacher teacher = getTeacherById(teacherId);
+        Subject subject = getSubjectById(subjectId);
+
+        Class schoolClass = subject.getSchoolClass();
+
+        checkIfTeacherHasSubject(subjectId, teacher);
+
+        Map<StudentDto, GradeDto> studentFinalGradesListMap = new TreeMap<>(
+                ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
+                        .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
+
+        schoolClass.getStudents().forEach(student -> {
+            studentFinalGradesListMap.put(studentToStudentDto.convert(student),
+                    gradeToGradeDto.convert(gradeRepository
+                            .findByTeacherIdAndSubjectIdAndStudentIdAndWeight(teacherId, subjectId, student.getId(), GradeWeight.FINAL_GRADE.getWeight())));
+        });
+
+
+        if (studentFinalGradesListMap.keySet().isEmpty()) {
+            return null;
+        }
+
+        return studentFinalGradesListMap;
+
     }
 
     @Override
