@@ -48,6 +48,7 @@ public class AdminController {
 
         model.addAttribute("newUser", adminService.initNewUser());
         model.addAttribute("roles", adminService.getAllRoles());
+        model.addAttribute("students", adminService.getAllStudentsWithoutParent());
 
         return "admin/newUser";
     }
@@ -56,6 +57,7 @@ public class AdminController {
     @PostMapping("/newUser")
     public String processNewUser(@Valid @ModelAttribute UserDto userDto,
                                  @RequestParam(name = "selectedRoles") List<Long> rolesId,
+                                 @RequestParam(name = "selectedStudents", required = false) List<Long> selectedStudentsForParent,
                                  BindingResult result) {
 
         if (result.hasErrors()) {
@@ -63,7 +65,7 @@ public class AdminController {
             return "";
         }
 
-        User user = adminService.saveUser(userDto, rolesId);
+        User user = adminService.saveUser(userDto, rolesId, selectedStudentsForParent);
 
         return "redirect:/admin/users";
     }

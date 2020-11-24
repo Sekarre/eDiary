@@ -39,6 +39,7 @@ public class AdminServiceImplTest {
     @Mock RoleToRoleDto roleToRoleDto;
     @Mock SchoolToSchoolDto schoolToSchoolDto;
     @Mock SchoolDtoToSchool schoolDtoToSchool;
+    @Mock StudentToStudentDto studentToStudentDto;
 
     @Mock
     PasswordEncoder passwordEncoder;
@@ -52,7 +53,8 @@ public class AdminServiceImplTest {
         MockitoAnnotations.initMocks(this);
         adminService = new AdminServiceImpl(userRepository, roleRepository, schoolRepository, addressRepository,
                 studentRepository, parentRepository, teacherRepository,
-                userToUserDto, userDtoToUser, roleToRoleDto, schoolToSchoolDto, schoolDtoToSchool,passwordEncoder);
+                userToUserDto, userDtoToUser, roleToRoleDto, schoolToSchoolDto, schoolDtoToSchool,studentToStudentDto,
+                passwordEncoder);
     }
 
     @Test
@@ -72,7 +74,7 @@ public class AdminServiceImplTest {
         when(userDtoToUser.convert(any())).thenReturn(user);
         when(userRepository.save(any())).thenReturn(user);
 
-        User savedUser = adminService.saveUser(userDto, List.of(1L, 2L));
+        User savedUser = adminService.saveUser(userDto, List.of(1L, 2L), List.of(1L, 2L));
 
         assertNotNull(savedUser);
         assertEquals(savedUser, user);
@@ -125,7 +127,7 @@ public class AdminServiceImplTest {
         when(userToUserDto.convertForAdmin(any())).thenReturn(userDto);
         when(userRepository.save(any())).thenReturn(user);
 
-        User savedUser = adminService.saveUser(userDto, List.of(1L, 2L));
+        User savedUser = adminService.saveUser(userDto, List.of(1L, 2L), List.of(1L, 2L));
 
         assertNotNull(savedUser);
         assertEquals(savedUser, user);

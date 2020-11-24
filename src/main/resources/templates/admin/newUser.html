@@ -124,13 +124,12 @@ The above copyright notice and this permission notice shall be included in all c
                     <label>Rola</label>
                     <div class="form-group">
                       <div class="form-check" th:each="role : ${roles}">
-                          <label class="form-check-label" th:switch="${role.name}">
-                            <input class="form-check-input" type="checkbox"  name="selectedRoles" th:value="${role.id}">
+                          <label class="form-check-label" th:if="${role.name} != 'ROLE_FORM_TUTOR'" th:switch="${role.name}">
+                            <input th:id="'checkbox_' + ${role.name}" class="form-check-input" type="checkbox"  name="selectedRoles" th:value="${role.id}">
                             <div th:case="'ROLE_ADMIN'" >ADMINISTRATOR</div>
                             <div th:case="'ROLE_STUDENT'" >UCZEŃ</div>
                             <div th:case="'ROLE_PARENT'" >RODZIC</div>
                             <div th:case="'ROLE_TEACHER'">NAUCZYCIEL</div>
-                            <div th:case="'ROLE_FORM_TUTOR'" >WYCHOWAWCA</div>
                             <div th:case="'ROLE_DEPUTY_HEAD'" >WICEDYREKTOR</div>
                             <div th:case="'ROLE_HEADMASTER'">DYREKTOR</div>
                             <span class="form-check-sign">
@@ -140,6 +139,30 @@ The above copyright notice and this permission notice shall be included in all c
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+              <div id="addStudent" class="row">
+                <div class="col-md-1">
+                <span class="input-group-text">
+                    <i class="material-icons">family_restroom</i>
+                </span>
+                </div>
+                <div class="col-md-11">
+                  <div class="form-group">
+                    <label class="label">Przypisz uczniów do rodzica</label>
+                    <br>
+                    <select id="selectStudents" class="selectpicker" data-live-search="true" multiple>
+                      <option th:each="student : ${students}"
+                              th:value="${student.id}"
+                              th:text="${student.userName}">
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display: none">
+                  <span th:each="student : ${students}">
+                    <input th:id="'chkStudent_' + ${student.id}" type="checkbox"  name="selectedStudents" th:value="${student.id}">
+                  </span>
                 </div>
               </div>
 
@@ -225,7 +248,7 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-primary pull-right">Dodaj</button>
+              <button id="submitButton"type="submit" class="btn btn-primary pull-right">Dodaj</button>
               <div class="clearfix"></div>
               </form>
 
@@ -457,17 +480,40 @@ The above copyright notice and this permission notice shall be included in all c
 </script>
 
 <script>
+  $(document).ready(function() {
+    $('#addStudent').hide();
+  });
+</script>
+<script>
   $(function() {
 
-    $('#selectClass').on('change', function(){
+    $('#selectStudents').on('change', function(){
       var selected = $(this).find("option:selected").val();
 
       $('#classIdInput').val(selected);
-      $('#selectClass').selectpicker("refresh");
+      $('#selectStudents').selectpicker("refresh");
     });
 
+  })
+
+  $(function () {
+    $("#checkbox_ROLE_PARENT").click(function () {
+      if ($(this).is(":checked")) {
+        $("#addStudent").show();
+      } else {
+        $("#addStudent").hide();
+      }
+    });
+  });
+
+  $( "#submitButton" ).click(function() {
+    $( "#selectStudents option:selected" ).each(function() {
+      var chkStudent = 'chkStudent_' + $(this).val();
+      document.getElementById(chkStudent).checked = true;
+    });
   });
 </script>
+
 
 </body>
 

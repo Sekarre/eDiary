@@ -1,15 +1,9 @@
 package com.ediary.web.controllers;
 
-import com.ediary.DTO.AddressDto;
-import com.ediary.DTO.EventDto;
-import com.ediary.DTO.SchoolDto;
 import com.ediary.DTO.UserDto;
 import com.ediary.converters.UserToUserDto;
-import com.ediary.domain.Address;
-import com.ediary.domain.School;
 import com.ediary.domain.security.User;
 import com.ediary.services.AdminService;
-import com.ediary.web.controllers.AdminController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -18,9 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-
 import java.util.Collections;
-import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -77,16 +69,17 @@ public class AdminControllerTest {
     @Test
     void processNewUser() throws Exception {
 
-        when(adminService.saveUser(any(), any())).thenReturn(User.builder().build());
+        when(adminService.saveUser(any(), any(), anyList())).thenReturn(User.builder().build());
 
         mockMvc.perform(post("/admin/newUser")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(UserDto.builder().build()))
-                .param("selectedRoles", "1"))
+                .param("selectedRoles", "1")
+                .param("selectedStudents", "1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/admin/users"));
 
-        assertNotNull(adminService.saveUser(any(), any()));
+        assertNotNull(adminService.saveUser(any(), any(), anyList()));
 
     }
 

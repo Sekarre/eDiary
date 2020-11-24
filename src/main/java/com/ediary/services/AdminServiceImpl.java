@@ -1,9 +1,6 @@
 package com.ediary.services;
 
-import com.ediary.DTO.AddressDto;
-import com.ediary.DTO.RoleDto;
-import com.ediary.DTO.SchoolDto;
-import com.ediary.DTO.UserDto;
+import com.ediary.DTO.*;
 import com.ediary.bootstrap.DefaultLoader;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
@@ -18,6 +15,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,6 +37,7 @@ public class AdminServiceImpl implements AdminService {
     private final RoleToRoleDto roleToRoleDto;
     private final SchoolToSchoolDto schoolToSchoolDto;
     private final SchoolDtoToSchool schoolDtoToSchool;
+    private final StudentToStudentDto studentToStudentDto;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -49,7 +48,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public User saveUser(UserDto userDto, List<Long> rolesId) {
+    public User saveUser(UserDto userDto, List<Long> rolesId, List<Long> selectedStudentsForParent) {
 
 
         if (userRepository.findByUsername(userDto.getUsername()).isPresent()) {
@@ -77,7 +76,14 @@ public class AdminServiceImpl implements AdminService {
                     studentRepository.save(Student.builder().user(savedUser).build());
                     break;
                 case DefaultLoader.PARENT_ROLE:
-                    parentRepository.save(Parent.builder().user(savedUser).build());
+                    Parent savedParent = parentRepository.save(Parent.builder().user(savedUser).build());
+                    if(selectedStudentsForParent != null) {
+                        selectedStudentsForParent.forEach(studentId -> {
+                            Student student = studentRepository.findById(studentId).orElse(null);
+                            student.setParent(savedParent);
+                            studentRepository.save(student);
+                        });
+                    }
                     break;
                 case DefaultLoader.TEACHER_ROLE:
                     teacherRepository.save(Teacher.builder().user(savedUser).build());
@@ -118,6 +124,14 @@ public class AdminServiceImpl implements AdminService {
                 .map(userToUserDto::convertForAdmin)
                 .collect(Collectors.toList());
 
+    }
+
+    @Override
+    public List<StudentDto> getAllStudentsWithoutParent() {
+        return studentRepository.findAllByParentIsNull()
+                .stream()
+                .map(studentToStudentDto::convert)
+                .collect(Collectors.toList());
     }
 
     @Override
