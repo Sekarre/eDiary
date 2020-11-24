@@ -494,21 +494,6 @@ public class TeacherServiceImpl implements TeacherService {
                 .build());
     }
 
-    @Override
-    public Grade saveClassGrade(Grade grade) {
-        return null;
-    }
-
-    @Override
-    public Boolean deleteClassGrade(Long gradeId) {
-        return null;
-    }
-
-    @Override
-    public List<GradeDto> listClassGrades(Long teacherId, Long schoolClassId) {
-        return null;
-    }
-
 
     @Override
     public Boolean deleteLessonGrade(Long studentId, Long gradeId) {

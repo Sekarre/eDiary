@@ -365,7 +365,7 @@ public class TeacherController {
 
     @TeacherPermission
     @PostMapping("{teacherId}/grade/subject/{subjectId}/{studentId}/{gradeId}/deleteGrade")
-    public String deleteGrade(@PathVariable Long teacherId,
+    public String deleteClassGrade(@PathVariable Long teacherId,
                               @PathVariable Long subjectId,
                               @PathVariable Long studentId,
                               @PathVariable Long gradeId) {

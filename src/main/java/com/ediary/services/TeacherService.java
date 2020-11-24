@@ -43,9 +43,6 @@ public interface TeacherService {
     AttendanceDto initNewLessonAttendance(Long teacherId, Long subjectId, Long lessonId);
 
 
-    Grade saveClassGrade(Grade grade);
-    Boolean deleteClassGrade(Long gradeId);
-    List<GradeDto> listClassGrades(Long teacherId, Long schoolClassId);
     Boolean deleteLessonGrade(Long studentId, Long gradeId);
 
 

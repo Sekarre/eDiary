@@ -308,7 +308,7 @@ class TeacherControllerTest {
 
         when(teacherService.saveOrUpdateGrade(any())).thenReturn(Grade.builder().build());
 
-        mockMvc.perform(post("/teacher/" + teacherId + "/grade/subject/" + subjectId + "/new")
+        mockMvc.perform(post("/teacher/" + teacherId + "/grade/subject/" + subjectId + "/newGrade")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(BehaviorDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
@@ -318,50 +318,17 @@ class TeacherControllerTest {
     }
 
     @Test
-    void deleteGrade() throws Exception {
+    void deleteClassGrade() throws Exception {
         Long subjectId = 1L;
         Long gradeId = 1L;
 
-        mockMvc.perform(delete("/teacher/" + teacherId + "/grade/subject/" + subjectId + "/" + gradeId))
+        mockMvc.perform(post("/teacher/" + teacherId + "/grade/subject/" + subjectId + "/" + 1L + "/" + gradeId + "/deleteGrade"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId));
 
-        verify(teacherService, times(1)).deleteGrade(teacherId, subjectId, gradeId);
+        verify(teacherService, times(1)).deleteLessonGrade(1L, gradeId);
     }
 
-    @Test
-    void updatePutGrade() throws Exception {
-        Long gradeId = 1L;
-        Long subjectId = 1L;
-        GradeDto gradeDto = GradeDto.builder().id(gradeId).build();
-
-        when(teacherService.updatePutGrade(any())).thenReturn(gradeDto);
-
-        mockMvc.perform(put("/teacher/" + teacherId + "/grade/subject/" + subjectId + "/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(AbstractAsJsonControllerTest.asJsonString(gradeDto)))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId));
-
-        verify(teacherService, times(1)).updatePutGrade(any());
-    }
-
-    @Test
-    void updatePatchGrade() throws Exception {
-        Long gradeId = 1L;
-        Long subjectId = 1L;
-        GradeDto gradeDto = GradeDto.builder().id(gradeId).build();
-
-        when(teacherService.updatePatchGrade(any())).thenReturn(gradeDto);
-
-        mockMvc.perform(patch("/teacher/" + teacherId + "/grade/subject/" + subjectId + "/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(AbstractAsJsonControllerTest.asJsonString(gradeDto)))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId));
-
-        verify(teacherService, times(1)).updatePatchGrade(any());
-    }
 
 
     @Test
