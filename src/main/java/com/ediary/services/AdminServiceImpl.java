@@ -55,7 +55,10 @@ public class AdminServiceImpl implements AdminService {
             throw new BadCredentialsException("Username already taken");
         }
 
-        userDto.setRolesId(rolesId);
+        userDto.setRoles(rolesId
+                .stream()
+                .map((roleId) -> RoleDto.builder().id(roleId).build())
+                .collect(Collectors.toList()));
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         User user = userDtoToUser.convert(userDto);
@@ -112,7 +115,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public UserDto updateUser(UserDto userDto, List<Long> rolesId) {
 
-        userDto.setRolesId(rolesId);
+        userDto.setRoles(rolesId
+                .stream()
+                .map((roleId) -> RoleDto.builder().id(roleId).build())
+                .collect(Collectors.toList()));
 
         return userToUserDto
                 .convertForAdmin(userRepository.save(userDtoToUser.convert(userDto)));

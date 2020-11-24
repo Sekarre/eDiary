@@ -26,7 +26,6 @@ public class UserDto {
     private AddressDto address;
 
     //Roles
-    private List<String> rolesNames;
-    private List<Long> rolesId;
+    private List<RoleDto> roles;
 
 }

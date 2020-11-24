@@ -89,7 +89,9 @@ public class AdminController {
     @GetMapping("/users/{userId}/edit")
     public String editUser(@PathVariable Long userId, Model model) {
 
-        model.addAttribute("user", adminService.getUser(userId));
+        model.addAttribute("editUser", adminService.getUser(userId));
+        model.addAttribute("roles", adminService.getAllRoles());
+        model.addAttribute("students", adminService.getAllStudentsWithoutParent());
 
         return "admin/editUser";
     }

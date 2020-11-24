@@ -1,5 +1,6 @@
 package com.ediary.converters;
 
+import com.ediary.DTO.RoleDto;
 import com.ediary.DTO.UserDto;
 import com.ediary.domain.security.User;
 import com.ediary.repositories.security.RoleRepository;
@@ -8,6 +9,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -37,12 +39,11 @@ public class UserDtoToUser implements Converter<UserDto, User> {
 
         }
 
-
         //Address
         user.setAddress(addressDtoToAddress.convert(source.getAddress()));
 
         //Roles
-        user.setRoles(new HashSet<>(roleRepository.findAllById(source.getRolesId())));
+        user.setRoles(new HashSet<>(roleRepository.findAllById(source.getRoles().stream().map(RoleDto::getId).collect(Collectors.toList()))));
 
         return user;
     }

@@ -120,7 +120,7 @@ public class AdminControllerTest {
 
         mockMvc.perform(get("/admin/users/" + userId +"/edit"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("user"))
+                .andExpect(model().attributeExists("editUser"))
                 .andExpect(view().name("admin/editUser"));
 
         verify(adminService, times(1)).getUser(userId);
