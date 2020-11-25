@@ -109,7 +109,8 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Hasło</label>
-                    <input type="password" class="form-control" th:field="*{editUser.password}">
+                    <input  id="passwd" type="password" class="form-control" th:field="*{editUser.password}">
+                    <button id="editPasswd" type="button" class="btn btn-primary pull-right">Zmień</button>
                   </div>
                 </div>
               </div>
@@ -123,8 +124,11 @@ The above copyright notice and this permission notice shall be included in all c
                   <div class="form-group">
                     <label>Rola</label>
                     <div class="form-group">
-                      <div class="form-check" th:each="role : ${user.roles}">
-                        <button type="button" class="btn btn-outline-primary"><span th:text="${}"></span></button>
+                      <div class="form-check">
+                        <button th:each="role : ${editUser.roles}" type="button" class="btn btn-outline-primary btn-sm">
+                          <span th:text="${role.name}"></span>
+                          <i class="material-icons icon-warning">delete_forever</i>
+                        </button>
                       </div>
                       <div class="form-check" th:each="role : ${roles}">
                           <label class="form-check-label" th:if="${role.name} != 'ROLE_FORM_TUTOR'" th:switch="${role.name}">
@@ -190,7 +194,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Ulica</label>
-                    <input type="text" class="form-control" id="street" name="address.street" th:value="*{editUser.address.street}">
+                    <input type="text" class="form-control" id="street" name="address.street" th:value="*{editUser?.address?.street}">
                   </div>
                 </div>
               </div>
@@ -204,7 +208,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Miasto</label>
-                    <input type="text" class="form-control" id="city" name="address.city" th:value="*{editUser.address.city}">
+                    <input type="text" class="form-control" id="city" name="address.city" th:value="*{editUser?.address?.city}">
                   </div>
                 </div>
               </div>
@@ -218,7 +222,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Województwo</label>
-                    <input type="text" class="form-control" id="state" name="address.state" th:value="*{editUser.address.state}">
+                    <input type="text" class="form-control" id="state" name="address.state" th:value="*{editUser?.address?.state}">
                   </div>
                 </div>
               </div>
@@ -232,7 +236,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Kod pocztowy</label>
-                    <input type="text" class="form-control" id="zip" name="address.zip" th:value="*{editUser.address.zip}">
+                    <input type="text" class="form-control" id="zip" name="address.zip" th:value="*{editUser?.address?.zip}">
                   </div>
                 </div>
               </div>
@@ -246,7 +250,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Numer telefonu</label>
-                    <input type="tel" class="form-control" id="phoneNumber" name="address.phoneNumber" th:value="*{editUser.address.phoneNumber}">
+                    <input type="tel" class="form-control" id="phoneNumber" name="address.phoneNumber" th:value="*{editUser?.address?.phoneNumber}">
                   </div>
                 </div>
               </div>
@@ -485,6 +489,7 @@ The above copyright notice and this permission notice shall be included in all c
 <script>
   $(document).ready(function() {
     $('#addStudent').hide();
+    $("#passwd").prop('disabled', true);
   });
 </script>
 <script>
@@ -514,6 +519,11 @@ The above copyright notice and this permission notice shall be included in all c
       var chkStudent = 'chkStudent_' + $(this).val();
       document.getElementById(chkStudent).checked = true;
     });
+  });
+
+  $( "#editPasswd" ).click(function() {
+    $("#passwd").prop('disabled', false);
+    $("#passwd").val("");
   });
 </script>
 
