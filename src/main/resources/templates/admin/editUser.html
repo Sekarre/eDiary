@@ -126,12 +126,19 @@ The above copyright notice and this permission notice shall be included in all c
                     <div class="form-group">
                       <div class="form-check">
                         <button th:each="role : ${editUser.roles}" type="button" class="btn btn-outline-primary btn-sm">
-                          <span th:text="${role.name}"></span>
-                          <i class="material-icons icon-warning">delete_forever</i>
+                          <span th:switch="${role.name}">
+                            <div th:case="'ROLE_ADMIN'" >ADMINISTRATOR <i class="material-icons icon-warning">delete_forever</i> </div>
+                            <div th:case="'ROLE_STUDENT'" >UCZEŃ <i class="material-icons icon-warning">delete_forever</i> </div>
+                            <div th:case="'ROLE_PARENT'" >RODZIC <i class="material-icons icon-warning">delete_forever</i> </div>
+                            <div th:case="'ROLE_TEACHER'">NAUCZYCIEL <i class="material-icons icon-warning">delete_forever</i> </div>
+                            <div th:case="'ROLE_FORM_TUTOR'">WYCHOWAWCA</div>
+                            <div th:case="'ROLE_DEPUTY_HEAD'" >WICEDYREKTOR <i class="material-icons icon-warning">delete_forever</i> </div>
+                            <div th:case="'ROLE_HEADMASTER'">DYREKTOR <i class="material-icons icon-warning">delete_forever</i> </div>
+                          </span>
                         </button>
                       </div>
                       <div class="form-check" th:each="role : ${roles}">
-                          <label class="form-check-label" th:if="${role.name} != 'ROLE_FORM_TUTOR'" th:switch="${role.name}">
+                          <label class="form-check-label" th:if="!${#lists.contains(ownedRoles, role.name)} and ${role.name} != 'ROLE_FORM_TUTOR'" th:switch="${role.name}">
                             <input th:id="'checkbox_' + ${role.name}" class="form-check-input" type="checkbox"  name="selectedRoles" th:value="${role.id}">
                             <div th:case="'ROLE_ADMIN'" >ADMINISTRATOR</div>
                             <div th:case="'ROLE_STUDENT'" >UCZEŃ</div>
@@ -523,7 +530,6 @@ The above copyright notice and this permission notice shall be included in all c
 
   $( "#editPasswd" ).click(function() {
     $("#passwd").prop('disabled', false);
-    $("#passwd").val("");
   });
 </script>
 

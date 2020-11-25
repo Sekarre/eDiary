@@ -1,5 +1,6 @@
 package com.ediary.web.controllers;
 
+import com.ediary.DTO.RoleDto;
 import com.ediary.DTO.SchoolDto;
 import com.ediary.DTO.UserDto;
 import com.ediary.converters.UserToUserDto;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
@@ -91,6 +93,7 @@ public class AdminController {
 
         model.addAttribute("editUser", adminService.getUser(userId));
         model.addAttribute("roles", adminService.getAllRoles());
+        model.addAttribute("ownedRoles", adminService.getUser(userId).getRoles().stream().map(RoleDto::getName).collect(Collectors.toList()));
         model.addAttribute("students", adminService.getAllStudentsWithoutParent());
 
         return "admin/editUser";
