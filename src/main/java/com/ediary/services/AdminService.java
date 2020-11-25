@@ -15,7 +15,7 @@ public interface AdminService {
     User saveUser(UserDto userDto, List<Long> rolesId,List<Long> selectedStudentsForParent);
     Boolean deleteUser(Long userId);
     UserDto getUser(Long userId);
-    UserDto updateUser(UserDto userDto, List<Long> rolesId);
+    UserDto updateUser(UserDto userDto, List<Long> rolesId, List<Long> selectedStudentsForParent);
     List<UserDto> getAllUsers();
     List<StudentDto> getAllStudentsWithoutParent();
 

@@ -37,6 +37,7 @@ public class AdminServiceImplTest {
     @Mock UserToUserDto userToUserDto;
     @Mock UserDtoToUser userDtoToUser;
     @Mock RoleToRoleDto roleToRoleDto;
+    @Mock RoleDtoToRole roleDtoToRole ;
     @Mock SchoolToSchoolDto schoolToSchoolDto;
     @Mock SchoolDtoToSchool schoolDtoToSchool;
     @Mock StudentToStudentDto studentToStudentDto;
@@ -53,7 +54,7 @@ public class AdminServiceImplTest {
         MockitoAnnotations.initMocks(this);
         adminService = new AdminServiceImpl(userRepository, roleRepository, schoolRepository, addressRepository,
                 studentRepository, parentRepository, teacherRepository,
-                userToUserDto, userDtoToUser, roleToRoleDto, schoolToSchoolDto, schoolDtoToSchool,studentToStudentDto,
+                userToUserDto, userDtoToUser, roleToRoleDto, roleDtoToRole, schoolToSchoolDto, schoolDtoToSchool,studentToStudentDto,
                 passwordEncoder);
     }
 

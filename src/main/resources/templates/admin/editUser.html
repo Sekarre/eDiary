@@ -69,7 +69,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <h4 class="card-title">Dodaj użytkownika</h4>
               </div>
               <div class="card-body">
-                  <form th:object="${editUser}" th:action="@{'/admin/users' + ${user.id} + '/update'}" method="post">
+                  <form th:object="${editUser}" th:action="@{'/admin/users/' + ${editUser.id} + '/update'}" method="post">
               </div>
               <div class="card-body">
 
@@ -110,7 +110,7 @@ The above copyright notice and this permission notice shall be included in all c
                   <div class="form-group">
                     <label class="bmd-label-floating">Hasło</label>
                     <input  id="passwd" type="password" class="form-control" th:field="*{editUser.password}">
-                    <button id="editPasswd" type="button" class="btn btn-primary pull-right">Zmień</button>
+                    <button id="editPasswd" type="button" class="btn btn-primary pull-right">Odblokuj</button>
                   </div>
                 </div>
               </div>
@@ -262,7 +262,7 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
               </div>
 
-              <button id="submitButton"type="submit" class="btn btn-primary pull-right">Dodaj</button>
+              <button id="submitButton"type="submit" class="btn btn-primary pull-right">Zapisz</button>
               <div class="clearfix"></div>
               </form>
 
@@ -530,6 +530,7 @@ The above copyright notice and this permission notice shall be included in all c
 
   $( "#editPasswd" ).click(function() {
     $("#passwd").prop('disabled', false);
+    $("#editPasswd").hide();
   });
 </script>
 

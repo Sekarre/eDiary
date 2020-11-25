@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,7 @@ public class AdminServiceImpl implements AdminService {
     private final UserToUserDto userToUserDto;
     private final UserDtoToUser userDtoToUser;
     private final RoleToRoleDto roleToRoleDto;
+    private final RoleDtoToRole roleDtoToRole;
     private final SchoolToSchoolDto schoolToSchoolDto;
     private final SchoolDtoToSchool schoolDtoToSchool;
     private final StudentToStudentDto studentToStudentDto;
@@ -113,15 +115,61 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto, List<Long> rolesId) {
+    public UserDto updateUser(UserDto userUpdated, List<Long> rolesId, List<Long> selectedStudentsForParent) {
 
-        userDto.setRoles(rolesId
-                .stream()
-                .map((roleId) -> RoleDto.builder().id(roleId).build())
-                .collect(Collectors.toList()));
+        Optional<User> userOptional = userRepository.findById(userUpdated.getId());
 
-        return userToUserDto
-                .convertForAdmin(userRepository.save(userDtoToUser.convert(userDto)));
+        if (!userOptional.isPresent()) {
+            throw new NotFoundException("User Not Found.");
+        }
+
+        UserDto userDto = userToUserDto.convertForAdmin(userOptional.get());
+
+        if (userUpdated.getName() != null && userUpdated.getName() != userDto.getName())
+            userDto.setName(userUpdated.getName());
+
+
+        if (userUpdated.getAddress() != null) {
+            userDto.setAddress(userUpdated.getAddress());
+        }
+
+        if (userUpdated.getPassword() != null && passwordEncoder.encode(userUpdated.getPassword()) != userDto.getPassword())
+            userDto.setPassword(passwordEncoder.encode(userUpdated.getPassword()));
+
+        User user = userDtoToUser.convert(userDto);
+
+        Set<Role> roles = user.getRoles();
+
+
+        if (rolesId != null) {
+            rolesId.forEach(roleId -> {
+                Role role = roleDtoToRole.convert(RoleDto.builder().id(roleId).build());
+                roles.add(role);
+                switch (role.getName()) {
+                    case DefaultLoader.STUDENT_ROLE:
+                        studentRepository.save(Student.builder().user(user).build());
+                        break;
+                    case DefaultLoader.PARENT_ROLE:
+                        Parent savedParent = parentRepository.save(Parent.builder().user(user).build());
+                        if (selectedStudentsForParent != null) {
+                            selectedStudentsForParent.forEach(studentId -> {
+                                Student student = studentRepository.findById(studentId).orElse(null);
+                                student.setParent(savedParent);
+                                studentRepository.save(student);
+                            });
+                        }
+                        break;
+                    case DefaultLoader.TEACHER_ROLE:
+                        teacherRepository.save(Teacher.builder().user(user).build());
+                        break;
+
+                }
+            });
+        }
+        user.setRoles(roles);
+        User savedUser = userRepository.save(user);
+
+        return userToUserDto.convert(savedUser);
     }
 
     @Override

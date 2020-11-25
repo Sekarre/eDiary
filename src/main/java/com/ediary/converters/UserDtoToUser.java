@@ -43,7 +43,8 @@ public class UserDtoToUser implements Converter<UserDto, User> {
         user.setAddress(addressDtoToAddress.convert(source.getAddress()));
 
         //Roles
-        user.setRoles(new HashSet<>(roleRepository.findAllById(source.getRoles().stream().map(RoleDto::getId).collect(Collectors.toList()))));
+        if (source.getRoles() != null)
+            user.setRoles(new HashSet<>(roleRepository.findAllById(source.getRoles().stream().map(RoleDto::getId).collect(Collectors.toList()))));
 
         return user;
     }

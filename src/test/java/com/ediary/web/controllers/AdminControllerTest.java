@@ -132,16 +132,17 @@ public class AdminControllerTest {
         Long userId = 1L;
 
         UserDto userDto = UserDto.builder().id(userId).build();
-        when(adminService.updateUser(any(), any())).thenReturn(userDto);
+        when(adminService.updateUser(any(), any(), anyList())).thenReturn(userDto);
 
         mockMvc.perform(post("/admin/users/" + userId + "/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(userDto))
-                .param("roleId", "1"))
+                .param("roleId", "1")
+                .param("selectedStudents", "1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/admin/users/" + userId));
 
-        assertNotNull(adminService.updateUser(any(), any()));
+        assertNotNull(adminService.updateUser(any(), any(), anyList()));
     }
 
 

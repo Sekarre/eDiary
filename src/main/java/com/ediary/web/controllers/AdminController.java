@@ -101,7 +101,8 @@ public class AdminController {
 
     @PostMapping("/users/{userId}/update")
     public String updateUser(@PathVariable Long userId,
-                             @RequestParam(name = "roleId") List<Long> rolesId,
+                             @RequestParam(name = "selectedRoles", required = false) List<Long> rolesId,
+                             @RequestParam(name = "selectedStudents", required = false) List<Long> selectedStudentsForParent,
                              @Valid @ModelAttribute UserDto userDto,
                              BindingResult result) {
 
@@ -110,9 +111,10 @@ public class AdminController {
             return "";
         }
 
-        UserDto updatedUser = adminService.updateUser(userDto, rolesId);
+        userDto.setId(userId);
+        UserDto updatedUser = adminService.updateUser(userDto, rolesId, selectedStudentsForParent);
 
-        return "redirect:/admin/users/" + updatedUser.getId();
+        return "redirect:/admin/users/";
     }
 
     @GetMapping("/school")
