@@ -162,7 +162,6 @@ public class AdminServiceImpl implements AdminService {
                     case DefaultLoader.TEACHER_ROLE:
                         teacherRepository.save(Teacher.builder().user(user).build());
                         break;
-
                 }
             });
         }
@@ -194,6 +193,67 @@ public class AdminServiceImpl implements AdminService {
                 .stream()
                 .map(roleToRoleDto::convert)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean deleteRole(Long userId, String role) {
+
+        User user = getUserById(userId);
+        Set<Role> ownedRoles = user.getRoles();
+
+        //student, parent, teacher
+        switch (role) {
+            case DefaultLoader.STUDENT_ROLE:
+                Student student = studentRepository.findByUser(user).orElse(null);
+                if (student != null) {
+                    User newUser = userRepository.save(User.builder()
+                            .firstName(user.getFirstName())
+                            .lastName(user.getLastName())
+                            .build());
+                    student.setUser(newUser);
+                    studentRepository.save(student);
+                } else {
+                    return false;
+                }
+                break;
+            case DefaultLoader.PARENT_ROLE:
+                Parent parent = parentRepository.findByUser(user).orElse(null);
+                if (parent != null) {
+                    User newUser = userRepository.save(User.builder()
+                            .firstName(user.getFirstName())
+                            .lastName(user.getLastName())
+                            .build());
+                    parent.setUser(newUser);
+                    parentRepository.save(parent);
+                } else {
+                    return false;
+                }
+                break;
+            case DefaultLoader.TEACHER_ROLE:
+                Teacher teacher = teacherRepository.findByUser(user).orElse(null);
+                if (teacher != null) {
+                    User newUser = userRepository.save(User.builder()
+                            .firstName(user.getFirstName())
+                            .lastName(user.getLastName())
+                            .build());
+                    teacher.setUser(newUser);
+                    teacherRepository.save(teacher);
+                } else {
+                    return false;
+                }
+                break;
+        }
+
+        //admin, deputy_head, headmaster
+        Role roleToDelete = roleRepository.findByName(role).orElse(null);
+        if (roleToDelete == null) {
+            return false;
+        }
+        ownedRoles.remove(roleToDelete);
+        user.setRoles(ownedRoles);
+        userRepository.save(user);
+
+        return true;
     }
 
     @Override

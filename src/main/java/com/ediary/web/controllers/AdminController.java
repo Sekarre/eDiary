@@ -99,6 +99,15 @@ public class AdminController {
         return "admin/editUser";
     }
 
+    @PostMapping("/users/{userId}/role/delete")
+    public String deleteRole(@PathVariable Long userId,
+                             @RequestParam(name = "roleToDelete") String role) {
+
+        adminService.deleteRole(userId, role);
+
+        return "redirect:/admin/users/" + userId + "/edit";
+    }
+
     @PostMapping("/users/{userId}/update")
     public String updateUser(@PathVariable Long userId,
                              @RequestParam(name = "selectedRoles", required = false) List<Long> rolesId,

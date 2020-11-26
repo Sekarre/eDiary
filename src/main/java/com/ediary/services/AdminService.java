@@ -20,6 +20,7 @@ public interface AdminService {
     List<StudentDto> getAllStudentsWithoutParent();
 
     List<RoleDto> getAllRoles();
+    Boolean deleteRole(Long userId, String role);
 
     School updateSchool(SchoolDto school);
     SchoolDto getSchool();

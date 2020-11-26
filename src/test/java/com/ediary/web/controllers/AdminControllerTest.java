@@ -1,5 +1,7 @@
 package com.ediary.web.controllers;
 
+import com.ediary.DTO.RoleDto;
+import com.ediary.DTO.StudentDto;
 import com.ediary.DTO.UserDto;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.security.User;
@@ -13,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -113,21 +116,6 @@ public class AdminControllerTest {
     }
 
     @Test
-    void editUser() throws Exception {
-        Long userId = 1L;
-
-        when(adminService.getUser(any())).thenReturn(UserDto.builder().build());
-
-        mockMvc.perform(get("/admin/users/" + userId +"/edit"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("editUser"))
-                .andExpect(view().name("admin/editUser"));
-
-        verify(adminService, times(1)).getUser(userId);
-        assertNotNull(adminService.getUser(userId));
-    }
-
-    @Test
     void updateUser() throws Exception {
         Long userId = 1L;
 
@@ -140,9 +128,24 @@ public class AdminControllerTest {
                 .param("roleId", "1")
                 .param("selectedStudents", "1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/admin/users/" + userId));
+                .andExpect(view().name("redirect:/admin/users/"));
 
         assertNotNull(adminService.updateUser(any(), any(), anyList()));
+    }
+
+    @Test
+    void deleteRole() throws Exception {
+        Long userId = 1L;
+        String roleStudent = "ROLE_STUDENT";
+
+        when(adminService.deleteRole(userId, roleStudent)).thenReturn(true);
+
+        mockMvc.perform(post("/admin/users/" + userId + "/role/delete")
+                .param("roleToDelete", roleStudent))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/admin/users/" + userId + "/edit"));
+
+        verify(adminService, times(1)).deleteRole(userId, roleStudent);
     }
 
 
