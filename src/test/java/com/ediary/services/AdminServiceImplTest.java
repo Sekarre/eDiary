@@ -37,8 +37,10 @@ public class AdminServiceImplTest {
     @Mock UserToUserDto userToUserDto;
     @Mock UserDtoToUser userDtoToUser;
     @Mock RoleToRoleDto roleToRoleDto;
+    @Mock RoleDtoToRole roleDtoToRole ;
     @Mock SchoolToSchoolDto schoolToSchoolDto;
     @Mock SchoolDtoToSchool schoolDtoToSchool;
+    @Mock StudentToStudentDto studentToStudentDto;
 
     @Mock
     PasswordEncoder passwordEncoder;
@@ -52,7 +54,8 @@ public class AdminServiceImplTest {
         MockitoAnnotations.initMocks(this);
         adminService = new AdminServiceImpl(userRepository, roleRepository, schoolRepository, addressRepository,
                 studentRepository, parentRepository, teacherRepository,
-                userToUserDto, userDtoToUser, roleToRoleDto, schoolToSchoolDto, schoolDtoToSchool,passwordEncoder);
+                userToUserDto, userDtoToUser, roleToRoleDto, roleDtoToRole, schoolToSchoolDto, schoolDtoToSchool,studentToStudentDto,
+                passwordEncoder);
     }
 
     @Test
@@ -72,7 +75,7 @@ public class AdminServiceImplTest {
         when(userDtoToUser.convert(any())).thenReturn(user);
         when(userRepository.save(any())).thenReturn(user);
 
-        User savedUser = adminService.saveUser(userDto, List.of(1L, 2L));
+        User savedUser = adminService.saveUser(userDto, List.of(1L, 2L), List.of(1L, 2L));
 
         assertNotNull(savedUser);
         assertEquals(savedUser, user);
@@ -94,6 +97,7 @@ public class AdminServiceImplTest {
 
         assertTrue(result);
         verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, times(1)).save(user);
 
     }
 
@@ -125,7 +129,7 @@ public class AdminServiceImplTest {
         when(userToUserDto.convertForAdmin(any())).thenReturn(userDto);
         when(userRepository.save(any())).thenReturn(user);
 
-        User savedUser = adminService.saveUser(userDto, List.of(1L, 2L));
+        User savedUser = adminService.saveUser(userDto, List.of(1L, 2L), List.of(1L, 2L));
 
         assertNotNull(savedUser);
         assertEquals(savedUser, user);

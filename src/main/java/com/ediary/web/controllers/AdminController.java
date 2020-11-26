@@ -1,5 +1,6 @@
 package com.ediary.web.controllers;
 
+import com.ediary.DTO.RoleDto;
 import com.ediary.DTO.SchoolDto;
 import com.ediary.DTO.UserDto;
 import com.ediary.converters.UserToUserDto;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
@@ -52,6 +54,7 @@ public class AdminController {
 
         model.addAttribute("newUser", adminService.initNewUser());
         model.addAttribute("roles", adminService.getAllRoles());
+        model.addAttribute("students", adminService.getAllStudentsWithoutParent());
 
         return "admin/newUser";
     }
@@ -60,6 +63,7 @@ public class AdminController {
     @PostMapping("/newUser")
     public String processNewUser(@Valid @ModelAttribute UserDto userDto,
                                  @RequestParam(name = "selectedRoles") List<Long> rolesId,
+                                 @RequestParam(name = "selectedStudents", required = false) List<Long> selectedStudentsForParent,
                                  BindingResult result) {
 
         if (result.hasErrors()) {
@@ -67,7 +71,7 @@ public class AdminController {
             return "";
         }
 
-        User user = adminService.saveUser(userDto, rolesId);
+        User user = adminService.saveUser(userDto, rolesId, selectedStudentsForParent);
 
         return "redirect:/admin/users";
     }
@@ -81,28 +85,42 @@ public class AdminController {
         return "admin/user";
     }
 
+
     @AdminPermission
-    @DeleteMapping("/users/{userId}/delete")
+    @PostMapping("/users/{userId}/delete")
     public String deleteUser(@PathVariable Long userId) {
 
         adminService.deleteUser(userId);
 
-        return "admin/users";
+        return "redirect:/admin/users";
     }
 
     @AdminPermission
     @GetMapping("/users/{userId}/edit")
     public String editUser(@PathVariable Long userId, Model model) {
 
-        model.addAttribute("user", adminService.getUser(userId));
+        model.addAttribute("editUser", adminService.getUser(userId));
+        model.addAttribute("roles", adminService.getAllRoles());
+        model.addAttribute("ownedRoles", adminService.getUser(userId).getRoles().stream().map(RoleDto::getName).collect(Collectors.toList()));
+        model.addAttribute("students", adminService.getAllStudentsWithoutParent());
 
         return "admin/editUser";
     }
 
     @AdminPermission
+    @PostMapping("/users/{userId}/role/delete")
+    public String deleteRole(@PathVariable Long userId,
+                             @RequestParam(name = "roleToDelete") String role) {
+
+        adminService.deleteRole(userId, role);
+
+        return "redirect:/admin/users/" + userId + "/edit";
+    }
+
     @PostMapping("/users/{userId}/update")
     public String updateUser(@PathVariable Long userId,
-                             @RequestParam(name = "roleId") List<Long> rolesId,
+                             @RequestParam(name = "selectedRoles", required = false) List<Long> rolesId,
+                             @RequestParam(name = "selectedStudents", required = false) List<Long> selectedStudentsForParent,
                              @Valid @ModelAttribute UserDto userDto,
                              BindingResult result) {
 
@@ -111,9 +129,10 @@ public class AdminController {
             return "";
         }
 
-        UserDto updatedUser = adminService.updateUser(userDto, rolesId);
+        userDto.setId(userId);
+        UserDto updatedUser = adminService.updateUser(userDto, rolesId, selectedStudentsForParent);
 
-        return "redirect:/admin/users/" + updatedUser.getId();
+        return "redirect:/admin/users/";
     }
 
     @AdminPermission

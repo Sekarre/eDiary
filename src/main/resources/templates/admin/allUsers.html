@@ -82,7 +82,7 @@ The above copyright notice and this permission notice shall be included in all c
                                 <tr th:each="user : ${users}">
                                     <td>
                                         <ul th:id="@{'roleUser' + ${user.id}}">
-                                            <li th:each="role : ${user.rolesNames}" style="list-style-type:none;" th:switch="${role}">
+                                            <li th:each="role : ${user.roles}" style="list-style-type:none;" th:switch="${role.name}">
                                                 <button th:case="'ROLE_ADMIN'" type="button" class="btn btn-outline-danger">ADMINISTRATOR</button>
                                                 <button th:case="'ROLE_STUDENT'" type="button" class="btn btn-outline-primary">UCZEŃ</button>
                                                 <button th:case="'ROLE_PARENT'" type="button" class="btn btn-outline-secondary">RODZIC</button>
@@ -109,12 +109,13 @@ The above copyright notice and this permission notice shall be included in all c
                                                 <i class="material-icons">zoom_in</i>
                                             </button>
                                         </a>
-                                        <a id="open-gradeDialogModal-editTopic" data-toggle="modal" class="open-gradeDialogModal" href="#editTopicModal">
+                                        <a th:href="@{'/admin/users/' + ${user.id} + '/edit'}">
                                             <button rel="tooltip" class="btn btn-primary btn-warning btn-fab-mini btn-round">
                                                 <i class="material-icons">edit</i>
                                             </button>
                                         </a>
-                                        <a id="open-gradeDialogModal-deleteTopic" data-toggle="modal" class="open-gradeDialogModal" href="#deleteTopicModal">
+                                        <a id="open-gradeDialogModal-deleteUser" data-toggle="modal" class="open-gradeDialogModal" href="#deleteUserModal"
+                                               th:attr="data-target='#deleteUserModal', data-userid=''+${user.id}+''">
                                             <button rel="tooltip" class="btn btn-primary btn-danger btn-fab-mini btn-round">
                                                 <i class="material-icons">close</i>
                                             </button>
@@ -228,12 +229,8 @@ The above copyright notice and this permission notice shall be included in all c
             </div>
         </div>
 
-
-
-
-        <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
         <!-- Modal delete topic-->
-        <div class="modal fade" id="deleteTopicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -243,10 +240,12 @@ The above copyright notice and this permission notice shall be included in all c
                         </button>
                     </div>
                     <div class="modal-body">
-                        Usunąć temat?
+                        <h3>Jesteś pewny, że chcesz usunąć tego użytkownika ?</h3>
+                        <p>Konto nie zostanie całkowicie usunięte ze względu na jego powiązania w systemie.</p>
+                        <p>Zostaną usunięte dane kontaktowe i możliwość zalogowania na konto.</p>
                     </div>
                     <div class="modal-footer">
-                        <form id="deleteFormTopic" method="post">
+                        <form id="deleteFormUser" method="post">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
                             <button type="submit" class="btn btn-danger" >Usuń</button>
                             <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
@@ -256,88 +255,6 @@ The above copyright notice and this permission notice shall be included in all c
             </div>
         </div>
 
-        <!-- Modal delete subject -->
-        <div class="modal fade" id="deleteSubjectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteSubjectLabel"><i class="material-icons">delete</i></h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Usunąć przedmiot?
-                    </div>
-                    <div class="modal-footer">
-                        <form id="deleteSubjectForm" method="post">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
-                            <button type="submit" class="btn btn-danger" >Usuń</button>
-                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal edit topic -->
-        <div class="modal fade" id="editTopicModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edytuj temat: </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-
-                        <div class="modal-body">
-                            <div class="content">
-                                <div class="container-fluid">
-                                    <div class="card">
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <tr>
-                                                    <td id="topicEditNumber">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-static">Numer</label>
-                                                            <input  id="topicEditNumberVal" type="number" min="0" class="form-control" value="0">
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td id="topicEditName">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-static">Nazwa</label>
-                                                            <input  id="topicEditNameVal" type="text" maxlength="40" class="form-control">
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td id="topicEditDescription">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-static">Opis</label>
-                                                            <textarea  id="topicEditDescVal" class="form-control" maxlength="250" rows="5"></textarea>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <input id="topicEditIdVal" type="hidden"/>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-                            <button id="editTopic" type="button" class="btn btn-warning" >Zapisz</button>
-                        </div>
-                </div>
-            </div>
-        </div>
-
-        <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
 
     </div>
 </div>
@@ -601,105 +518,17 @@ The above copyright notice and this permission notice shall be included in all c
         document.getElementById("userAddressZipVal").value = zip;
         document.getElementById("userAddressPhoneNumberVal").value = phoneNumber;
 
-
-
-    });
-</script>
-
-
-
-<!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-<script>
-    function showHideContent(contentId) {
-        var x = document.getElementById(contentId);
-        if (x.classList.contains('textOverflowCustom')) {
-            x.classList.remove('textOverflowCustom');
-        } else {
-            x.classList.add('textOverflowCustom');
-        }
-    }
-</script>
-
-<script>
-    $(document).on("click", "#open-gradeDialogModal-deleteSubject", function () {
-
-        var subject = $(this).data('subject');
-
-        var deleteForm = document.getElementById("deleteSubjectForm");
-
-        deleteForm.setAttribute("action", subject + "/delete");
     });
 </script>
 
 <script>
-    $(document).on("click", "#open-gradeDialogModal-deleteTopic", function () {
+    $(document).on("click", "#open-gradeDialogModal-deleteUser", function () {
 
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
+        var userToDeleteId = $(this).data('userid');
 
-        var topicId = $(this).data('topic');
+        var deleteFormUser = document.getElementById("deleteFormUser");
 
-
-        var deleteFormTopic = document.getElementById("deleteFormTopic");
-
-        deleteFormTopic.setAttribute("action", "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal + "/topic/" + topicId);
-    });
-</script>
-
-<script>
-    $(document).on("click", "#open-gradeDialogModal-editTopic", function () {
-
-        var id = $(this).data('id');
-        var number = $(this).data('number');
-        var name = $(this).data('name');
-        var desc = $(this).data('desc');
-
-        document.getElementById("topicEditIdVal").value = id;
-        document.getElementById("topicEditNumberVal").value = number;
-        document.getElementById("topicEditNameVal").value = name;
-        document.getElementById("topicEditDescVal").value = desc;
-
-    });
-</script>
-
-<script>
-    $(document).on("click", "#editTopic", function () {
-        var csrf= $("#csrfVal").val();
-
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
-        var topicIdIdVal = $("#topicEditIdVal").val();
-
-        var topicDto = {
-            id: "",
-            number: $("#topicEditNumberVal").val(),
-            name: $("#topicEditNameVal").val(),
-            description: $("#topicEditDescVal").val(),
-            subjectId: subjectIdVal,
-        };
-
-        // Creating a XHR object
-        let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal + "/topic/edit/" + topicIdIdVal;
-
-        // open a connection
-        xhr.open("POST", url, true);
-
-        // Set the request header i.e. which type of content you are sending
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.setRequestHeader("_csrf", csrf);
-        xhr.setRequestHeader('x-csrf-token', csrf);
-
-        // Create a state change callback
-        xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal;
-        };
-
-        // Converting JSON data to string
-        var data = JSON.stringify(topicDto);
-
-        // Sending data with the request
-        xhr.send(data);
+        deleteFormUser.setAttribute("action", "/admin/users/" + userToDeleteId + "/delete");
     });
 </script>
 

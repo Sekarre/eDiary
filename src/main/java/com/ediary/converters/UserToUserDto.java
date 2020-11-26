@@ -5,6 +5,7 @@ import com.ediary.domain.Message;
 import com.ediary.domain.security.Role;
 import com.ediary.domain.security.User;
 import com.ediary.repositories.MessageRepository;
+import com.ediary.repositories.security.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import org.springframework.core.convert.converter.Converter;
@@ -18,7 +19,9 @@ import java.util.stream.Collectors;
 public class UserToUserDto implements Converter<User, UserDto> {
 
     private final MessageRepository messageRepository;
+    private final RoleRepository roleRepository;
     private final AddressToAddressDto addressToAddressDto;
+    private final RoleToRoleDto roleToRoleDto;
 
     @Nullable
     @Synchronized
@@ -59,15 +62,8 @@ public class UserToUserDto implements Converter<User, UserDto> {
         userDto.setAddress(addressToAddressDto.convert(source.getAddress()));
 
         //Roles
-        userDto.setRolesNames(source.getRoles()
-                .stream()
-                .map(Role::getName)
-                .collect(Collectors.toList()));
+        userDto.setRoles(source.getRoles().stream().map(roleToRoleDto::convert).collect(Collectors.toList()));
 
-        userDto.setRolesNames(source.getRoles()
-                .stream()
-                .map(Role::getName)
-                .collect(Collectors.toList()));
 
         return userDto;
     }

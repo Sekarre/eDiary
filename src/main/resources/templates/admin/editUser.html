@@ -69,7 +69,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <h4 class="card-title">Dodaj użytkownika</h4>
               </div>
               <div class="card-body">
-                  <form th:object="${newUser}" th:action="@{'/admin/newUser'}" method="post">
+                  <form th:object="${editUser}" th:action="@{'/admin/users/' + ${editUser.id} + '/update'}" method="post">
               </div>
               <div class="card-body">
 
@@ -82,7 +82,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Imię i nazwisko</label>
-                    <input type="text" class="form-control" th:field="*{newUser.name}">
+                    <input type="text" class="form-control" th:field="*{editUser.name}">
                   </div>
                 </div>
               </div>
@@ -96,7 +96,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Nazwa użytkownika</label>
-                    <input type="text" class="form-control" th:field="*{newUser.username}">
+                    <input type="text" class="form-control" th:field="*{editUser.username}">
                   </div>
                 </div>
               </div>
@@ -109,7 +109,8 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Hasło</label>
-                    <input type="password" class="form-control" th:field="*{newUser.password}">
+                    <input  id="passwd" type="password" class="form-control" th:field="*{editUser.password}">
+                    <button id="editPasswd" type="button" class="btn btn-primary pull-right">Odblokuj</button>
                   </div>
                 </div>
               </div>
@@ -123,8 +124,62 @@ The above copyright notice and this permission notice shall be included in all c
                   <div class="form-group">
                     <label>Rola</label>
                     <div class="form-group">
+                      <div class="form-check">
+                        <button th:each="role : ${editUser.roles}" type="button" class="btn btn-outline-primary btn-sm">
+                          <span th:switch="${role.name}">
+                            <div th:case="'ROLE_ADMIN'" >
+                              <a data-toggle="modal" class="open-gradeDialogModal open-gradeDialogModal-deleteRole" href="#deleteRoleModal"
+                                 th:attr="data-id=''+${editUser.id}+'', data-target='#deleteRoleModal', data-role=''+${role.name}+''">
+                                ADMINISTRATOR
+                                <i class="material-icons icon-warning">delete_forever</i>
+                              </a>
+                            </div>
+                            <div th:case="'ROLE_STUDENT'" >
+                              <a data-toggle="modal" class="open-gradeDialogModal open-gradeDialogModal-deleteRole" href="#deleteRoleModal"
+                                 th:attr="data-id=''+${editUser.id}+'', data-target='#deleteRoleModal', data-role=''+${role.name}+''">
+                                UCZEŃ
+                                <i class="material-icons icon-warning">delete_forever</i>
+                              </a>
+                            </div>
+                            <div th:case="'ROLE_PARENT'" >
+                              <a data-toggle="modal" class="open-gradeDialogModal open-gradeDialogModal-deleteRole" href="#deleteRoleModal"
+                                 th:attr="data-id=''+${editUser.id}+'', data-target='#deleteRoleModal', data-role=''+${role.name}+''">
+                                RODZIC
+                                <i class="material-icons icon-warning">delete_forever</i>
+                              </a>
+                            </div>
+                            <div th:case="'ROLE_TEACHER'">
+                              <a data-toggle="modal" class="open-gradeDialogModal open-gradeDialogModal-deleteRole" href="#deleteRoleModal"
+                                 th:attr="data-id=''+${editUser.id}+'', data-target='#deleteRoleModal', data-role=''+${role.name}+''">
+                              NAUCZYCIEL
+                                <i class="material-icons icon-warning">delete_forever</i>
+                              </a>
+                            </div>
+                            <div th:case="'ROLE_FORM_TUTOR'">
+                              <a data-toggle="modal" class="open-gradeDialogModal open-gradeDialogModal-deleteRole" href="#deleteRoleModal"
+                                 th:attr="data-id=''+${editUser.id}+'', data-target='#deleteRoleModal', data-role=''+${role.name}+''">
+                                WYCHOWAWCA
+                              </a>
+                            </div>
+                            <div th:case="'ROLE_DEPUTY_HEAD'" >
+                              <a data-toggle="modal" class="open-gradeDialogModal open-gradeDialogModal-deleteRole" href="#deleteRoleModal"
+                                 th:attr="data-id=''+${editUser.id}+'', data-target='#deleteRoleModal', data-role=''+${role.name}+''">
+                              WICEDYREKTOR
+                                <i class="material-icons icon-warning">delete_forever</i>
+                              </a>
+                            </div>
+                            <div th:case="'ROLE_HEADMASTER'">
+                              <a data-toggle="modal" class="open-gradeDialogModal open-gradeDialogModal-deleteRole" href="#deleteRoleModal"
+                                 th:attr="data-id=''+${editUser.id}+'', data-target='#deleteRoleModal', data-role=''+${role.name}+''">
+                              DYREKTOR
+                                <i class="material-icons icon-warning">delete_forever</i>
+                              </a>
+                            </div>
+                          </span>
+                        </button>
+                      </div>
                       <div class="form-check" th:each="role : ${roles}">
-                          <label class="form-check-label" th:if="${role.name} != 'ROLE_FORM_TUTOR'" th:switch="${role.name}">
+                          <label class="form-check-label" th:if="!${#lists.contains(ownedRoles, role.name)} and ${role.name} != 'ROLE_FORM_TUTOR'" th:switch="${role.name}">
                             <input th:id="'checkbox_' + ${role.name}" class="form-check-input" type="checkbox"  name="selectedRoles" th:value="${role.id}">
                             <div th:case="'ROLE_ADMIN'" >ADMINISTRATOR</div>
                             <div th:case="'ROLE_STUDENT'" >UCZEŃ</div>
@@ -187,7 +242,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Ulica</label>
-                    <input type="text" class="form-control" id="street" name="address.street" th:value="*{newUser.address.street}">
+                    <input type="text" class="form-control" id="street" name="address.street" th:value="*{editUser?.address?.street}">
                   </div>
                 </div>
               </div>
@@ -201,7 +256,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Miasto</label>
-                    <input type="text" class="form-control" id="city" name="address.city" th:value="*{newUser.address.city}">
+                    <input type="text" class="form-control" id="city" name="address.city" th:value="*{editUser?.address?.city}">
                   </div>
                 </div>
               </div>
@@ -215,7 +270,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Województwo</label>
-                    <input type="text" class="form-control" id="state" name="address.state" th:value="*{newUser.address.state}">
+                    <input type="text" class="form-control" id="state" name="address.state" th:value="*{editUser?.address?.state}">
                   </div>
                 </div>
               </div>
@@ -229,7 +284,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Kod pocztowy</label>
-                    <input type="text" class="form-control" id="zip" name="address.zip" th:value="*{newUser.address.zip}">
+                    <input type="text" class="form-control" id="zip" name="address.zip" th:value="*{editUser?.address?.zip}">
                   </div>
                 </div>
               </div>
@@ -243,12 +298,12 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Numer telefonu</label>
-                    <input type="tel" class="form-control" id="phoneNumber" name="address.phoneNumber" th:value="*{newUser.address.phoneNumber}">
+                    <input type="tel" class="form-control" id="phoneNumber" name="address.phoneNumber" th:value="*{editUser?.address?.phoneNumber}">
                   </div>
                 </div>
               </div>
 
-              <button id="submitButton"type="submit" class="btn btn-primary pull-right">Dodaj</button>
+              <button id="submitButton"type="submit" class="btn btn-primary pull-right">Zapisz</button>
               <div class="clearfix"></div>
               </form>
 
@@ -264,6 +319,32 @@ The above copyright notice and this permission notice shall be included in all c
   <footer class="footer">
   </footer>
 </div>
+
+<!--  Delete role-->
+  <div class="modal fade" id="deleteRoleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel"><i class="material-icons">delete</i></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Usunąć rolę?
+        </div>
+        <div class="modal-footer">
+          <form id="deleteFormRole" method="post">
+            <input id="roleToDelete" type="hidden" name="roleToDelete"/>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
+            <button type="submit" class="btn btn-danger" >Usuń</button>
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 <!--   Core JS Files   -->
 <script th:src="@{/js/core/jquery.min.js}"></script>
@@ -482,6 +563,7 @@ The above copyright notice and this permission notice shall be included in all c
 <script>
   $(document).ready(function() {
     $('#addStudent').hide();
+    $("#passwd").prop('disabled', true);
   });
 </script>
 <script>
@@ -511,6 +593,25 @@ The above copyright notice and this permission notice shall be included in all c
       var chkStudent = 'chkStudent_' + $(this).val();
       document.getElementById(chkStudent).checked = true;
     });
+  });
+
+  $( "#editPasswd" ).click(function() {
+    $("#passwd").prop('disabled', false);
+    $("#editPasswd").hide();
+  });
+</script>
+
+<script>
+  $(document).on("click", ".open-gradeDialogModal-deleteRole", function () {
+
+    var userId = $(this).data('id');
+    var role = $(this).data('role');
+    $("#roleToDelete").val(role);
+
+
+    var deleteFormRole = document.getElementById("deleteFormRole");
+
+    deleteFormRole.setAttribute("action", "/admin/users/" + userId + "/role/delete");
   });
 </script>
 
