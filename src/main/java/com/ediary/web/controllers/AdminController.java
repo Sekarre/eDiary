@@ -117,6 +117,7 @@ public class AdminController {
         return "redirect:/admin/users/" + userId + "/edit";
     }
 
+    @AdminPermission
     @PostMapping("/users/{userId}/update")
     public String updateUser(@PathVariable Long userId,
                              @RequestParam(name = "selectedRoles", required = false) List<Long> rolesId,
