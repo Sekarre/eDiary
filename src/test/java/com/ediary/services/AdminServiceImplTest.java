@@ -97,6 +97,7 @@ public class AdminServiceImplTest {
 
         assertTrue(result);
         verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, times(1)).save(user);
 
     }
 

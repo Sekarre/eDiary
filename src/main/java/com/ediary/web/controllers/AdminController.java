@@ -80,12 +80,12 @@ public class AdminController {
         return "admin/user";
     }
 
-    @DeleteMapping("/users/{userId}/delete")
+    @PostMapping("/users/{userId}/delete")
     public String deleteUser(@PathVariable Long userId) {
 
         adminService.deleteUser(userId);
 
-        return "admin/users";
+        return "redirect:/admin/users";
     }
 
     @GetMapping("/users/{userId}/edit")

@@ -101,10 +101,14 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Boolean deleteUser(Long userId) {
+
         User user = getUserById(userId);
 
-        user.setEnabled(false);
-//        userRepository.delete(user);
+        user.setUsername(null);
+        user.setPassword(null);
+        user.setAddress(null);
+
+        userRepository.save(user);
 
         return true;
     }

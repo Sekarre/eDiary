@@ -107,9 +107,9 @@ public class AdminControllerTest {
 
         when(adminService.deleteUser(any())).thenReturn(true);
 
-        mockMvc.perform(delete("/admin/users/" + userId + "/delete"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin/users"));
+        mockMvc.perform(post("/admin/users/" + userId + "/delete"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/admin/users"));
 
         verify(adminService, times(1)).deleteUser(userId);
         assertTrue(adminService.deleteUser(userId));
