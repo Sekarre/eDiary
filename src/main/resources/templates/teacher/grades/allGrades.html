@@ -73,18 +73,19 @@ The above copyright notice and this permission notice shall be included in all c
                                 <th class="col-lg-1">Nr. </th>
                                 <th class="col-lg-2">Imie</th>
                                 <th  class="text-center col-lg-7" th:colspan="${maxGrades.size() + 1}">Oceny</th>
+                                <th  class="text-center col-lg-2">Średnia</th>
                                 <th  class="text-center col-lg-2">Ocena końcowa</th>
                                 </thead>
                                 <tbody>
-                                <tr th:each="student : ${studentsWithGrades.keySet()}" >
+                                <tr th:id="@{'student' + ${student.id}}" class="students" th:each="student : ${studentsWithGrades.keySet()}" >
                                     <td th:text="${studentStat.index + 1}">
                                         Nr.
                                     </td>
                                     <td th:text="${student?.userName}" class="border-right">
                                         Imie
                                     </td>
-
-                                    <td th:each="grade : ${studentsWithGrades?.get(student)}">
+                                    <td class="grades" th:each="grade : ${studentsWithGrades?.get(student)}" th:value="${grade?.value}">
+                                        <input type="hidden" th:value="${grade?.weight}">
                                         <a data-toggle="modal" id="open-gradeDialogModal-editGrade" class="open-gradeDialogModal btn-sm btn-info" href="#editGradeModal"
                                            th:attr="data-date=''+${grade.date}+'', data-target='#editGradeModal', data-value=''+${grade.value}+'', data-weight=''+${grade.weight}+'',
                                                        data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+'', data-id=''+${student.id}+'', data-grade=''+${grade.id}+''"
@@ -103,6 +104,8 @@ The above copyright notice and this permission notice shall be included in all c
                                                 <i class="material-icons">add_circle</i>&nbsp
                                             </button>
                                         </a>
+                                    </td>
+                                    <td class="averageGrade border-left text-center">
                                     </td>
                                     <td class="border-left text-center">
                                         <a th:if="${studentsWithFinalGrades?.get(student)?.value != null}" data-toggle="modal" id="open-gradeDialogModal-editFinalGrade" class="open-gradeDialogModal btn-sm btn-danger" href="#editGradeModal"
@@ -836,6 +839,37 @@ The above copyright notice and this permission notice shall be included in all c
         xhr.send(data);
     });
 </script>
+
+<!--average grade-->
+<!--Weighted arithmetic mean-->
+<script>
+    var sum = 0.0;
+    var weightSum = 0;
+    var average = 0.0;
+
+    $( ".students" ).each(function() {
+        sum = 0.0;
+        weightSum = 0;
+        average = 0.0;
+
+        var grades = "#" + $(this).attr("id") + " td.grades";
+        $(grades.toString()).each(function() {
+            var value = $(this).attr("value");
+            var weight = $(this).find("input").attr("value");
+            sum = +sum + +(value*weight);
+            weightSum = +weightSum + +weight;
+        });
+
+        average = (sum / weightSum);
+        
+        if (!isNaN(average)) {
+            var averageGrade = "#" + $(this).attr("id") + " td.averageGrade";
+            $(averageGrade.toString()).html(average.toPrecision(3).toString());
+        }
+    });
+</script>
+
+
 
 </body>
 
