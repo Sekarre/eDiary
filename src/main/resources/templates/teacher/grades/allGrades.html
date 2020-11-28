@@ -72,8 +72,8 @@ The above copyright notice and this permission notice shall be included in all c
                                 <thead class=" text-primary">
                                 <th class="col-lg-1">Nr. </th>
                                 <th class="col-lg-2">Imie</th>
-                                <th  class="text-center col-lg-7" th:colspan="${maxGrades.size() + 1}">Oceny</th>
-                                <th  class="text-center col-lg-2">Średnia</th>
+                                <th  class="text-center col-lg-6" th:colspan="${maxGrades.size() + 1}">Oceny</th>
+                                <th  class="text-center col-lg-1">Średnia</th>
                                 <th  class="text-center col-lg-2">Ocena końcowa</th>
                                 </thead>
                                 <tbody>
@@ -108,8 +108,9 @@ The above copyright notice and this permission notice shall be included in all c
                                     <td class="averageGrade border-left text-center">
                                     </td>
                                     <td class="border-left text-center">
-                                        <a th:if="${studentsWithFinalGrades?.get(student)?.value != null}" data-toggle="modal" id="open-gradeDialogModal-editFinalGrade" class="open-gradeDialogModal btn-sm btn-danger" href="#editGradeModal"
-                                           th:text="${studentsWithFinalGrades?.get(student)?.value}">
+                                        <a th:if="${studentsWithFinalGrades?.get(student)?.value != null}" data-toggle="modal" id="open-gradeDialogModal-editFinalGrade" class="open-gradeDialogModal-editFinalGrade btn-sm btn-danger" href="#editFinalGradeModal"
+                                           th:text="${studentsWithFinalGrades?.get(student)?.value}" th:attr="data-date=''+${studentsWithFinalGrades?.get(student)?.date}+'', data-target='#editFinalGradeModal', data-value=''+${studentsWithFinalGrades?.get(student)?.value}+'', data-weight=''+${studentsWithFinalGrades?.get(student)?.weight}+'',
+                                                       data-student=''+${studentsWithFinalGrades?.get(student)?.studentName}+'', data-desc=''+${studentsWithFinalGrades?.get(student)?.description}+'', data-id=''+${student.id}+'', data-grade=''+${studentsWithFinalGrades?.get(student)?.id}+''">
                                         </a>&nbsp;&nbsp;
                                         <a th:if="${studentsWithFinalGrades?.get(student)?.value == null}" id="open-gradeDialogModal-finalGrade" data-toggle="modal" class="open-gradeDialogModal-finalGrade" href="#addFinalGradeModal"
                                            th:attr="data-id=''+${student.id}+'', data-target='#addFinalGradeModal', data-name=''+${student.userName}+''">
@@ -155,7 +156,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                                 <td id="gradeValue">
                                                                     <div class="form-group">
                                                                         <label class="bmd-label-floating">Ocena: </label>
-                                                                        <input  id="gradeValueVal" type="number" min="0" max="6" step="0.5" class="form-control">
+                                                                        <input  id="gradeValueVal" type="number" min="1" max="6" step="0.5" class="form-control">
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -163,7 +164,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                                 <td id="gradeWeight">
                                                                     <div class="form-group">
                                                                         <label class="bmd-label-floating">Waga</label>
-                                                                        <input  id="gradeWeightVal" class="form-control" min="0" type="number"/>
+                                                                        <input  id="gradeWeightVal" class="form-control" min="1" type="number"/>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -225,7 +226,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                             <tr>
                                                                 <td id="gradeStudentEdit">
                                                                     <div class="form-group">
-                                                                        <label class="bmd-label-static " th:text="'Uczeń'" disabled=""> </label>
+                                                                        <label class="bmd-label-static " th:text="'Uczeń'" disabled> </label>
                                                                         <input  id="studentNameValEdit" type="text" class="form-control" disabled>
                                                                     </div>
                                                                 </td>
@@ -234,7 +235,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                                 <td id="gradeValueEdit">
                                                                     <div class="form-group">
                                                                         <label class="bmd-label-static" th:text="'Ocena'"> </label>
-                                                                        <input  id="gradeValueValEdit" type="number" min="0" max="6" step="0.5" class="form-control">
+                                                                        <input  id="gradeValueValEdit" type="number" min="1" max="6" step="0.5" class="form-control">
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -242,7 +243,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                                 <td id="gradeWeightEdit">
                                                                     <div class="form-group">
                                                                         <label class="bmd-label-static" th:text="'Waga'"></label>
-                                                                        <input  id="gradeWeightValEdit" class="form-control" min="0" type="number"/>
+                                                                        <input  id="gradeWeightValEdit" class="form-control" min="1" type="number"/>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -315,15 +316,16 @@ The above copyright notice and this permission notice shall be included in all c
                                                                 <td id="gradeValueF">
                                                                     <div class="form-group">
                                                                         <label class="bmd-label-floating" th:text="'Ocena'">Ocena: </label>
-                                                                        <input  id="gradeValueValFinal" type="number" min="0" max="6" step="0.5" class="form-control">
+                                                                        <input  id="gradeValueValFinal" type="number" min="1" max="6" step="0.5" class="form-control">
                                                                     </div>
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                 <td id="gradeWeightF">
                                                                     <div class="form-group">
-                                                                        <label class="bmd-label-floating is-filled" th:text="'Waga: '" disabled>Waga</label>
-                                                                        <input id="gradeWeightValFinal" type="text" th:value="${finalGrade.weight}" disabled/>
+                                                                        <label class="bmd-label-floating " th:text="'Waga'" disabled></label>
+                                                                        <input type="text" id="gradeWeightValFinalDisplay" class="form-control" th:value="${finalGrade.weight}"  disabled/>
+                                                                        <input type="hidden" id="gradeWeightValFinal" th:value="${finalGrade.weight}"/>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -348,7 +350,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                                 <td id="gradePropF">
                                                                     <div class="form-group">
                                                                         <label class="bmd-label-floating is-filled">Proponowana ocena: </label>
-                                                                        <input type="number"  id="gradeProp" class="form-control" min="0" max="6" step="0.5" th:value="'*todo: Proponowana ocena*'" disabled/>
+                                                                        <input type="number"  id="gradeProp" class="form-control" min="1" max="6" step="0.5" th:value="'*todo: Proponowana ocena*'" disabled/>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -371,6 +373,87 @@ The above copyright notice and this permission notice shall be included in all c
                         </div>
                     </div>
                     <!-- end of add final grade modal -->
+
+                    <!-- Modal edit final grade -->
+                    <div class="modal fade" id="editFinalGradeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Ocena: </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+                                <form id="editFinalGradeForm" method="post" >
+                                    <div class="modal-body">
+                                        <div class="content">
+                                            <div class="container-fluid">
+                                                <div class="card">
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <tr>
+                                                                <td id="gradeFStudentEdit">
+                                                                    <div class="form-group">
+                                                                        <label class="bmd-label-static " th:text="'Uczeń'" disabled=""> </label>
+                                                                        <input  id="studentFNameValEdit" type="text" class="form-control" disabled>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td id="gradeFValueEdit">
+                                                                    <div class="form-group">
+                                                                        <label class="bmd-label-static" th:text="'Ocena'"> </label>
+                                                                        <input  id="gradeFValueValEdit" type="number" min="1" max="6" step="0.5" class="form-control">
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td id="gradeFWeightEdit">
+                                                                    <div class="form-group">
+                                                                        <label class="bmd-label-static" th:text="'Waga'" disabled></label>
+                                                                        <input  type="text" id="gradeFWeightValEdit" class="form-control" disabled/>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td id="gradeFDescriptionEdit">
+                                                                    <div class="form-group">
+                                                                        <label class="bmd-label-static" th:text="'Opis'"></label>
+                                                                        <textarea  id="gradeFDescValEdit" class="form-control" rows="3"></textarea>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td id="gradeFDateEdit">
+                                                                    <div class="form-group">
+                                                                        <label class="bmd-label-static" th:text="'Data'"></label>
+                                                                        <input  id="gradeFDateValEditD" class="form-control" type="text" th:value="${#dates.format(grade.date , 'dd-MM-yyyy HH:mm:ss')}" disabled/>
+                                                                        <input type="hidden" id="gradeFDateValEdit" th:value="${#dates.format(grade.date , 'yyyy-MM-dd HH:mm:ss')}">
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <input id="studentFIdValEdit" type="hidden" disabled/>
+
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                                        <input id="gradeFIdValue" type="hidden" disabled/>
+                                        <button id="deleteFGrade" type="button" class="btn btn-danger ">Usuń</button>
+                                        <button id="editFGrade" type="button" class="btn btn-success" >Zapisz</button>
+                                        <!--                                    id="editGrade" -->
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- end edit grade -->
 
 
                     <input id="subjectIdVal" type="hidden" th:value="${grade.subjectId}"/>
@@ -839,6 +922,121 @@ The above copyright notice and this permission notice shall be included in all c
         xhr.send(data);
     });
 </script>
+
+<!--Edit final grade modal-->
+<script>
+    $(document).on("click", ".open-gradeDialogModal-editFinalGrade", function () {
+
+        var studentId = $(this).data('id');
+        var studentName = $(this).data('student');
+        var value = $(this).data('value');
+        var weight = $(this).data('weight');
+        var desc = $(this).data('desc');
+        var date = $(this).data('date');
+        var gradeId = $(this).data('grade');
+
+        if (desc == null) {
+            desc = "";
+        }
+
+        var gradeStudentId = document.getElementById("studentFIdValEdit");
+
+        gradeStudentId.value = studentId;
+
+        document.getElementById("gradeFIdValue").value = gradeId;
+        document.getElementById("studentFNameValEdit").value = studentName;
+        document.getElementById("gradeFWeightValEdit").value = weight;
+        document.getElementById("gradeFValueValEdit").value = value;
+        document.getElementById("gradeFDescValEdit").value = desc;
+        document.getElementById("gradeFDateValEdit").value = date;
+
+    });
+</script>
+
+
+<!--Edit final grade-->
+
+<script>
+    $(document).on("click", "#deleteFGrade", function () {
+        var csrf= $("#csrfVal").val();
+        var subjectIdVal = $("#subjectIdVal").val();
+        var teacherIdVal = $("#teacherIdVal").val();
+        var studentIdVal = document.getElementById("studentFIdValEdit").value;
+        var gradeIdVal = $("#gradeFIdValue").val();
+
+
+
+        // Creating a XHR object
+        let xhr = new XMLHttpRequest();
+        let url = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal + "/" + studentIdVal + "/" + gradeIdVal + "/deleteFinalGrade";
+
+        // open a connection
+        xhr.open("POST", url, true);
+
+        // Set the request header i.e. which type of content you are sending
+        xhr.setRequestHeader("_csrf", csrf);
+        xhr.setRequestHeader('x-csrf-token', csrf);
+
+        // Create a state change callback
+        xhr.onreadystatechange = function () {
+            location.href = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal;
+        };
+
+
+        // Sending data with the request
+        xhr.send();
+    });
+</script>
+
+<!--Delete final grade-->
+
+<script>
+    $(document).on("click", "#deleteFGrade", function () {
+        var csrf= $("#csrfVal").val();
+        var subjectIdVal = $("#subjectIdVal").val();
+        var teacherIdVal = $("#teacherIdVal").val();
+        var studentIdVal = document.getElementById("studentFIdValEdit").value;
+        var gradeIdVal = $("#gradeFIdValue").val();
+
+
+        var gradeDto = {
+            id: gradeIdVal,
+            value: $("#gradeFValueValEdit").val(),
+            weight: $("#gradeFWeightValEdit").val(),
+            description: $("#gradeFDescValEdit").val(),
+            date: $("#gradeFDateValEdit").val(),
+            teacherId: teacherIdVal,
+            subjectId: subjectIdVal,
+            studentId: studentIdVal,
+        };
+
+        // Creating a XHR object
+        let xhr = new XMLHttpRequest();
+        let url = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal + "/updateGrade";
+
+        // open a connection
+        xhr.open("POST", url, true);
+
+        // Set the request header i.e. which type of content you are sending
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("_csrf", csrf);
+        xhr.setRequestHeader('x-csrf-token', csrf);
+
+        // Create a state change callback
+        xhr.onreadystatechange = function () {
+            location.href = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal;
+        };
+
+
+        // Converting JSON data to string
+        var data = JSON.stringify(gradeDto);
+
+        // Sending data with the request
+        xhr.send(data);
+    });
+</script>
+
+
 
 <!--average grade-->
 <!--Weighted arithmetic mean-->

@@ -4,7 +4,6 @@ import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.*;
 import com.ediary.domain.security.User;
-import com.ediary.repositories.TeacherRepository;
 import com.ediary.security.perms.FormTutorPermission;
 import com.ediary.security.perms.TeacherPermission;
 import com.ediary.services.FormTutorService;
@@ -25,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -292,7 +290,6 @@ public class TeacherController {
     }
 
 
-
     @TeacherPermission
     @GetMapping("{teacherId}/timetable")
     public String getTeacherTimetable(@PathVariable Long teacherId, Model model) {
@@ -328,13 +325,12 @@ public class TeacherController {
     }
 
 
-
     @TeacherPermission
     @PostMapping("{teacherId}/grade/subject/{subjectId}/newGrade")
     public String processNewGrade(@PathVariable Long teacherId,
-                                        @PathVariable Long subjectId,
-                                        @Valid @RequestBody GradeDto gradeDto,
-                                        BindingResult result) {
+                                  @PathVariable Long subjectId,
+                                  @Valid @RequestBody GradeDto gradeDto,
+                                  BindingResult result) {
 
         if (result.hasErrors()) {
             //todo: view path
@@ -349,9 +345,9 @@ public class TeacherController {
     @TeacherPermission
     @PostMapping("{teacherId}/grade/subject/{subjectId}/updateGrade")
     public String updateGrade(@PathVariable Long teacherId,
-                                  @PathVariable Long subjectId,
-                                  @Valid @RequestBody GradeDto gradeDto,
-                                  BindingResult result) {
+                              @PathVariable Long subjectId,
+                              @Valid @RequestBody GradeDto gradeDto,
+                              BindingResult result) {
 
         if (result.hasErrors()) {
             //todo: view path
@@ -366,11 +362,11 @@ public class TeacherController {
     @TeacherPermission
     @PostMapping("{teacherId}/grade/subject/{subjectId}/{studentId}/{gradeId}/deleteGrade")
     public String deleteClassGrade(@PathVariable Long teacherId,
-                              @PathVariable Long subjectId,
-                              @PathVariable Long studentId,
-                              @PathVariable Long gradeId) {
+                                   @PathVariable Long subjectId,
+                                   @PathVariable Long studentId,
+                                   @PathVariable Long gradeId) {
 
-        teacherService.deleteLessonGrade(studentId, gradeId);
+        teacherService.deleteGrade(studentId, gradeId);
 
         return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
     }
@@ -379,9 +375,9 @@ public class TeacherController {
     @TeacherPermission
     @PostMapping("{teacherId}/grade/subject/{subjectId}/newFinalGrade")
     public String processNewFinalGrade(@PathVariable Long teacherId,
-                                  @PathVariable Long subjectId,
-                                  @Valid @RequestBody GradeDto gradeDto,
-                                  BindingResult result) {
+                                       @PathVariable Long subjectId,
+                                       @Valid @RequestBody GradeDto gradeDto,
+                                       BindingResult result) {
 
         if (result.hasErrors()) {
             //todo: view path
@@ -392,8 +388,37 @@ public class TeacherController {
 
         return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
     }
-    //end
 
+
+    @TeacherPermission
+    @PostMapping("{teacherId}/grade/subject/{subjectId}/updateFinalGrade")
+    public String updateFinalGrade(@PathVariable Long teacherId,
+                                   @PathVariable Long subjectId,
+                                   @Valid @RequestBody GradeDto gradeDto,
+                                   BindingResult result) {
+        if (result.hasErrors()) {
+            return "";
+        }
+
+        teacherService.saveOrUpdateFinalGrade(gradeDto);
+
+        return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
+
+    }
+
+    @TeacherPermission
+    @PostMapping("{teacherId}/grade/subject/{subjectId}/{studentId}/{gradeId}/deleteFinalGrade")
+    public String deleteFinalGrade(@PathVariable Long teacherId,
+                                   @PathVariable Long subjectId,
+                                   @PathVariable Long gradeId,
+                                   @PathVariable Long studentId) {
+
+        teacherService.deleteGrade(studentId, gradeId);
+
+        return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
+
+    }
+    //end
 
 
     @TeacherPermission
@@ -495,8 +520,8 @@ public class TeacherController {
     @TeacherPermission
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/newEvent")
     public String processNewClassEvent(@PathVariable Long teacherId,
-                                        @PathVariable Long subjectId,
-                                        @ModelAttribute EventDto newEvent) {
+                                       @PathVariable Long subjectId,
+                                       @ModelAttribute EventDto newEvent) {
 
 
         Event event = teacherService.saveEvent(newEvent);
@@ -547,21 +572,21 @@ public class TeacherController {
 
 
         Attendance attendance = teacherService.saveAttendance(attendanceDto);
-        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId +  "/" + classId + "/" +
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + classId + "/" +
                 lessonId;
     }
 
     @TeacherPermission
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/newAttendancesClass")
     public String newLessonAttendancesForClass(@PathVariable Long teacherId,
-                                      @PathVariable Long subjectId,
-                                      @PathVariable Long classId,
-                                      @PathVariable Long lessonId,
-                                      @Valid @RequestBody AttendanceDto attendanceDto) {
+                                               @PathVariable Long subjectId,
+                                               @PathVariable Long classId,
+                                               @PathVariable Long lessonId,
+                                               @Valid @RequestBody AttendanceDto attendanceDto) {
 
 
         List<Attendance> attendance = teacherService.saveAttendancesForClass(attendanceDto, classId, teacherId);
-        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId +  "/" + classId + "/" +
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + classId + "/" +
                 lessonId;
     }
 
@@ -581,22 +606,22 @@ public class TeacherController {
         Grade grade = teacherService.saveOrUpdateGrade(gradeDto);
         Long classId = grade.getSubject().getSchoolClass().getId();
 
-        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId +  "/" + classId + "/" +
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + classId + "/" +
                 lessonId;
     }
 
     @TeacherPermission
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/{lessonId}/{classId}/{studentId}/{gradeId}/delete")
-    public String deleteGrade(@PathVariable Long teacherId,
-                              @PathVariable Long subjectId,
-                              @PathVariable Long lessonId,
-                              @PathVariable Long classId,
-                              @PathVariable Long studentId,
-                              @PathVariable Long gradeId) {
+    public String deleteLessonGrade(@PathVariable Long teacherId,
+                                    @PathVariable Long subjectId,
+                                    @PathVariable Long lessonId,
+                                    @PathVariable Long classId,
+                                    @PathVariable Long studentId,
+                                    @PathVariable Long gradeId) {
 
-        teacherService.deleteLessonGrade(studentId, gradeId);
+        teacherService.deleteGrade(studentId, gradeId);
 
-        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId +  "/" + classId + "/" +
+        return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + classId + "/" +
                 lessonId;
     }
 

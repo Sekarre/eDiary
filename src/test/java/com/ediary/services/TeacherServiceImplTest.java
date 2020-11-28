@@ -1075,7 +1075,7 @@ class TeacherServiceImplTest {
 
         when(gradeRepository.findById(any())).thenReturn(Optional.ofNullable(gradeToDelete));
 
-        Boolean result = teacherService.deleteGrade(teacherId, subjectId, gradeId);
+        Boolean result = teacherService.deleteGrade(1L, gradeId);
 
         assertTrue(result);
         verify(gradeRepository, times(1)).findById(gradeId);

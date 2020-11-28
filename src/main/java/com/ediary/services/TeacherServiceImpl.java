@@ -496,7 +496,7 @@ public class TeacherServiceImpl implements TeacherService {
 
 
     @Override
-    public Boolean deleteLessonGrade(Long studentId, Long gradeId) {
+    public Boolean deleteGrade(Long studentId, Long gradeId) {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
         Grade grade = gradeRepository.findById(gradeId).orElse(null);
 
@@ -565,21 +565,6 @@ public class TeacherServiceImpl implements TeacherService {
         return gradeToGradeDto.convert(gradeRepository.save(gradeDtoToGrade.convert(grade)));
     }
 
-    @Override
-    public Boolean deleteGrade(Long teacherId, Long subjectId, Long gradeId) {
-        Grade grade = gradeRepository.findById(gradeId).orElse(null);
-
-        if (grade == null) {
-            return false;
-        }
-
-        if ((grade.getTeacher().getId().equals(teacherId) && grade.getSubject().getId().equals(subjectId))) {
-            gradeRepository.delete(grade);
-            return true;
-        }
-
-        return false;
-    }
 
     @Override
     public Grade saveOrUpdateGrade(GradeDto grade) {
@@ -600,8 +585,17 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Grade saveOrUpdateFinalGrade(GradeDto grade) {
+
         if (grade.getWeight() != null && grade.getWeight() != 100) {
             grade.setWeight(100);
+        }
+
+        if (grade.getId() != null) {
+            Grade gradeToUpdate = gradeRepository.findById(grade.getId()).orElse(null);
+            if (gradeToUpdate != null) {
+                gradeToUpdate.setValue(grade.getValue());
+                gradeToUpdate.setDescription(grade.getDescription());
+            }
         }
 
         return saveOrUpdateGrade(grade);

@@ -18,9 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -326,7 +324,7 @@ class TeacherControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId));
 
-        verify(teacherService, times(1)).deleteLessonGrade(1L, gradeId);
+        verify(teacherService, times(1)).deleteGrade(1L, gradeId);
     }
 
 
