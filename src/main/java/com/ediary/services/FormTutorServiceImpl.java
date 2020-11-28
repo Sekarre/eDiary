@@ -3,6 +3,8 @@ package com.ediary.services;
 import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
+import com.ediary.domain.Class;
+import com.ediary.domain.helpers.GradeWeight;
 import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.nio.file.AccessDeniedException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -29,6 +32,7 @@ public class FormTutorServiceImpl implements FormTutorService {
     private final ParentRepository parentRepository;
     private final ParentCouncilRepository parentCouncilRepository;
     private final GradeRepository gradeRepository;
+    private final SubjectRepository subjectRepository;
 
     private final StudentCouncilDtoToStudentCouncil studentCouncilDtoToStudentCouncil;
     private final StudentCouncilToStudentCouncilDto studentCouncilToStudentCouncilDto;
@@ -38,6 +42,8 @@ public class FormTutorServiceImpl implements FormTutorService {
     private final ParentToParentDto parentToParentDto;
     private final GradeToGradeDto gradeToGradeDto;
     private final GradeDtoToGrade gradeDtoToGrade;
+    private final SubjectToSubjectDto subjectToSubjectDto;
+
 
 
     @Override
@@ -295,6 +301,87 @@ public class FormTutorServiceImpl implements FormTutorService {
                 .build();
     }
 
+    @Override
+    public List<SubjectDto> listAllSubjectsByClass(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        if (teacher.getSchoolClass() != null) {
+            return subjectRepository.findAllBySchoolClassId(teacher.getSchoolClass().getId())
+                    .stream()
+                    .map(subjectToSubjectDto::convert)
+                    .collect(Collectors.toList());
+        }
+
+        return null;
+    }
+
+    @Override
+    public Map<StudentDto, List<GradeDto>> listStudentsGrades(Long teacherId, Long subjectId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new NotFoundException("Subject not found"));
+        Optional<Class> optionalClass = Optional.ofNullable(teacher.getSchoolClass());
+
+        Class schoolClass = optionalClass.orElseThrow(() -> new org.springframework.security.access.AccessDeniedException("Teacher -> school Class"));
+
+        if (teacher.getSchoolClass() != null && schoolClass.equals(teacher.getSchoolClass())) {
+
+            Map<StudentDto, List<GradeDto>> studentGradesListMap = new TreeMap<>(
+                    ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
+                            .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
+
+            schoolClass.getStudents().forEach(student -> {
+                studentGradesListMap.put(studentToStudentDto.convert(student),
+                        gradeRepository.findAllByTeacherIdAndSubjectIdAndStudentIdAndWeightNotIn(teacherId, subjectId,
+                                student.getId(), Arrays.asList(GradeWeight.FINAL_GRADE.getWeight(), GradeWeight.BEHAVIOR_GRADE.getWeight()))
+                                .stream()
+                                .map(gradeToGradeDto::convert)
+                                .collect(Collectors.toList()));
+            });
+
+
+            if (studentGradesListMap.keySet().isEmpty()) {
+                return null;
+            }
+
+            return studentGradesListMap;
+        }
+
+        return null;
+    }
+
+    @Override
+    public Map<StudentDto, GradeDto> listStudentsFinalGrades(Long teacherId, Long subjectId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new NotFoundException("Subject not found"));
+
+        Optional<Class> optionalClass = Optional.ofNullable(teacher.getSchoolClass());
+
+        Class schoolClass = optionalClass.orElseThrow(() -> new org.springframework.security.access.AccessDeniedException("Teacher -> school Class"));
+
+        if (teacher.getSchoolClass() != null && schoolClass.equals(teacher.getSchoolClass())) {
+
+            Map<StudentDto, GradeDto> studentFinalGradesListMap = new TreeMap<>(
+                    ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
+                            .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
+
+            schoolClass.getStudents().forEach(student -> {
+                studentFinalGradesListMap.put(studentToStudentDto.convert(student),
+                        gradeToGradeDto.convert(gradeRepository
+                                .findByTeacherIdAndSubjectIdAndStudentIdAndWeight(teacherId, subjectId, student.getId(), GradeWeight.FINAL_GRADE.getWeight())));
+            });
+
+            if (studentFinalGradesListMap.keySet().isEmpty()) {
+                return null;
+            }
+
+            return studentFinalGradesListMap;
+        }
+
+        return null;
+    }
+
     private Teacher getTeacherById(Long teacherId) {
         return teacherRepository
                 .findById(teacherId).orElseThrow(() -> new NotFoundException("Teacher not found"));
@@ -315,19 +402,6 @@ public class FormTutorServiceImpl implements FormTutorService {
     private Map<String, Long> getAttendancesNumber(Student student, Date startTime, Date endTime) {
 
         Map<String, Long> attendancesNumber = new HashMap<>();
-
-//Old version, may be useful
-//        List<Attendance> attendanceList  = student.getAttendance()
-//                .stream()
-//                .filter(attendance -> attendance.getStatus().equals(Attendance.Status.ABSENT)
-//                        || attendance.getStatus().equals(Attendance.Status.UNEXCUSED)
-//                        || attendance.getStatus().equals(Attendance.Status.EXCUSED))
-//                .collect(Collectors.toList());
-//
-//        Long excusedAttendances = attendanceList
-//                .stream()
-//                .filter(attendance ->attendance.getStatus().equals(Attendance.Status.EXCUSED))
-//                .count();
 
         List<Attendance> attendanceList = student.getAttendance()
                 .stream()

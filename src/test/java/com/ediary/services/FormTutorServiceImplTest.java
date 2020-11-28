@@ -36,6 +36,8 @@ public class FormTutorServiceImplTest {
     ParentCouncilRepository parentCouncilRepository;
     @Mock
     GradeRepository gradeRepository;
+    @Mock
+    SubjectRepository subjectRepository;
 
     @Mock
     StudentCouncilDtoToStudentCouncil studentCouncilDtoToStudentCouncil;
@@ -53,6 +55,8 @@ public class FormTutorServiceImplTest {
     GradeToGradeDto gradeToGradeDto;
     @Mock
     GradeDtoToGrade gradeDtoToGrade;
+    @Mock
+    SubjectToSubjectDto subjectToSubjectDto;
 
 
     HttpServletResponse mockResponse;
@@ -64,9 +68,9 @@ public class FormTutorServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         formTutorService = new FormTutorServiceImpl(pdfService, teacherRepository, studentCouncilRepository, studentRepository, parentRepository,
-                parentCouncilRepository,gradeRepository, studentCouncilDtoToStudentCouncil, studentCouncilToStudentCouncilDto,
+                parentCouncilRepository,gradeRepository, subjectRepository, studentCouncilDtoToStudentCouncil, studentCouncilToStudentCouncilDto,
                 parentCouncilDtoToParentCouncil, parentCouncilToParentCouncilDto, studentToStudentDto, parentToParentDto,
-                gradeToGradeDto, gradeDtoToGrade);
+                gradeToGradeDto, gradeDtoToGrade, subjectToSubjectDto);
 
         mockResponse = mock(HttpServletResponse.class);
 

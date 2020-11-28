@@ -1,16 +1,14 @@
 package com.ediary.services;
 
 import com.ediary.DTO.*;
-import com.ediary.domain.Grade;
-import com.ediary.domain.ParentCouncil;
-import com.ediary.domain.StudentCard;
-import com.ediary.domain.StudentCouncil;
+import com.ediary.domain.*;
 import com.ediary.domain.helpers.TimeInterval;
 
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 
 public interface FormTutorService {
@@ -42,4 +40,7 @@ public interface FormTutorService {
     TimeInterval initNewTimeInterval();
     TimeInterval setTimeInterval(LocalDate startTime, LocalDate endTime);
 
+    List<SubjectDto> listAllSubjectsByClass(Long teacherId);
+    Map<StudentDto, List<GradeDto>> listStudentsGrades(Long teacherId, Long subjectId);
+    Map<StudentDto, GradeDto> listStudentsFinalGrades(Long teacherId, Long subjectId);
 }

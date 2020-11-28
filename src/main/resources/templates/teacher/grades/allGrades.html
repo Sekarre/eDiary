@@ -77,7 +77,7 @@ The above copyright notice and this permission notice shall be included in all c
                                 <th  class="text-center col-lg-2">Ocena końcowa</th>
                                 </thead>
                                 <tbody>
-                                <tr th:id="@{'student' + ${student.id}}" class="students" th:each="student : ${studentsWithGrades.keySet()}" >
+                                <tr th:id="'student' + ${student.id}" class="students" th:each="student : ${studentsWithGrades.keySet()}" >
                                     <td th:text="${studentStat.index + 1}">
                                         Nr.
                                     </td>
@@ -93,7 +93,7 @@ The above copyright notice and this permission notice shall be included in all c
                                         </a>
                                     </td>
                                     <th:block th:each="field : ${maxGrades}">
-                                        <td th:if="${fieldStat.index} < ${maxGrades.size() - studentsWithGrades?.get(student).size()}" th:text="' '">
+                                        <td th:if="${fieldStat.index} < ${maxGrades.size() - studentsWithGrades?.get(student)?.size()}" th:text="' '">
 
                                         </td>
                                     </th:block>
@@ -105,7 +105,7 @@ The above copyright notice and this permission notice shall be included in all c
                                             </button>
                                         </a>
                                     </td>
-                                    <td class="averageGrade border-left text-center">
+                                    <td class="averageGrade border-left text-center" >
                                     </td>
                                     <td class="border-left text-center">
                                         <a th:if="${studentsWithFinalGrades?.get(student)?.value != null}" data-toggle="modal" id="open-gradeDialogModal-editFinalGrade" class="open-gradeDialogModal-editFinalGrade btn-sm btn-danger" href="#editFinalGradeModal"
@@ -343,14 +343,6 @@ The above copyright notice and this permission notice shall be included in all c
                                                                         <label class="bmd-label-floating is-filled" th:text="'Data'">Data</label>
                                                                         <input  id="gradeDateValDisplayF" class="form-control" th:value="${#dates.format(grade.date , 'dd-MM-yyyy HH:mm:ss')}" disabled/>
                                                                         <input type="hidden" id="gradeDateValFinal" th:value="${#dates.format(grade.date , 'yyyy-MM-dd HH:mm:ss')}">
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td id="gradePropF">
-                                                                    <div class="form-group">
-                                                                        <label class="bmd-label-floating is-filled">Proponowana ocena: </label>
-                                                                        <input type="number"  id="gradeProp" class="form-control" min="1" max="6" step="0.5" th:value="'*todo: Proponowana ocena*'" disabled/>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -872,7 +864,6 @@ The above copyright notice and this permission notice shall be included in all c
 
         gradeStudentElem.innerHTML = studentName;
         gradeStudentId.value = studentId;
-
     });
 </script>
 

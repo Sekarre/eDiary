@@ -87,7 +87,6 @@ public class TeacherController {
         return "/teacher/allEvents";
     }
 
-    //todo: hmm
     @TeacherPermission
     @GetMapping("/{teacherId}/event/{eventId}")
     public String getEvent(@PathVariable Long teacherId, @PathVariable Long eventId, Model model) {
@@ -116,7 +115,6 @@ public class TeacherController {
         }
     }
 
-    //todo: hmm
     @TeacherPermission
     @DeleteMapping("/{teacherId}/event/{eventId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -298,7 +296,6 @@ public class TeacherController {
         return "teacher/timetable/timetable";
     }
 
-    //end of todo
 
 
     //start
@@ -307,6 +304,7 @@ public class TeacherController {
     public String getAllSubjectsGrade(@PathVariable Long teacherId, Model model) {
 
         model.addAttribute("subjects", teacherService.listSubjects(teacherId));
+        model.addAttribute("formTutorSubjects", formTutorService.listAllSubjectsByClass(teacherId));
 
         return "teacher/grades/subject";
     }
@@ -795,6 +793,21 @@ public class TeacherController {
     }
 
     //FormTutor
+
+
+    @FormTutorPermission
+    @GetMapping("/{teacherId}/grade/subject/{subjectId}/viewOnly")
+    public String getAllGradesBySubjectFormTutor(@PathVariable Long teacherId, @PathVariable Long subjectId, Model model) {
+
+
+        model.addAttribute("studentsWithGrades", formTutorService.listStudentsGrades(teacherId, subjectId));
+        model.addAttribute("studentsWithFinalGrades", formTutorService.listStudentsFinalGrades(teacherId, subjectId));
+        model.addAttribute("maxGrades", teacherService.maxGradesCountBySubject(teacherId, subjectId));
+
+        return "/teacher/grades/allGradesFormTutor";
+    }
+
+
 
     @FormTutorPermission
     @PostMapping("/{teacherId}/attendances/class/{classId}/{studentId}/excuse")
