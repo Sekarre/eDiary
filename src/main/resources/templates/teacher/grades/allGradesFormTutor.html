@@ -103,7 +103,7 @@ The above copyright notice and this permission notice shall be included in all c
                                         <td class="border-left text-center">
                                             <a th:if="${studentsWithFinalGrades?.get(student)?.value != null}" data-toggle="modal" id="open-gradeDialogModal-FinalGrade" class="open-gradeDialogModal btn-sm btn-danger" href="#gradeModal"
                                                th:text="${studentsWithFinalGrades?.get(student)?.value}" th:attr="data-date=''+${studentsWithFinalGrades?.get(student)?.date}+'', data-target='#gradeModal', data-value=''+${studentsWithFinalGrades?.get(student)?.value}+'', data-weight=''+${studentsWithFinalGrades?.get(student)?.weight}+'',
-                                                       data-student=''+${studentsWithFinalGrades?.get(student)?.studentName}+'', data-desc=''+${studentsWithFinalGrades?.get(student)?.description}+'', data-teacher=''+${studentsWithFinalGrades?.get(student)?.teacherName}+'', data-grade=''+${studentsWithFinalGrades?.get(student)?.subjectName}+''">
+                                                       data-student=''+${studentsWithFinalGrades?.get(student)?.studentName}+'', data-desc=''+${studentsWithFinalGrades?.get(student)?.description}+'', data-teacher=''+${studentsWithFinalGrades?.get(student)?.teacherName}+'', data-subject=''+${studentsWithFinalGrades?.get(student)?.subjectName}+''">
                                             </a>&nbsp;&nbsp;
                                         </td>
                                     </tr>

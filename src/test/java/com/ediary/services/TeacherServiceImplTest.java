@@ -1067,13 +1067,17 @@ class TeacherServiceImplTest {
         Long subjectId = 1L;
         Long gradeId = 1L;
 
+        Student student = Student.builder().build();
+
         Grade gradeToDelete = Grade.builder()
                 .id(gradeId)
+                .student(student)
                 .subject(Subject.builder().id(subjectId).build())
                 .teacher(Teacher.builder().id(teacherId).build())
                 .build();
 
         when(gradeRepository.findById(any())).thenReturn(Optional.ofNullable(gradeToDelete));
+        when(studentRepository.findById(any())).thenReturn(Optional.ofNullable(student));
 
         Boolean result = teacherService.deleteGrade(1L, gradeId);
 

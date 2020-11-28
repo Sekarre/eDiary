@@ -10,27 +10,28 @@ Coded by Creative Tim
 =========================================================
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <link rel="apple-touch-icon" sizes="76x76" th:href="@{/img/apple-icon.png}">
     <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
         E-dziennik
     </title>
-    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport'/>
     <!--     Fonts and icons     -->
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <!-- CSS Files -->
-    <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
+    <link th:href="@{/css/material-dashboard.css}" rel="stylesheet"/>
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link th:href="@{/demo/demo.css}" rel="stylesheet" />
+    <link th:href="@{/demo/demo.css}" rel="stylesheet"/>
     <style>
-        tr:hover td{
-            background-color:#f5f5f5;;
+        tr:hover td {
+            background-color: #f5f5f5;;
         }
     </style>
 </head>
@@ -47,13 +48,14 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="navbar-wrapper">
                     <a class="navbar-brand">Przedmioty:</a>
                 </div>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index"
+                        aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="navbar-toggler-icon icon-bar"></span>
                     <span class="navbar-toggler-icon icon-bar"></span>
                     <span class="navbar-toggler-icon icon-bar"></span>
                 </button>
-                <div th:replace="fragments/optionsBar :: optionsBar"> </div>
+                <div th:replace="fragments/optionsBar :: optionsBar"></div>
             </div>
         </nav>
         <!-- End Navbar -->
@@ -69,7 +71,7 @@ The above copyright notice and this permission notice shall be included in all c
                         <h3 class="card-title">Wybierz przedmiot:</h3>
                     </div>
                     <div class="card-body">
-<!--                       Teacher-->
+                        <!--                       Teacher-->
                         <div class="table-responsive">
                             <table class="table">
                                 <thead class=" text-primary">
@@ -90,7 +92,15 @@ The above copyright notice and this permission notice shall be included in all c
                                 </tbody>
                             </table>
                         </div>
-<!--                        if formTutor-->
+                    </div>
+                </div>
+                <div sec:authorize="hasRole('FORM_TUTOR')" class="form-control"></div>
+                <!--                        if formTutor-->
+                <div class="card" sec:authorize="hasRole('FORM_TUTOR')">
+                    <div class="card-header card-header-primary">
+                        <h3 class="card-title">Przedmioty nauczanej klasy:</h3>
+                    </div>
+                    <div class="card-body">
                         <div th:if="${formTutorSubjects != null}" class="table-responsive">
                             <table class="table">
                                 <thead class=" text-primary">
@@ -115,6 +125,8 @@ The above copyright notice and this permission notice shall be included in all c
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
 
 <!--   Core JS Files   -->
@@ -160,8 +172,8 @@ The above copyright notice and this permission notice shall be included in all c
 <!-- Material Dashboard DEMO methods, don't include it in your project! -->
 <script th:src="@{/demo/demo.js}"></script>
 <script>
-    $(document).ready(function() {
-        $().ready(function() {
+    $(document).ready(function () {
+        $().ready(function () {
             $sidebar = $('.sidebar');
 
             $sidebar_img_container = $sidebar.find('.sidebar-background');
@@ -181,7 +193,7 @@ The above copyright notice and this permission notice shall be included in all c
 
             }
 
-            $('.fixed-plugin a').click(function(event) {
+            $('.fixed-plugin a').click(function (event) {
                 // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
                 if ($(this).hasClass('switch-trigger')) {
                     if (event.stopPropagation) {
@@ -192,7 +204,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.fixed-plugin .active-color span').click(function() {
+            $('.fixed-plugin .active-color span').click(function () {
                 $full_page_background = $('.full-page-background');
 
                 $(this).siblings().removeClass('active');
@@ -213,7 +225,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.fixed-plugin .background-color .badge').click(function() {
+            $('.fixed-plugin .background-color .badge').click(function () {
                 $(this).siblings().removeClass('active');
                 $(this).addClass('active');
 
@@ -224,7 +236,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.fixed-plugin .img-holder').click(function() {
+            $('.fixed-plugin .img-holder').click(function () {
                 $full_page_background = $('.full-page-background');
 
                 $(this).parent('li').siblings().removeClass('active');
@@ -234,7 +246,7 @@ The above copyright notice and this permission notice shall be included in all c
                 var new_image = $(this).find("img").attr('src');
 
                 if ($sidebar_img_container.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
-                    $sidebar_img_container.fadeOut('fast', function() {
+                    $sidebar_img_container.fadeOut('fast', function () {
                         $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
                         $sidebar_img_container.fadeIn('fast');
                     });
@@ -243,7 +255,7 @@ The above copyright notice and this permission notice shall be included in all c
                 if ($full_page_background.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
                     var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
 
-                    $full_page_background.fadeOut('fast', function() {
+                    $full_page_background.fadeOut('fast', function () {
                         $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
                         $full_page_background.fadeIn('fast');
                     });
@@ -262,7 +274,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.switch-sidebar-image input').change(function() {
+            $('.switch-sidebar-image input').change(function () {
                 $full_page_background = $('.full-page-background');
 
                 $input = $(this);
@@ -294,7 +306,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.switch-sidebar-mini input').change(function() {
+            $('.switch-sidebar-mini input').change(function () {
                 $body = $('body');
 
                 $input = $(this);
@@ -309,7 +321,7 @@ The above copyright notice and this permission notice shall be included in all c
 
                     $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
 
-                    setTimeout(function() {
+                    setTimeout(function () {
                         $('body').addClass('sidebar-mini');
 
                         md.misc.sidebar_mini_active = true;
@@ -317,12 +329,12 @@ The above copyright notice and this permission notice shall be included in all c
                 }
 
                 // we simulate the window Resize so the charts will get updated in realtime.
-                var simulateWindowResize = setInterval(function() {
+                var simulateWindowResize = setInterval(function () {
                     window.dispatchEvent(new Event('resize'));
                 }, 180);
 
                 // we stop the simulation of Window Resize after the animations are completed
-                setTimeout(function() {
+                setTimeout(function () {
                     clearInterval(simulateWindowResize);
                 }, 1000);
 
@@ -331,7 +343,7 @@ The above copyright notice and this permission notice shall be included in all c
     });
 </script>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         //init DateTimePickers
         md.initFormExtendedDatetimepickers();
     });

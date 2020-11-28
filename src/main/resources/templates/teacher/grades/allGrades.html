@@ -93,7 +93,7 @@ The above copyright notice and this permission notice shall be included in all c
                                         </a>
                                     </td>
                                     <th:block th:each="field : ${maxGrades}">
-                                        <td th:if="${fieldStat.index} < ${maxGrades.size() - studentsWithGrades?.get(student)?.size()}" th:text="' '">
+                                        <td th:if="${fieldStat.index} < ${maxGrades.size() - studentsWithGrades?.get(student).size()}" th:text="' '">
 
                                         </td>
                                     </th:block>
@@ -945,7 +945,7 @@ The above copyright notice and this permission notice shall be included in all c
 </script>
 
 
-<!--Edit final grade-->
+<!--Delete final grade-->
 
 <script>
     $(document).on("click", "#deleteFGrade", function () {
@@ -973,16 +973,15 @@ The above copyright notice and this permission notice shall be included in all c
             location.href = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal;
         };
 
-
         // Sending data with the request
         xhr.send();
     });
 </script>
 
-<!--Delete final grade-->
+<!--Edit final grade-->
 
 <script>
-    $(document).on("click", "#deleteFGrade", function () {
+    $(document).on("click", "#editFGrade", function () {
         var csrf= $("#csrfVal").val();
         var subjectIdVal = $("#subjectIdVal").val();
         var teacherIdVal = $("#teacherIdVal").val();
@@ -1003,7 +1002,7 @@ The above copyright notice and this permission notice shall be included in all c
 
         // Creating a XHR object
         let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal + "/updateGrade";
+        let url = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal + "/updateFinalGrade";
 
         // open a connection
         xhr.open("POST", url, true);
