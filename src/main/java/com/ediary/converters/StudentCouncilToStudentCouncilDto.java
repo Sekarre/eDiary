@@ -10,6 +10,8 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -35,6 +37,11 @@ public class StudentCouncilToStudentCouncilDto implements Converter<StudentCounc
         studentCouncilDto.setStudents(source.getStudents()
                 .stream()
                 .map(studentToStudentDto::convert)
+                .sorted(Comparator
+                        .comparing(studentDto ->
+                                Arrays.stream(studentDto
+                                        .getUserName()
+                                        .split(" ")).skip(1).findFirst().get()))
                 .collect(Collectors.toList()));
 
 

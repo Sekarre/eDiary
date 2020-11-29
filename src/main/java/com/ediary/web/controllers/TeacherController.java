@@ -902,12 +902,11 @@ public class TeacherController {
     public String removeStudentFromCouncil(@PathVariable Long teacherId,
                                            @PathVariable Long studentId,
                                            @ModelAttribute StudentCouncilDto studentCouncilDto,
-                                           Model model) {
+                                           BindingResult result) {
 
-        model.addAttribute("students", formTutorService.listClassStudents(teacherId));
-        model.addAttribute("studentCouncil", formTutorService.removeStudentFromCouncil(studentCouncilDto, studentId));
+        formTutorService.removeStudentFromCouncil(studentCouncilDto, teacherId,  studentId);
 
-        return "teacher/formTutor/studentCouncil";
+        return "redirect:/teacher/" + teacherId + "/formTutor/studentCouncil";
     }
 
     @FormTutorPermission

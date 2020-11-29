@@ -79,16 +79,19 @@ The above copyright notice and this permission notice shall be included in all c
                             <table class="table">
                                 <thead>
                                 <th>Imie i nazwisko</th>
-                                <th>Zmień</th>
+                                <th>Usuń z pozycji</th>
                                 </thead>
                                 <tbody>
                                 <tr th:each="student : ${studentCouncil.students}">
+                                    <form method="post" th:action="@{'/teacher/' + ${teacher.id} + '/formTutor/studentCouncil/remove/' + ${student.id}}">
+
                                     <td th:text = "${student.userName}"></td>
-                                    <td>
-                                        <a th:href="@{'/teacher/' + ${teacher.id} + '/formTutor/studentCouncil'}">
-                                            <i class="material-icons">swap_horiz</i>
-                                        </a>
-                                    </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-round submit">
+                                                <i class="material-icons">delete</i>
+                                            </button>
+                                        </td>
+                                    </form>
                                 </tr>
                                 </tbody>
                             </table>

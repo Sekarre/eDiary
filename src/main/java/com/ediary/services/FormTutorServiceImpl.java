@@ -50,7 +50,6 @@ public class FormTutorServiceImpl implements FormTutorService {
     private final SubjectToSubjectDto subjectToSubjectDto;
 
 
-
     @Override
     public StudentCouncilDto initNewStudentCouncil(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
@@ -73,14 +72,12 @@ public class FormTutorServiceImpl implements FormTutorService {
             StudentCouncil studentCouncil = studentCouncilRepository.findBySchoolClassId(teacher.getSchoolClass().getId());
 
             if (studentCouncil != null) {
-                if (studentCouncil.getStudents().size() > 0) {
+                int studentCouncilSize = studentCouncil.getStudents().size();
+                for (int i = 0; i < 3 - studentCouncilSize; i++) {
+                    Student student = studentRepository.findById(studentsId.get(i))
+                            .orElseThrow(() -> new NotFoundException("Student not found"));
 
-                    for (int i = 0; i < 3 - studentCouncil.getStudents().size(); i++) {
-                        Student student = studentRepository.findById(studentsId.get(i))
-                                .orElseThrow(() -> new NotFoundException("Student not found"));
-
-                        studentCouncil.getStudents().add(student);
-                    }
+                    studentCouncil.getStudents().add(student);
                 }
             } else {
                 studentCouncil = StudentCouncil.builder()
@@ -131,8 +128,10 @@ public class FormTutorServiceImpl implements FormTutorService {
     }
 
     @Override
-    public StudentCouncilDto removeStudentFromCouncil(StudentCouncilDto studentCouncilDto, Long studentId) {
-        StudentCouncil studentCouncil = studentCouncilDtoToStudentCouncil.convert(studentCouncilDto);
+    public StudentCouncilDto removeStudentFromCouncil(StudentCouncilDto studentCouncilDto, Long teacherId, Long studentId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        StudentCouncil studentCouncil = studentCouncilRepository.findBySchoolClassId(teacher.getSchoolClass().getId());
 
         if ((studentCouncil != null) && (studentCouncil.getStudents().stream().anyMatch(s -> s.getId().equals(studentId)))) {
 
@@ -300,14 +299,14 @@ public class FormTutorServiceImpl implements FormTutorService {
             StudentCouncil studentCouncil = studentCouncilRepository.findBySchoolClassId(teacher.getSchoolClass().getId());
 
             if (studentCouncil == null) {
-                return studentRepository.findAllBySchoolClassId(teacher.getSchoolClass().getId())
+                return studentRepository.findAllBySchoolClassIdOrderByUserLastName(teacher.getSchoolClass().getId())
                         .stream()
                         .map(studentToStudentDto::convert)
                         .collect(Collectors.toList());
 
             }
 
-            return studentRepository.findAllBySchoolClassId(teacher.getSchoolClass().getId())
+            return studentRepository.findAllBySchoolClassIdOrderByUserLastName(teacher.getSchoolClass().getId())
                     .stream()
                     .filter(student -> !studentCouncil.getStudents().contains(student))
                     .map(studentToStudentDto::convert)

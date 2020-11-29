@@ -189,7 +189,7 @@ public class FormTutorServiceImplTest {
 
 
         StudentCouncilDto removedStudentCouncilDto = formTutorService
-                .removeStudentFromCouncil(studentCouncilDto, studentId);
+                .removeStudentFromCouncil(studentCouncilDto, 1L,  studentId);
 
 
         assertNotNull(removedStudentCouncilDto);

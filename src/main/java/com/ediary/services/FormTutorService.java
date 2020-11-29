@@ -17,7 +17,7 @@ public interface FormTutorService {
     StudentCouncil saveStudentCouncil(Long teacherId, StudentCouncilDto studentCouncilDto, List<Long> studentsId);
     StudentCouncilDto findStudentCouncil(Long teacherId);
     Boolean deleteStudentCouncil(Long teacherId);
-    StudentCouncilDto removeStudentFromCouncil(StudentCouncilDto studentCouncilDto, Long studentId);
+    StudentCouncilDto removeStudentFromCouncil(StudentCouncilDto studentCouncilDto,Long teacherId, Long studentId);
 
     ParentCouncilDto initNewParentCouncil(Long teacherId);
     ParentCouncil saveParentCouncil(Long teacherId, ParentCouncilDto parentCouncilDto, List<Long> parentsId);

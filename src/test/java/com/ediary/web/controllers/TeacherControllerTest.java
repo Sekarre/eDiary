@@ -820,7 +820,7 @@ class TeacherControllerTest {
     void removeStudentFromCouncil() throws Exception {
         Long parentId = 1L;
 
-        when(formTutorService.removeStudentFromCouncil(any(), any()))
+        when(formTutorService.removeStudentFromCouncil(any(), any(), any()))
                 .thenReturn(StudentCouncilDto.builder().build());
         when(formTutorService.listClassStudents(teacherId)).thenReturn(Arrays.asList(
                 StudentDto.builder().id(1L).build(),
