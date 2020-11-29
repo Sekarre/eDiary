@@ -1,6 +1,7 @@
 package com.ediary.converters;
 
 import com.ediary.DTO.ParentCouncilDto;
+import com.ediary.DTO.ParentDto;
 import com.ediary.domain.Parent;
 import com.ediary.domain.ParentCouncil;
 import com.ediary.repositories.ClassRepository;
@@ -38,7 +39,10 @@ public class ParentCouncilDtoToParentCouncil implements Converter<ParentCouncilD
         parentCouncil.setSchoolClass(classRepository.findById(source.getId()).orElse(null));
 
         //Parent
-        parentCouncil.setParents(new HashSet<>(parentRepository.findAllById(source.getParentsId())));
+        parentCouncil.setParents(new HashSet<>(parentRepository.findAllById(source.getParents()
+                .stream()
+                .map(ParentDto::getId)
+                .collect(Collectors.toList()))));
 
         return parentCouncil;
     }

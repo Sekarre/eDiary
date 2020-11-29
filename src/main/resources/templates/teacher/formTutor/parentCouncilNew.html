@@ -32,11 +32,11 @@ The above copyright notice and this permission notice shall be included in all c
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
 
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
-    <!--    <style>-->
-    <!--        tr:hover td{-->
-    <!--            background-color:#f5f5f5;;-->
-    <!--        }-->
-    <!--    </style>-->
+    <style>
+        .active a{
+            background-color: #9c27b0 !important;
+        }
+    </style>
 </head>
 
 <body class="">
@@ -49,7 +49,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <h3  th:text="'Klasa  ' + ${studentCouncil.schoolClassName}"></h3>
+                    <h3  th:text="'Klasa  ' + ${parentCouncil.schoolClassName} + ': dodaj do trójki klasowej'"></h3>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -65,88 +65,45 @@ The above copyright notice and this permission notice shall be included in all c
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h3 class="card-title" th:text="'Obecna trójka klasowa: '">Obecna trójka: </h3>
+                        <h3 class="card-title">Dostępni rodzicie :</h3>
                     </div>
-                    <div  class="card-body text-center" th:if="${studentCouncil == null || studentCouncil?.students?.size() < 3}">
-                            <a  th:href="@{'/teacher/' + ${teacher.id} + '/formTutor/studentCouncil/add'}">
-                                <button class="btn btn-primary btn-fab btn-round">
-                                    <i class="material-icons">add</i>
-                                </button>
-                            </a>
-                    </div>
-                    <div class="card-body" th:if="${studentCouncil != null && studentCouncil?.students?.size() > 0}">
-                        <div class='table-responsive'>
-                            <table class="table">
-                                <thead>
-                                <th>Imie i nazwisko</th>
-                                <th>Usuń z pozycji</th>
-                                </thead>
-                                <tbody>
-                                <tr th:each="student : ${studentCouncil.students}">
-                                    <form method="post" th:action="@{'/teacher/' + ${teacher.id} + '/formTutor/studentCouncil/remove/' + ${student.id}}">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <form method="post" th:action="@{'/teacher/' + ${teacher.id} +'/formTutor/parentCouncil/new'}">
 
-                                    <td th:text = "${student.userName}"></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-round submit">
-                                                <i class="material-icons">delete</i>
-                                            </button>
+                                <table class="table">
+                                    <thead class=" text-primary">
+                                    <th>Imie i nazwisko</th>
+                                    <th>Wybierz</th>
+                                    </thead>
+                                    <tbody>
+
+                                    <tr th:each="parent : ${parents}">
+                                        <td th:text="${parent.userName}">
+                                            Imie i nazwisko
                                         </td>
-                                    </form>
-                                </tr>
-                                </tbody>
-                            </table>
+                                        <td>
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input"  type="checkbox" name="toCouncil" th:value="${parent?.id}">
+                                                    <span class="form-check-sign">
+                                                        <span class="check"></span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="text-center">
+                                    <button class="btn btn-primary accept" id="accept" type="submit" disabled>Zapisz</button>
+                                    <small id="help" class="form-text text-muted" th:text="'Niepoprawna liczba wybranych osób'" hidden></small>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-
-
-                <!-- Modal -->
-                <div class="modal fade" id="deleteStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel"><i class="material-icons">delete</i></h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body" id="modal-body">
-
-                            </div>
-                            <div class="modal-footer">
-                                <form id="deleteForm" method="post">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
-                                    <button type="submit" class="btn btn-danger" >Usuń</button>
-                                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal fade" id="deleteClassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="example2ModalLabel"><i class="material-icons">delete</i></h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body" id="modal-body-class">
-
-                            </div>
-                            <div class="modal-footer">
-                                <form id="deleteFormClass" method="post">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
-                                    <button type="submit" class="btn btn-danger" >Usuń</button>
-                                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                <input type="hidden" id="parentsCount" th:value="${parentCouncil?.parents?.size()}">
             </div>
         </div>
     </div>
@@ -371,6 +328,24 @@ The above copyright notice and this permission notice shall be included in all c
         md.initFormExtendedDatetimepickers();
     });
 </script>
+
+<script>
+    $(document).ready(function () {
+
+        $(':checkbox').click(function () {
+            var total = $("input:checked").length;
+            var parentsCount = $('#parentsCount').val();
+
+            if (total > 0 && total < 4 - parentsCount) {
+                $('#accept').prop('disabled', false);
+            } else {
+                $('#accept').prop('disabled', true);
+            }
+
+        });
+    });
+</script>
+
 </body>
 
 </html>

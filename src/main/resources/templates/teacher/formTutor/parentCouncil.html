@@ -49,7 +49,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <h3  th:text="'Klasa  ' + ${studentCouncil.schoolClassName}"></h3>
+                    <h3  th:text="'Klasa  ' + ${parentCouncil.schoolClassName}"></h3>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -65,16 +65,16 @@ The above copyright notice and this permission notice shall be included in all c
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h3 class="card-title" th:text="'Obecna trójka klasowa: '">Obecna trójka: </h3>
+                        <h3 class="card-title" th:text="'Obecna klasowa rada rodziców: '">Obecna rada rodziców: </h3>
                     </div>
-                    <div  class="card-body text-center" th:if="${studentCouncil == null || studentCouncil?.students?.size() < 3}">
-                            <a  th:href="@{'/teacher/' + ${teacher.id} + '/formTutor/studentCouncil/add'}">
-                                <button class="btn btn-primary btn-fab btn-round">
-                                    <i class="material-icons">add</i>
-                                </button>
-                            </a>
+                    <div  class="card-body text-center" th:if="${parentCouncil == null || parentCouncil?.parents?.size() < 3}">
+                        <a  th:href="@{'/teacher/' + ${teacher.id} + '/formTutor/parentCouncil/add'}">
+                            <button class="btn btn-primary btn-fab btn-round">
+                                <i class="material-icons">add</i>
+                            </button>
+                        </a>
                     </div>
-                    <div class="card-body" th:if="${studentCouncil != null && studentCouncil?.students?.size() > 0}">
+                    <div class="card-body" th:if="${parentCouncil != null && parentCouncil?.parents?.size() > 0}">
                         <div class='table-responsive'>
                             <table class="table">
                                 <thead>
@@ -82,10 +82,10 @@ The above copyright notice and this permission notice shall be included in all c
                                 <th>Usuń z pozycji</th>
                                 </thead>
                                 <tbody>
-                                <tr th:each="student : ${studentCouncil.students}">
-                                    <form method="post" th:action="@{'/teacher/' + ${teacher.id} + '/formTutor/studentCouncil/remove/' + ${student.id}}">
+                                <tr th:each="parent : ${parentCouncil.parents}">
+                                    <form method="post" th:action="@{'/teacher/' + ${teacher.id} + '/formTutor/parentCouncil/remove/' + ${parent.id}}">
 
-                                    <td th:text = "${student.userName}"></td>
+                                        <td th:text = "${parent.userName}"></td>
                                         <td>
                                             <button class="btn btn-sm btn-round submit">
                                                 <i class="material-icons">delete</i>
@@ -101,29 +101,6 @@ The above copyright notice and this permission notice shall be included in all c
 
 
                 <!-- Modal -->
-                <div class="modal fade" id="deleteStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel"><i class="material-icons">delete</i></h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body" id="modal-body">
-
-                            </div>
-                            <div class="modal-footer">
-                                <form id="deleteForm" method="post">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
-                                    <button type="submit" class="btn btn-danger" >Usuń</button>
-                                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="modal fade" id="deleteClassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -371,6 +348,7 @@ The above copyright notice and this permission notice shall be included in all c
         md.initFormExtendedDatetimepickers();
     });
 </script>
+
 </body>
 
 </html>

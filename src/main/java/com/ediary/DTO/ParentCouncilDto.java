@@ -1,5 +1,6 @@
 package com.ediary.DTO;
 
+import com.ediary.domain.Parent;
 import lombok.*;
 
 import java.util.List;
@@ -18,6 +19,5 @@ public class ParentCouncilDto {
     private Long schoolClassId;
 
     //Parents
-    private List<String> parentsName;
-    private List<Long> parentsId;
+    private List<ParentDto> parents;
 }

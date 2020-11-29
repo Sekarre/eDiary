@@ -806,15 +806,7 @@ class TeacherControllerTest {
         assertNotNull(formTutorService.saveStudentCouncil(any(), any(), any()));
     }
 
-    @Test
-    void deleteStudentCouncil() throws Exception {
 
-        mockMvc.perform(delete("/teacher/" + teacherId + "/formTutor/studentCouncil/delete"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("teacher/formTutor/studentCouncil"));
-
-        verify(formTutorService, times(1)).deleteStudentCouncil(any());
-    }
 
     @Test
     void removeStudentFromCouncil() throws Exception {
@@ -876,14 +868,6 @@ class TeacherControllerTest {
         assertNotNull(formTutorService.saveParentCouncil(any(), any(), any()));
     }
 
-    @Test
-    void deleteParentCouncil() throws Exception {
-        mockMvc.perform(delete("/teacher/" + teacherId + "/formTutor/parentCouncil/delete"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("teacher/formTutor/parentCouncil"));
-
-        verify(formTutorService, times(1)).deleteParentCouncil(any());
-    }
 
     @Test
     void removeParentFromCouncil() throws Exception {

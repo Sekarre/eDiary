@@ -113,19 +113,6 @@ public class FormTutorServiceImpl implements FormTutorService {
         return null;
     }
 
-    @Override
-    public Boolean deleteStudentCouncil(Long teacherId) {
-        Teacher teacher = getTeacherById(teacherId);
-
-        StudentCouncil studentCouncil = teacher.getSchoolClass().getStudentCouncil();
-
-        if (studentCouncil != null) {
-            studentCouncilRepository.delete(studentCouncil);
-            return true;
-        }
-
-        return false;
-    }
 
     @Override
     public StudentCouncilDto removeStudentFromCouncil(StudentCouncilDto studentCouncilDto, Long teacherId, Long studentId) {
@@ -163,39 +150,54 @@ public class FormTutorServiceImpl implements FormTutorService {
     public ParentCouncil saveParentCouncil(Long teacherId, ParentCouncilDto parentCouncilDto, List<Long> parentsId) {
         Teacher teacher = getTeacherById(teacherId);
 
-        ParentCouncil parentCouncil = parentCouncilDtoToParentCouncil.convert(parentCouncilDto);
-
-        if (parentCouncil != null) {
-            if (parentCouncil.getParents().size() > 0) {
-                parentCouncil.getParents().addAll(parentRepository.findAllById(parentsId));
-            } else {
-                parentCouncil.setParents(new HashSet<>(parentRepository.findAllById(parentsId)));
-            }
-            return parentCouncilRepository.save(parentCouncil);
-
-        } else {
-            throw new NotFoundException("Parents not found");
+        if (parentsId.size() > 3) {
+            return null;
         }
+
+        if (teacher.getSchoolClass() != null) {
+            ParentCouncil parentCouncil = parentCouncilRepository.findBySchoolClassId(teacher.getSchoolClass().getId());
+
+            if (parentCouncil != null) {
+                int parentCouncilSize = parentCouncil.getParents().size();
+                for (int i = 0; i < 3 - parentCouncilSize; i++) {
+                    Parent parent = parentRepository.findById(parentsId.get(i))
+                            .orElseThrow(() -> new NotFoundException("Parent not found"));
+
+                    parentCouncil.getParents().add(parent);
+                }
+            } else {
+                parentCouncil = ParentCouncil.builder()
+                        .parents(parentRepository.findAllById(parentsId))
+                        .schoolClass(teacher.getSchoolClass())
+                        .build();
+            }
+
+            Class classToSave = teacher.getSchoolClass();
+            classToSave.setParentCouncil(parentCouncil);
+
+            Class savedClass = classRepository.save(classToSave);
+
+            return savedClass.getParentCouncil();
+        }
+
+        return null;
     }
 
     @Override
     public ParentCouncilDto findParentCouncil(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
 
-        return parentCouncilToParentCouncilDto.convert(teacher.getSchoolClass().getParentCouncil());
-    }
+        if (teacher.getSchoolClass() != null) {
+            ParentCouncil parentCouncil = parentCouncilRepository.findBySchoolClassId(teacher.getSchoolClass().getId());
 
-    @Override
-    public Boolean deleteParentCouncil(Long teacherId) {
-        Teacher teacher = getTeacherById(teacherId);
+            if (parentCouncil == null) {
+                return null;
+            }
 
-        ParentCouncil parentCouncil = teacher.getSchoolClass().getParentCouncil();
-
-        if (parentCouncil != null) {
-            parentCouncilRepository.delete(parentCouncil);
-            return true;
+            return parentCouncilToParentCouncilDto.convert(parentCouncil);
         }
-        return false;
+
+        return null;
     }
 
     @Override
@@ -258,15 +260,12 @@ public class FormTutorServiceImpl implements FormTutorService {
                 student, getAttendancesNumber(student, correctedStartTime, correctedEndTime), timeInterval);
     }
 
-    /**
-     * Assuming weight of behavior grade is 9000, will be refactored to enum
-     **/
     @Override
     public List<GradeDto> listBehaviorGrades(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
 
 
-        return gradeRepository.findAllByTeacherIdAndWeight(teacherId, 9000)
+        return gradeRepository.findAllByTeacherIdAndWeight(teacherId, GradeWeight.BEHAVIOR_GRADE.getWeight())
                 .stream()
                 .map(gradeToGradeDto::convert)
                 .collect(Collectors.toList());
@@ -279,7 +278,7 @@ public class FormTutorServiceImpl implements FormTutorService {
         Grade grade = gradeDtoToGrade.convert(gradeDto);
 
         if (grade != null) {
-            grade.setWeight(9000);
+            grade.setWeight(GradeWeight.BEHAVIOR_GRADE.getWeight());
             return gradeRepository.save(grade);
         }
 
@@ -320,16 +319,27 @@ public class FormTutorServiceImpl implements FormTutorService {
     public List<ParentDto> listClassParents(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
 
-        List<Student> students =
-                new ArrayList<>(studentRepository.findAllBySchoolClassId(teacher.getSchoolClass().getId()));
+        if (teacher.getSchoolClass() != null) {
+            ParentCouncil parentCouncil = parentCouncilRepository.findBySchoolClassId(teacher.getSchoolClass().getId());
 
-        Set<Parent> parents = students.stream()
-                .map(Student::getParent)
-                .collect(Collectors.toSet());
+            if (parentCouncil == null) {
 
-        return parents.stream()
-                .map(parentToParentDto::convert)
-                .collect(Collectors.toList());
+
+                return parentRepository.findAllByStudentsInOrderByUserLastName(teacher.getSchoolClass().getStudents())
+                        .stream()
+                        .map(parentToParentDto::convert)
+                        .collect(Collectors.toList());
+
+            }
+
+            return parentRepository.findAllByStudentsInOrderByUserLastName(teacher.getSchoolClass().getStudents())
+                    .stream()
+                    .filter(parent -> !parentCouncil.getParents().contains(parent))
+                    .map(parentToParentDto::convert)
+                    .collect(Collectors.toList());
+        }
+
+        return null;
 
     }
 

@@ -297,7 +297,6 @@ public class TeacherController {
     }
 
 
-
     //start
     @TeacherPermission
     @GetMapping("/{teacherId}/grade/subject")
@@ -808,7 +807,6 @@ public class TeacherController {
     }
 
 
-
     @FormTutorPermission
     @PostMapping("/{teacherId}/attendances/class/{classId}/{studentId}/excuse")
     public String processExcuseAttendancesFormTutor(@PathVariable Long teacherId,
@@ -889,13 +887,6 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/formTutor/studentCouncil";
     }
 
-    @FormTutorPermission
-    @DeleteMapping("/{teacherId}/formTutor/studentCouncil/delete")
-    public String deleteStudentCouncil(@PathVariable Long teacherId) {
-
-        formTutorService.deleteStudentCouncil(teacherId);
-        return "teacher/formTutor/studentCouncil";
-    }
 
     @FormTutorPermission
     @PostMapping("/{teacherId}/formTutor/studentCouncil/remove/{studentId}")
@@ -904,7 +895,7 @@ public class TeacherController {
                                            @ModelAttribute StudentCouncilDto studentCouncilDto,
                                            BindingResult result) {
 
-        formTutorService.removeStudentFromCouncil(studentCouncilDto, teacherId,  studentId);
+        formTutorService.removeStudentFromCouncil(studentCouncilDto, teacherId, studentId);
 
         return "redirect:/teacher/" + teacherId + "/formTutor/studentCouncil";
     }
@@ -918,47 +909,53 @@ public class TeacherController {
         } else {
             model.addAttribute("parentCouncil", formTutorService.initNewParentCouncil(teacherId));
         }
-        model.addAttribute("parents", formTutorService.listClassParents(teacherId));
+
         return "teacher/formTutor/parentCouncil";
 
     }
 
     @FormTutorPermission
+    @GetMapping("/{teacherId}/formTutor/parentCouncil/add")
+    public String newParentCouncil(@PathVariable Long teacherId, Model model) {
+
+        if (formTutorService.findParentCouncil(teacherId) != null) {
+            model.addAttribute("parentCouncil", formTutorService.findParentCouncil(teacherId));
+        } else {
+            model.addAttribute("parentCouncil", formTutorService.initNewParentCouncil(teacherId));
+        }
+
+        model.addAttribute("parents", formTutorService.listClassParents(teacherId));
+
+        return "teacher/formTutor/parentCouncilNew";
+    }
+
+    @FormTutorPermission
     @PostMapping("/{teacherId}/formTutor/parentCouncil/new")
     public String processNewParentCouncil(@PathVariable Long teacherId,
-                                          @RequestParam(name = "parentId") List<Long> parentsId,
-                                          @Valid @RequestBody ParentCouncilDto parentCouncilDto,
+                                          @RequestParam(name = "toCouncil") List<Long> parentsId,
+                                          @Valid @ModelAttribute ParentCouncilDto parentCouncil,
                                           BindingResult result) {
         if (result.hasErrors()) {
             //todo: path to view
             return "";
         }
 
-        ParentCouncil parentCouncil = formTutorService.saveParentCouncil(teacherId, parentCouncilDto, parentsId);
+        ParentCouncil savedParentCouncil = formTutorService.saveParentCouncil(teacherId, parentCouncil, parentsId);
 
         return "redirect:/teacher/" + teacherId + "/formTutor/parentCouncil";
     }
 
-    @FormTutorPermission
-    @DeleteMapping("/{teacherId}/formTutor/parentCouncil/delete")
-    public String deleteParentCouncil(@PathVariable Long teacherId) {
-
-        formTutorService.deleteParentCouncil(teacherId);
-
-        return "teacher/formTutor/parentCouncil";
-    }
 
     @FormTutorPermission
     @PostMapping("/{teacherId}/formTutor/parentCouncil/remove/{parentId}")
     public String removeParentFromCouncil(@PathVariable Long teacherId,
                                           @PathVariable Long parentId,
                                           @ModelAttribute ParentCouncilDto parentCouncilDto,
-                                          Model model) {
+                                          BindingResult result) {
 
-        model.addAttribute("parents", formTutorService.listClassParents(teacherId));
-        model.addAttribute("parentCouncil", formTutorService.removeParentFromCouncil(parentCouncilDto, parentId));
+        formTutorService.removeParentFromCouncil(parentCouncilDto, parentId);
 
-        return "teacher/formTutor/parentCouncil";
+        return "redirect:/teacher/" + teacherId + "/formTutor/parentCouncil";
     }
 
     @FormTutorPermission

@@ -14,4 +14,5 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
     Parent findByUserId(Long userId);
     Optional<Parent> findByUser(User user);
     List<Parent> findAllByStudentsIn(Set<Student> students);
+    List<Parent> findAllByStudentsInOrderByUserLastName(Set<Student> students);
 }

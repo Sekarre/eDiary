@@ -4,6 +4,7 @@ import com.ediary.DTO.ParentCouncilDto;
 import com.ediary.domain.Parent;
 import com.ediary.domain.ParentCouncil;
 import com.ediary.domain.Student;
+import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
@@ -11,8 +12,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Component
 public class ParentCouncilToParentCouncilDto implements Converter<ParentCouncil, ParentCouncilDto> {
+
+    private final ParentToParentDto parentToParentDto;
 
     @Nullable
     @Synchronized
@@ -32,14 +36,9 @@ public class ParentCouncilToParentCouncilDto implements Converter<ParentCouncil,
         parentCouncilDto.setSchoolClassId(source.getSchoolClass().getId());
 
         //Parents
-        parentCouncilDto.setParentsId(source.getParents().stream()
-                .map(Parent::getId)
-                .collect(Collectors.toList()));
-
-
-        parentCouncilDto.setParentsName(source.getParents().stream()
-                .map(Parent::getUser)
-                .map(user -> user.getFirstName() + " " + user.getLastName())
+        parentCouncilDto.setParents(source.getParents()
+                .stream()
+                .map(parentToParentDto::convert)
                 .collect(Collectors.toList()));
 
 

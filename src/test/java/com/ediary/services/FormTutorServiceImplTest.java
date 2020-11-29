@@ -143,24 +143,7 @@ public class FormTutorServiceImplTest {
 
     }
 
-    @Test
-    void deleteStudentCouncil() {
-        Long teacherId = 1L;
 
-        Teacher teacher = Teacher.builder()
-                .id(teacherId)
-                .schoolClass(Class.builder()
-                        .studentCouncil(StudentCouncil.builder().build())
-                        .build())
-                .build();
-
-        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
-
-        Boolean result = formTutorService.deleteStudentCouncil(teacherId);
-
-        assertTrue(result);
-        verify(teacherRepository, times(1)).findById(teacherId);
-    }
 
     @Test
     void removeStudentFromCouncil() {
@@ -262,26 +245,6 @@ public class FormTutorServiceImplTest {
     }
 
     @Test
-    void deleteParentCouncil() {
-        Long teacherId = 1L;
-
-        Teacher teacher = Teacher.builder()
-                .id(teacherId)
-                .schoolClass(Class.builder()
-                        .parentCouncil(ParentCouncil.builder().build())
-                        .build())
-                .build();
-
-        when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
-
-        Boolean result = formTutorService.deleteParentCouncil(teacherId);
-
-        assertTrue(result);
-        verify(teacherRepository, times(1)).findById(teacherId);
-    }
-
-
-    @Test
     void removeParentFromCouncil() {
         Long teacherId = 1L;
         Long parentId = 1L;
@@ -296,9 +259,8 @@ public class FormTutorServiceImplTest {
 
         ParentCouncilDto parentCouncilDto = ParentCouncilDto.builder()
                 .id(1L)
-                .parentsId(new ArrayList<>(){{
-                    add(parentId);
-                    add(2L);
+                .parents(new ArrayList<>(){{
+                    add(ParentDto.builder().build());
                 }})
                 .build();
 
