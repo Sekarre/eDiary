@@ -874,7 +874,7 @@ class TeacherControllerTest {
         Long parentId = 1L;
         ParentCouncilDto parentCouncilDto = ParentCouncilDto.builder().build();
 
-        when(formTutorService.removeParentFromCouncil(any(), any()))
+        when(formTutorService.removeParentFromCouncil(any(), any(), any()))
                 .thenReturn(parentCouncilDto);
         when(formTutorService.listClassParents(teacherId)).thenReturn(Arrays.asList(
                 ParentDto.builder().id(1L).build(),

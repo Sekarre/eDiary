@@ -10,6 +10,8 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -39,6 +41,11 @@ public class ParentCouncilToParentCouncilDto implements Converter<ParentCouncil,
         parentCouncilDto.setParents(source.getParents()
                 .stream()
                 .map(parentToParentDto::convert)
+                .sorted(Comparator
+                        .comparing(parentDto ->
+                                Arrays.stream(parentDto
+                                        .getUserName()
+                                        .split(" ")).skip(1).findFirst().get()))
                 .collect(Collectors.toList()));
 
 

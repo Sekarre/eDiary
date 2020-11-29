@@ -201,8 +201,10 @@ public class FormTutorServiceImpl implements FormTutorService {
     }
 
     @Override
-    public ParentCouncilDto removeParentFromCouncil(ParentCouncilDto parentCouncilDto, Long parentId) {
-        ParentCouncil parentCouncil = parentCouncilDtoToParentCouncil.convert(parentCouncilDto);
+    public ParentCouncilDto removeParentFromCouncil(ParentCouncilDto parentCouncilDto, Long teacherId, Long parentId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        ParentCouncil parentCouncil = parentCouncilRepository.findBySchoolClassId(teacher.getSchoolClass().getId());
 
         if ((parentCouncil != null) && (parentCouncil.getParents().stream().anyMatch(s -> s.getId().equals(parentId)))) {
 

@@ -953,7 +953,7 @@ public class TeacherController {
                                           @ModelAttribute ParentCouncilDto parentCouncilDto,
                                           BindingResult result) {
 
-        formTutorService.removeParentFromCouncil(parentCouncilDto, parentId);
+        formTutorService.removeParentFromCouncil(parentCouncilDto, teacherId, parentId);
 
         return "redirect:/teacher/" + teacherId + "/formTutor/parentCouncil";
     }

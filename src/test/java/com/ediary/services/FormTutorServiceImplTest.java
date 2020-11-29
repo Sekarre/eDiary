@@ -271,7 +271,7 @@ public class FormTutorServiceImplTest {
 
 
         ParentCouncilDto removedParentCouncilDto = formTutorService
-                .removeParentFromCouncil(parentCouncilDto, parentId);
+                .removeParentFromCouncil(parentCouncilDto, 1L,  parentId);
 
 
         assertNotNull(removedParentCouncilDto);

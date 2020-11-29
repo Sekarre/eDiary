@@ -21,7 +21,7 @@ public interface FormTutorService {
     ParentCouncilDto initNewParentCouncil(Long teacherId);
     ParentCouncil saveParentCouncil(Long teacherId, ParentCouncilDto parentCouncilDto, List<Long> parentsId);
     ParentCouncilDto findParentCouncil(Long teacherId);
-    ParentCouncilDto removeParentFromCouncil(ParentCouncilDto parentCouncilDto, Long parentId);
+    ParentCouncilDto removeParentFromCouncil(ParentCouncilDto parentCouncilDto, Long teacherId,  Long parentId);
 
 
     StudentCard findStudentCard(Long teacherId, Long studentId);
