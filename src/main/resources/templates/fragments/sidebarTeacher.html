@@ -74,34 +74,6 @@
                     </a>
                 </li>
 
-<!--                For now form tutor here-->
-
-                <li class="nav-item " sec:authorize="hasRole('FORM_TUTOR')">
-                    <a class="nav-link" th:href="@{'/teacher/'+ ${teacher.id} + '/formTutor/studentCard'}">
-                        <i class="material-icons">contact_page</i>
-                        <p>Karta ucznia</p>
-                    </a>
-                </li>
-                <li class="nav-item " sec:authorize="hasRole('FORM_TUTOR')">
-                    <a class="nav-link" th:href="@{'/teacher/'+ ${teacher.id} + '/formTutor/studentCouncil'}">
-                        <i class="material-icons">groups</i>
-                        <p>Trójka klasowa</p>
-                    </a>
-                </li>
-                <li class="nav-item " sec:authorize="hasRole('FORM_TUTOR')">
-                    <a class="nav-link" th:href="@{'/teacher/'+ ${teacher.id} + '/formTutor/parentCouncil'}">
-                        <i class="material-icons">people_outline</i>
-                        <p>Rada rodziców</p>
-                    </a>
-                </li>
-                <li class="nav-item " sec:authorize="hasRole('FORM_TUTOR')">
-                    <a class="nav-link" th:href="@{'/teacher/'+ ${teacher.id} + '/formTutor/behaviorGrade'}">
-                        <i class="material-icons">store</i>
-                        <p>Oceny z zachowania</p>
-                    </a>
-                </li>
-
-
 
                 <span th:replace="fragments/sidebarUser :: userRoleNav"></span>
 

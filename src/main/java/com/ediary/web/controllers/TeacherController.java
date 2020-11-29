@@ -793,6 +793,11 @@ public class TeacherController {
 
     //FormTutor
 
+    @GetMapping("/formTutor/home")
+    public String formTutorHome() {
+        return "/teacher/formTutor/index";
+    }
+
 
     @FormTutorPermission
     @GetMapping("/{teacherId}/grade/subject/{subjectId}/viewOnly")

@@ -75,6 +75,10 @@
                             <i class="material-icons">person</i>
                             <p>Dyrektor</p>
                         </a>
+                        <a sec:authorize="hasRole('FORM_TUTOR')" class="nav-link" th:href="@{'/teacher/formTutor/home'}">
+                            <i class="material-icons">person</i>
+                            <p>Wychowawca</p>
+                        </a>
                     </li>
                 </span>
 

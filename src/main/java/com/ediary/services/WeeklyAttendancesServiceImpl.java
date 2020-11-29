@@ -8,13 +8,13 @@ import com.ediary.domain.helpers.WeeklyAttendances;
 import com.ediary.repositories.AttendanceRepository;
 import com.ediary.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,9 +41,15 @@ public class WeeklyAttendancesServiceImpl implements WeeklyAttendancesService {
 
         Map<Date, List<AttendanceDto>> attendancesByDays = new TreeMap<>();
 
+        java.util.Date startOfDayDate;
+        java.util.Date endOfDayDate;
+
         for (int i = 0; i < 7; i++) {
+            startOfDayDate = new java.util.Date(Timestamp.valueOf(LocalDateTime.of(localDate, LocalTime.MIDNIGHT)).getTime());
+            endOfDayDate = new java.util.Date(Timestamp.valueOf(LocalDateTime.of(localDate, LocalTime.MAX)).getTime());
+
             List<Attendance> attendanceList = attendanceRepository.findAllByStudentIdAndLesson_DateBetween(studentId,
-                    Date.valueOf(localDate), Date.valueOf(localDate.plusDays(1)));
+                    startOfDayDate, endOfDayDate);
 
             attendancesByDays.put(Date.valueOf(localDate), attendanceList.stream()
                     .map(attendanceToAttendanceDto::convert)

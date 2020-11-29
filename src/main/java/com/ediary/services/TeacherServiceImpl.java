@@ -285,7 +285,7 @@ public class TeacherServiceImpl implements TeacherService {
 
         TopicDto topic = topicToTopicDto.convert(topicOptional.get());
 
-        if(topicUpdated.getNumber() != null) {
+        if (topicUpdated.getNumber() != null) {
             topic.setNumber(topicUpdated.getNumber());
         }
 
@@ -402,11 +402,17 @@ public class TeacherServiceImpl implements TeacherService {
                 attendance.getLessonId());
 
         if (existingAtt != null) {
+
             //if clicked same again, delete attendance
             if (attendance.getStatus().equals(existingAtt.getStatus())) {
                 deleteLessonAttendance(existingAtt);
             }
-            existingAtt.setStatus(attendance.getStatus());
+
+            if (!existingAtt.getStatus().equals(Attendance.Status.EXCUSED)
+                    && !existingAtt.getStatus().equals(Attendance.Status.UNEXCUSED)) {
+                existingAtt.setStatus(attendance.getStatus());
+            }
+
             return attendanceRepository.save(existingAtt);
         }
 
@@ -425,7 +431,7 @@ public class TeacherServiceImpl implements TeacherService {
 
         List<Student> students = new ArrayList<>(schoolClass.getStudents());
 
-        for (Student s: students) {
+        for (Student s : students) {
             Attendance attendanceToSave = attendanceRepository.findByStudentIdAndLessonId(s.getId(), lesson.getId());
 
             if (attendanceToSave == null) {
@@ -451,7 +457,9 @@ public class TeacherServiceImpl implements TeacherService {
 
     private void deleteLessonAttendance(Attendance existingAtt) {
 
-        if (existingAtt != null) {
+        if (existingAtt != null && !existingAtt.getStatus().equals(Attendance.Status.EXCUSED)
+                && !existingAtt.getStatus().equals(Attendance.Status.UNEXCUSED)) {
+
             existingAtt.setExtenuations(null);
             existingAtt.setLesson(null);
             existingAtt.setStudent(null);
@@ -1132,8 +1140,8 @@ public class TeacherServiceImpl implements TeacherService {
                 maxCount[0] = count;
         });
 
-        return new ArrayList<>(){{
-            for (int i = 0; i < maxCount[0]; i++){
+        return new ArrayList<>() {{
+            for (int i = 0; i < maxCount[0]; i++) {
                 add(null);
             }
         }};
@@ -1153,8 +1161,8 @@ public class TeacherServiceImpl implements TeacherService {
                 maxCount[0] = count;
         });
 
-        return new ArrayList<>(){{
-            for (int i = 0; i < maxCount[0]; i++){
+        return new ArrayList<>() {{
+            for (int i = 0; i < maxCount[0]; i++) {
                 add(null);
             }
         }};
