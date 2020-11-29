@@ -586,8 +586,8 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public Grade saveOrUpdateFinalGrade(GradeDto grade) {
 
-        if (grade.getWeight() != null && grade.getWeight() != 100) {
-            grade.setWeight(100);
+        if (grade.getWeight() != null && !grade.getWeight().equals(GradeWeight.FINAL_GRADE.getWeight())) {
+            grade.setWeight(GradeWeight.FINAL_GRADE.getWeight());
         }
 
         if (grade.getId() != null) {

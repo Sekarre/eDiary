@@ -281,7 +281,7 @@ public class FormTutorServiceImpl implements FormTutorService {
                 schoolClass.getStudents().forEach(student -> {
                     studentBehaviorGradeListMap.put(studentToStudentDto.convert(student),
                             gradeToGradeDto.convert(gradeRepository
-                                    .findByStudentIdAndWeight(student.getId(), GradeWeight.FINAL_GRADE.getWeight())));
+                                    .findByStudentIdAndWeight(student.getId(), GradeWeight.BEHAVIOR_GRADE.getWeight())));
                 });
 
                 if (studentBehaviorGradeListMap.keySet().isEmpty()) {
@@ -345,13 +345,23 @@ public class FormTutorServiceImpl implements FormTutorService {
         getTeacherById(teacherId);
 
         Grade grade = gradeDtoToGrade.convert(gradeDto);
-
         if (grade != null) {
-            grade.setWeight(GradeWeight.BEHAVIOR_GRADE.getWeight());
+
+            if (grade.getWeight() != null && !grade.getWeight().equals(GradeWeight.BEHAVIOR_GRADE.getWeight())) {
+                grade.setWeight(GradeWeight.BEHAVIOR_GRADE.getWeight());
+            }
+
+            if (grade.getId() != null) {
+                Grade gradeToUpdate = gradeRepository.findById(grade.getId()).orElse(null);
+                if (gradeToUpdate != null) {
+                    gradeToUpdate.setValue(grade.getValue());
+                    gradeToUpdate.setDescription(grade.getDescription());
+                }
+            }
             return gradeRepository.save(grade);
         }
 
-        return gradeDtoToGrade.convert(gradeDto);
+        return null;
     }
 
     @Override

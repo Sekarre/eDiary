@@ -47,9 +47,11 @@ public class GradeDtoToGrade implements Converter<GradeDto, Grade> {
         }
 
         //Subject
-        Optional<Subject> subjectOptional = subjectRepository.findById(source.getSubjectId());
-        if(subjectOptional.isPresent()) {
-            grade.setSubject(subjectOptional.get());
+        if (source.getSubjectId() != null) {
+            Optional<Subject> subjectOptional = subjectRepository.findById(source.getSubjectId());
+            if (subjectOptional.isPresent()) {
+                grade.setSubject(subjectOptional.get());
+            }
         }
 
         //Student

@@ -75,7 +75,7 @@ The above copyright notice and this permission notice shall be included in all c
                                     <th  class="text-center col-lg-1">Pozytywne uwagi: </th>
                                     <th  class="text-center col-lg-1">Negatywne uwagi:</th>
                                     <th  class="text-center col-lg-2">Nieobecności:</th>
-                                    <th  class="text-center col-lg-3">Ocena końcowa</th>
+                                    <th  class="text-center col-lg-3">Zachowanie</th>
                                     </thead>
                                     <tbody>
                                     <tr th:each="student : ${studentsWithBehaviorGrade.keySet()}" >
@@ -226,7 +226,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                                     <td id="gradeFValueEdit">
                                                                         <div class="form-group">
                                                                             <label class="bmd-label-static" th:text="'Ocena'"> </label>
-                                                                            <input  id="gradeFValueValEdit" type="number" min="1" max="6" step="0.5" class="form-control">
+                                                                            <input  id="gradeFValueValEdit" type="text" class="form-control">
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -276,8 +276,8 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                         </div>
                         <!-- end edit grade -->
-
-                        <input id="teacherIdVal" type="hidden" th:value="${finalGrade.teacherId}"/>
+                        <input id="csrfVal" type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        <input id="teacherIdVal" type="hidden" th:value="${teacher.id}"/>
                     </div>
                 </div>
             </div>
@@ -506,52 +506,6 @@ The above copyright notice and this permission notice shall be included in all c
 </script>
 
 
-<!--New grade-->
-
-<script>
-    $(document).on("click", "#sendGrade", function () {
-        var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
-        var studentIdVal = document.getElementById("studentIdVal").value;
-
-
-        var gradeDto = {
-            id: "",
-            value: $("#gradeValueVal").val(),
-            weight: $("#gradeWeightVal").val(),
-            description: $("#gradeDescVal").val(),
-            date: $("#gradeDateVal").val(),
-            teacherId: teacherIdVal,
-            subjectId: subjectIdVal,
-            studentId: studentIdVal,
-        };
-
-        // Creating a XHR object
-        let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal + "/newGrade";
-
-        // open a connection
-        xhr.open("POST", url, true);
-
-        // Set the request header i.e. which type of content you are sending
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.setRequestHeader("_csrf", csrf);
-        xhr.setRequestHeader('x-csrf-token', csrf);
-
-        // Create a state change callback
-        xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal;
-        };
-
-
-        // Converting JSON data to string
-        var data = JSON.stringify(gradeDto);
-
-        // Sending data with the request
-        xhr.send(data);
-    });
-</script>
 
 <!--add final grade modal-->
 <script>
@@ -573,7 +527,6 @@ The above copyright notice and this permission notice shall be included in all c
 <script>
     $(document).on("click", "#addFinalGrade", function () {
         var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
         var teacherIdVal = $("#teacherIdVal").val();
         var studentIdVal = document.getElementById("studentIdValFinal").value;
 
@@ -585,13 +538,12 @@ The above copyright notice and this permission notice shall be included in all c
             description: $("#gradeDescValFinal").val(),
             date: $("#gradeDateValFinal").val(),
             teacherId: teacherIdVal,
-            subjectId: subjectIdVal,
             studentId: studentIdVal,
         };
 
 
         let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal + "/newFinalGrade";
+        let url = "/teacher/" + teacherIdVal + "/formTutor/behaviorGrade/new";
 
         // open a connection
         xhr.open("POST", url, true);
@@ -603,7 +555,7 @@ The above copyright notice and this permission notice shall be included in all c
 
         // Create a state change callback
         xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal;
+            location.href = "/teacher/" + teacherIdVal + "/formTutor/behaviorGrade";
         };
 
 
@@ -651,7 +603,6 @@ The above copyright notice and this permission notice shall be included in all c
 <script>
     $(document).on("click", "#deleteFGrade", function () {
         var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
         var teacherIdVal = $("#teacherIdVal").val();
         var studentIdVal = document.getElementById("studentFIdValEdit").value;
         var gradeIdVal = $("#gradeFIdValue").val();
@@ -660,7 +611,7 @@ The above copyright notice and this permission notice shall be included in all c
 
         // Creating a XHR object
         let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal + "/" + studentIdVal + "/" + gradeIdVal + "/deleteFinalGrade";
+        let url = "/teacher/" + teacherIdVal + "/formTutor/behaviorGrade/" + studentIdVal + "/" + gradeIdVal + "/deleteBehaviorGrade";
 
         // open a connection
         xhr.open("POST", url, true);
@@ -671,7 +622,7 @@ The above copyright notice and this permission notice shall be included in all c
 
         // Create a state change callback
         xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal;
+            location.href = "/teacher/" + teacherIdVal + "/formTutor/behaviorGrade";
         };
 
         // Sending data with the request
@@ -684,7 +635,6 @@ The above copyright notice and this permission notice shall be included in all c
 <script>
     $(document).on("click", "#editFGrade", function () {
         var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
         var teacherIdVal = $("#teacherIdVal").val();
         var studentIdVal = document.getElementById("studentFIdValEdit").value;
         var gradeIdVal = $("#gradeFIdValue").val();
@@ -697,13 +647,12 @@ The above copyright notice and this permission notice shall be included in all c
             description: $("#gradeFDescValEdit").val(),
             date: $("#gradeFDateValEdit").val(),
             teacherId: teacherIdVal,
-            subjectId: subjectIdVal,
             studentId: studentIdVal,
         };
 
         // Creating a XHR object
         let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal + "/updateFinalGrade";
+        let url = "/teacher/" + teacherIdVal + "/formTutor/behaviorGrade/updateBehaviorGrade";
 
         // open a connection
         xhr.open("POST", url, true);
@@ -715,7 +664,7 @@ The above copyright notice and this permission notice shall be included in all c
 
         // Create a state change callback
         xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/grade/subject/" + subjectIdVal;
+            location.href = "/teacher/" + teacherIdVal + "/formTutor/behaviorGrade";
         };
 
 

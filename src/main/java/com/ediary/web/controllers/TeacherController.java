@@ -984,7 +984,35 @@ public class TeacherController {
 
         return "redirect:/teacher/" + teacherId + "/formTutor/behaviorGrade";
     }
-    //to here
+
+
+    @FormTutorPermission
+    @PostMapping("/{teacherId}/formTutor/behaviorGrade/updateBehaviorGrade")
+    public String updateClassBehaviorGrade(@PathVariable Long teacherId,
+                                               @Valid @RequestBody GradeDto gradeDto,
+                                               BindingResult result) {
+
+        if (result.hasErrors()) {
+            //todo: view path
+            return "";
+        }
+        Grade grade = formTutorService.saveBehaviorGrade(teacherId, gradeDto);
+
+        return "redirect:/teacher/" + teacherId + "/formTutor/behaviorGrade";
+    }
+
+    @FormTutorPermission
+    @PostMapping("{teacherId}/formTutor/behaviorGrade/{studentId}/{gradeId}/deleteBehaviorGrade")
+    public String deleteBehaviorGrade(@PathVariable Long teacherId,
+                                   @PathVariable Long gradeId,
+                                   @PathVariable Long studentId) {
+
+        teacherService.deleteGrade(studentId, gradeId);
+
+        return "redirect:/teacher/" + teacherId + "/formTutor/behaviorGrade";
+
+    }
+
 
     @FormTutorPermission
     @GetMapping("/{teacherId}/formTutor/studentCard")
