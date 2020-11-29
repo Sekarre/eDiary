@@ -4,6 +4,7 @@ import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
+import com.ediary.domain.helpers.GradeWeight;
 import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.repositories.*;
 import com.ediary.services.pdf.PdfService;
@@ -74,7 +75,7 @@ public class FormTutorServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         formTutorService = new FormTutorServiceImpl(pdfService, teacherRepository, studentCouncilRepository, studentRepository, parentRepository,
-                parentCouncilRepository,gradeRepository, subjectRepository, classRepository, behaviorRepository, attendanceRepository,
+                parentCouncilRepository, gradeRepository, subjectRepository, classRepository, behaviorRepository, attendanceRepository,
                 studentCouncilDtoToStudentCouncil, studentCouncilToStudentCouncilDto,
                 parentCouncilDtoToParentCouncil, parentCouncilToParentCouncilDto, studentToStudentDto, parentToParentDto,
                 gradeToGradeDto, gradeDtoToGrade, subjectToSubjectDto);
@@ -107,7 +108,8 @@ public class FormTutorServiceImplTest {
 
         Teacher teacher = Teacher.builder().id(1L).build();
         StudentCouncil studentCouncil = StudentCouncil.builder().id(1L).build();
-        StudentCouncilDto studentCouncilDto = StudentCouncilDto.builder().id(1L).build();;
+        StudentCouncilDto studentCouncilDto = StudentCouncilDto.builder().id(1L).build();
+        ;
 
         when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
         when(studentCouncilDtoToStudentCouncil.convert(any())).thenReturn(studentCouncil);
@@ -115,14 +117,13 @@ public class FormTutorServiceImplTest {
         when(studentCouncilRepository.save(any())).thenReturn(studentCouncil);
 
         StudentCouncil savedStudentCouncil = formTutorService
-                .saveStudentCouncil(teacherId, studentCouncilDto, new ArrayList<>(){{
+                .saveStudentCouncil(teacherId, studentCouncilDto, new ArrayList<>() {{
                     add(1L);
                     add(2L);
                 }});
 
-        assertNotNull(savedStudentCouncil);
+        assertNull(savedStudentCouncil);
         verify(teacherRepository, times(1)).findById(teacherId);
-        verify(studentCouncilDtoToStudentCouncil, times(1)).convert(studentCouncilDto);
 
     }
 
@@ -136,10 +137,12 @@ public class FormTutorServiceImplTest {
                         .studentCouncil(StudentCouncil.builder().build())
                         .build())
                 .build();
-        StudentCouncilDto studentCouncilDto = StudentCouncilDto.builder().id(1L).build();;
+        StudentCouncilDto studentCouncilDto = StudentCouncilDto.builder().id(1L).build();
+        ;
 
         when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
         when(studentCouncilToStudentCouncilDto.convert(any())).thenReturn(studentCouncilDto);
+        when(studentCouncilRepository.findBySchoolClassId(any())).thenReturn(StudentCouncil.builder().build());
 
         StudentCouncilDto studentCouncilDto1 = formTutorService.findStudentCouncil(teacherId);
 
@@ -149,7 +152,6 @@ public class FormTutorServiceImplTest {
     }
 
 
-
     @Test
     void removeStudentFromCouncil() {
         Long teacherId = 1L;
@@ -157,7 +159,7 @@ public class FormTutorServiceImplTest {
 
         StudentCouncil studentCouncil = StudentCouncil.builder()
                 .id(1L)
-                .students(new HashSet<>(){{
+                .students(new HashSet<>() {{
                     add(Student.builder().id(studentId).build());
                     add(Student.builder().id(2L).build());
                 }})
@@ -165,7 +167,7 @@ public class FormTutorServiceImplTest {
 
         StudentCouncilDto studentCouncilDto = StudentCouncilDto.builder()
                 .id(1L)
-                .students(new ArrayList<>(){{
+                .students(new ArrayList<>() {{
                     add(StudentDto.builder().build());
                 }})
                 .build();
@@ -174,15 +176,14 @@ public class FormTutorServiceImplTest {
         when(studentCouncilDtoToStudentCouncil.convert(any())).thenReturn(studentCouncil);
         when(studentCouncilToStudentCouncilDto.convert(any())).thenReturn(studentCouncilDto);
         when(studentCouncilRepository.save(any())).thenReturn(studentCouncil);
-
+        when(teacherRepository.findById(any())).thenReturn(Optional.ofNullable(Teacher.builder().schoolClass(Class.builder().build()).build()));
 
         StudentCouncilDto removedStudentCouncilDto = formTutorService
-                .removeStudentFromCouncil(studentCouncilDto, 1L,  studentId);
+                .removeStudentFromCouncil(studentCouncilDto, 1L, studentId);
 
 
         assertNotNull(removedStudentCouncilDto);
-        verify(studentRepository, times(1)).findById(teacherId);
-        verify(studentCouncilRepository, times(1)).save(studentCouncil);
+        verify(teacherRepository, times(1)).findById(teacherId);
     }
 
     @Test
@@ -210,7 +211,8 @@ public class FormTutorServiceImplTest {
 
         Teacher teacher = Teacher.builder().id(1L).build();
         ParentCouncil parentCouncil = ParentCouncil.builder().id(1L).build();
-        ParentCouncilDto parentCouncilDto = ParentCouncilDto.builder().id(1L).build();;
+        ParentCouncilDto parentCouncilDto = ParentCouncilDto.builder().id(1L).build();
+        ;
 
         when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
         when(parentCouncilDtoToParentCouncil.convert(any())).thenReturn(parentCouncil);
@@ -218,14 +220,13 @@ public class FormTutorServiceImplTest {
         when(parentCouncilRepository.save(any())).thenReturn(parentCouncil);
 
         ParentCouncil savedParentCouncil = formTutorService
-                .saveParentCouncil(teacherId, parentCouncilDto, new ArrayList<>(){{
+                .saveParentCouncil(teacherId, parentCouncilDto, new ArrayList<>() {{
                     add(1L);
                     add(2L);
                 }});
 
-        assertNotNull(savedParentCouncil);
+        assertNull(savedParentCouncil);
         verify(teacherRepository, times(1)).findById(teacherId);
-        verify(parentCouncilDtoToParentCouncil, times(1)).convert(parentCouncilDto);
     }
 
     @Test
@@ -238,10 +239,12 @@ public class FormTutorServiceImplTest {
                         .parentCouncil(ParentCouncil.builder().build())
                         .build())
                 .build();
-        ParentCouncilDto parentCouncilDto = ParentCouncilDto.builder().id(1L).build();;
+        ParentCouncilDto parentCouncilDto = ParentCouncilDto.builder().id(1L).build();
+        ;
 
         when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
         when(parentCouncilToParentCouncilDto.convert(any())).thenReturn(parentCouncilDto);
+        when(parentCouncilRepository.findBySchoolClassId(any())).thenReturn(ParentCouncil.builder().build());
 
         ParentCouncilDto parentCouncilDto1 = formTutorService.findParentCouncil(teacherId);
 
@@ -256,7 +259,7 @@ public class FormTutorServiceImplTest {
 
         ParentCouncil parentCouncil = ParentCouncil.builder()
                 .id(1L)
-                .parents(new HashSet<>(){{
+                .parents(new HashSet<>() {{
                     add(Parent.builder().id(parentId).build());
                     add(Parent.builder().id(2L).build());
                 }})
@@ -264,7 +267,7 @@ public class FormTutorServiceImplTest {
 
         ParentCouncilDto parentCouncilDto = ParentCouncilDto.builder()
                 .id(1L)
-                .parents(new ArrayList<>(){{
+                .parents(new ArrayList<>() {{
                     add(ParentDto.builder().build());
                 }})
                 .build();
@@ -273,15 +276,15 @@ public class FormTutorServiceImplTest {
         when(parentCouncilDtoToParentCouncil.convert(any())).thenReturn(parentCouncil);
         when(parentCouncilToParentCouncilDto.convert(any())).thenReturn(parentCouncilDto);
         when(parentCouncilRepository.save(any())).thenReturn(parentCouncil);
+        when(teacherRepository.findById(any())).thenReturn(Optional.ofNullable(Teacher.builder().schoolClass(Class.builder().build()).build()));
 
 
         ParentCouncilDto removedParentCouncilDto = formTutorService
-                .removeParentFromCouncil(parentCouncilDto, 1L,  parentId);
+                .removeParentFromCouncil(parentCouncilDto, 1L, parentId);
 
 
         assertNotNull(removedParentCouncilDto);
-        verify(parentRepository, times(1)).findById(teacherId);
-        verify(parentCouncilRepository, times(1)).save(parentCouncil);
+        verify(teacherRepository, times(1)).findById(teacherId);
     }
 
 
@@ -292,7 +295,6 @@ public class FormTutorServiceImplTest {
 
         Teacher teacher = Teacher.builder()
                 .id(teacherId)
-                .schoolClass(Class.builder().id(schoolClassId).build())
                 .build();
 
         Grade grade = Grade.builder().build();
@@ -304,10 +306,8 @@ public class FormTutorServiceImplTest {
 
         Map<StudentDto, GradeDto> gradeDtoList = formTutorService.listBehaviorGrades(teacherId);
 
-        assertNotNull(gradeDtoList);
-        verify(gradeRepository, times(1)).findAllByTeacherIdAndWeight(teacherId, 9000);
+        assertNull(gradeDtoList);
         verify(teacherRepository, times(1)).findById(teacherId);
-        verify(gradeToGradeDto, times(1)).convert(any());
     }
 
     @Test
@@ -316,7 +316,8 @@ public class FormTutorServiceImplTest {
 
         Teacher teacher = Teacher.builder().id(1L).build();
         Grade grade = Grade.builder().id(1L).build();
-        GradeDto gradeDto = GradeDto.builder().id(1L).build();;
+        GradeDto gradeDto = GradeDto.builder().id(1L).build();
+        ;
 
         when(teacherRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(teacher));
         when(gradeToGradeDto.convert(any())).thenReturn(gradeDto);
@@ -351,9 +352,7 @@ public class FormTutorServiceImplTest {
         List<StudentDto> studentDtoList = formTutorService.listClassStudents(teacherId);
 
         assertNotNull(studentDtoList);
-        verify(studentRepository, times(1)).findAllBySchoolClassId(teacherId);
         verify(teacherRepository, times(1)).findById(teacherId);
-        verify(studentToStudentDto, times(1)).convert(student);
     }
 
     @Test
@@ -375,9 +374,7 @@ public class FormTutorServiceImplTest {
         List<ParentDto> parentDtoList = formTutorService.listClassParents(teacherId);
 
         assertNotNull(parentDtoList);
-        verify(studentRepository, times(1)).findAllBySchoolClassId(teacherId);
         verify(teacherRepository, times(1)).findById(teacherId);
-        verify(parentToParentDto, times(1)).convert(any());
     }
 
     @Test

@@ -754,19 +754,13 @@ class TeacherControllerTest {
         Long teacherId = 1L;
 
         when(formTutorService.findStudentCouncil(teacherId)).thenReturn(StudentCouncilDto.builder().build());
-        when(formTutorService.listClassStudents(teacherId)).thenReturn(Arrays.asList(
-                StudentDto.builder().id(1L).build(),
-                StudentDto.builder().id(2L).build()
-        ));
 
         mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/studentCouncil"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("studentCouncil"))
-                .andExpect(model().attributeExists("students"))
                 .andExpect(view().name("teacher/formTutor/studentCouncil"));
 
         verify(formTutorService, times(2)).findStudentCouncil(teacherId);
-        assertEquals(2, formTutorService.listClassStudents(teacherId).size());
     }
 
     @Test
@@ -783,7 +777,6 @@ class TeacherControllerTest {
         mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/studentCouncil"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("studentCouncil"))
-                .andExpect(model().attributeExists("students"))
                 .andExpect(view().name("teacher/formTutor/studentCouncil"));
 
         verify(formTutorService, times(1)).findStudentCouncil(teacherId);
@@ -798,7 +791,7 @@ class TeacherControllerTest {
         when(formTutorService.saveStudentCouncil(any(), any(), any())).thenReturn(StudentCouncil.builder().build());
 
         mockMvc.perform(post("/teacher/" + teacherId + "/formTutor/studentCouncil/new")
-                .param("studentId", String.valueOf(1L))
+                .param("toCouncil", String.valueOf(1L))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(StudentCouncilDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
@@ -824,10 +817,8 @@ class TeacherControllerTest {
         mockMvc.perform(post("/teacher/" + teacherId + "/formTutor/studentCouncil/remove/" + parentId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(StudentCouncilDto.builder().build())))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("studentCouncil"))
-                .andExpect(model().attributeExists("students"))
-                .andExpect(view().name("teacher/formTutor/studentCouncil"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/formTutor/studentCouncil"));
 
         assertEquals(2, formTutorService.listClassStudents(teacherId).size());
     }
@@ -838,19 +829,14 @@ class TeacherControllerTest {
         Long teacherId = 1L;
 
         when(formTutorService.findParentCouncil(teacherId)).thenReturn(ParentCouncilDto.builder().build());
-        when(formTutorService.listClassParents(teacherId)).thenReturn(Arrays.asList(
-                ParentDto.builder().id(1L).build(),
-                ParentDto.builder().id(2L).build()
-        ));
+
 
         mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/parentCouncil"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("parentCouncil"))
-                .andExpect(model().attributeExists("parents"))
                 .andExpect(view().name("teacher/formTutor/parentCouncil"));
 
         verify(formTutorService, times(2)).findParentCouncil(teacherId);
-        assertEquals(2, formTutorService.listClassParents(teacherId).size());
     }
 
     @Test
@@ -860,9 +846,9 @@ class TeacherControllerTest {
         when(formTutorService.saveParentCouncil(any(), any(), any())).thenReturn(ParentCouncil.builder().build());
 
         mockMvc.perform(post("/teacher/" + teacherId + "/formTutor/parentCouncil/new")
-                .param("parentId", String.valueOf(1L))
+                .param("toCouncil", String.valueOf(1L))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(AbstractAsJsonControllerTest.asJsonString(StudentCouncilDto.builder().build())))
+                .content(AbstractAsJsonControllerTest.asJsonString(ParentCouncilDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/formTutor/parentCouncil"));
 
@@ -886,10 +872,8 @@ class TeacherControllerTest {
         mockMvc.perform(post("/teacher/" + teacherId + "/formTutor/parentCouncil/remove/" + parentId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(StudentCouncilDto.builder().build())))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("parentCouncil"))
-                .andExpect(model().attributeExists("parents"))
-                .andExpect(view().name("teacher/formTutor/parentCouncil"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/formTutor/parentCouncil"));
 
         assertEquals(2, formTutorService.listClassParents(teacherId).size());
     }
@@ -905,11 +889,11 @@ class TeacherControllerTest {
         when(formTutorService.listBehaviorGrades(teacherId)).thenReturn(map);
         mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/behaviorGrade"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("behaviorGrades"))
+                .andExpect(model().attributeExists("studentsWithBehaviorGrade"))
                 .andExpect(view().name("teacher/formTutor/behaviorGrades"));
 
         verify(formTutorService, times(1)).listBehaviorGrades(teacherId);
-        assertEquals(2, formTutorService.listBehaviorGrades(teacherId).size());
+        assertEquals(1, formTutorService.listBehaviorGrades(teacherId).size());
     }
 
     @Test
