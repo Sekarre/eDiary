@@ -143,8 +143,8 @@ public class DefaultLoader implements CommandLineRunner {
         createUsers();
         createStudentsAndParents();
         createTeachers();
-        createParentCouncils();
-        createStudentCouncils();
+//        createParentCouncils();
+//        createStudentCouncils();
 //        createExtenuations();
 //        createAttendances();
         createMessages();
@@ -518,8 +518,8 @@ public class DefaultLoader implements CommandLineRunner {
                     .name(classNames[i])
                     .teacher(teacherRepository.findByUserId(userRepository
                             .findByFirstNameAndLastName(teacherNames[i], teacherLastNames[i]).getId()))
-                    .parentCouncil(parentCouncilRepository.findAll().get(i))
-                    .studentCouncil(studentCouncilRepository.findAll().get(i))
+//                    .parentCouncil(parentCouncilRepository.findAll().get(i))
+//                    .studentCouncil(studentCouncilRepository.findAll().get(i))
                     .build());
 
             User user = userRepository.findByFirstNameAndLastName(teacherNames[i], teacherLastNames[i]);

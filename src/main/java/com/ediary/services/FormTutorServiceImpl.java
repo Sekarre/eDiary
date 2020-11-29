@@ -9,7 +9,9 @@ import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
 import com.ediary.services.pdf.PdfService;
+import com.sun.el.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.StreamUtils;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 @RequiredArgsConstructor
 @Service
@@ -33,6 +37,7 @@ public class FormTutorServiceImpl implements FormTutorService {
     private final ParentCouncilRepository parentCouncilRepository;
     private final GradeRepository gradeRepository;
     private final SubjectRepository subjectRepository;
+    private final ClassRepository classRepository;
 
     private final StudentCouncilDtoToStudentCouncil studentCouncilDtoToStudentCouncil;
     private final StudentCouncilToStudentCouncilDto studentCouncilToStudentCouncilDto;
@@ -60,26 +65,55 @@ public class FormTutorServiceImpl implements FormTutorService {
     public StudentCouncil saveStudentCouncil(Long teacherId, StudentCouncilDto studentCouncilDto, List<Long> studentsId) {
         Teacher teacher = getTeacherById(teacherId);
 
-        StudentCouncil studentCouncil = studentCouncilDtoToStudentCouncil.convert(studentCouncilDto);
-
-        if (studentCouncil != null) {
-            if (studentCouncil.getStudents().size() > 0) {
-                studentCouncil.getStudents().addAll(studentRepository.findAllById(studentsId));
-            } else {
-                studentCouncil.setStudents(new HashSet<>(studentRepository.findAllById(studentsId)));
-            }
-            return studentCouncilRepository.save(studentCouncil);
-
-        } else {
-            throw new NotFoundException("Students not found");
+        if (studentsId.size() > 3) {
+            return null;
         }
+
+        if (teacher.getSchoolClass() != null) {
+            StudentCouncil studentCouncil = studentCouncilRepository.findBySchoolClassId(teacher.getSchoolClass().getId());
+
+            if (studentCouncil != null) {
+                if (studentCouncil.getStudents().size() > 0) {
+
+                    for (int i = 0; i < 3 - studentCouncil.getStudents().size(); i++) {
+                        Student student = studentRepository.findById(studentsId.get(i))
+                                .orElseThrow(() -> new NotFoundException("Student not found"));
+
+                        studentCouncil.getStudents().add(student);
+                    }
+                }
+            } else {
+                studentCouncil = StudentCouncil.builder()
+                        .students(studentRepository.findAllById(studentsId))
+                        .schoolClass(teacher.getSchoolClass())
+                        .build();
+            }
+
+            Class classToSave = teacher.getSchoolClass();
+            classToSave.setStudentCouncil(studentCouncil);
+
+            Class savedClass = classRepository.save(classToSave);
+
+            return savedClass.getStudentCouncil();
+        }
+        return null;
     }
 
     @Override
     public StudentCouncilDto findStudentCouncil(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
 
-        return studentCouncilToStudentCouncilDto.convert(teacher.getSchoolClass().getStudentCouncil());
+        if (teacher.getSchoolClass() != null) {
+            StudentCouncil studentCouncil = studentCouncilRepository.findBySchoolClassId(teacher.getSchoolClass().getId());
+
+            if (studentCouncil == null) {
+                return null;
+            }
+
+            return studentCouncilToStudentCouncilDto.convert(studentCouncil);
+        }
+
+        return null;
     }
 
     @Override
@@ -262,10 +296,25 @@ public class FormTutorServiceImpl implements FormTutorService {
     public List<StudentDto> listClassStudents(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
 
-        return studentRepository.findAllBySchoolClassId(teacher.getSchoolClass().getId())
-                .stream()
-                .map(studentToStudentDto::convert)
-                .collect(Collectors.toList());
+        if (teacher.getSchoolClass() != null) {
+            StudentCouncil studentCouncil = studentCouncilRepository.findBySchoolClassId(teacher.getSchoolClass().getId());
+
+            if (studentCouncil == null) {
+                return studentRepository.findAllBySchoolClassId(teacher.getSchoolClass().getId())
+                        .stream()
+                        .map(studentToStudentDto::convert)
+                        .collect(Collectors.toList());
+
+            }
+
+            return studentRepository.findAllBySchoolClassId(teacher.getSchoolClass().getId())
+                    .stream()
+                    .filter(student -> !studentCouncil.getStudents().contains(student))
+                    .map(studentToStudentDto::convert)
+                    .collect(Collectors.toList());
+        }
+
+        return null;
     }
 
     @Override

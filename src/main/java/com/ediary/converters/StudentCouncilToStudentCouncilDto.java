@@ -4,6 +4,7 @@ package com.ediary.converters;
 import com.ediary.DTO.StudentCouncilDto;
 import com.ediary.domain.Student;
 import com.ediary.domain.StudentCouncil;
+import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
@@ -11,9 +12,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Component
 public class StudentCouncilToStudentCouncilDto implements Converter<StudentCouncil, StudentCouncilDto> {
 
+    private final StudentToStudentDto studentToStudentDto;
 
     @Nullable
     @Synchronized
@@ -29,13 +32,9 @@ public class StudentCouncilToStudentCouncilDto implements Converter<StudentCounc
         studentCouncilDto.setId(source.getId());
 
         //Students
-        studentCouncilDto.setStudentsName(source.getStudents().stream()
-                .map(Student::getUser)
-                .map(user -> user.getFirstName() + " " + user.getLastName())
-                .collect(Collectors.toList()));
-
-        studentCouncilDto.setStudentsId(source.getStudents().stream()
-                .map(Student::getId)
+        studentCouncilDto.setStudents(source.getStudents()
+                .stream()
+                .map(studentToStudentDto::convert)
                 .collect(Collectors.toList()));
 
 

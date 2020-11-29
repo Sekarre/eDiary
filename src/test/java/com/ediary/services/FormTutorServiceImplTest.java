@@ -38,6 +38,8 @@ public class FormTutorServiceImplTest {
     GradeRepository gradeRepository;
     @Mock
     SubjectRepository subjectRepository;
+    @Mock
+    ClassRepository classRepository;
 
     @Mock
     StudentCouncilDtoToStudentCouncil studentCouncilDtoToStudentCouncil;
@@ -68,7 +70,7 @@ public class FormTutorServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         formTutorService = new FormTutorServiceImpl(pdfService, teacherRepository, studentCouncilRepository, studentRepository, parentRepository,
-                parentCouncilRepository,gradeRepository, subjectRepository, studentCouncilDtoToStudentCouncil, studentCouncilToStudentCouncilDto,
+                parentCouncilRepository,gradeRepository, subjectRepository, classRepository, studentCouncilDtoToStudentCouncil, studentCouncilToStudentCouncilDto,
                 parentCouncilDtoToParentCouncil, parentCouncilToParentCouncilDto, studentToStudentDto, parentToParentDto,
                 gradeToGradeDto, gradeDtoToGrade, subjectToSubjectDto);
 
@@ -175,9 +177,8 @@ public class FormTutorServiceImplTest {
 
         StudentCouncilDto studentCouncilDto = StudentCouncilDto.builder()
                 .id(1L)
-                .studentsId(new ArrayList<>(){{
-                    add(studentId);
-                    add(2L);
+                .students(new ArrayList<>(){{
+                    add(StudentDto.builder().build());
                 }})
                 .build();
 

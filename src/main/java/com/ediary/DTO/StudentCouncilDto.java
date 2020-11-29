@@ -15,8 +15,7 @@ public class StudentCouncilDto {
     private Long id;
 
     //Students
-    private List<String> studentsName;
-    private List<Long> studentsId;
+    private List<StudentDto> students;
 
     //Class
     private String schoolClassName;

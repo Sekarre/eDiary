@@ -18,10 +18,13 @@ public class StudentCouncil {
     private Long id;
 
     @Singular
-    @ManyToMany(mappedBy = "studentCouncils" , fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(name = "Student_has_StudentCouncil",
+            joinColumns = {@JoinColumn(name = "studentCouncil_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "student_id", referencedColumnName = "id")})
     private Set<Student> students;
 
-    @OneToOne(mappedBy = "studentCouncil")
+    @OneToOne(mappedBy = "studentCouncil", cascade = CascadeType.MERGE)
     private Class schoolClass;
 
 }

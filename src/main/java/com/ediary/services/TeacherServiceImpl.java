@@ -1044,7 +1044,7 @@ public class TeacherServiceImpl implements TeacherService {
 
         schoolClass.getStudents().forEach(student -> {
             studentGradesListMap.put(studentToStudentDto.convert(student),
-                    gradeRepository.findAllByStudentIdAndDate(student.getId(), lesson.getDate())
+                    gradeRepository.findAllByStudentIdAndDateAndSubjectId(student.getId(), lesson.getDate(), lesson.getSubject().getId())
                             .stream()
                             .map(gradeToGradeDto::convert)
                             .collect(Collectors.toList()));

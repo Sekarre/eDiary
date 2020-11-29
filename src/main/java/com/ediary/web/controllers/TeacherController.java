@@ -853,23 +853,38 @@ public class TeacherController {
         } else {
             model.addAttribute("studentCouncil", formTutorService.initNewStudentCouncil(teacherId));
         }
-        model.addAttribute("students", formTutorService.listClassStudents(teacherId));
+
         return "teacher/formTutor/studentCouncil";
 
+    }
+
+
+    @FormTutorPermission
+    @GetMapping("/{teacherId}/formTutor/studentCouncil/add")
+    public String newStudentCouncil(@PathVariable Long teacherId, Model model) {
+        if (formTutorService.findStudentCouncil(teacherId) != null) {
+            model.addAttribute("studentCouncil", formTutorService.findStudentCouncil(teacherId));
+        } else {
+            model.addAttribute("studentCouncil", formTutorService.initNewStudentCouncil(teacherId));
+        }
+
+        model.addAttribute("students", formTutorService.listClassStudents(teacherId));
+
+        return "teacher/formTutor/studentCouncilNew";
     }
 
     @FormTutorPermission
     @PostMapping("/{teacherId}/formTutor/studentCouncil/new")
     public String processNewStudentCouncil(@PathVariable Long teacherId,
-                                           @RequestParam(name = "studentId") List<Long> studentsId,
-                                           @Valid @RequestBody StudentCouncilDto studentCouncilDto,
+                                           @RequestParam(name = "toCouncil") List<Long> studentsId,
+                                           @Valid @ModelAttribute(name = "studentCouncil") StudentCouncilDto studentCouncil,
                                            BindingResult result) {
         if (result.hasErrors()) {
             //todo: path to view
             return "";
         }
 
-        StudentCouncil studentCouncil = formTutorService.saveStudentCouncil(teacherId, studentCouncilDto, studentsId);
+        StudentCouncil savedStudentCouncil = formTutorService.saveStudentCouncil(teacherId, studentCouncil, studentsId);
 
         return "redirect:/teacher/" + teacherId + "/formTutor/studentCouncil";
     }

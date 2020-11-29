@@ -2,6 +2,7 @@ package com.ediary.converters;
 
 
 import com.ediary.DTO.StudentCouncilDto;
+import com.ediary.DTO.StudentDto;
 import com.ediary.domain.StudentCouncil;
 import com.ediary.repositories.ClassRepository;
 import com.ediary.repositories.StudentRepository;
@@ -12,6 +13,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -34,7 +36,13 @@ public class StudentCouncilDtoToStudentCouncil implements Converter<StudentCounc
         studentCouncil.setId(source.getId());
 
         //Students
-        studentCouncil.setStudents(new HashSet<>(studentRepository.findAllById(source.getStudentsId())));
+        if (source.getStudents() != null) {
+            studentCouncil.setStudents(new HashSet<>(studentRepository.findAllById(source.getStudents()
+                    .stream()
+                    .map(StudentDto::getId)
+                    .collect(Collectors.toList()))));
+
+        }
 
         //Class
         studentCouncil.setSchoolClass(classRepository.findById(source.getSchoolClassId()).orElse(null));
