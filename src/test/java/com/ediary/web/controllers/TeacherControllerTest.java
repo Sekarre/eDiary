@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -896,11 +898,11 @@ class TeacherControllerTest {
     void getClassBehaviorGrades() throws Exception {
         Long teacherId = 1L;
 
-        when(formTutorService.listBehaviorGrades(teacherId)).thenReturn(Arrays.asList(
-                GradeDto.builder().id(1L).build(),
-                GradeDto.builder().id(2L).build()
-        ));
+        Map<StudentDto, GradeDto> map = new HashMap<>(){{
+            put(StudentDto.builder().build(), GradeDto.builder().build());
+        }};
 
+        when(formTutorService.listBehaviorGrades(teacherId)).thenReturn(map);
         mockMvc.perform(get("/teacher/" + teacherId + "/formTutor/behaviorGrade"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("behaviorGrades"))

@@ -42,7 +42,9 @@ public class WeeklyAttendancesServiceImpl implements WeeklyAttendancesService {
         Map<Date, List<AttendanceDto>> attendancesByDays = new TreeMap<>();
 
         for (int i = 0; i < 7; i++) {
-            List<Attendance> attendanceList = attendanceRepository.findAllByStudentIdAndLesson_Date(studentId, Date.valueOf(localDate));
+            List<Attendance> attendanceList = attendanceRepository.findAllByStudentIdAndLesson_DateBetween(studentId,
+                    Date.valueOf(localDate), Date.valueOf(localDate.plusDays(1)));
+
             attendancesByDays.put(Date.valueOf(localDate), attendanceList.stream()
                     .map(attendanceToAttendanceDto::convert)
                     .collect(Collectors.toList()));

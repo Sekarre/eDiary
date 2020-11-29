@@ -958,11 +958,14 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/formTutor/parentCouncil";
     }
 
+    //here
     @FormTutorPermission
     @GetMapping("/{teacherId}/formTutor/behaviorGrade")
     public String getClassBehaviorGrades(@PathVariable Long teacherId, Model model) {
 
-        model.addAttribute("behaviorGrades", formTutorService.listBehaviorGrades(teacherId));
+        model.addAttribute("studentsWithBehaviorGrade", formTutorService.listBehaviorGrades(teacherId));
+        model.addAttribute("studentsWithBehaviorInfo", formTutorService.listBehaviorInfo(teacherId));
+        model.addAttribute("finalGrade", formTutorService.initNewBehaviorFinalGrade(teacherId));
 
         return "teacher/formTutor/behaviorGrades";
     }
@@ -981,6 +984,7 @@ public class TeacherController {
 
         return "redirect:/teacher/" + teacherId + "/formTutor/behaviorGrade";
     }
+    //to here
 
     @FormTutorPermission
     @GetMapping("/{teacherId}/formTutor/studentCard")
@@ -1019,4 +1023,5 @@ public class TeacherController {
 
         formTutorService.createStudentCard(response, studentId, startTime, endTime);
     }
+
 }

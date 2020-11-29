@@ -17,8 +17,10 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.file.AccessDeniedException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -38,6 +40,8 @@ public class FormTutorServiceImpl implements FormTutorService {
     private final GradeRepository gradeRepository;
     private final SubjectRepository subjectRepository;
     private final ClassRepository classRepository;
+    private final BehaviorRepository behaviorRepository;
+    private final AttendanceRepository attendanceRepository;
 
     private final StudentCouncilDtoToStudentCouncil studentCouncilDtoToStudentCouncil;
     private final StudentCouncilToStudentCouncilDto studentCouncilToStudentCouncilDto;
@@ -263,14 +267,77 @@ public class FormTutorServiceImpl implements FormTutorService {
     }
 
     @Override
-    public List<GradeDto> listBehaviorGrades(Long teacherId) {
+    public Map<StudentDto, GradeDto> listBehaviorGrades(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
 
+        if (teacher.getSchoolClass() != null) {
 
-        return gradeRepository.findAllByTeacherIdAndWeight(teacherId, GradeWeight.BEHAVIOR_GRADE.getWeight())
-                .stream()
-                .map(gradeToGradeDto::convert)
-                .collect(Collectors.toList());
+            Class schoolClass = teacher.getSchoolClass();
+
+                Map<StudentDto, GradeDto> studentBehaviorGradeListMap = new TreeMap<>(
+                        ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
+                                .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
+
+                schoolClass.getStudents().forEach(student -> {
+                    studentBehaviorGradeListMap.put(studentToStudentDto.convert(student),
+                            gradeToGradeDto.convert(gradeRepository
+                                    .findByStudentIdAndWeight(student.getId(), GradeWeight.FINAL_GRADE.getWeight())));
+                });
+
+                if (studentBehaviorGradeListMap.keySet().isEmpty()) {
+                    return null;
+                }
+
+                return studentBehaviorGradeListMap;
+        }
+
+        return null;
+    }
+
+    @Override
+    public Map<Long, Map<String, Long>> listBehaviorInfo(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        if (teacher.getSchoolClass() != null) {
+
+            Class schoolClass = teacher.getSchoolClass();
+
+            Map<Long, Map<String, Long>> studentBehaviorGradeListMap = new HashMap<>();
+
+            schoolClass.getStudents().forEach(student -> {
+                Map<String, Long> behaviorInfo = new HashMap<>();
+
+                behaviorInfo.put("positiveBehaviorCount", behaviorRepository.countAllByStudentIdAndPositive(student.getId(), true));
+                behaviorInfo.put("negativeBehaviorCount", behaviorRepository.countAllByStudentIdAndPositive(student.getId(), false));
+                behaviorInfo.put("attendancesCount", attendanceRepository.countAllByStudentIdAndStatusIn(student.getId(),
+                        Arrays.asList(Attendance.Status.ABSENT, Attendance.Status.UNEXCUSED)));
+
+                studentBehaviorGradeListMap.put(student.getId(), behaviorInfo);
+            });
+
+
+            if (studentBehaviorGradeListMap.keySet().isEmpty()) {
+                return null;
+            }
+
+            return studentBehaviorGradeListMap;
+        }
+
+        return null;
+    }
+
+
+    @Override
+    public GradeDto initNewBehaviorFinalGrade(Long teacherId) {
+        Grade grade = Grade.builder()
+                .teacher(getTeacherById(teacherId))
+                .subject(null)
+                .date(new java.util.Date(Timestamp.valueOf(LocalDateTime.now()).getTime()))
+                .description("Ocena z zachowania")
+                .weight(GradeWeight.BEHAVIOR_GRADE.getWeight())
+                .build();
+
+        return gradeToGradeDto.convert(grade);
     }
 
     @Override

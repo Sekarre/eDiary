@@ -624,7 +624,7 @@ public class TeacherServiceImpl implements TeacherService {
                 .subject(subject)
                 .date(new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()))
                 .description("Ocena końcowa z przedmiotu: " + subject.getName())
-                .weight(100)
+                .weight(GradeWeight.FINAL_GRADE.getWeight())
                 .build();
 
         return gradeToGradeDto.convert(grade);

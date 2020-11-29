@@ -40,6 +40,10 @@ public class FormTutorServiceImplTest {
     SubjectRepository subjectRepository;
     @Mock
     ClassRepository classRepository;
+    @Mock
+    BehaviorRepository behaviorRepository;
+    @Mock
+    AttendanceRepository attendanceRepository;
 
     @Mock
     StudentCouncilDtoToStudentCouncil studentCouncilDtoToStudentCouncil;
@@ -70,7 +74,8 @@ public class FormTutorServiceImplTest {
         MockitoAnnotations.initMocks(this);
 
         formTutorService = new FormTutorServiceImpl(pdfService, teacherRepository, studentCouncilRepository, studentRepository, parentRepository,
-                parentCouncilRepository,gradeRepository, subjectRepository, classRepository, studentCouncilDtoToStudentCouncil, studentCouncilToStudentCouncilDto,
+                parentCouncilRepository,gradeRepository, subjectRepository, classRepository, behaviorRepository, attendanceRepository,
+                studentCouncilDtoToStudentCouncil, studentCouncilToStudentCouncilDto,
                 parentCouncilDtoToParentCouncil, parentCouncilToParentCouncilDto, studentToStudentDto, parentToParentDto,
                 gradeToGradeDto, gradeDtoToGrade, subjectToSubjectDto);
 
@@ -297,7 +302,7 @@ public class FormTutorServiceImplTest {
         when(gradeRepository.findAllByTeacherIdAndWeight(any(), any())).thenReturn(Collections.singletonList(grade));
 
 
-        List<GradeDto> gradeDtoList = formTutorService.listBehaviorGrades(teacherId);
+        Map<StudentDto, GradeDto> gradeDtoList = formTutorService.listBehaviorGrades(teacherId);
 
         assertNotNull(gradeDtoList);
         verify(gradeRepository, times(1)).findAllByTeacherIdAndWeight(teacherId, 9000);

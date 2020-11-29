@@ -10,4 +10,5 @@ public interface BehaviorRepository extends JpaRepository<Behavior, Long> {
 
     List<Behavior> findAllByStudentId(Long studentId);
     List<Behavior> findAllByTeacher(Teacher teacher);
+    Long countAllByStudentIdAndPositive(Long studentId, boolean positive);
 }
