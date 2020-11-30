@@ -216,6 +216,51 @@ class TeacherControllerTest {
     }
 
     @Test
+    void newBehaviorWithClass() throws Exception {
+        Long classId = 2L;
+
+        when(teacherService.initNewBehavior(teacherId)).thenReturn(BehaviorDto.builder().build());
+        when(teacherService.listAllClasses()).thenReturn(Arrays.asList(ClassDto.builder().id(1L).build()));
+        when(teacherService.listStudentsBySchoolClassId(classId)).thenReturn(Arrays.asList(
+                StudentDto.builder().build(),
+                StudentDto.builder().build()));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/behavior/new/class/" + classId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("behavior"))
+                .andExpect(model().attributeExists("schoolClasses"))
+                .andExpect(model().attributeExists("students"))
+                .andExpect(view().name("/teacher/newBehavior"));
+
+        verify(teacherService, times(1)).initNewBehavior(teacherId);
+        verify(teacherService, times(1)).listAllClasses();
+        verify(teacherService, times(1)).listStudentsBySchoolClassId(classId);
+    }
+
+    @Test
+    void newBehaviorWithStudent() throws Exception {
+        Long classId = 2L;
+        Long studentId = 3L;
+
+        when(teacherService.initNewBehavior(teacherId, studentId)).thenReturn(BehaviorDto.builder().build());
+        when(teacherService.listAllClasses()).thenReturn(Arrays.asList(ClassDto.builder().id(1L).build()));
+        when(teacherService.listStudentsBySchoolClassId(classId)).thenReturn(Arrays.asList(
+                StudentDto.builder().build(),
+                StudentDto.builder().build()));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/behavior/new/class/" + classId + "/student/" + studentId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("behavior"))
+                .andExpect(model().attributeExists("schoolClasses"))
+                .andExpect(model().attributeExists("students"))
+                .andExpect(view().name("/teacher/newBehavior"));
+
+        verify(teacherService, times(1)).initNewBehavior(teacherId, studentId);
+        verify(teacherService, times(1)).listAllClasses();
+        verify(teacherService, times(1)).listStudentsBySchoolClassId(classId);
+    }
+
+    @Test
     void processNewBehavior() throws Exception {
         when(teacherService.saveBehavior(any())).thenReturn(Behavior.builder().build());
 
@@ -223,7 +268,7 @@ class TeacherControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(BehaviorDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/behavior"));
+                .andExpect(view().name("redirect:/teacher/" + teacherId + "/behavior"));
 
         verify(teacherService, times(1)).saveBehavior(any());
     }

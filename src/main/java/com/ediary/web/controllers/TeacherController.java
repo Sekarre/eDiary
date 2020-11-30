@@ -27,6 +27,8 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -172,18 +174,50 @@ public class TeacherController {
     public String newBehavior(@PathVariable Long teacherId, Model model) {
 
         model.addAttribute("behavior", teacherService.initNewBehavior(teacherId));
+        model.addAttribute("schoolClasses", teacherService.listAllClasses());
+
         return "/teacher/newBehavior";
     }
 
     @TeacherPermission
+    @GetMapping("/{teacherId}/behavior/new/class/{classId}")
+    public String newBehaviorWithClass(@PathVariable Long teacherId,
+                                         @PathVariable Long classId, Model model) {
+
+        model.addAttribute("behavior", teacherService.initNewBehavior(teacherId));
+        model.addAttribute("schoolClasses", teacherService.listAllClasses());
+        model.addAttribute("students", teacherService.listStudentsBySchoolClassId(classId));
+
+        return "/teacher/newBehavior";
+    }
+
+    @TeacherPermission
+    @GetMapping("/{teacherId}/behavior/new/class/{classId}/student/{studentId}")
+    public String newBehaviorWithStudent(@PathVariable Long teacherId,
+                                         @PathVariable Long classId,
+                                         @PathVariable Long studentId,
+                                         Model model) {
+
+        model.addAttribute("behavior", teacherService.initNewBehavior(teacherId, studentId));
+        model.addAttribute("schoolClasses", teacherService.listAllClasses());
+        model.addAttribute("students", teacherService.listStudentsBySchoolClassId(classId));
+
+        return "/teacher/newBehavior";
+    }
+
+
+    @TeacherPermission
     @PostMapping("/{teacherId}/behavior/new")
-    public String processNewBehavior(@Valid @RequestBody BehaviorDto behaviorDto, BindingResult result) {
+    public String processNewBehavior(@PathVariable Long teacherId,
+                                     @Valid @ModelAttribute BehaviorDto behaviorDto,
+                                     BindingResult result) {
+
         if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
             teacherService.saveBehavior(behaviorDto);
-            return "redirect:/teacher/behavior";
+            return "redirect:/teacher/" + teacherId + "/behavior";
         }
     }
 

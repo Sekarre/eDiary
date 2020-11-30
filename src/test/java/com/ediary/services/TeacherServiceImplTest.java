@@ -453,6 +453,26 @@ class TeacherServiceImplTest {
     }
 
     @Test
+    void initNewBehaviorWithTwoId() {
+        Long studentId = 2L;
+
+        Teacher teacher = Teacher.builder().id(1L).build();
+        Student student = Student.builder().id(2L).build();
+        when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
+        when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
+
+        when(behaviorToBehaviorDto.convert(any())).thenReturn(
+                BehaviorDto.builder().id(2L).teacherId(teacher.getId()).studentId(student.getId()).build());
+
+        BehaviorDto behavior = teacherService.initNewBehavior(teacherId, studentId);
+
+        assertEquals(2L, behavior.getId());
+        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(studentRepository, times(1)).findById(studentId);
+        verify(behaviorToBehaviorDto, times(1)).convert(any());
+    }
+
+    @Test
     void deleteBehavior() {
         Teacher teacher = Teacher.builder().id(teacherId).build();
 

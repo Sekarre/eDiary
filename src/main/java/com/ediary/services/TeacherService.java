@@ -12,7 +12,7 @@ import java.util.Map;
 public interface TeacherService {
 
     TeacherDto findByUser(User user);
-
+    List<StudentDto> listStudentsBySchoolClassId(Long schoolClassId);
     List<StudentDto> listLessonStudents(Long teacherId, Long subjectId, Long classId, Long lessonId);
 
     LessonDto initNewLesson(Long subjectId);
@@ -69,6 +69,7 @@ public interface TeacherService {
     List<BehaviorDto> listBehaviors(Long teacherId);
     List<BehaviorDto> listBehaviors(Long teacherId, Long studentId);
     BehaviorDto initNewBehavior(Long teacherId);
+    BehaviorDto initNewBehavior(Long teacherId, Long studentId);
     Boolean deleteBehavior(Long teacherId, Long behaviorId);
     BehaviorDto updatePutBehavior(BehaviorDto behaviorDto);
     BehaviorDto updatePatchBehavior(BehaviorDto behaviorDto);

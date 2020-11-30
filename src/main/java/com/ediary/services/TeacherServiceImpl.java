@@ -78,6 +78,13 @@ public class TeacherServiceImpl implements TeacherService {
         return teacherToTeacherDto.convert(teacherOptional.get());
     }
 
+    public List<StudentDto> listStudentsBySchoolClassId(Long schoolClassId) {
+        return studentRepository.findAllBySchoolClassId(schoolClassId)
+                .stream()
+                .map(studentToStudentDto::convert)
+                .collect(Collectors.toList());
+    }
+
     @Override
     public List<StudentDto> listLessonStudents(Long teacherId, Long subjectId, Long classId, Long lessonId) {
         Teacher teacher = getTeacherById(teacherId);
@@ -783,7 +790,9 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Behavior saveBehavior(BehaviorDto behaviorDto) {
-        return behaviorRepository.save(behaviorDtoToBehavior.convert(behaviorDto));
+        Behavior behavior = behaviorDtoToBehavior.convert(behaviorDto);
+        behavior.setDate(new Date());
+        return behaviorRepository.save(behavior);
     }
 
     @Override
@@ -806,6 +815,16 @@ public class TeacherServiceImpl implements TeacherService {
     public BehaviorDto initNewBehavior(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
         Behavior behavior = Behavior.builder().teacher(teacher).build();
+
+        return behaviorToBehaviorDto.convert(behavior);
+    }
+
+    @Override
+    public BehaviorDto initNewBehavior(Long teacherId, Long studentId) {
+
+        Teacher teacher = getTeacherById(teacherId);
+        Student student = getStudentById(studentId);
+        Behavior behavior = Behavior.builder().teacher(teacher).student(student).build();
 
         return behaviorToBehaviorDto.convert(behavior);
     }
@@ -1176,6 +1195,10 @@ public class TeacherServiceImpl implements TeacherService {
     private Class getClassById(Long classId) {
         return classRepository
                 .findById(classId).orElseThrow(() -> new NotFoundException("Class not found"));
+    }
+
+    private Student getStudentById(Long studentId) {
+        return studentRepository.findById(studentId).orElseThrow(() -> new NotFoundException("Student not found"));
     }
 
 

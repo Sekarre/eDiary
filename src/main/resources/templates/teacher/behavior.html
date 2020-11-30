@@ -99,7 +99,7 @@ The above copyright notice and this permission notice shall be included in all c
                                             <td> <div th:id="@{'content' + ${behavior.id}}" class="textOverflowCustom" th:text="${behavior?.content}">
                                                     </div>
                                             </td>
-                                            <td>
+                                            <td class="text-right">
                                                 <a  th:href="@{'javascript:showHideContent(&quot;content' + ${behavior.id} + '&quot;)'}">
                                                     <button class="btn btn-primary btn-primary btn-fab-mini btn-round">
                                                         <i class="material-icons">read_more</i>
