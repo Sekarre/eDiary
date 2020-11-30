@@ -10,18 +10,14 @@ import com.ediary.domain.timetable.Timetable;
 import com.ediary.exceptions.NoAccessException;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
-import com.ediary.services.pdf.PdfService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -800,7 +796,7 @@ public class TeacherServiceImpl implements TeacherService {
 
         Teacher teacher = getTeacherById(teacherId);
 
-        return behaviorRepository.findAllByTeacher(teacher)
+        return behaviorRepository.findAllByTeacherOrderByDateDesc(teacher)
                 .stream()
                 .map(behaviorToBehaviorDto::convert)
                 .collect(Collectors.toList());

@@ -72,32 +72,60 @@ The above copyright notice and this permission notice shall be included in all c
                                 <form th:object="${behavior}" th:action="@{'/teacher/' + ${teacherId} + '/behavior/new'}" method="post">
                             </div>
 
+                            <div class="card-body">
+
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-1">
+                                  <span class="input-group-text">
+                                      <i class="material-icons">person_search</i>
+                                  </span>
+                                </div>
+                                <div class="col-md-11">
                                     <div class="form-group">
-                                        <label>Wybierz [KLASA / UCZEŃ]</label>
-                                        <div class="form-group">
-                                            <select id="selectClass" class="selectpicker" data-live-search="true">
-                                                <option>BRAK</option>
-                                                <option th:each="schoolClass : ${schoolClasses}"
-                                                        th:value="${schoolClass.id}"
-                                                        th:text="${schoolClass.name}">Klasa</option>
-                                            </select>
-                                            <select id="selectStudent" class="selectpicker" data-live-search="true">
-                                                <option>BRAK</option>
-                                                <option th:each="student : ${students}"
-                                                        th:value="${student?.id}"
-                                                        th:text="${student?.userName}">Klasa</option>
-                                            </select>
-                                        </div>
-                                        <label>Uczeń</label>
-                                        <div class="form-group">
-                                            <input disabled type="text" class="form-control" th:value="*{behavior.studentName}">
-                                        </div>
-                                        <label>Typ Uwagi</label>
+                                        <label class="bmd-label-floating">Wybierz [KLASA / UCZEŃ]</label>
+                                        <select id="selectClass" class="selectpicker" data-live-search="true">
+                                            <option>Klasa</option>
+                                            <option th:each="schoolClass : ${schoolClasses}"
+                                                    th:value="${schoolClass.id}"
+                                                    th:text="${schoolClass.name}">Klasa</option>
+                                        </select>
+                                        <select id="selectStudent" class="selectpicker" data-live-search="true">
+                                            <option>Uczeń</option>
+                                            <option th:each="student : ${students}"
+                                                    th:value="${student?.id}"
+                                                    th:text="${student?.userName}">Klasa</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            </br>
+                            <div class="row">
+                                <div class="col-md-1">
+                                  <span class="input-group-text">
+                                      <i class="material-icons">how_to_reg</i>
+                                  </span>
+                                </div>
+                                <div class="col-md-11">
+                                    <div class="form-group">
+                                        <label class="bmd-label-floating">Uczeń</label>
+                                        <input disabled type="text" class="form-control" th:value="*{behavior.studentName}">
+                                    </div>
+                                </div>
+                            </div>
+                            </br>
+                            <div class="row">
+                                <div class="col-md-1">
+                                  <span class="input-group-text">
+                                      <i class="material-icons">thumb_up_alt</i>
+                                      <i class="material-icons">thumb_down_alt</i>
+                                  </span>
+                                </div>
+                                <div class="col-md-11">
+                                    <div class="form-group">
+                                        <label class="bmd-label-floating">Typ Uwagi</label>
                                         <div class="form-check form-check-radio">
                                             <label class="form-check-label">
-                                                <input checked type="radio"  name="behaviorType" value="true" th:value="*{behavior.positive}" class="form-check-input">Pozytywna</input>
+                                                <input type="radio"  name="behaviorType" value="true" th:field="*{behavior.positive}" class="form-check-input">Pozytywna</input>
                                                 <span class="circle">
                                                     <span class="check"></span>
                                                 </span>
@@ -105,7 +133,7 @@ The above copyright notice and this permission notice shall be included in all c
                                         </div>
                                         <div class="form-check form-check-radio">
                                             <label class="form-check-label">
-                                                <input type="radio"  name="behaviorType" value="false" th:value="*{behavior.positive}" class="form-check-input">Negatywna</input>
+                                                <input type="radio"  name="behaviorType" value="false" th:field="*{behavior.positive}" class="form-check-input">Negatywna</input>
                                                 <span class="circle">
                                                 <span class="check"></span>
                                             </span>
@@ -114,16 +142,17 @@ The above copyright notice and this permission notice shall be included in all c
                                     </div>
                                 </div>
                             </div>
-
-
+                            </br>
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-1">
+                                  <span class="input-group-text">
+                                      <i class="material-icons">history_edu</i>
+                                  </span>
+                                </div>
+                                <div class="col-md-11">
                                     <div class="form-group">
-                                        <label>Treść uwagi</label>
-                                        <div class="form-group">
-                                            <label class="bmd-label-floating"> </label>
-                                            <textarea class="form-control" rows="5" th:field="*{behavior.content}"></textarea>
-                                        </div>
+                                        <label class="bmd-label-floating">Treść uwagi</label>
+                                        <textarea class="form-control" rows="5" th:field="*{behavior.content}"></textarea>
                                     </div>
                                 </div>
                             </div>
