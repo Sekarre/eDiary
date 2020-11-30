@@ -405,6 +405,9 @@ The above copyright notice and this permission notice shall be included in all c
         var gradeDate = $(this).data('date');
         var gradeDesc = $(this).data('desc');
 
+        if (gradeDesc == null) {
+            gradeDesc = "";
+        }
 
 
         var gradeValueElem = document.getElementById("gradeValue");

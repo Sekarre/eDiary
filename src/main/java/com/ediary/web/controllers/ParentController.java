@@ -101,11 +101,13 @@ public class ParentController {
     @GetMapping("/{studentId}/grade")
     public String getAllGrades(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
 
-        model.addAttribute("subjects", parentService.getAllStudentSubjectNames(parentId, studentId));
+//        model.addAttribute("subjects", parentService.getAllStudentSubjectNames(parentId, studentId));
+//        model.addAttribute("grades", studentService.listGrades(studentId));
 
-        model.addAttribute("grades", studentService.listGrades(studentId));
-
+        model.addAttribute("subjectsGrades", studentService.listSubjectsGrades(studentId));
+        model.addAttribute("behaviorGrade", studentService.getBehaviorGrade(studentId));
         model.addAttribute("student", parentService.findStudent(parentId, studentId));
+
         return "parent/allGrades";
     }
 

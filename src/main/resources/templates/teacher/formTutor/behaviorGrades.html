@@ -101,7 +101,7 @@ The above copyright notice and this permission notice shall be included in all c
                                         </td>
 
                                         <td class="border-left text-center">
-                                            <a th:if="${studentsWithBehaviorGrade?.get(student)?.value != null}" data-toggle="modal" id="open-gradeDialogModal-editFinalGrade" class="open-gradeDialogModal-editFinalGrade btn-sm btn-danger" href="#editFinalGradeModal"
+                                            <a th:if="${studentsWithBehaviorGrade?.get(student)?.value != null}" data-toggle="modal" id="open-gradeDialogModal-editFinalGrade" class="open-gradeDialogModal-editFinalGrade btn-sm btn-info" href="#editFinalGradeModal"
                                                th:text="${studentsWithBehaviorGrade?.get(student)?.value}" th:attr="data-date=''+${studentsWithBehaviorGrade?.get(student)?.date}+'', data-target='#editFinalGradeModal', data-value=''+${studentsWithBehaviorGrade?.get(student)?.value}+'', data-weight=''+${studentsWithBehaviorGrade?.get(student)?.weight}+'',
                                                        data-student=''+${studentsWithBehaviorGrade?.get(student)?.studentName}+'', data-desc=''+${studentsWithBehaviorGrade?.get(student)?.description}+'', data-id=''+${student.id}+'', data-grade=''+${studentsWithBehaviorGrade?.get(student)?.id}+''">
                                             </a>&nbsp;&nbsp;

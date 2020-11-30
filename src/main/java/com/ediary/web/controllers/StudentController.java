@@ -61,8 +61,11 @@ public class StudentController {
     @GetMapping("/{studentId}/grade")
     public String getAllGrades(@PathVariable Long studentId, Model model) {
 
-        model.addAttribute("subjects", studentService.listSubjects(studentId));
-        model.addAttribute("grades", studentService.listGrades(studentId));
+//        model.addAttribute("subjects", studentService.listSubjects(studentId));
+//        model.addAttribute("grades", studentService.listGrades(studentId));
+        model.addAttribute("subjectsGrades", studentService.listSubjectsGrades(studentId));
+        model.addAttribute("behaviorGrade", studentService.getBehaviorGrade(studentId));
+
         return "student/allGrades";
     }
 

@@ -18,4 +18,6 @@ public interface StudentService {
     Timetable getTimetableByStudentId(Long studentId);
     StudentDto findByUser(User user);
 
+    Map<SubjectDto, List<GradeDto>> listSubjectsGrades(Long studentId);
+    GradeDto getBehaviorGrade(Long studentId);
 }
