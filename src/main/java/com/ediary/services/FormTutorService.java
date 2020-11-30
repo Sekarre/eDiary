@@ -31,7 +31,6 @@ public interface FormTutorService {
     Map<Long, Map<String, Long>> listBehaviorInfo(Long teacherId);
     GradeDto initNewBehaviorFinalGrade(Long teacherId);
     Grade saveBehaviorGrade(Long teacher, GradeDto gradeDto);
-    Grade findGrade(Long studentId); //wyswietlenie oceny z zachowania
 
     List<StudentDto> listClassStudents(Long teacherId);
 
@@ -43,5 +42,7 @@ public interface FormTutorService {
     List<SubjectDto> listAllSubjectsByClass(Long teacherId);
     Map<StudentDto, List<GradeDto>> listStudentsGrades(Long teacherId, Long subjectId);
     Map<StudentDto, GradeDto> listStudentsFinalGrades(Long teacherId, Long subjectId);
+
+    List<String> getBehaviorGradeValues();
 
 }

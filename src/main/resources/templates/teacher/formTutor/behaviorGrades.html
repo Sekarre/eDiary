@@ -24,6 +24,11 @@ The above copyright notice and this permission notice shall be included in all c
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
     <!-- CSS Files -->
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
@@ -146,7 +151,13 @@ The above copyright notice and this permission notice shall be included in all c
                                                                     <td id="gradeValueF">
                                                                         <div class="form-group">
                                                                             <label class="bmd-label-floating" th:text="'Ocena'">Ocena: </label>
-                                                                            <input  id="gradeValueValFinal" type="text" class="form-control">
+                                                                            <select id="gradeSelect" class="selectpicker" data-live-search="true">
+                                                                                <option th:each="gradeValue : ${behaviorGradeValues}"
+                                                                                        th:value="${gradeValue}"
+                                                                                        th:text="${gradeValue}" th:selected="${gradeValueStat.index == 0} ? 'selected' : ''"></option>
+
+                                                                            </select>
+                                                                            <input  id="gradeValueValFinal" type="hidden" class="form-control">
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -208,7 +219,7 @@ The above copyright notice and this permission notice shall be included in all c
                                     </div>
 
                                     <form id="editFinalGradeForm" method="post" >
-                                        <div class="modal-body">
+                                        <div class="modal-body" >
                                             <div class="content">
                                                 <div class="container-fluid">
                                                     <div class="card">
@@ -226,7 +237,13 @@ The above copyright notice and this permission notice shall be included in all c
                                                                     <td id="gradeFValueEdit">
                                                                         <div class="form-group">
                                                                             <label class="bmd-label-static" th:text="'Ocena'"> </label>
-                                                                            <input  id="gradeFValueValEdit" type="text" class="form-control">
+                                                                            <select id="gradeSelectEdit" class="selectpicker" data-live-search="true">
+                                                                                <option th:each="gradeValue : ${behaviorGradeValues}"
+                                                                                        th:value="${gradeValue}"
+                                                                                        th:text="${gradeValue}" th:selected="${gradeValueStat.index == 0} ? 'selected' : ''"></option>
+
+                                                                            </select>
+                                                                            <input  id="gradeFValueValEdit" type="hidden" class="form-control">
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -234,6 +251,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                                     <td id="gradeFWeightEdit">
                                                                         <div class="form-group">
                                                                             <label class="bmd-label-static" th:text="'Waga'" disabled></label>
+
                                                                             <input  type="text" id="gradeFWeightValEdit" class="form-control" disabled/>
                                                                         </div>
                                                                     </td>
@@ -517,8 +535,13 @@ The above copyright notice and this permission notice shall be included in all c
         var gradeStudentElem = document.getElementById("finalGradeStudent");
         var gradeStudentId = document.getElementById("studentIdValFinal");
 
+        var selected = $('#gradeSelect').find("option:selected").val();
+
+        $('#gradeValueValFinal').val(selected);
+
         gradeStudentElem.innerHTML = studentName;
         gradeStudentId.value = studentId;
+
     });
 </script>
 
@@ -593,6 +616,8 @@ The above copyright notice and this permission notice shall be included in all c
         document.getElementById("gradeFValueValEdit").value = value;
         document.getElementById("gradeFDescValEdit").value = desc;
         document.getElementById("gradeFDateValEdit").value = date;
+
+        $('#gradeSelectEdit').selectpicker('val', value);
 
     });
 </script>
@@ -673,6 +698,31 @@ The above copyright notice and this permission notice shall be included in all c
 
         // Sending data with the request
         xhr.send(data);
+    });
+</script>
+
+<script>
+    $(function() {
+
+        $('#gradeSelect').on('change', function(){
+            var selected = $(this).find("option:selected").val();
+
+            $('#gradeValueValFinal').val(selected);
+            $('#gradeSelect').selectpicker("refresh");
+        });
+
+    });
+
+</script>
+
+<script>
+    $(function() {
+        $('#gradeSelectEdit').on('change', function(){
+            var selected = $(this).find("option:selected").val();
+
+            $('#gradeFValueValEdit').val(selected);
+            $('#gradeSelectEdit').selectpicker("refresh");
+        });
     });
 </script>
 

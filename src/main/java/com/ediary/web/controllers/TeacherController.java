@@ -963,7 +963,6 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/formTutor/parentCouncil";
     }
 
-    //here
     @FormTutorPermission
     @GetMapping("/{teacherId}/formTutor/behaviorGrade")
     public String getClassBehaviorGrades(@PathVariable Long teacherId, Model model) {
@@ -971,6 +970,8 @@ public class TeacherController {
         model.addAttribute("studentsWithBehaviorGrade", formTutorService.listBehaviorGrades(teacherId));
         model.addAttribute("studentsWithBehaviorInfo", formTutorService.listBehaviorInfo(teacherId));
         model.addAttribute("finalGrade", formTutorService.initNewBehaviorFinalGrade(teacherId));
+        model.addAttribute("behaviorGradeValues", formTutorService.getBehaviorGradeValues());
+
 
         return "teacher/formTutor/behaviorGrades";
     }
@@ -1041,7 +1042,6 @@ public class TeacherController {
         return "teacher/formTutor/studentCards";
     }
 
-    //todo: tests
     @FormTutorPermission
     @RequestMapping("/studentCard/{studentId}/download/{startTime}/{endTime}")
     public void downloadStudentCardPdf(HttpServletResponse response,
