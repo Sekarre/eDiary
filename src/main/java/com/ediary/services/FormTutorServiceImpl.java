@@ -274,21 +274,21 @@ public class FormTutorServiceImpl implements FormTutorService {
 
             Class schoolClass = teacher.getSchoolClass();
 
-                Map<StudentDto, GradeDto> studentBehaviorGradeListMap = new TreeMap<>(
-                        ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
-                                .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
+            Map<StudentDto, GradeDto> studentBehaviorGradeListMap = new TreeMap<>(
+                    ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
+                            .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
 
-                schoolClass.getStudents().forEach(student -> {
-                    studentBehaviorGradeListMap.put(studentToStudentDto.convert(student),
-                            gradeToGradeDto.convert(gradeRepository
-                                    .findByStudentIdAndWeight(student.getId(), GradeWeight.BEHAVIOR_GRADE.getWeight())));
-                });
+            schoolClass.getStudents().forEach(student -> {
+                studentBehaviorGradeListMap.put(studentToStudentDto.convert(student),
+                        gradeToGradeDto.convert(gradeRepository
+                                .findByStudentIdAndWeight(student.getId(), GradeWeight.BEHAVIOR_GRADE.getWeight())));
+            });
 
-                if (studentBehaviorGradeListMap.keySet().isEmpty()) {
-                    return null;
-                }
+            if (studentBehaviorGradeListMap.keySet().isEmpty()) {
+                return null;
+            }
 
-                return studentBehaviorGradeListMap;
+            return studentBehaviorGradeListMap;
         }
 
         return null;
@@ -364,10 +364,6 @@ public class FormTutorServiceImpl implements FormTutorService {
         return null;
     }
 
-    @Override
-    public Grade findGrade(Long studentId) {
-        return null;
-    }
 
     @Override
     public List<StudentDto> listClassStudents(Long teacherId) {
@@ -517,6 +513,19 @@ public class FormTutorServiceImpl implements FormTutorService {
         }
 
         return null;
+    }
+
+
+    @Override
+    public List<String> getBehaviorGradeValues() {
+        return new ArrayList<>() {{
+            add("Wzorowe");
+            add("Bardzo dobre");
+            add("Dobre");
+            add("Poprawne");
+            add("Nieodpowiednie");
+            add("Naganne");
+        }};
     }
 
     private Teacher getTeacherById(Long teacherId) {

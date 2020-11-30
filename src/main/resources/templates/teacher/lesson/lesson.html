@@ -75,9 +75,6 @@ The above copyright notice and this permission notice shall be included in all c
                         <li class="nav-item">
                             <a class="nav-link" th:text="'Frekwencja'"  data-toggle="tab" href="#attendances" role="tablist"  aria-selected="false">Profile</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" th:text="'Dodatkowe'" data-toggle="tab" href="#events" role="tablist"  aria-selected="false">Contact</a>
-                        </li>
                     </ul>
                 </div>
                 <!--end tabs-->
@@ -105,7 +102,7 @@ The above copyright notice and this permission notice shall be included in all c
                                             </td>
 
                                             <td th:each="grade : ${studentsWithGrades?.get(student)}">
-                                                <a data-toggle="modal" id="open-gradeDialogModal-editGrade" class="open-gradeDialogModal btn btn-info" href="#editGradeModal"
+                                                <a data-toggle="modal" id="open-gradeDialogModal-editGrade" class="open-gradeDialogModal btn btn-sm" href="#editGradeModal"
                                                    th:attr="data-date=''+${grade.date}+'', data-target='#editGradeModal', data-value=''+${grade.value}+'', data-weight=''+${grade.weight}+'',
                                                        data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+'', data-id=''+${student.id}+'', data-grade=''+${grade.id}+''"
                                                    th:text="${grade?.value}">
@@ -141,22 +138,22 @@ The above copyright notice and this permission notice shall be included in all c
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class=" text-primary">
-                                        <th>Nr. </th>
-                                        <th>Imie</th>
-                                        <th>Status</th>
-                                        <th>
+                                        <th class="col-lg-1">Nr. </th>
+                                        <th class="col-lg-2">Imie</th>
+                                        <th class="col-lg-3 text-center">Status</th>
+                                        <th class="col-lg-2">
                                             <button  id="allPresent" th:onclick="'javascript:sendAllAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
                                                     + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + 'present' + '\');'" class="btn btn-fab-mini btn-round">
                                                 <i class="material-icons">add_task</i>&nbsp;
                                             </button>
                                         </th>
-                                        <th>
+                                        <th class="col-lg-2">
                                             <button  id="allAbsent" th:onclick="'javascript:sendAllAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
                                                     + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + 'absent' + '\');'" class="btn btn-fab-mini btn-round">
                                                 <i class="material-icons">unpublished</i>&nbsp;
                                             </button>
                                         </th>
-                                        <th>
+                                        <th class="col-lg-2">
                                             <button  id="allLate" th:onclick="'javascript:sendAllAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
                                                     + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + 'late' + '\');'" class="btn btn-fab-mini btn-round">
                                                 <i class="material-icons">watch_later</i>&nbsp;
@@ -172,7 +169,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                 Imie
                                             </td>
 
-                                            <td th:text="${studentsWithAttendances?.get(student)?.status?.translatedName}"
+                                            <td class="text-center border-right" th:text="${studentsWithAttendances?.get(student)?.status?.translatedName}"
                                                 th:style="${studentsWithAttendances?.get(student)?.status?.name() eq 'PRESENT' || studentsWithAttendances?.get(student)?.status?.name() eq 'EXCUSED'} ? 'color: green' : ''"
                                                 th:styleappend="${studentsWithAttendances?.get(student)?.status?.name() eq 'ABSENT' || studentsWithAttendances?.get(student)?.status?.name() eq 'UNEXCUSED'} ? 'color: red' : ''" >
                                                 Status

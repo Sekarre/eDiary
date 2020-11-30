@@ -3,6 +3,8 @@ package com.ediary.services;
 import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
+import com.ediary.domain.Class;
+import com.ediary.domain.helpers.GradeWeight;
 import com.ediary.domain.security.User;
 import com.ediary.domain.timetable.Timetable;
 import com.ediary.exceptions.NotFoundException;
@@ -15,10 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -121,6 +120,43 @@ public class StudentServiceImpl implements StudentService {
             throw new NotFoundException("Student Not Found");
         }
         return studentToStudentDto.convert(studentOptional.get());
+    }
+
+
+    @Override
+    public Map<SubjectDto, List<GradeDto>> listSubjectsGrades(Long studentId) {
+        Student student = getStudentById(studentId);
+
+        Map<SubjectDto, List<GradeDto>> studentGradesListMap = new TreeMap<>(
+                ((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName())));
+
+        student.getSchoolClass().getSubjects().forEach(subject -> {
+            studentGradesListMap.put(subjectToSubjectDto.convert(subject),
+                    gradeRepository.findAllByStudentIdAndSubjectId(student.getId(), subject.getId())
+                            .stream()
+                            .map(gradeToGradeDto::convert)
+                            .collect(Collectors.toList()));
+        });
+
+
+        if (studentGradesListMap.keySet().isEmpty()) {
+            return null;
+        }
+
+        return studentGradesListMap;
+    }
+
+    @Override
+    public GradeDto getBehaviorGrade(Long studentId) {
+        Student student = getStudentById(studentId);
+
+        Grade grade = gradeRepository.findByStudentIdAndWeight(student.getId(), GradeWeight.BEHAVIOR_GRADE.getWeight());
+
+        if (grade != null) {
+            return gradeToGradeDto.convert(grade);
+        }
+
+        return null;
     }
 
     private Student getStudentById(Long studentId) {

@@ -58,24 +58,47 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <div th:if="${subjects == null || subjects?.size() == 0}" class="navbar-wrapper">
+            <div th:if="${subjectsGrades == null}" class="navbar-wrapper">
                 <div class="d-flex justify-content-center">
                     <h2 class="navbar-brand">Nie znaleziono ocen</h2>
                 </div>
             </div>
-            <div th:each="subject : ${subjects}" class="container-fluid" th:if="${subjects != null && subjects?.size() > 0}">
+
+            <div class="container-fluid">
+                <div class="card" >
+                    <div class="card-header card-header-text card-header-primary">
+                        <div class="card-text col-md-3" >
+                            <h4 class="card-title" th:text="'Zachowanie: '"></h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <span>
+                                <a th:if="${behaviorGrade != null}" data-toggle="modal" class="open-gradeDialogModal btn btn-info" href="#gradeModal"
+                                   th:attr="data-date=''+${behaviorGrade?.date}+'', data-target='#gradeModal', data-value=''+${behaviorGrade?.value}+'', data-weight=''+${behaviorGrade?.weight}+'',
+                                        data-subject=''+${behaviorGrade?.subjectName}+'', data-teacher=''+${behaviorGrade?.teacherName}+'',data-student=''+${behaviorGrade?.studentName}+'', data-desc=''+${behaviorGrade?.description}+''"
+                                   th:text="${behaviorGrade?.value}">
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group"></div>
+
+            <div th:each="subjectKey : ${subjectsGrades.keySet()}" class="container-fluid">
                 <div class="card">
                     <div class="card-header card-header-text card-header-primary">
                         <div class="card-text col-md-3" >
                             <h4 class="card-title">
-                                <a th:href="@{/student/{studentId}/grade/subject/{subjectId}(studentId=${studentId}, subjectId=${subject.id})}"  th:text="${subject.name}"></a>
+                                <a th:href="@{/student/{studentId}/grade/subject/{subjectId}(studentId=${studentId}, subjectId=${subjectKey.id})}"  th:text="${subjectKey.name}"></a>
                             </h4>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
 
-                            <span th:each="grade : ${grades}" th:if="${grade.subjectName} == ${subject.name}">
+                            <span th:each="grade : ${subjectsGrades?.get(subjectKey)}">
                                 <a data-toggle="modal" class="open-gradeDialogModal btn btn-info" href="#gradeModal"
                                    th:attr="data-date=''+${grade.date}+'', data-target='#gradeModal', data-value=''+${grade.value}+'', data-weight=''+${grade.weight}+'',
                                         data-subject=''+${grade.subjectName}+'', data-teacher=''+${grade.teacherName}+'',data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+''"
@@ -135,13 +158,12 @@ The above copyright notice and this permission notice shall be included in all c
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class="form-group"></div>
             </div>
         </div>
     </div>
@@ -376,7 +398,9 @@ The above copyright notice and this permission notice shall be included in all c
         var gradeDate = $(this).data('date');
         var gradeDesc = $(this).data('desc');
 
-
+        if (gradeDesc == null) {
+            gradeDesc = "";
+        }
 
         var gradeValueElem = document.getElementById("gradeValue");
         var gradeWeightElem = document.getElementById("gradeWeight");
