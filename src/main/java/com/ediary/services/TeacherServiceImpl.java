@@ -659,7 +659,12 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public EventDto initNewEvent(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
-        Event event = Event.builder().teacher(teacher).build();
+
+        Event event = Event.builder()
+                .teacher(getTeacherById(teacherId))
+                .createDate(new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()))
+                .build();
+
         return eventToEventDto.convert(event);
     }
 
@@ -697,14 +702,26 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<EventDto> listEvents(Long teacherId) {
-
+    public List<EventDto> listEvents(Long teacherId, Integer page, Integer size, Boolean includeHistory) {
         Teacher teacher = getTeacherById(teacherId);
 
-        return eventService.listEventsByTeacher(teacher)
-                .stream()
-                .map(eventToEventDto::convert)
-                .collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("date"));
+
+        if (includeHistory) {
+            pageable = PageRequest.of(page, size, Sort.by("date").descending());
+            return eventRepository.findAllByTeacherIdAndDateBefore(teacher.getId(),
+                    new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()), pageable)
+                    .stream()
+                    .map(eventToEventDto::convert)
+                    .collect(Collectors.toList());
+        } else {
+            return eventRepository.findAllByTeacherIdAndDateAfter(teacher.getId(),
+                    new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()), pageable)
+                    .stream()
+                    .map(eventToEventDto::convert)
+                    .collect(Collectors.toList());
+        }
+
     }
 
     @Override

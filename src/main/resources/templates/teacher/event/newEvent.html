@@ -50,7 +50,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" >Dodaj wydarzenie</a>
+                    <a class="navbar-brand" th:href="@{'/teacher/' + ${teacherId} + '/event'}">Wydarzenia</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -70,16 +70,21 @@ The above copyright notice and this permission notice shall be included in all c
 
                         <div class="card">
                             <div class="card-header card-header-primary">
-                                <h4 class="card-title">Dodaj lekcje</h4>
+                                <h4 class="card-title">Dodaj wydarzenie:</h4>
                             </div>
-                            <form th:object="${newEvent}" th:action="@{'/teacher/' + ${teacher.id} + '/event/newEvent' + ${subjectId} + '/newEvent'}" method="post">
+                            <form th:object="${newEvent}" th:action="@{'/teacher/' + ${teacher.id} + '/event/newEvent'}" method="post">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-5">
                                             <div class="form-group">
                                                 <label class="bmd-label-floating">Klasa</label>
-                                                <input type="text" class="form-control" th:value="${newEvent.className}" disabled>
-                                                <input type="hidden" th:field="*{classId}">
+                                                <select id="selectClass" class="selectpicker" data-live-search="true" th:field="*{classId}">
+                                                    <option th:each="class : ${schoolClasses}"
+                                                            th:value="${class.id}"
+                                                            th:text="${class.name}" th:selected="${classStat.index == 0} ? 'selected' : ''">Klasa</option>
+                                                </select>
+<!--                                                <input type="hidden" id="selectedClassId" th:field="*{classId}">-->
+
                                             </div>
                                         </div>
                                     </div>
@@ -364,9 +369,11 @@ The above copyright notice and this permission notice shall be included in all c
 <script>
     $(function() {
 
-        $('#selectTopic').on('change', function(){
+        $('#selectClass').on('change', function(){
             var selected = $(this).find("option:selected").val();
-            $('#selectTopic').selectpicker("refresh");
+            // $('#selectedClassId').val(selected);
+
+            $('#selectClass').selectpicker("refresh");
         });
 
     });

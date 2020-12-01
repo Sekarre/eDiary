@@ -81,39 +81,53 @@ public class TeacherController {
         return "/teacher/index";
     }
 
+    //Start
     @TeacherPermission
     @GetMapping("/{teacherId}/event")
-    public String getAllEvents(@PathVariable Long teacherId, Model model) {
+    public String getAllEvents(@PathVariable Long teacherId,
+                               @RequestParam(name = "page", required = false) Optional<Integer> page,
+                               Model model) {
 
-        model.addAttribute("events", teacherService.listEvents(teacherId));
-        return "/teacher/allEvents";
+        model.addAttribute("events", teacherService.listEvents(teacherId, page.orElse(0), 10, false));
+        model.addAttribute("page", page);
+
+        return "/teacher/event/allEvents";
     }
 
     @TeacherPermission
-    @GetMapping("/{teacherId}/event/{eventId}")
-    public String getEvent(@PathVariable Long teacherId, @PathVariable Long eventId, Model model) {
+    @GetMapping("/{teacherId}/event/eventsHistory")
+    public String getAllEventsHistory(@PathVariable Long teacherId,
+                                      @RequestParam(name = "page", required = false) Optional<Integer> page,
+                                      Model model) {
 
-        model.addAttribute("event", teacherService.getEvent(eventId));
-        return "/teacher/event";
+        model.addAttribute("events", teacherService.listEvents(teacherId, page.orElse(0), 10, true));
+        model.addAttribute("page", page);
+
+        return "/teacher/event/allEventsHistory";
     }
 
     @TeacherPermission
-    @GetMapping("/{teacherId}/event/new")
+    @GetMapping("/{teacherId}/event/newEvent")
     public String newEvent(@PathVariable Long teacherId, Model model) {
 
-        model.addAttribute("event", teacherService.initNewEvent(teacherId));
-        return "/teacher/newEvent";
+        model.addAttribute("newEvent", teacherService.initNewEvent(teacherId));
+        model.addAttribute("schoolClasses", teacherService.listClassByTeacher(teacherId));
+
+        return "/teacher/event/newEvent";
     }
 
     @TeacherPermission
-    @PostMapping("/{teacherId}/event/new")
-    public String processNewEvent(@Valid @RequestBody EventDto eventDto, BindingResult result) {
+    @PostMapping("/{teacherId}/event/newEvent")
+    public String processNewEvent(@PathVariable Long teacherId,
+                                  @Valid @ModelAttribute EventDto newEvent,
+                                  BindingResult result) {
         if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
-            teacherService.saveEvent(eventDto);
-            return "redirect:/teacher/event";
+            teacherService.saveEvent(newEvent);
+
+            return "redirect:/teacher/" + teacherId + "/event";
         }
     }
 
@@ -123,7 +137,7 @@ public class TeacherController {
     public String deleteEvent(@PathVariable Long teacherId, @PathVariable Long eventId) {
 
         teacherService.deleteEvent(teacherId, eventId);
-        return "/" + teacherId + "/event";
+        return "redirect/teacher/" + teacherId + "/event";
     }
 
     @TeacherPermission //todo: hmm
@@ -135,7 +149,7 @@ public class TeacherController {
             return "/";
         } else {
             EventDto event = teacherService.updatePutEvent(eventDto);
-            return "/" + teacherId + "/event/" + event.getId();
+            return "redirect:/teacher/" + teacherId + "/event/" + event.getId();
         }
     }
 
@@ -148,9 +162,11 @@ public class TeacherController {
             return "/";
         } else {
             EventDto event = teacherService.updatePatchEvent(eventDto);
-            return "/" + teacherId + "/event/" + event.getId();
+            return "redirect:/teacher/" + teacherId + "/event/" + event.getId();
         }
     }
+
+    //end
 
     @TeacherPermission
     @GetMapping("/{teacherId}/classes")

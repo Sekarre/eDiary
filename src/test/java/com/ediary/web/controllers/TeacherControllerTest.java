@@ -70,7 +70,7 @@ class TeacherControllerTest {
     @Test
     void getAllEvents() throws Exception {
 
-        when(teacherService.listEvents(teacherId)).thenReturn(Arrays.asList(
+        when(teacherService.listEvents(teacherId, any(), any(), false)).thenReturn(Arrays.asList(
                 EventDto.builder().id(1L).build(),
                 EventDto.builder().id(2L).build()
         ));
@@ -80,8 +80,8 @@ class TeacherControllerTest {
                 .andExpect(model().attributeExists("events"))
                 .andExpect(view().name("/teacher/allEvents"));
 
-        verify(teacherService, times(1)).listEvents(teacherId);
-        assertEquals(2, teacherService.listEvents(teacherId).size());
+        verify(teacherService, times(1)).listEvents(teacherId, any(), any(), false);
+        assertEquals(2, teacherService.listEvents(teacherId, any(), any(), false).size());
     }
 
     @Test

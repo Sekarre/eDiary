@@ -24,19 +24,42 @@ The above copyright notice and this permission notice shall be included in all c
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker-standalone.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" />
     <!-- CSS Files -->
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
 
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <style>
+        .agenda {  }
+
+        /* Dates */
+        .agenda .agenda-date { width: 170px; }
+        .agenda .agenda-date .dayofmonth {
+            width: 40px;
+            font-size: 36px;
+            line-height: 36px;
+            float: left;
+            text-align: right;
+            margin-right: 10px;
+        }
+        .agenda .agenda-date .shortdate {
+            font-size: 0.75em;
+        }
+
+
+        /* Times */
+        .agenda .agenda-time { width: 140px; }
+
+
+        /* Events */
+        .agenda .agenda-events {  }
+        .agenda .agenda-events .agenda-event {  }
+
+        .active a{
+            background-color: #9c27b0 !important;
+        }
+
+    </style>
 </head>
 
 <body class="">
@@ -44,13 +67,12 @@ The above copyright notice and this permission notice shall be included in all c
 
     <div th:replace="fragments/sidebarTeacher :: sidebar"></div>
 
-
     <div class="main-panel">
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" >Dodaj wydarzenie</a>
+                    <a class="navbar-brand">Terminarz</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -63,81 +85,96 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <div class="container-fluid">
-                <div class="row">
+            <div th:if="${events == null || events.size() == 0}" class="navbar-wrapper">
+                <div class="d-flex justify-content-center">
+                    <h2 class="navbar-brand">Nie znaleziono żadnych nadchodzących wydarzeń&nbsp;&nbsp;
+                        <a th:href="@{/teacher/{teacherId}/event/newEvent(teacherId=${teacherId})}">
+                            <button rel="tooltip" class="btn btn-success add btn-fab btn-fab-mini btn-primary btn-round">
+                                <i class="material-icons">add</i>
+                            </button>
+                        </a>
+                    </h2>
 
-                    <div class="col-md-8">
+                </div>
+                <div class="d-flex justify-content-center">
+                    <a th:href="@{/teacher/{teacherId}/event/eventsHistory(teacherId=${teacherId})}">
+                        <button rel="tooltip" class="btn btn-default add btn-fab btn-fab-mini btn-primary btn-round">
+                            <i class="material-icons">history</i>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="container-fluid" th:if="${events != null && events.size() > 0}">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <div class="float-left">
+                            <h3 class="card-title ">Terminarz&nbsp;&nbsp;
+                                <a th:href="@{/teacher/{teacherId}/event/eventsHistory(teacherId=${teacherId})}">
+                                    <button rel="tooltip" class="btn btn-default add btn-fab btn-fab-mini btn-primary btn-round">
+                                        <i class="material-icons">history</i>
+                                    </button>
+                                </a>
+                            </h3>
 
-                        <div class="card">
-                            <div class="card-header card-header-primary">
-                                <h4 class="card-title">Dodaj lekcje</h4>
-                            </div>
-                            <form th:object="${newEvent}" th:action="@{'/teacher/' + ${teacher.id} + '/event/newEvent' + ${subjectId} + '/newEvent'}" method="post">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-5">
-                                            <div class="form-group">
-                                                <label class="bmd-label-floating">Klasa</label>
-                                                <input type="text" class="form-control" th:value="${newEvent.className}" disabled>
-                                                <input type="hidden" th:field="*{classId}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class='col-md-5'>
-                                        <label for="todate">Data: </label>
-                                        <div class="form-group">
-                                            <div class='input-group date' id='todate'>
-                                                <input type='text' class="form-control" name = "endTime" th:field="*{date}"/>
-                                                <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
-                                            </div>
-                                        </div>
-                                    </div>
+                        </div>
+                        <div class="float-right">
+                            <a th:href="@{/teacher/{teacherId}/event/newEvent(teacherId=${teacherId})}">
+                                <button rel="tooltip" class="btn btn-success add btn-fab btn-fab-mini btn-primary btn-round">
+                                    <i class="material-icons">add</i>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
 
-                                    <div class="row">
-                                        <div class="col-md-5">
-                                            <div class="form-group">
-                                                <label>Typ wydarzenia</label>
-                                                <div class="form-group">
-                                                    <select id="selectTopic" class="selectpicker" data-live-search="true" th:field="*{type}">
-                                                        <option th:each="type : ${T(com.ediary.domain.Event$Type).values()}"
-                                                                th:value="${type}"
-                                                                th:text="${type.translatedName}" th:selected="${typeStat.index == 0} ? 'selected' : ''">Typ</option>
-                                                    </select>
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div class="agenda">
+                                <div class="table-responsive">
+                                    <table class="table table-condensed table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Data wydarzenia</th>
+                                            <th>Godzina</th>
+                                            <th>Klasa</th>
+                                            <th>Rodzaj</th>
+                                            <th>Wydarzenie</th>
+                                            <th>Data utworzenia</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <!-- Single event in a single day -->
+                                        <tr th:each="event : ${events}">
+                                            <td class="agenda-date active" rowspan="1">
+                                                <div class="dayofmonth" th:text="${event.date.getDate()}"></div>
+                                                <div class="dayofweek" th:text="${#dates.dayOfWeekName(event.date).substring(0, 1).toUpperCase() + #dates.dayOfWeekName(event.date).substring(1)}">Saturday</div>
+                                                <div class="shortdate text-muted" th:text="${(#dates.monthName(event.date).substring(0, 1).toUpperCase() + #dates.monthName(event.date).substring(1)) + ', ' + (event.date.getYear() + 1900)}">Miesiac, 2020</div>
+                                            </td>
+                                            <td class="agenda-time" th:text="${#dates.format(event.date, 'HH:mm')}">
+                                                15:30
+                                            </td>
+                                            <td class="agenda-time" th:text="${event.className}">Nauczyciel</td>
+                                            <td class="agenda-time" th:text="${event.type.getTranslatedName()}">Rodzaj</td>
+                                            <td class="agenda-events">
+                                                <div class="agenda-event">
+                                                    <i class="glyphicon glyphicon-repeat" th:text="${event.description}"></i>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                            </td>
+                                            <td class="agenda-time" th:text="${#dates.format(event?.createDate, 'dd-MM-yyyy HH:mm')}"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item " th:classappend="${page.isPresent() && page.get() > 0} ? 'active' : 'disabled'">
+                                            <a class="page-link" th:href="@{/teacher/{teacherId}/event(teacherId = ${teacher.id}, page = ${page.orElse(0) - 1})}" th:text="'Poprzednia'"></a>
+                                        </li>
+                                        <li class="page-item" th:classappend="${events.size() < 10} ? 'disabled' : 'active'">
+                                            <a class="page-link" th:href="@{/teacher/{teacherId}/event(teacherId = ${teacher.id}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
 
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-5">
-                                                <div class="form-group">
-                                                    <label class="bmd-label-floating">Opis</label>
-                                                    <textarea class="form-control" th:field="*{description}" rows="3" maxlength="150"></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class='col-md-5'>
-                                        <label for="d">Data utworzenia: </label>
-                                        <div class="form-group">
-                                            <div class='input-group date' id="d">
-                                                <input type="text" class="form-control"  th:value="${#dates.format(newEvent.createDate, 'dd-MM-yyyy HH:mm')}" disabled />
-                                                <input type="hidden" class="form-control"  th:field="*{createDate}" >
-                                                <span class="input-group-addon">
-                                            </span>
-                                            </div>
-                                            <input type="hidden">
-                                        </div>
-                                    </div>
-
-
-                                    <button class="submit btn btn-primary pull-right">Wyślij</button>
+                                        </li>
+                                    </ul>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -360,24 +397,6 @@ The above copyright notice and this permission notice shall be included in all c
         });
     });
 </script>
-
-<script>
-    $(function() {
-
-        $('#selectTopic').on('change', function(){
-            var selected = $(this).find("option:selected").val();
-            $('#selectTopic').selectpicker("refresh");
-        });
-
-    });
-</script>
-
-<script type="text/javascript">
-    $(function () {
-        $('#todate').datetimepicker();
-    });
-</script>
-
 </body>
 
 </html>

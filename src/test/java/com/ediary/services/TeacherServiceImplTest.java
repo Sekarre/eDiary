@@ -206,7 +206,7 @@ class TeacherServiceImplTest {
                 Event.builder().id(2L).build()
         ));
 
-        List<EventDto> events = teacherService.listEvents(teacherId);
+        List<EventDto> events = teacherService.listEvents(teacherId, 0, 1, false);
 
         assertEquals(2, events.size());
         assertEquals(3L, events.get(0).getId());

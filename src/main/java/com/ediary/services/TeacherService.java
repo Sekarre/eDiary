@@ -2,6 +2,7 @@ package com.ediary.services;
 
 import com.ediary.DTO.*;
 import com.ediary.domain.*;
+import com.ediary.domain.Class;
 import com.ediary.domain.security.User;
 import com.ediary.domain.timetable.Timetable;
 
@@ -59,7 +60,7 @@ public interface TeacherService {
     EventDto initNewEvent(Long teacherId);
     EventDto initNewClassEvent(Long teacherId, Long subjectId);
     Boolean deleteEvent(Long teacherId, Long eventId);
-    List<EventDto> listEvents(Long teacherId);
+    List<EventDto> listEvents(Long teacherId, Integer page, Integer size, Boolean includeHistory);
     List<EventDto> listClassEvents(Long teacherId, Long subjectId, Integer page, Integer size, Boolean includeHistory);
     EventDto updatePutEvent(EventDto eventDto);
     EventDto updatePatchEvent(EventDto eventDto);

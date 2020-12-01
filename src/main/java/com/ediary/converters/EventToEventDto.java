@@ -27,8 +27,10 @@ public class EventToEventDto implements Converter<Event, EventDto> {
         eventDto.setType(source.getType());
 
         //Class
-        eventDto.setClassId(source.getSchoolClass().getId());
-        eventDto.setClassName(source.getSchoolClass().getName());
+        if (source.getSchoolClass() != null) {
+            eventDto.setClassId(source.getSchoolClass().getId());
+            eventDto.setClassName(source.getSchoolClass().getName());
+        }
 
         //Teacher
         eventDto.setTeacherId(source.getTeacher().getId());
