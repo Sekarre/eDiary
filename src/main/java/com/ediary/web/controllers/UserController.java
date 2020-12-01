@@ -57,13 +57,13 @@ public class UserController {
     @UserPermission
     @PostMapping("/{userId}/updatePassword")
     public String processUpdatePassword(@PathVariable Long userId,
-                                        @RequestParam("password") String password,
+                                        @RequestParam("newPassword") String password,
                                         @RequestParam("oldPassword") String oldPassword,
                                         @AuthenticationPrincipal User user,
                                         Model model) {
 
         userService.updatePassword(user, password, oldPassword);
-        return "/";
+        return "redirect:/user/profil";
     }
 
     @UserPermission
@@ -221,6 +221,13 @@ public class UserController {
 
             userService.deleteNotice(userId, noticeId);
             return "redirect:/user/" + userId + "/readNotices";
+    }
+
+    @GetMapping("/profil")
+    public String profil(@AuthenticationPrincipal User user, Model model) {
+        model.addAttribute("userDetails", userToUserDto.convertForViewProfil(user));
+
+        return "user/profil";
     }
 
 

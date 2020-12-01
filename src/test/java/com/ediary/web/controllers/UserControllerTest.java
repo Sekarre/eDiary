@@ -57,10 +57,10 @@ class UserControllerTest {
         when(userService.updatePassword(any(),any(),any())).thenReturn(true);
 
         mockMvc.perform(post("/user/"+ userId +"/updatePassword")
-                    .param("password", "pwd")
+                    .param("newPassword", "pwd")
                     .param("oldPassword", "opwd"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("/"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/user/profil"));
 
         verify(userService, times(1)).updatePassword(any(),any(),any());
     }

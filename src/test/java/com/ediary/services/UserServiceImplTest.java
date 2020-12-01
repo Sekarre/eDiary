@@ -94,33 +94,35 @@ class UserServiceImplTest {
 
     @Test
     void updatePassword() {
+        Long userId = 3L;
         String password = "password";
         String oldPassword = "oldPassword";
-        User user = User.builder().password(oldPassword).build();
+        User user = User.builder().id(userId).password(oldPassword).build();
 
-        when(passwordEncoder.encode(oldPassword)).thenReturn(oldPassword);
-        when(passwordEncoder.encode(password)).thenReturn(password);
+        when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(user));
+        when(passwordEncoder.matches(oldPassword, user.getPassword())).thenReturn(true);
 
         Boolean status = userService.updatePassword(user, password, oldPassword);
 
         assertTrue(status);
-        verify(passwordEncoder, times(2)).encode(any());
+        verify(passwordEncoder, times(1)).encode(any());
         verify(userRepository, times(1)).save(user);
     }
 
     @Test
     void updatePasswordIncorrectOldPassword() {
+        Long userId = 3L;
         String password = "password";
         String oldPassword = "oldPassword";
-        User user = User.builder().password(oldPassword).build();
+        User user = User.builder().id(userId).password(oldPassword).build();
 
-        when(passwordEncoder.encode(oldPassword)).thenReturn(oldPassword);
-        when(passwordEncoder.encode(password)).thenReturn(password);
+        when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(user));
+        when(passwordEncoder.matches(oldPassword, user.getPassword())).thenReturn(true);
 
         Boolean status = userService.updatePassword(user, password, "incorrectOldPassword");
 
         assertFalse(status);
-        verify(passwordEncoder, times(1)).encode(any());
+        verify(passwordEncoder, times(0)).encode(any());
         verify(userRepository, times(0)).save(any());
     }
 

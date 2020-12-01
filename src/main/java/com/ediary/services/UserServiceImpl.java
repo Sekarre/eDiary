@@ -46,19 +46,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean updatePassword(User user, String password, String oldPassword) {
+    public Boolean updatePassword(User user, String newPassword, String oldPassword) {
 
-        if (!user.getPassword().equals(passwordEncoder.encode(oldPassword))) {
+        if (newPassword.isEmpty() || oldPassword.isEmpty()) {
             return false;
         }
 
-        //TODO validation
-        if (password.isEmpty()) {
+        User userDB = userRepository.findById(user.getId()).orElseThrow(() -> new NotFoundException("Nie znaleziono użytkownika"));
+
+        if (!passwordEncoder.matches(oldPassword, userDB.getPassword())) {
             return false;
         }
 
-        user.setPassword(passwordEncoder.encode(password));
-        userRepository.save(user);
+        userDB.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(userDB);
         return true;
     }
 

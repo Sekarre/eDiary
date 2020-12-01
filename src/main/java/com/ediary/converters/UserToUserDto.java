@@ -68,5 +68,30 @@ public class UserToUserDto implements Converter<User, UserDto> {
         return userDto;
     }
 
+    @Nullable
+    @Synchronized
+    public UserDto convertForViewProfil(User source) {
+
+        if (source == null) {
+            return null;
+        }
+
+        final UserDto userDto = new UserDto();
+        userDto.setId(source.getId());
+        userDto.setName(source.getFirstName() + " " + source.getLastName());
+        userDto.setUsername(source.getUsername());
+        userDto.setMessageNumber((long) messageRepository.findAllByStatusAndReaders(Message.Status.SENT, source).size());
+
+        //Address
+        userDto.setAddress(addressToAddressDto.convert(source.getAddress()));
+
+        //Roles
+        userDto.setRoles(source.getRoles().stream().map(roleToRoleDto::convert).collect(Collectors.toList()));
+
+        return userDto;
+    }
+
+
+
 
 }
