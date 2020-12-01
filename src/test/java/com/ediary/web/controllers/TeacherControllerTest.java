@@ -89,14 +89,14 @@ class TeacherControllerTest {
 
         Long eventId = 2L;
 
-        when(teacherService.getEvent(eventId)).thenReturn(EventDto.builder().build());
+        when(teacherService.getEvent(eventId, teacherId)).thenReturn(EventDto.builder().build());
 
         mockMvc.perform(get("/teacher/" + teacherId + "/event/" + eventId))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("event"))
                 .andExpect(view().name("/teacher/event"));
 
-        verify(teacherService, times(1)).getEvent(eventId);
+        verify(teacherService, times(1)).getEvent(eventId, teacherId);
     }
 
     @Test
@@ -113,7 +113,7 @@ class TeacherControllerTest {
 
     @Test
     void processNewEvent() throws Exception {
-        when(teacherService.saveEvent(any())).thenReturn(Event.builder().build());
+        when(teacherService.saveOrUpdateEvent(any())).thenReturn(Event.builder().build());
 
         mockMvc.perform(post("/teacher/" + teacherId + "/event/new")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -121,7 +121,7 @@ class TeacherControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/event"));
 
-        verify(teacherService, times(1)).saveEvent(any());
+        verify(teacherService, times(1)).saveOrUpdateEvent(any());
     }
 
     @Test
@@ -135,21 +135,7 @@ class TeacherControllerTest {
         verify(teacherService, times(1)).deleteEvent(teacherId, eventId);
     }
 
-    @Test
-    void updatePutEvent() throws Exception {
-        Long eventId = 2L;
-        EventDto eventDto = EventDto.builder().id(eventId).build();
 
-        when(teacherService.updatePutEvent(any())).thenReturn(EventDto.builder().id(eventId).build());
-
-        mockMvc.perform(put("/teacher/" + teacherId + "/event/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(AbstractAsJsonControllerTest.asJsonString(eventDto)))
-                .andExpect(status().isOk())
-                .andExpect(view().name("/" + teacherId + "/event/" + eventId));
-
-        verify(teacherService, times(1)).updatePutEvent(any());
-    }
 
     @Test
     void updatePatchEvent() throws Exception {
@@ -559,7 +545,7 @@ class TeacherControllerTest {
                 .id(1L)
                 .build();
 
-        when(teacherService.saveEvent(any())).thenReturn(event);
+        when(teacherService.saveOrUpdateEvent(any())).thenReturn(event);
 
         mockMvc.perform(post(
                 "/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/newEvent")
@@ -569,7 +555,7 @@ class TeacherControllerTest {
                 .andExpect(view().name(
                         "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/events"));
 
-        verify(teacherService, times(1)).saveEvent(any());
+        verify(teacherService, times(1)).saveOrUpdateEvent(any());
     }
 
 

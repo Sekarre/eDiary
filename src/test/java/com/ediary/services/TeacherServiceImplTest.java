@@ -223,7 +223,7 @@ class TeacherServiceImplTest {
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(eventDB));
         when(eventToEventDto.convert(eventDB)).thenReturn(EventDto.builder().id(eventDB.getId()).build());
 
-        EventDto event = teacherService.getEvent(eventId);
+        EventDto event = teacherService.getEvent(eventId, teacherId);
 
         assertEquals(eventId, event.getId());
         verify(eventRepository, times(1)).findById(eventId);
@@ -239,7 +239,7 @@ class TeacherServiceImplTest {
         when(eventDtoToEvent.convert(eventToSave)).thenReturn(Event.builder().id(eventToSave.getId()).build());
         when(eventRepository.save(any())).thenReturn(eventReturned);
 
-        Event savedEvent = teacherService.saveEvent(eventToSave);
+        Event savedEvent = teacherService.saveOrUpdateEvent(eventToSave);
 
         assertEquals(eventId, savedEvent.getId());
         verify(eventDtoToEvent, times(1)).convert(eventToSave);
@@ -343,24 +343,6 @@ class TeacherServiceImplTest {
         verify(classToClassDto, times(2)).convert(any());
     }
 
-    @Test
-    void updatePutEvent() {
-        Long eventToUpdateId = 1L;
-        String eventToUpdateDesc = "before";
-        EventDto eventToUpdate = EventDto.builder().id(eventToUpdateId).description(eventToUpdateDesc).build();
-
-        Long eventUpdatedId = 1L;
-        String eventUpdatedDesc = "after";
-        EventDto eventUpdated = EventDto.builder().id(eventUpdatedId).description(eventUpdatedDesc).build();
-
-        when(eventDtoToEvent.convert(eventToUpdate)).thenReturn(Event.builder().id(eventUpdatedId).build());
-        when(eventRepository.save(any())).thenReturn(Event.builder().build());
-
-        EventDto eventDto = teacherService.updatePutEvent(any());
-
-        verify(eventDtoToEvent, times(1)).convert(any());
-        verify(eventRepository, times(1)).save(any());
-    }
 
     @Test
     void updatePatchEvent() {

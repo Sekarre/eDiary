@@ -11,7 +11,6 @@ import com.ediary.services.TeacherService;
 import com.ediary.services.WeeklyAttendancesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -27,8 +26,6 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -125,44 +122,46 @@ public class TeacherController {
             //TODO
             return "/";
         } else {
-            teacherService.saveEvent(newEvent);
+            teacherService.saveOrUpdateEvent(newEvent);
 
             return "redirect:/teacher/" + teacherId + "/event";
         }
     }
 
     @TeacherPermission
-    @DeleteMapping("/{teacherId}/event/{eventId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public String deleteEvent(@PathVariable Long teacherId, @PathVariable Long eventId) {
+    @PostMapping("/{teacherId}/event/{eventId}/delete")
+    public String deleteEvent(@PathVariable Long teacherId,
+                              @PathVariable Long eventId) {
 
         teacherService.deleteEvent(teacherId, eventId);
-        return "redirect/teacher/" + teacherId + "/event";
+        return "redirect:/teacher/" + teacherId + "/event";
     }
 
-    @TeacherPermission //todo: hmm
-    @PutMapping("/{teacherId}/event/update")
-    public String updatePutEvent(@PathVariable Long teacherId,
-                                 @Valid @RequestBody EventDto eventDto, BindingResult result) {
+    @TeacherPermission
+    @GetMapping("/{teacherId}/event/update/{eventId}")
+    public String updateEvent(@PathVariable Long teacherId,
+                              @PathVariable Long eventId, Model model) {
+
+        model.addAttribute("schoolClasses", teacherService.listClassByTeacher(teacherId));
+        model.addAttribute("newEvent", teacherService.getEvent(teacherId, eventId));
+
+        return "/teacher/event/updateEvent";
+    }
+
+    @TeacherPermission
+    @PostMapping("/{teacherId}/event/update/{eventId}")
+    public String processUpdateEvent(@PathVariable Long teacherId,
+                                     @PathVariable Long eventId,
+                                  @Valid @ModelAttribute EventDto newEvent,
+                                  BindingResult result) {
         if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
-            EventDto event = teacherService.updatePutEvent(eventDto);
-            return "redirect:/teacher/" + teacherId + "/event/" + event.getId();
-        }
-    }
+            newEvent.setId(eventId);
+            teacherService.saveOrUpdateEvent(newEvent);
 
-    @TeacherPermission //todo: hmm
-    @PatchMapping("/{teacherId}/event/update")
-    public String updatePatchEvent(@PathVariable Long teacherId,
-                                   @Valid @RequestBody EventDto eventDto, BindingResult result) {
-        if (result.hasErrors()) {
-            //TODO
-            return "/";
-        } else {
-            EventDto event = teacherService.updatePatchEvent(eventDto);
-            return "redirect:/teacher/" + teacherId + "/event/" + event.getId();
+            return "redirect:/teacher/" + teacherId + "/event";
         }
     }
 
@@ -571,7 +570,7 @@ public class TeacherController {
                                        @ModelAttribute EventDto newEvent) {
 
 
-        Event event = teacherService.saveEvent(newEvent);
+        Event event = teacherService.saveOrUpdateEvent(newEvent);
         return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/events";
 
     }

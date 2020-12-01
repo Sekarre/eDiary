@@ -13,28 +13,32 @@ The above copyright notice and this permission notice shall be included in all c
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <link rel="apple-touch-icon" sizes="76x76" th:href="@{/img/apple-icon.png}">
     <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>
         E-dziennik
     </title>
-    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport'/>
     <!--     Fonts and icons     -->
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker-standalone.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker-standalone.min.css"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
     <!-- CSS Files -->
-    <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
+    <link th:href="@{/css/material-dashboard.css}" rel="stylesheet"/>
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link th:href="@{/demo/demo.css}" rel="stylesheet" />
+    <link th:href="@{/demo/demo.css}" rel="stylesheet"/>
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
 </head>
@@ -50,91 +54,119 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" >Dodaj wydarzenie</a>
+                    <a class="navbar-brand">Wydarzenia</a>
                 </div>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index"
+                        aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="navbar-toggler-icon icon-bar"></span>
                     <span class="navbar-toggler-icon icon-bar"></span>
                     <span class="navbar-toggler-icon icon-bar"></span>
                 </button>
-                <div th:replace="fragments/optionsBar :: optionsBar"> </div>
+                <div th:replace="fragments/optionsBar :: optionsBar"></div>
             </div>
         </nav>
         <!-- End Navbar -->
         <div class="content">
             <div class="container-fluid">
-                <div class="row">
-
-                    <div class="col-md-8">
-
+                <div class="row justify-content-md-center">
+                    <div class="col-lg-10 col-md-10 col-sm-12">
                         <div class="card">
                             <div class="card-header card-header-primary">
-                                <h4 class="card-title">Dodaj lekcje</h4>
+                                <h4 class="card-title">Dodaj wydarzenie:</h4>
                             </div>
-                            <form th:object="${newEvent}" th:action="@{'/teacher/' + ${teacher.id} + '/event/newEvent' + ${subjectId} + '/newEvent'}" method="post">
+                            <form th:object="${newEvent}" th:action="@{'/teacher/' + ${teacher.id} + '/lesson/subject/' + ${subjectId} + '/newEvent'}"
+                                  method="post">
+
                                 <div class="card-body">
+                                    <div class="form-group"></div>
                                     <div class="row">
-                                        <div class="col-md-5">
+                                        <div class="col-md-1">
+                                          <span class="input-group-text">
+                                              <i class="material-icons">person_search</i>
+                                          </span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Klasa</label>
                                             <div class="form-group">
-                                                <label class="bmd-label-floating">Klasa</label>
                                                 <input type="text" class="form-control" th:value="${newEvent.className}" disabled>
                                                 <input type="hidden" th:field="*{classId}">
+
                                             </div>
                                         </div>
                                     </div>
-                                    <div class='col-md-5'>
+                                    <div class="form-group"></div>
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                          <span class="input-group-text">
+                                              <i class="material-icons">calendar_today</i>
+                                          </span>
+                                        </div>
                                         <label for="todate">Data: </label>
                                         <div class="form-group">
                                             <div class='input-group date' id='todate'>
-                                                <input type='text' class="form-control" name = "endTime" th:field="*{date}"/>
+                                                <input type='text' class="form-control" name="endTime"
+                                                       th:field="*{date}"/>
                                                 <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                             </span>
                                             </div>
                                         </div>
                                     </div>
-
+                                    <div class="form-group"></div>
                                     <div class="row">
-                                        <div class="col-md-5">
+                                        <div class="col-md-1">
+                                          <span class="input-group-text">
+                                              <i class="material-icons">dns</i>
+                                          </span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Typ wydarzenia</label>
                                             <div class="form-group">
-                                                <label>Typ wydarzenia</label>
-                                                <div class="form-group">
-                                                    <select id="selectTopic" class="selectpicker" data-live-search="true" th:field="*{type}">
-                                                        <option th:each="type : ${T(com.ediary.domain.Event$Type).values()}"
-                                                                th:value="${type}"
-                                                                th:text="${type.translatedName}" th:selected="${typeStat.index == 0} ? 'selected' : ''">Typ</option>
-                                                    </select>
-                                                </div>
+                                                <select id="selectTopic" class="selectpicker" data-live-search="true"
+                                                        th:field="*{type}">
+                                                    <option th:each="type : ${T(com.ediary.domain.Event$Type).values()}"
+                                                            th:value="${type}"
+                                                            th:text="${type.translatedName}"
+                                                            th:selected="${typeStat.index == 0} ? 'selected' : ''">Typ
+                                                    </option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-md-5">
-                                                <div class="form-group">
-                                                    <label class="bmd-label-floating">Opis</label>
-                                                    <textarea class="form-control" th:field="*{description}" rows="3" maxlength="150"></textarea>
-                                                </div>
-                                            </div>
+                                    <div class="form-group"></div>
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                          <span class="input-group-text">
+                                              <i class="material-icons">history_edu</i>
+                                          </span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="bmd-label-floating">Opis</label>
+                                            <textarea class="form-control" th:field="*{description}" rows="3"
+                                                      maxlength="500"></textarea>
                                         </div>
                                     </div>
-
-                                    <div class='col-md-5'>
-                                        <label for="d">Data utworzenia: </label>
+                                    <div class="form-group"></div>
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                          <span class="input-group-text">
+                                              <i class="material-icons">date_range</i>
+                                          </span>
+                                        </div>
+                                        <label>Data utworzenia: </label>
                                         <div class="form-group">
                                             <div class='input-group date' id="d">
-                                                <input type="text" class="form-control"  th:value="${#dates.format(newEvent.createDate, 'dd-MM-yyyy HH:mm')}" disabled />
-                                                <input type="hidden" class="form-control"  th:field="*{createDate}" >
+                                                <input type="text" class="form-control"
+                                                       th:value="${#dates.format(newEvent.createDate, 'dd-MM-yyyy HH:mm')}"
+                                                       disabled/>
+                                                <input type="hidden" class="form-control" th:field="*{createDate}">
                                                 <span class="input-group-addon">
                                             </span>
                                             </div>
                                             <input type="hidden">
                                         </div>
                                     </div>
-
-
                                     <button class="submit btn btn-primary pull-right">Wyślij</button>
                                 </div>
                             </form>
@@ -190,8 +222,8 @@ The above copyright notice and this permission notice shall be included in all c
 <!-- Material Dashboard DEMO methods, don't include it in your project! -->
 <script th:src="@{/demo/demo.js}"></script>
 <script>
-    $(document).ready(function() {
-        $().ready(function() {
+    $(document).ready(function () {
+        $().ready(function () {
             $sidebar = $('.sidebar');
 
             $sidebar_img_container = $sidebar.find('.sidebar-background');
@@ -211,7 +243,7 @@ The above copyright notice and this permission notice shall be included in all c
 
             }
 
-            $('.fixed-plugin a').click(function(event) {
+            $('.fixed-plugin a').click(function (event) {
                 // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
                 if ($(this).hasClass('switch-trigger')) {
                     if (event.stopPropagation) {
@@ -222,7 +254,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.fixed-plugin .active-color span').click(function() {
+            $('.fixed-plugin .active-color span').click(function () {
                 $full_page_background = $('.full-page-background');
 
                 $(this).siblings().removeClass('active');
@@ -243,7 +275,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.fixed-plugin .background-color .badge').click(function() {
+            $('.fixed-plugin .background-color .badge').click(function () {
                 $(this).siblings().removeClass('active');
                 $(this).addClass('active');
 
@@ -254,7 +286,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.fixed-plugin .img-holder').click(function() {
+            $('.fixed-plugin .img-holder').click(function () {
                 $full_page_background = $('.full-page-background');
 
                 $(this).parent('li').siblings().removeClass('active');
@@ -264,7 +296,7 @@ The above copyright notice and this permission notice shall be included in all c
                 var new_image = $(this).find("img").attr('src');
 
                 if ($sidebar_img_container.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
-                    $sidebar_img_container.fadeOut('fast', function() {
+                    $sidebar_img_container.fadeOut('fast', function () {
                         $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
                         $sidebar_img_container.fadeIn('fast');
                     });
@@ -273,7 +305,7 @@ The above copyright notice and this permission notice shall be included in all c
                 if ($full_page_background.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
                     var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
 
-                    $full_page_background.fadeOut('fast', function() {
+                    $full_page_background.fadeOut('fast', function () {
                         $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
                         $full_page_background.fadeIn('fast');
                     });
@@ -292,7 +324,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.switch-sidebar-image input').change(function() {
+            $('.switch-sidebar-image input').change(function () {
                 $full_page_background = $('.full-page-background');
 
                 $input = $(this);
@@ -324,7 +356,7 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             });
 
-            $('.switch-sidebar-mini input').change(function() {
+            $('.switch-sidebar-mini input').change(function () {
                 $body = $('body');
 
                 $input = $(this);
@@ -339,7 +371,7 @@ The above copyright notice and this permission notice shall be included in all c
 
                     $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
 
-                    setTimeout(function() {
+                    setTimeout(function () {
                         $('body').addClass('sidebar-mini');
 
                         md.misc.sidebar_mini_active = true;
@@ -347,12 +379,12 @@ The above copyright notice and this permission notice shall be included in all c
                 }
 
                 // we simulate the window Resize so the charts will get updated in realtime.
-                var simulateWindowResize = setInterval(function() {
+                var simulateWindowResize = setInterval(function () {
                     window.dispatchEvent(new Event('resize'));
                 }, 180);
 
                 // we stop the simulation of Window Resize after the animations are completed
-                setTimeout(function() {
+                setTimeout(function () {
                     clearInterval(simulateWindowResize);
                 }, 1000);
 
@@ -362,10 +394,11 @@ The above copyright notice and this permission notice shall be included in all c
 </script>
 
 <script>
-    $(function() {
+    $(function () {
 
-        $('#selectTopic').on('change', function(){
+        $('#selectTopic').on('change', function () {
             var selected = $(this).find("option:selected").val();
+
             $('#selectTopic').selectpicker("refresh");
         });
 

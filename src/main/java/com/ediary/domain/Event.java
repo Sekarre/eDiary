@@ -35,6 +35,7 @@ public class Event {
         }
     }
 
+    @Lob
     private String description;
     private Date createDate;
     private Date date;

@@ -73,10 +73,10 @@ The above copyright notice and this permission notice shall be included in all c
                     <div class="col-lg-10">
                         <div class="card">
                             <div class="card-header card-header-primary">
-                                <h4 class="card-title">Dodaj wydarzenie:</h4>
+                                <h4 class="card-title">Edytuj wydarzenie:</h4>
                             </div>
-                            <form th:object="${newEvent}" th:action="@{'/teacher/' + ${teacher.id} + '/event/newEvent'}"
-                                 method="post">
+                            <form th:object="${newEvent}" th:action="@{'/teacher/' + ${teacher.id} + '/event/update/' + ${newEvent.id}}"
+                                  method="post">
 
                                 <div class="card-body">
                                     <div class="form-group"></div>
@@ -114,6 +114,7 @@ The above copyright notice and this permission notice shall be included in all c
                                             <div class='input-group date' id='todate'>
                                                 <input type='text' class="form-control" name="endTime"
                                                        th:field="*{date}"/>
+                                                <input type="hidden" id="dateValue" th:value="${newEvent.date}">
                                                 <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                             </span>
@@ -425,9 +426,14 @@ The above copyright notice and this permission notice shall be included in all c
     });
 </script>
 
+
 <script type="text/javascript">
     $(function () {
-        $('#todate').datetimepicker();
+        var dateValue = $('#dateValue').val();
+
+        $('#todate').datetimepicker({
+            date: new Date(dateValue)
+        });
     });
 </script>
 
