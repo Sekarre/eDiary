@@ -112,15 +112,19 @@ The above copyright notice and this permission notice shall be included in all c
                       <form th:action="@{'/user/' + ${userDetails.id} + '/updatePassword'}" method="post">
                         <div class="form-group">
                           <label class="bmd-label-floating">Stare hasło</label>
-                          <input  id="oldPassword" type="password" class="form-control" name="oldPassword">
+                          <input required id="oldPassword" type="password" class="form-control" name="oldPassword">
                         </div>
                         <div class="form-group">
                           <label class="bmd-label-floating">Nowe hasło</label>
                           <input  id="newPassword" type="password" class="form-control" name="newPassword">
                         </div>
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Powtórz</label>
-                          <input  id="newRepetPassword" type="password" class="form-control" name="newRepetPassword">
+                        <div class="form-group has-danger">
+                          <label class="control-label">Powtórz</label>
+                          <div class="form-group label-floating has-danger">
+                            <label class="control-label isError">Hasła różnią się od siebie </label>
+                            <input required id="newRepeatPassword" type="password" class="form-control" name="newRepeatPassword">
+                            <span class="material-icons form-control-feedback isError">clear</span>
+                          </div>
                         </div>
                         <div class="form-group">
                           <button id="submitButton"type="submit" class="btn btn-warning">Zapisz</button>
@@ -472,6 +476,8 @@ The above copyright notice and this permission notice shall be included in all c
   $(document).ready(function() {
     $('#username').hide();
     $('#changePassword').hide();
+    $('#submitButton').attr('disabled', true);
+    $('.confirmedPassword').hide();
   });
 </script>
 
@@ -498,54 +504,23 @@ The above copyright notice and this permission notice shall be included in all c
         $('#changePassword').show();
         $('#oldPassword').val("");
         $('#newPassword').val("");
-        $('#newRepetPassword').val("");
+        $('#newRepeatPassword').val("");
         $('#editPasswd').html("ANULUJ");
       }
     });
   });
+
+  $('#newPassword, #newRepeatPassword').on('keyup', function () {
+    if ($('#newPassword').val() == $('#newRepeatPassword').val()) {
+      $('.isError').hide();
+      $('#submitButton').removeAttr("disabled");
+    } else {
+      $('.isError').show();
+      $('#submitButton').attr('disabled', true);
+    }
+  });
 </script>
 
-<!--<script>-->
-<!--  // -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-<!--  $(function() {-->
-
-<!--    $('#selectStudents').on('change', function(){-->
-<!--      var selected = $(this).find("option:selected").val();-->
-
-<!--      $('#classIdInput').val(selected);-->
-<!--      $('#selectStudents').selectpicker("refresh");-->
-<!--    });-->
-
-<!--  })-->
-
-
-
-<!--  $( "#submitButton" ).click(function() {-->
-<!--    $( "#selectStudents option:selected" ).each(function() {-->
-<!--      var chkStudent = 'chkStudent_' + $(this).val();-->
-<!--      document.getElementById(chkStudent).checked = true;-->
-<!--    });-->
-<!--  });-->
-
-<!--  $( "#editPasswd" ).click(function() {-->
-<!--    $("#passwd").prop('disabled', false);-->
-<!--    $("#editPasswd").hide();-->
-<!--  });-->
-<!--</script>-->
-
-<!--<script>-->
-<!--  $(document).on("click", ".open-gradeDialogModal-deleteRole", function () {-->
-
-<!--    var userId = $(this).data('id');-->
-<!--    var role = $(this).data('role');-->
-<!--    $("#roleToDelete").val(role);-->
-
-
-<!--    var deleteFormRole = document.getElementById("deleteFormRole");-->
-
-<!--    deleteFormRole.setAttribute("action", "/admin/users/" + userId + "/role/delete");-->
-<!--  });-->
-<!--</script>-->
 
 
 </body>
