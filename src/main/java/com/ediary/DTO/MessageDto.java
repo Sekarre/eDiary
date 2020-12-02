@@ -2,11 +2,8 @@ package com.ediary.DTO;
 
 import com.ediary.domain.Message;
 import lombok.*;
-import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +34,7 @@ public class MessageDto {
 
     //Readers
     private List<String> readersName;
-    @NotNull
+    @Size(min = 1)
     private List<Long> readersId;
 
     public String getSimpleDateFormat() {

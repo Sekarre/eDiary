@@ -178,7 +178,7 @@ class UserControllerTest {
         mockMvc.perform(post("/user/"+ userId +"/readMessages/" + messageId))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("readers"))
-                .andExpect(model().attributeExists("message"))
+                .andExpect(model().attributeExists("messageDto"))
                 .andExpect(view().name("/user/newMessages"));
 
         verify(userService, times(1)).listUsers();

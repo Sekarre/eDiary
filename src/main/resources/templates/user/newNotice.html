@@ -64,25 +64,44 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                             <div class="card-body">
                                 <form th:object="${notice}" th:action="@{'/user/' + ${notice.getAuthorId()} + '/newNotice'}" method="post">
-
                             </div>
-
+                            <div class="card-body">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-1">
+                              <span class="input-group-text">
+                                  <i class="material-icons">title</i>
+                              </span>
+                            </div>
+                            <div class="col-md-11">
                                 <div class="form-group">
                                     <label class="bmd-label-floating">Temat ogłoszenia</label>
                                     <input type="text" class="form-control" th:field="*{notice.title}">
+                                    <span class="text-danger" th:if="${#fields.hasErrors('notice.title')}">
+                                      <ul>
+                                          <li th:each="err : ${#fields.errors('notice.title')}" th:text="${err}"/>
+                                      </ul>
+                                    </span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-1">
+                              <span class="input-group-text">
+                                  <i class="material-icons">text_fields</i>
+                              </span>
+                            </div>
+                            <div class="col-md-11">
                                 <div class="form-group">
                                     <label>Treść ogłoszenia wiadomości</label>
                                     <div class="form-group">
                                         <label class="bmd-label-floating"> </label>
                                         <textarea class="form-control" rows="5" th:field="*{notice.content}"></textarea>
+                                        <span class="text-danger" th:if="${#fields.hasErrors('notice.content')}">
+                                          <ul>
+                                              <li th:each="err : ${#fields.errors('notice.content')}" th:text="${err}"/>
+                                          </ul>
+                                        </span>
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary pull-left">Umieść ogłoszenie</button>

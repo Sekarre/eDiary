@@ -111,9 +111,9 @@ The above copyright notice and this permission notice shall be included in all c
                         </ol>
                       </div>
                     </div>
-                    <span class="text-danger" th:if="${#fields.hasErrors('messageDto.readersName')}">
+                    <span class="text-danger" th:if="${#fields.hasErrors('messageDto.readersId')}">
                       <ul>
-                          <li th:each="err : ${#fields.errors('messageDto.readersName')}" th:text="${err}"/>
+                          <li th:each="err : ${#fields.errors('messageDto.readersId')}" th:text="${err}"/>
                       </ul>
                     </span>
                   </div>
