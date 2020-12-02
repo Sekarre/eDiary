@@ -2,7 +2,10 @@ package com.ediary.DTO;
 
 import com.ediary.domain.Message;
 import lombok.*;
+import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +19,11 @@ import java.util.List;
 public class MessageDto {
 
     private Long id;
+
+    @Size(min = 2, max = 20)
     private String title;
+
+    @Size(min = 3, max = 255)
     private String content;
     private Date date;
 
@@ -28,6 +35,7 @@ public class MessageDto {
     private String sendersName;
 
     //Readers
+    @NotNull
     private List<String> readersName;
     private List<Long> readersId;
 
