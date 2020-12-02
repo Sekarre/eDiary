@@ -512,12 +512,12 @@ public class TeacherController {
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/new")
     public String processNewLesson(@PathVariable Long teacherId,
                                    @PathVariable Long subjectId,
-                                   @Valid @ModelAttribute LessonDto newLesson,
-                                   BindingResult result) {
+                                   @Valid @ModelAttribute("newLesson") LessonDto newLesson,
+                                   BindingResult result, Model model) {
 
         if (result.hasErrors()) {
-            //todo: add view path
-            return "";
+            model.addAttribute("topics", teacherService.listTopics(teacherId, subjectId));
+            return "/teacher/lesson/newLesson";
         } else {
             Lesson savedLesson = teacherService.saveLesson(newLesson);
         }
