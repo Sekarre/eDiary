@@ -124,7 +124,7 @@ public class UserController {
                                      @ModelAttribute MessageDto message,
                                      Model model) {
         model.addAttribute("readers", userService.listUsers());
-        model.addAttribute("message", userService.addReaderToMessage(message, readerId));
+        model.addAttribute("messageDto", userService.addReaderToMessage(message, readerId));
         return "user/newMessages";
 
     }

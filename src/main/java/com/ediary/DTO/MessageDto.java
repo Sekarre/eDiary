@@ -4,6 +4,7 @@ import com.ediary.domain.Message;
 import lombok.*;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
@@ -35,8 +36,8 @@ public class MessageDto {
     private String sendersName;
 
     //Readers
-    @NotNull
     private List<String> readersName;
+    @NotNull
     private List<Long> readersId;
 
     public String getSimpleDateFormat() {
