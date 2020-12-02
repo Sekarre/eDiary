@@ -92,17 +92,10 @@ The above copyright notice and this permission notice shall be included in all c
                     <h2 class="navbar-brand">Nie znaleziono żadnych wydarzeń</h2>
                 </div>
             </div>
-            <div class="d-flex justify-content-center">
-                <a th:href="@{/student/{studentId}/event/eventsHistory(studentId=${studentId})}">
-                    <button rel="tooltip" class="btn btn-default add btn-fab btn-fab-mini btn-primary btn-round">
-                        <i class="material-icons">history</i>
-                    </button>
-                </a>
-            </div>
             <div class="container-fluid" th:if="${events != null && events.size() > 0}">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h4 class="card-title ">Terminarz</h4>
+                        <h4 class="card-title ">Terminarz (historia)</h4>
                     </div>
 
 
@@ -143,10 +136,10 @@ The above copyright notice and this permission notice shall be included in all c
                                     </table>
                                     <ul class="pagination justify-content-center">
                                         <li class="page-item " th:classappend="${page.isPresent() && page.get() > 0} ? 'active' : 'disabled'">
-                                            <a class="page-link" th:href="@{/student/{studentId}/event(studentId = ${studentId}, page = ${page.orElse(0) - 1})}" th:text="'Poprzednia'"></a>
+                                            <a class="page-link" th:href="@{/student/{studentId}/event/eventsHistory(studentId = ${studentId}, page = ${page.orElse(0) - 1})}" th:text="'Poprzednia'"></a>
                                         </li>
                                         <li class="page-item" th:classappend="${events.size() < 10} ? 'disabled' : 'active'">
-                                            <a class="page-link" th:href="@{/student/{studentId}/event(studentId = ${studentId}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
+                                            <a class="page-link" th:href="@{/student/{studentId}/event/eventsHistory(studentId = ${studentId}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
 
                                         </li>
                                     </ul>

@@ -652,14 +652,32 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Event saveEvent(EventDto eventDto) {
-        return eventRepository.save(eventDtoToEvent.convert(eventDto));
+    public Event saveOrUpdateEvent(EventDto eventDto) {
+
+        Teacher teacher = getTeacherById(eventDto.getTeacherId());
+        Event event = eventDtoToEvent.convert(eventDto);
+
+        if (!event.getTeacher().equals(teacher)) {
+            return null;
+        }
+
+        if (eventDto.getId() == null) {
+            return eventRepository.save(eventDtoToEvent.convert(eventDto));
+        }
+
+        return eventDtoToEvent.convert(updatePatchEvent(eventDto));
+
     }
 
     @Override
     public EventDto initNewEvent(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
-        Event event = Event.builder().teacher(teacher).build();
+
+        Event event = Event.builder()
+                .teacher(getTeacherById(teacherId))
+                .createDate(new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()))
+                .build();
+
         return eventToEventDto.convert(event);
     }
 
@@ -682,29 +700,44 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Boolean deleteEvent(Long teacherId, Long eventId) {
-        Optional<Event> optionalEvent = eventRepository.findById(eventId);
-        if (!optionalEvent.isPresent()) {
-            return false;
-        }
-        Event event = optionalEvent.get();
+        Teacher teacher = getTeacherById(teacherId);
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event not found"));
 
-        if (!event.getTeacher().getId().equals(teacherId)) {
+        if (!event.getTeacher().getId().equals(teacher.getId())) {
             return false;
-        } else {
-            eventRepository.delete(event);
-            return true;
         }
+
+        event.setSchoolClass(null);
+        event.setTeacher(null);
+
+        eventRepository.save(event);
+
+        eventRepository.delete(event);
+
+        return true;
     }
 
     @Override
-    public List<EventDto> listEvents(Long teacherId) {
-
+    public List<EventDto> listEvents(Long teacherId, Integer page, Integer size, Boolean includeHistory) {
         Teacher teacher = getTeacherById(teacherId);
 
-        return eventService.listEventsByTeacher(teacher)
-                .stream()
-                .map(eventToEventDto::convert)
-                .collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("date"));
+
+        if (includeHistory) {
+            pageable = PageRequest.of(page, size, Sort.by("date").descending());
+            return eventRepository.findAllByTeacherIdAndDateBefore(teacher.getId(),
+                    new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()), pageable)
+                    .stream()
+                    .map(eventToEventDto::convert)
+                    .collect(Collectors.toList());
+        } else {
+            return eventRepository.findAllByTeacherIdAndDateAfter(teacher.getId(),
+                    new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()), pageable)
+                    .stream()
+                    .map(eventToEventDto::convert)
+                    .collect(Collectors.toList());
+        }
+
     }
 
     @Override
@@ -736,22 +769,9 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public EventDto updatePutEvent(EventDto eventDto) {
-        Event event = eventDtoToEvent.convert(eventDto);
-        Event savedEvent = eventRepository.save(event);
-
-        return eventToEventDto.convert(savedEvent);
-    }
-
-    @Override
     public EventDto updatePatchEvent(EventDto eventUpdated) {
 
-        Optional<Event> eventOptional = eventRepository.findById(eventUpdated.getId());
-        if (!eventOptional.isPresent()) {
-            throw new NotFoundException("Event Not Found.");
-        }
-
-        EventDto event = eventToEventDto.convert(eventOptional.get());
+        Event event = eventRepository.findById(eventUpdated.getId()).orElseThrow(() -> new NotFoundException("Event not found"));
 
         if (eventUpdated.getDescription() != null) {
             event.setDescription(eventUpdated.getDescription());
@@ -769,19 +789,22 @@ public class TeacherServiceImpl implements TeacherService {
             event.setType(eventUpdated.getType());
         }
 
-        Event savedEvent = eventRepository.save(eventDtoToEvent.convert(event));
+        Event savedEvent = eventRepository.save(event);
 
         return eventToEventDto.convert(savedEvent);
     }
 
     @Override
-    public EventDto getEvent(Long eventId) {
-        Optional<Event> eventOptional = eventRepository.findById(eventId);
-        if (!eventOptional.isPresent()) {
-            throw new NotFoundException("Event Not Found.");
+    public EventDto getEvent(Long teacherId, Long eventId) {
+
+        Teacher teacher = getTeacherById(teacherId);
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event not found"));
+
+        if (!event.getTeacher().getId().equals(teacher.getId())) {
+            return null;
         }
 
-        return eventToEventDto.convert(eventOptional.get());
+        return eventToEventDto.convert(event);
     }
 
     @Override

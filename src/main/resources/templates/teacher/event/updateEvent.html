@@ -54,7 +54,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand">Wydarzenia</a>
+                    <a class="navbar-brand" th:href="@{'/teacher/' + ${teacherId} + '/event'}">Wydarzenia</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -70,12 +70,12 @@ The above copyright notice and this permission notice shall be included in all c
         <div class="content">
             <div class="container-fluid">
                 <div class="row justify-content-md-center">
-                    <div class="col-lg-10 col-md-10 col-sm-12">
+                    <div class="col-lg-10">
                         <div class="card">
                             <div class="card-header card-header-primary">
-                                <h4 class="card-title">Dodaj wydarzenie:</h4>
+                                <h4 class="card-title">Edytuj wydarzenie:</h4>
                             </div>
-                            <form th:object="${newEvent}" th:action="@{'/teacher/' + ${teacher.id} + '/lesson/subject/' + ${subjectId} + '/newEvent'}"
+                            <form th:object="${newEvent}" th:action="@{'/teacher/' + ${teacher.id} + '/event/update/' + ${newEvent.id}}"
                                   method="post">
 
                                 <div class="card-body">
@@ -89,8 +89,15 @@ The above copyright notice and this permission notice shall be included in all c
                                         <div class="form-group">
                                             <label>Klasa</label>
                                             <div class="form-group">
-                                                <input type="text" class="form-control" th:value="${newEvent.className}" disabled>
-                                                <input type="hidden" th:field="*{classId}">
+                                                <select id="selectClass" class="selectpicker" data-live-search="true"
+                                                        th:field="*{classId}">
+                                                    <option th:each="class : ${schoolClasses}"
+                                                            th:value="${class.id}"
+                                                            th:text="${class.name}"
+                                                            th:selected="${classStat.index == 0} ? 'selected' : ''">
+                                                        Klasa
+                                                    </option>
+                                                </select>
 
                                             </div>
                                         </div>
@@ -107,6 +114,7 @@ The above copyright notice and this permission notice shall be included in all c
                                             <div class='input-group date' id='todate'>
                                                 <input type='text' class="form-control" name="endTime"
                                                        th:field="*{date}"/>
+                                                <input type="hidden" id="dateValue" th:value="${newEvent.date}">
                                                 <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                             </span>
@@ -123,7 +131,7 @@ The above copyright notice and this permission notice shall be included in all c
                                         <div class="form-group">
                                             <label>Typ wydarzenia</label>
                                             <div class="form-group">
-                                                <select id="selectTopic" class="selectpicker" data-live-search="true"
+                                                <select id="selectType" class="selectpicker" data-live-search="true"
                                                         th:field="*{type}">
                                                     <option th:each="type : ${T(com.ediary.domain.Event$Type).values()}"
                                                             th:value="${type}"
@@ -158,16 +166,15 @@ The above copyright notice and this permission notice shall be included in all c
                                         <div class="form-group">
                                             <div class='input-group date' id="d">
                                                 <input type="text" class="form-control"
-                                                       th:value="${#dates.format(newEvent.createDate, 'dd-MM-yyyy HH:mm')}"
+                                                       th:value="${#dates.format(newEvent.createDate    , 'dd-MM-yyyy HH:mm')}"
                                                        disabled/>
                                                 <input type="hidden" class="form-control" th:field="*{createDate}">
                                                 <span class="input-group-addon">
                                             </span>
                                             </div>
-                                            <input type="hidden">
                                         </div>
                                     </div>
-                                    <button class="submit btn btn-primary pull-right">Wyślij</button>
+                                    <button class="submit btn btn-primary pull-right">Zapisz</button>
                                 </div>
                             </form>
                         </div>
@@ -396,18 +403,37 @@ The above copyright notice and this permission notice shall be included in all c
 <script>
     $(function () {
 
-        $('#selectTopic').on('change', function () {
+        $('#selectClass').on('change', function () {
             var selected = $(this).find("option:selected").val();
+            // $('#selectedClassId').val(selected);
 
-            $('#selectTopic').selectpicker("refresh");
+            $('#selectClass').selectpicker("refresh");
         });
 
     });
 </script>
 
+<script>
+    $(function () {
+
+        $('#selectType').on('change', function () {
+            var selected = $(this).find("option:selected").val();
+            // $('#selectedClassId').val(selected);
+
+            $('#selectType').selectpicker("refresh");
+        });
+
+    });
+</script>
+
+
 <script type="text/javascript">
     $(function () {
-        $('#todate').datetimepicker();
+        var dateValue = $('#dateValue').val();
+
+        $('#todate').datetimepicker({
+            date: new Date(dateValue)
+        });
     });
 </script>
 

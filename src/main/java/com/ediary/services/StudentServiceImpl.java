@@ -16,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -84,7 +86,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<EventDto> listEvents(Long studentId, Integer page, Integer size) {
+    public List<EventDto> listEvents(Long studentId, Integer page, Integer size, Boolean includeHistory) {
 
         Student student = getStudentById(studentId);
 
@@ -92,12 +94,22 @@ public class StudentServiceImpl implements StudentService {
             return null;
         }
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("date"));
 
-        return eventRepository.findAllBySchoolClassIdOrderByDate(student.getSchoolClass().getId(), pageable)
-                .stream()
-                .map(eventToEventDto::convert)
-                .collect(Collectors.toList());
+        if (includeHistory) {
+            pageable = PageRequest.of(page, size, Sort.by("date").descending());
+            return eventRepository.findAllBySchoolClassIdAndDateBefore(student.getSchoolClass().getId(),
+                    new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()), pageable)
+                    .stream()
+                    .map(eventToEventDto::convert)
+                    .collect(Collectors.toList());
+        } else {
+            return eventRepository.findAllBySchoolClassIdAndDateAfter(student.getSchoolClass().getId(),
+                    new Date(Timestamp.valueOf(LocalDateTime.now()).getTime()), pageable)
+                    .stream()
+                    .map(eventToEventDto::convert)
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override

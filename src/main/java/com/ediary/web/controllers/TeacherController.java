@@ -11,7 +11,6 @@ import com.ediary.services.TeacherService;
 import com.ediary.services.WeeklyAttendancesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -27,8 +26,6 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,74 +80,90 @@ public class TeacherController {
 
     @TeacherPermission
     @GetMapping("/{teacherId}/event")
-    public String getAllEvents(@PathVariable Long teacherId, Model model) {
+    public String getAllEvents(@PathVariable Long teacherId,
+                               @RequestParam(name = "page", required = false) Optional<Integer> page,
+                               Model model) {
 
-        model.addAttribute("events", teacherService.listEvents(teacherId));
-        return "/teacher/allEvents";
+        model.addAttribute("events", teacherService.listEvents(teacherId, page.orElse(0), 10, false));
+        model.addAttribute("page", page);
+
+        return "/teacher/event/allEvents";
     }
 
     @TeacherPermission
-    @GetMapping("/{teacherId}/event/{eventId}")
-    public String getEvent(@PathVariable Long teacherId, @PathVariable Long eventId, Model model) {
+    @GetMapping("/{teacherId}/event/eventsHistory")
+    public String getAllEventsHistory(@PathVariable Long teacherId,
+                                      @RequestParam(name = "page", required = false) Optional<Integer> page,
+                                      Model model) {
 
-        model.addAttribute("event", teacherService.getEvent(eventId));
-        return "/teacher/event";
+        model.addAttribute("events", teacherService.listEvents(teacherId, page.orElse(0), 10, true));
+        model.addAttribute("page", page);
+
+        return "/teacher/event/allEventsHistory";
     }
 
     @TeacherPermission
-    @GetMapping("/{teacherId}/event/new")
+    @GetMapping("/{teacherId}/event/newEvent")
     public String newEvent(@PathVariable Long teacherId, Model model) {
 
-        model.addAttribute("event", teacherService.initNewEvent(teacherId));
-        return "/teacher/newEvent";
+        model.addAttribute("newEvent", teacherService.initNewEvent(teacherId));
+        model.addAttribute("schoolClasses", teacherService.listClassByTeacher(teacherId));
+
+        return "/teacher/event/newEvent";
     }
 
     @TeacherPermission
-    @PostMapping("/{teacherId}/event/new")
-    public String processNewEvent(@Valid @RequestBody EventDto eventDto, BindingResult result) {
+    @PostMapping("/{teacherId}/event/newEvent")
+    public String processNewEvent(@PathVariable Long teacherId,
+                                  @Valid @ModelAttribute EventDto newEvent,
+                                  BindingResult result) {
         if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
-            teacherService.saveEvent(eventDto);
-            return "redirect:/teacher/event";
+            teacherService.saveOrUpdateEvent(newEvent);
+
+            return "redirect:/teacher/" + teacherId + "/event";
         }
     }
 
     @TeacherPermission
-    @DeleteMapping("/{teacherId}/event/{eventId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public String deleteEvent(@PathVariable Long teacherId, @PathVariable Long eventId) {
+    @PostMapping("/{teacherId}/event/{eventId}/delete")
+    public String deleteEvent(@PathVariable Long teacherId,
+                              @PathVariable Long eventId) {
 
         teacherService.deleteEvent(teacherId, eventId);
-        return "/" + teacherId + "/event";
+        return "redirect:/teacher/" + teacherId + "/event";
     }
 
-    @TeacherPermission //todo: hmm
-    @PutMapping("/{teacherId}/event/update")
-    public String updatePutEvent(@PathVariable Long teacherId,
-                                 @Valid @RequestBody EventDto eventDto, BindingResult result) {
+    @TeacherPermission
+    @GetMapping("/{teacherId}/event/update/{eventId}")
+    public String updateEvent(@PathVariable Long teacherId,
+                              @PathVariable Long eventId, Model model) {
+
+        model.addAttribute("schoolClasses", teacherService.listClassByTeacher(teacherId));
+        model.addAttribute("newEvent", teacherService.getEvent(teacherId, eventId));
+
+        return "/teacher/event/updateEvent";
+    }
+
+    @TeacherPermission
+    @PostMapping("/{teacherId}/event/update/{eventId}")
+    public String processUpdateEvent(@PathVariable Long teacherId,
+                                     @PathVariable Long eventId,
+                                  @Valid @ModelAttribute EventDto newEvent,
+                                  BindingResult result) {
         if (result.hasErrors()) {
             //TODO
             return "/";
         } else {
-            EventDto event = teacherService.updatePutEvent(eventDto);
-            return "/" + teacherId + "/event/" + event.getId();
+            newEvent.setId(eventId);
+            teacherService.saveOrUpdateEvent(newEvent);
+
+            return "redirect:/teacher/" + teacherId + "/event";
         }
     }
 
-    @TeacherPermission //todo: hmm
-    @PatchMapping("/{teacherId}/event/update")
-    public String updatePatchEvent(@PathVariable Long teacherId,
-                                   @Valid @RequestBody EventDto eventDto, BindingResult result) {
-        if (result.hasErrors()) {
-            //TODO
-            return "/";
-        } else {
-            EventDto event = teacherService.updatePatchEvent(eventDto);
-            return "/" + teacherId + "/event/" + event.getId();
-        }
-    }
 
     @TeacherPermission
     @GetMapping("/{teacherId}/classes")
@@ -555,7 +568,7 @@ public class TeacherController {
                                        @ModelAttribute EventDto newEvent) {
 
 
-        Event event = teacherService.saveEvent(newEvent);
+        Event event = teacherService.saveOrUpdateEvent(newEvent);
         return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/events";
 
     }

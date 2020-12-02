@@ -115,8 +115,7 @@ class ParentControllerTest {
 
         mockMvc.perform(get("/parent/" + parentId + "/" + studentId + "/grade"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("grades"))
-                .andExpect(model().attributeExists("subjects"))
+                .andExpect(model().attributeExists("subjectsGrades"))
                 .andExpect(view().name("parent/allGrades"));
 
         assertEquals(2, studentService.listGrades(studentId).size());
@@ -240,7 +239,7 @@ class ParentControllerTest {
     @Test
     void getAllEvents() throws Exception {
 
-        when(studentService.listEvents(studentId, 1, 2)).thenReturn(Arrays.asList(
+        when(studentService.listEvents(studentId, 1, 2, false)).thenReturn(Arrays.asList(
                 EventDto.builder().id(1L).build(),
                 EventDto.builder().id(2L).build()
         ));
@@ -250,7 +249,7 @@ class ParentControllerTest {
                 .andExpect(model().attributeExists("events"))
                 .andExpect(view().name("parent/allEvents"));
 
-        assertEquals(2, studentService.listEvents(studentId, 1, 2).size());
+        assertEquals(2, studentService.listEvents(studentId, 1, 2, false).size());
     }
 
     @Test

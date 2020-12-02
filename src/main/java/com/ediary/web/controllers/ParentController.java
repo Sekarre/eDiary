@@ -5,6 +5,7 @@ import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.Extenuation;
 import com.ediary.domain.security.User;
 import com.ediary.security.perms.ParentReadStudentPermission;
+import com.ediary.security.perms.StudentPermission;
 import com.ediary.services.ParentService;
 import com.ediary.services.StudentService;
 import com.ediary.services.SubjectService;
@@ -100,9 +101,6 @@ public class ParentController {
     @ParentReadStudentPermission
     @GetMapping("/{studentId}/grade")
     public String getAllGrades(@PathVariable Long studentId, @PathVariable Long parentId, Model model) {
-
-//        model.addAttribute("subjects", parentService.getAllStudentSubjectNames(parentId, studentId));
-//        model.addAttribute("grades", studentService.listGrades(studentId));
 
         model.addAttribute("subjectsGrades", studentService.listSubjectsGrades(studentId));
         model.addAttribute("behaviorGrade", studentService.getBehaviorGrade(studentId));
@@ -208,8 +206,20 @@ public class ParentController {
 
         
         model.addAttribute("page", page);
-        model.addAttribute("events", studentService.listEvents(studentId, page.orElse(0), 10));
+        model.addAttribute("events", studentService.listEvents(studentId, page.orElse(0), 10, false));
         return "parent/allEvents";
+    }
+
+    @ParentReadStudentPermission
+    @GetMapping("/{studentId}/event/eventsHistory")
+    public String getAllEventsHistory(@PathVariable Long studentId,
+                                      @PathVariable Long parentId,
+                                      @RequestParam(name = "page", required = false) Optional<Integer> page,
+                                      Model model) {
+
+        model.addAttribute("page", page);
+        model.addAttribute("events", studentService.listEvents(studentId, page.orElse(0), 10, true));
+        return "parent/allEventsHistory";
     }
 
     @ParentReadStudentPermission

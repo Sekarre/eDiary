@@ -9,12 +9,12 @@ import java.util.Map;
 
 public interface StudentService {
 
-    List<GradeDto> listGrades(Long studentId);                 //Wszystkie oceny
-    List<GradeDto> listGrades(Long studentId, Long subjectId); //Oceny wedlug przedmiotu
+    List<GradeDto> listGrades(Long studentId);
+    List<GradeDto> listGrades(Long studentId, Long subjectId);
     List<SubjectDto> listSubjects(Long studentId);
     List<AttendanceDto> listAttendances(Long studentId);
     List<BehaviorDto> listBehaviors(Long studentId);
-    List<EventDto> listEvents(Long studentId, Integer page, Integer size);
+    List<EventDto> listEvents(Long studentId, Integer page, Integer size, Boolean includeHistory);
     Timetable getTimetableByStudentId(Long studentId);
     StudentDto findByUser(User user);
 

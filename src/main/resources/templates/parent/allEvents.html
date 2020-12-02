@@ -92,6 +92,13 @@ The above copyright notice and this permission notice shall be included in all c
                     <h2 class="navbar-brand">Nie znaleziono żadnych wydarzeń</h2>
                 </div>
             </div>
+            <div class="d-flex justify-content-center">
+                <a th:href="@{/parent/{parentId}/{studentId}/event/eventsHistory(parentId=${parentId}, studentId=${studentId})}">
+                    <button rel="tooltip" class="btn btn-default add btn-fab btn-fab-mini btn-primary btn-round">
+                        <i class="material-icons">history</i>
+                    </button>
+                </a>
+            </div>
             <div class="container-fluid" th:if="${events != null && events.size() > 0}">
                 <div class="card">
                     <div class="card-header card-header-primary">

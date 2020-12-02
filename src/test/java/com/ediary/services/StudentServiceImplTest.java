@@ -176,16 +176,16 @@ class StudentServiceImplTest {
 
         Page<Event> page = new PageImpl<>(events);
 
-        when(eventRepository.findAllBySchoolClassIdOrderByDate(any(), any())).thenReturn(page);
+        when(eventRepository.findAllBySchoolClassIdAndDateAfter(any(), any(), any())).thenReturn(page);
         when(eventToEventDto.convert(any())).thenReturn(EventDto.builder().id(3L).build());
         when(studentRepository.findById(any()))
                 .thenReturn(Optional.ofNullable(Student.builder().schoolClass(Class.builder().id(1L).build()).build()));
 
-        List<EventDto> gotEvents = studentService.listEvents(studentId, 0, 1);
+        List<EventDto> gotEvents = studentService.listEvents(studentId, 0, 1, false);
 
         assertEquals(1, gotEvents.size());
         verify(studentRepository, times(1)).findById(studentId);
-        verify(eventRepository, times(1)).findAllBySchoolClassIdOrderByDate(any(), any());
+        verify(eventRepository, times(1)).findAllBySchoolClassIdAndDateAfter(any(), any(), any());
         verify(eventToEventDto, times(1)).convert(any());
     }
 

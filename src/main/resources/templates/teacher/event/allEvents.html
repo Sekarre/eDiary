@@ -24,6 +24,11 @@ The above copyright notice and this permission notice shall be included in all c
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
     <!-- CSS Files -->
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
@@ -65,9 +70,7 @@ The above copyright notice and this permission notice shall be included in all c
 <body class="">
 <div class="wrapper ">
 
-    <div th:replace="fragments/sidebarStudent :: sidebar"></div>
-
-
+    <div th:replace="fragments/sidebarTeacher :: sidebar"></div>
 
     <div class="main-panel">
         <!-- Navbar -->
@@ -89,20 +92,43 @@ The above copyright notice and this permission notice shall be included in all c
         <div class="content">
             <div th:if="${events == null || events.size() == 0}" class="navbar-wrapper">
                 <div class="d-flex justify-content-center">
-                    <h2 class="navbar-brand">Nie znaleziono żadnych wydarzeń</h2>
+                    <h2 class="navbar-brand">Nie znaleziono żadnych nadchodzących wydarzeń&nbsp;&nbsp;
+                        <a th:href="@{/teacher/{teacherId}/event/newEvent(teacherId=${teacherId})}">
+                            <button rel="tooltip" class="btn btn-success add btn-fab btn-fab-mini btn-primary btn-round">
+                                <i class="material-icons">add</i>
+                            </button>
+                        </a>
+                    </h2>
+
                 </div>
-            </div>
-            <div class="d-flex justify-content-center">
-                <a th:href="@{/student/{studentId}/event/eventsHistory(studentId=${studentId})}">
-                    <button rel="tooltip" class="btn btn-default add btn-fab btn-fab-mini btn-primary btn-round">
-                        <i class="material-icons">history</i>
-                    </button>
-                </a>
+                <div class="d-flex justify-content-center">
+                    <a th:href="@{/teacher/{teacherId}/event/eventsHistory(teacherId=${teacherId})}">
+                        <button rel="tooltip" class="btn btn-default add btn-fab btn-fab-mini btn-primary btn-round">
+                            <i class="material-icons">history</i>
+                        </button>
+                    </a>
+                </div>
             </div>
             <div class="container-fluid" th:if="${events != null && events.size() > 0}">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h4 class="card-title ">Terminarz</h4>
+                        <div class="float-left">
+                            <h3 class="card-title ">Terminarz&nbsp;&nbsp;
+                                <a th:href="@{/teacher/{teacherId}/event/eventsHistory(teacherId=${teacherId})}">
+                                    <button rel="tooltip" class="btn btn-default add btn-fab btn-fab-mini btn-primary btn-round">
+                                        <i class="material-icons">history</i>
+                                    </button>
+                                </a>
+                            </h3>
+
+                        </div>
+                        <div class="float-right">
+                            <a th:href="@{/teacher/{teacherId}/event/newEvent(teacherId=${teacherId})}">
+                                <button rel="tooltip" class="btn btn-success add btn-fab btn-fab-mini btn-primary btn-round">
+                                    <i class="material-icons">add</i>
+                                </button>
+                            </a>
+                        </div>
                     </div>
 
 
@@ -113,16 +139,19 @@ The above copyright notice and this permission notice shall be included in all c
                                     <table class="table table-condensed table-bordered">
                                         <thead>
                                         <tr>
-                                            <th>Data</th>
+                                            <th>Data wydarzenia</th>
                                             <th>Godzina</th>
-                                            <th>Nauczyciel</th>
+                                            <th>Klasa</th>
                                             <th>Rodzaj</th>
                                             <th>Wydarzenie</th>
+                                            <th>Data utworzenia</th>
+                                            <th></th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <!-- Single event in a single day -->
-                                        <tr th:each="event : ${events}">
+                                        <tr th:each="event : ${events}" >
+
                                             <td class="agenda-date active" rowspan="1">
                                                 <div class="dayofmonth" th:text="${event.date.getDate()}"></div>
                                                 <div class="dayofweek" th:text="${#dates.dayOfWeekName(event.date).substring(0, 1).toUpperCase() + #dates.dayOfWeekName(event.date).substring(1)}">Saturday</div>
@@ -131,22 +160,36 @@ The above copyright notice and this permission notice shall be included in all c
                                             <td class="agenda-time" th:text="${#dates.format(event.date, 'HH:mm')}">
                                                 15:30
                                             </td>
-                                            <td class="agenda-time" th:text="${event.teacherName}">Nauczyciel</td>
+                                            <td class="agenda-time" th:text="${event.className}">Nauczyciel</td>
                                             <td class="agenda-time" th:text="${event.type.getTranslatedName()}">Rodzaj</td>
                                             <td class="agenda-events">
                                                 <div class="agenda-event">
                                                     <i class="glyphicon glyphicon-repeat" th:text="${event.description}"></i>
                                                 </div>
                                             </td>
+                                            <td class="agenda-time" th:text="${#dates.format(event?.createDate, 'dd-MM-yyyy HH:mm')}"></td>
+                                            <td class="agenda-time">
+                                                <a id="open-eventDialogModal" data-toggle="modal" class="open-gradeDialogModal" href="#eventModal"
+                                                   th:attr="data-event=''+${event.id}+'', data-target='#eventModal'">
+                                                    <button rel="tooltip" class="btn btn-primary btn-danger btn-fab-sm btn-round">
+                                                        <i class="material-icons">delete</i>
+                                                    </button>
+                                                </a>
+                                                <a th:href="@{/teacher/{teacherId}/event/update/{eventId}(teacherId = ${teacher.id}, eventId = ${event.id})}">
+                                                    <button rel="tooltip" class="btn btn-primary btn-info btn-fab-sm btn-round">
+                                                        <i class="material-icons">edit</i>
+                                                    </button>
+                                                </a>
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>
                                     <ul class="pagination justify-content-center">
                                         <li class="page-item " th:classappend="${page.isPresent() && page.get() > 0} ? 'active' : 'disabled'">
-                                            <a class="page-link" th:href="@{/student/{studentId}/event(studentId = ${studentId}, page = ${page.orElse(0) - 1})}" th:text="'Poprzednia'"></a>
+                                            <a class="page-link" th:href="@{/teacher/{teacherId}/event(teacherId = ${teacher.id}, page = ${page.orElse(0) - 1})}" th:text="'Poprzednia'"></a>
                                         </li>
                                         <li class="page-item" th:classappend="${events.size() < 10} ? 'disabled' : 'active'">
-                                            <a class="page-link" th:href="@{/student/{studentId}/event(studentId = ${studentId}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
+                                            <a class="page-link" th:href="@{/teacher/{teacherId}/event(teacherId = ${teacher.id}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
 
                                         </li>
                                     </ul>
@@ -158,10 +201,34 @@ The above copyright notice and this permission notice shall be included in all c
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><i class="material-icons">delete</i></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Usunąć wydarzenie?
+                </div>
+                <div class="modal-footer">
+                    <form id="deleteFormEvent" method="post">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
+                        <button type="submit" class="btn btn-danger" >Usuń</button>
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        <input type="hidden" id="teacherId" name="teacherId" th:value="${teacher.id}"/>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-</div>
-</div>
 
 <!--   Core JS Files   -->
 <script th:src="@{/js/core/jquery.min.js}"></script>
@@ -376,6 +443,20 @@ The above copyright notice and this permission notice shall be included in all c
         });
     });
 </script>
+
+<!--event modal-->
+<script>
+    $(document).on("click", "#open-eventDialogModal", function () {
+
+        var eventId = $(this).data('event');
+        var teacherId = $("#teacherId").val();
+
+        var deleteForm = document.getElementById("deleteFormEvent");
+
+        deleteForm.setAttribute("action", "/teacher/" + teacherId + "/event/" + eventId + "/delete");
+    });
+</script>
+
 </body>
 
 </html>

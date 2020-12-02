@@ -61,8 +61,6 @@ public class StudentController {
     @GetMapping("/{studentId}/grade")
     public String getAllGrades(@PathVariable Long studentId, Model model) {
 
-//        model.addAttribute("subjects", studentService.listSubjects(studentId));
-//        model.addAttribute("grades", studentService.listGrades(studentId));
         model.addAttribute("subjectsGrades", studentService.listSubjectsGrades(studentId));
         model.addAttribute("behaviorGrade", studentService.getBehaviorGrade(studentId));
 
@@ -124,9 +122,21 @@ public class StudentController {
                                Model model) {
 
         model.addAttribute("page", page);
-        model.addAttribute("events", studentService.listEvents(studentId, page.orElse(0), 10));
+        model.addAttribute("events", studentService.listEvents(studentId, page.orElse(0), 10, false));
         return "student/allEvents";
     }
+
+    @StudentPermission
+    @GetMapping("/{studentId}/event/eventsHistory")
+    public String getAllEventsHistory(@PathVariable Long studentId,
+                               @RequestParam(name = "page", required = false) Optional<Integer> page,
+                               Model model) {
+
+        model.addAttribute("page", page);
+        model.addAttribute("events", studentService.listEvents(studentId, page.orElse(0), 10, true));
+        return "student/allEventsHistory";
+    }
+
 
     @StudentPermission
     @GetMapping("/{studentId}/timetable")
