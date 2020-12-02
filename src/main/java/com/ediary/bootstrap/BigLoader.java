@@ -33,7 +33,7 @@ import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
+//@Component
 public class BigLoader implements CommandLineRunner {
 
     private final AddressRepository addressRepository;

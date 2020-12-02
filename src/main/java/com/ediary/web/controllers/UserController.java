@@ -100,16 +100,18 @@ public class UserController {
     public String newMessage(@PathVariable Long userId, Model model) {
 
         model.addAttribute("readers", userService.listUsers());
-        model.addAttribute("message", userService.initNewMessage(userId));
+        model.addAttribute("messageDto", userService.initNewMessage(userId));
         return "user/newMessages";
     }
 
     @UserPermission
     @PostMapping("/{userId}/newMessages")
-    public String processNewMessage(@Valid @ModelAttribute MessageDto message, @PathVariable Long userId, BindingResult result) {
+    public String processNewMessage(@Valid @ModelAttribute MessageDto message, BindingResult result,
+                                    @PathVariable Long userId, Model model) {
         if (result.hasErrors()){
-            //TODO
-            return "/";
+//            return "redirect:/user/" + userId + "/newMessages";
+            model.addAttribute("readers", userService.listUsers());
+            return "user/newMessages";
         } else {
             userService.sendMessage(message);
             return "redirect:/user/" + message.getSendersId() + "/sendMessages";
