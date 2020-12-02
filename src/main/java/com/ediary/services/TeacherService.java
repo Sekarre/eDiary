@@ -96,7 +96,7 @@ public interface TeacherService {
     Map<StudentDto, AttendanceDto> listStudentsLessonAttendances(Long teacherId, Long lessonId);
     Map<StudentDto, List<GradeDto>> listStudentsLessonGrades(Long teacherId, Long lessonId);
     Map<StudentDto, List<GradeDto>> listStudentsGrades(Long teacherId, Long subjectId);
-    Map<StudentDto, GradeDto> listStudentsFinalGrades(Long teacherId, Long subjectId);
+    Map<Long, GradeDto> listStudentsFinalGrades(Long teacherId, Long subjectId);
 
     List<Long> maxGradesCount(Long teacherId, Long lessonId);
     List<Long> maxGradesCountBySubject(Long teacherId, Long subjectId);

@@ -120,7 +120,7 @@ The above copyright notice and this permission notice shall be included in all c
                                         Imie i nazwisko
                                     </td>
                                     <td>
-                                        <a th:href="@{'/teacher/studentCard/' + ${student.id} +'/download/' + ${timeInterval.startTime} + '/' + ${timeInterval.endTime}}" th:text="'Generuj'"></a>
+                                        <a th:href="@{'/teacher/' + ${teacher.id} + '/studentCard/' + ${student.id} +'/download/' + ${timeInterval.startTime} + '/' + ${timeInterval.endTime}}" th:text="'Generuj'"></a>
                                     </td>
                                 </tr>
                                 </tbody>

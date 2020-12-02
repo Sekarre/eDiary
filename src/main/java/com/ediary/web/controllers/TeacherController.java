@@ -365,6 +365,8 @@ public class TeacherController {
         model.addAttribute("grade", teacherService.initNewGrade(teacherId, subjectId));
         model.addAttribute("finalGrade", teacherService.initNewFinalGrade(teacherId, subjectId));
 
+        System.out.println("");
+
         return "/teacher/grades/allGrades";
     }
 
@@ -1090,8 +1092,9 @@ public class TeacherController {
     }
 
     @FormTutorPermission
-    @RequestMapping("/studentCard/{studentId}/download/{startTime}/{endTime}")
+    @RequestMapping("{teacherId}/studentCard/{studentId}/download/{startTime}/{endTime}")
     public void downloadStudentCardPdf(HttpServletResponse response,
+                                       @PathVariable Long teacherId,
                                        @PathVariable Date startTime,
                                        @PathVariable Date endTime,
                                        @RequestHeader String referer,

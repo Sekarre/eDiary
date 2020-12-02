@@ -108,11 +108,11 @@ The above copyright notice and this permission notice shall be included in all c
                                     <td class="averageGrade border-left text-center" >
                                     </td>
                                     <td class="border-left text-center">
-                                        <a th:if="${studentsWithFinalGrades?.get(student)?.value != null}" data-toggle="modal" id="open-gradeDialogModal-editFinalGrade" class="open-gradeDialogModal-editFinalGrade btn-sm btn-danger" href="#editFinalGradeModal"
-                                           th:text="${studentsWithFinalGrades?.get(student)?.value}" th:attr="data-date=''+${studentsWithFinalGrades?.get(student)?.date}+'', data-target='#editFinalGradeModal', data-value=''+${studentsWithFinalGrades?.get(student)?.value}+'', data-weight=''+${studentsWithFinalGrades?.get(student)?.weight}+'',
-                                                       data-student=''+${studentsWithFinalGrades?.get(student)?.studentName}+'', data-desc=''+${studentsWithFinalGrades?.get(student)?.description}+'', data-id=''+${student.id}+'', data-grade=''+${studentsWithFinalGrades?.get(student)?.id}+''">
+                                        <a th:if="${studentsWithFinalGrades?.get(student.id)?.value != null}" data-toggle="modal" id="open-gradeDialogModal-editFinalGrade" class="open-gradeDialogModal-editFinalGrade btn-sm btn-danger" href="#editFinalGradeModal"
+                                           th:text="${studentsWithFinalGrades?.get(student.id)?.value}" th:attr="data-date=''+${studentsWithFinalGrades?.get(student.id)?.date}+'', data-target='#editFinalGradeModal', data-value=''+${studentsWithFinalGrades?.get(student.id)?.value}+'', data-weight=''+${studentsWithFinalGrades?.get(student.id)?.weight}+'',
+                                                       data-student=''+${studentsWithFinalGrades?.get(student.id)?.studentName}+'', data-desc=''+${studentsWithFinalGrades?.get(student.id)?.description}+'', data-id=''+${student.id}+'', data-grade=''+${studentsWithFinalGrades?.get(student.id)?.id}+''">
                                         </a>&nbsp;&nbsp;
-                                        <a th:if="${studentsWithFinalGrades?.get(student)?.value == null}" id="open-gradeDialogModal-finalGrade" data-toggle="modal" class="open-gradeDialogModal-finalGrade" href="#addFinalGradeModal"
+                                        <a th:if="${studentsWithFinalGrades?.get(student.id)?.value == null}" id="open-gradeDialogModal-finalGrade" data-toggle="modal" class="open-gradeDialogModal-finalGrade" href="#addFinalGradeModal"
                                            th:attr="data-id=''+${student.id}+'', data-target='#addFinalGradeModal', data-name=''+${student.userName}+''">
                                             <button class="btn btn-fab-mini btn-round">
                                                 <i class="material-icons">add_circle</i>&nbsp
