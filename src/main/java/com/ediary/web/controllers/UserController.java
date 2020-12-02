@@ -109,7 +109,6 @@ public class UserController {
     public String processNewMessage(@Valid @ModelAttribute MessageDto message, BindingResult result,
                                     @PathVariable Long userId, Model model) {
         if (result.hasErrors()){
-//            return "redirect:/user/" + userId + "/newMessages";
             model.addAttribute("readers", userService.listUsers());
             return "user/newMessages";
         } else {

@@ -65,8 +65,14 @@ The above copyright notice and this permission notice shall be included in all c
               <div class="card-body">
                 <form th:object="${messageDto}" th:action="@{'/user/' + ${messageDto?.getSendersId()} + '/newMessages'}" method="post">
               </div>
+              <div class="card-body">
               <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-1">
+                  <span class="input-group-text">
+                      <i class="material-icons">title</i>
+                  </span>
+                </div>
+                <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Temat</label>
                     <input type="text" class="form-control" th:field="*{messageDto.title}" th:errorclass="has-error">
@@ -79,7 +85,12 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
               </div>
               <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-1">
+                  <span class="input-group-text">
+                      <i class="material-icons">groups</i>
+                  </span>
+                </div>
+                <div class="col-md-11">
                   <div class="form-group">
                     <label class="bmd-label-floating">Odbiorca</label>
                     <div id="selectedReaders">
@@ -110,7 +121,12 @@ The above copyright notice and this permission notice shall be included in all c
               </div>
 
               <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-1">
+                  <span class="input-group-text">
+                      <i class="material-icons">text_fields</i>
+                  </span>
+                </div>
+                <div class="col-md-11">
                   <div class="form-group">
                     <label>Treść wiadomości</label>
                     <div class="form-group">
