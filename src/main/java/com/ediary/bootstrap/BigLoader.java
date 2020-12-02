@@ -1,7 +1,7 @@
 package com.ediary.bootstrap;
 
-import com.ediary.domain.Class;
 import com.ediary.domain.*;
+import com.ediary.domain.Class;
 import com.ediary.domain.security.Role;
 import com.ediary.domain.security.User;
 import com.ediary.domain.timetable.Classroom;
@@ -13,6 +13,7 @@ import com.ediary.repositories.security.UserRepository;
 import com.ediary.repositories.timetable.ClassroomRepository;
 import com.ediary.repositories.timetable.DayRepository;
 import com.ediary.repositories.timetable.DurationRepository;
+import com.ediary.security.SfgPasswordEncoderFactories;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,8 +33,8 @@ import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
-//@Component
-public class NotDefaultLoader implements CommandLineRunner {
+@Component
+public class BigLoader implements CommandLineRunner {
 
     private final AddressRepository addressRepository;
     private final SchoolRepository schoolRepository;
@@ -63,9 +65,6 @@ public class NotDefaultLoader implements CommandLineRunner {
 
     private final PasswordEncoder passwordEncoder;
 
-    private Long firstUserAsStudentId;
-    private Long firstUserAsParentId;
-    private Long firstUserAsTeacherId;
     private final int classSize = 15;
 
     public static final String ADMIN_ROLE = "ROLE_ADMIN";
@@ -91,18 +90,26 @@ public class NotDefaultLoader implements CommandLineRunner {
 
     };
 
-    private final String[] studentNames = {"Dagmara", "Daniel", "Alicja", "Olgierd", "Kamil", "Olga", "Michał", "Piotr", "Adrian", "Adam", "Dominika", "Kinga",
-            "Weronika", "Daniel", "Damian"
-    };
+    private final String[] studentNames = {"Dagmara", "Daniel", "Alicja", "Olgierd", "Kamil", "Olga", "Michał", "Piotr", "Adrian", "Adam",
+            "Dominika", "Kinga", "Weronika", "Daniel", "Damian", "Natalia", "Ojczyznosław", "Aleksandra", "Aneta", "Mateusz"
+            , "Miron", "Ryszard", "Maurycy", "Robert", "Remigiusz", "Marcin", "Karol", "Ksawery", "Alojzy", "Eustachy",
+//            "Kacper", "Marcel", "Igor", "Marian", "Denis", "Borys", "Joachim", "Milena", "Żaneta", "Jola",
+//            "Anna", "Barbara", "Eliza", "Wiktoria", "Kaja", "Lucyna", "Marlena", "Klaudia", "Julita", "Alina"
 
+
+    };
     private final String[] studentLastNames = {"Lis", "Mazur", "Skrzeczkowska", "Szymczak", "Kubiak", "Woźniak", "Kalinowski", "Michalak", "Kołodziej", "Baran",
-            "Mróz", "Włodarczyk", "Kaczmarek", "Kowalski", "Zawadzki"
+            "Mróz", "Włodarczyk", "Kaczmarek", "Kowalski", "Zawadzki", "Nowak", "Kubiak", "Mazurek", "Kaźmierczuk", "Głowacka",
+            "Cieślak", "Czarnecki", "Sadowski", "Wysocki", "Krupa", "Makowski", "Szymański", "Kozłowski", "Nowak", "Wójcik",
+//            "Sadowska", "Szczepańska", "Lewandowska", "Kubiak", "Kowalczyk", "Baran", "Jaworska", "Pietrzak", "Kuchniczak", "Bąk",
+//            "Głowacka", "Sawicka", "Zielińska", "Mróz", "Pawlak", "Duda", "Gajewska", "Szulc", "Stępień", "Ostrowska"
     };
 
-    private final String[] parentNames = {"Marian", "Ludwik", "Konrad", "Amir", "Irena", "Rafał", "Jan", "Barbara", "Agnieszka", "Wanda", "Krystyna", "Jakub",
-            "Józef", "Izabela", "Zuzanna", "Oskar", "Rafał", "Diana", "Liliana", "Błażej", "Kuba", "Daniel", "Andrzej", "Jarosław", "Cyprian", "Eryk", "Albert",
-            "Marcel", "Kamil", "Alan", "Joachim", "Leszek", "Robert", "Filip", "Ksawery", "Anita", "Marcelina", "Roksana", "Eleonora", "Bogda", "Helena", "Pamela",
-            "Lila", "Marysia", "Andżelika", "Daria", "Eliza", "Klementyna", "Urszula", "Izabella"
+    private final String[] parentNames = {"Marian", "Ludwik", "Konrad", "Amir", "Irena", "Rafał", "Jan", "Barbara", "Agnieszka", "Wanda",
+            "Krystyna", "Jakub", "Józef", "Izabela", "Zuzanna", "Oskar", "Rafał", "Diana", "Liliana", "Błażej",
+            "Kuba", "Daniel", "Andrzej", "Jarosław", "Cyprian", "Eryk", "Albert", "Marcel", "Kamil", "Alan",
+            "Joachim", "Leszek", "Robert", "Filip", "Ksawery", "Anita", "Marcelina", "Roksana", "Eleonora", "Bogda",
+            "Helena", "Pamela", "Lila", "Marysia", "Andżelika", "Daria", "Eliza", "Klementyna", "Urszula", "Izabella"
     };
 
     private final String[] parentLastNames = {"Lis", "Mazur", "Skrzeczkowski", "Szymczak", "Kubiak", "Woźniak", "Kalinowski", "Michalak", "Kołodziej", "Baran",
@@ -112,27 +119,24 @@ public class NotDefaultLoader implements CommandLineRunner {
             "Kowalska", "Wiśniewska", "Szczepańska", "Mazurek"
     };
 
-    private final String[] teacherNames = {"Czesław", "Rafał", "Maciej", "Magdalena", "Krzysztoł", "Katarzyna", "Roman", "Gabriel", "Marcin", "Paweł", "Ryszard",
-            "Frydek", "Miron", "Ryszard", "Maurycy", "Robert", "Remigiusz", "Marcin", "Karol", "Ksawery", "Alojzy", "Czesław", "Kacper", "Marcel", "Igor",
-            "Marian", "Denis", "Borys", "Joachim", "Milena", "Żaneta", "Jola", "Anna", "Barbara", "Eliza", "Wiktoria", "Kaja", "Lucyna", "Marlena", "Klaudia",
-            "Julita", "Alina", "Wanda", "Ida", "Diana", "Kinga", "Natalia", "Monika", "Halina", "Karolina"
+    private final String[] teacherNames = {"Czesław", "Rafał", "Maciej", "Magdalena", "Krzysztoł", "Katarzyna", "Roman", "Gabriel", "Marcin", "Paweł",
+            "Ryszard", "Frydek", "Wanda", "Ida", "Diana", "Kinga", "Natalia", "Monika", "Halina", "Karolina"
+
     };
 
-    private final String[] teacherLastNames = {"Wójcik", "Marciniak", "Jankowski", "Kowalska", "Michalak", "Sikora", "Tomaszewski", "Andrzejewski", "Borkowski",
-            "Wróblewski", "Kubiak", "Bąk", "Kowalski", "Dąbrowski", "Głowacki", "Kaczmarczyk", "Lis", "Sobczak", "Wasilewski", "Mazur", "Cieślak", "Czarnecki", "Sadowski",
-            "Wysocki", "Krupa", "Makowski", "Szymański", "Kozłowski", "Nowak", "Wójcik", "Sadowska", "Szczepańska", "Lewandowska", "Kubiak", "Kowalczyk", "Baran",
-            "Jaworska", "Pietrzak", "Kuchniczak", "Bąk", "Głowacka", "Sawicka", "Zielińska", "Mróz", "Pawlak", "Duda", "Gajewska", "Szulc", "Stępień", "Ostrowska"
+    private final String[] teacherLastNames = {"Wójcik", "Marciniak", "Jankowski", "Kowalska", "Michalak", "Sikora", "Tomaszewski", "Andrzejewski", "Borkowski", "Wróblewski",
+            "Kubiak", "Bąk", "Kowalski", "Dąbrowski", "Głowacki", "Kaczmarczyk", "Lis", "Sobczak", "Wasilewski", "Mazur",
+
     };
 
     private final String[] classNames = {"1a", "1b", "1c", "1d", "1e", "1f", "1g", "2a", "2b", "2c", "2d", "2e", "2f", "2g",
-            "3a", "3b", "3c", "3d", "3e", "3f", "3g", "4a", "4b", "4c", "4d", "4e", "4f", "4g", "5a", "5b", "5c", "5d", "5e", "5f", "5g",
-            "6a", "6b", "6c", "6d", "6e", "6f", "6g", "7a", "7b", "7c", "7d", "7e", "7f", "7g", "8a"
+            "3a", "3b"
     };
 
-    private final String[] subjectNames = {"Matematyka", "Historia", "Informatyka", "Plastyka", "Muzyka", "Język angielski", "Wychowanie fizyczne",
-            "Przyroda", "Biologia", "Technika", "Język Polski", "Plastyka", "Religia", "Wychowanie do życia w rodzinie", "Godzina Wychowawcza", "Geografia",
-            "Chemia", "Fizyka", "Język Niemiecki"
+    private final String[] subjectNames = {"Matematyka", "Historia", "Informatyka", "Plastyka", "Muzyka", "Język angielski", "Wychowanie fizyczne", "Przyroda", "Biologia", "Technika",
+            "Język Polski", "Religia", "Wychowanie do życia w rodzinie", "Godzina Wychowawcza", "Geografia", "Chemia", "Fizyka", "Język Niemiecki", "Język rosyjski"
     };
+
 
     private final String[] topicNamesMath = {"Dodawanie", "Dzielenie", "Mnożenie", "Odejmowanie"};
 
@@ -159,7 +163,7 @@ public class NotDefaultLoader implements CommandLineRunner {
 //        Uncomment for grades (takes time)
         createGrades();
         createTopics();
-        //createLessons();
+        createLessons();
         createBehaviors();
         createEvents();
 //        createReports();
@@ -168,7 +172,7 @@ public class NotDefaultLoader implements CommandLineRunner {
         createDays();
         createClassrooms();
         createDurations();
-        //createSchoolPeriods();
+        createSchoolPeriods();
 
         log.debug("-------------- Bootstrap is done --------------");
     }
@@ -237,10 +241,10 @@ public class NotDefaultLoader implements CommandLineRunner {
 
 
         //Parents
-        Long sizeOfAddressTable = addressRepository.count();
+        Long sizeOfAddressTable = addressRepository.countAllByUserIsNotNull();
         Long addressId = addressRepository.findByStreetAndPhoneNumber(streetNames[sizeOfAddressTable.intValue()],
                 phoneNumber[sizeOfAddressTable.intValue()]).getId();
-        for (int i = 0; i < 20; i++, addressId++) {
+        for (int i = 0; i < parentNames.length; i++, addressId++) {
             userRepository.save(User.builder()
                     .firstName(parentNames[i])
                     .lastName(parentLastNames[i])
@@ -252,9 +256,10 @@ public class NotDefaultLoader implements CommandLineRunner {
         }
 
         //Teachers
-        sizeOfAddressTable = addressRepository.count();
-        addressId = addressRepository.findByStreetAndPhoneNumber(streetNames[sizeOfAddressTable.intValue()], phoneNumber[sizeOfAddressTable.intValue()]).getId();
-        for (int i = 0; i < 20; i++) {
+        sizeOfAddressTable = addressRepository.countAllByUserIsNotNull();
+        addressId = addressRepository.findByStreetAndPhoneNumber(streetNames[sizeOfAddressTable.intValue() - 1],
+                phoneNumber[sizeOfAddressTable.intValue() - 1]).getId();
+        for (int i = 0; i < teacherNames.length; i++) {
             userRepository.save(User.builder()
                     .firstName(teacherNames[i])
                     .lastName(teacherLastNames[i])
@@ -280,11 +285,6 @@ public class NotDefaultLoader implements CommandLineRunner {
                 .password(passwordEncoder.encode("headmaster")).build());
 
 
-        firstUserAsStudentId = userRepository.findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId();
-        firstUserAsParentId = userRepository.findByFirstNameAndLastName(parentNames[0], parentLastNames[0]).getId();
-        firstUserAsTeacherId = userRepository.findByFirstNameAndLastName(teacherNames[0], teacherLastNames[0]).getId();
-
-
         log.debug("-------- Created users: " + userRepository.count());
 
     }
@@ -292,11 +292,9 @@ public class NotDefaultLoader implements CommandLineRunner {
     //todo: classes for student
     private void createStudentsAndParents() {
 
-        long userAsStudentId = firstUserAsStudentId;
-        long userAsParentId = firstUserAsParentId;
 
-        for (; userAsStudentId < firstUserAsStudentId + studentNames.length; userAsStudentId++, userAsParentId++) {
-            User user = userRepository.findById(userAsStudentId).orElse(null);
+        for (int i = 0; i < studentNames.length; i++) {
+            User user = userRepository.findByFirstNameAndLastName(studentNames[i], studentLastNames[i]);
 
             Set<Role> roles = user.getRoles();
             roles.add(roleRepository.findByName(STUDENT_ROLE).orElse(null));
@@ -305,8 +303,8 @@ public class NotDefaultLoader implements CommandLineRunner {
             userRepository.save(user);
 
             studentRepository.save(Student.builder()
-                    .user(userRepository.findById(userAsStudentId).orElse(null))
-                    .parent(createParent(userAsParentId))
+                    .user(user)
+                    .parent(createParent(i))
                     .build());
         }
 
@@ -316,8 +314,8 @@ public class NotDefaultLoader implements CommandLineRunner {
     }
 
 
-    private Parent createParent(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
+    private Parent createParent(Integer i) {
+        User user =  userRepository.findByFirstNameAndLastName(parentNames[i], parentLastNames[i]);
 
         Set<Role> roles = user.getRoles();
         roles.add(roleRepository.findByName(PARENT_ROLE).orElse(null));
@@ -326,16 +324,15 @@ public class NotDefaultLoader implements CommandLineRunner {
         userRepository.save(user);
 
         return parentRepository.save(Parent.builder()
-                .user(userRepository.findById(userId).orElse(null))
+                .user(user)
                 .build());
     }
 
 
     private void createTeachers() {
 
-        for (long userAsTeacherId = firstUserAsTeacherId; userAsTeacherId < 20; userAsTeacherId++) {
-
-            User user = userRepository.findByFirstNameAndLastName(teacherNames[(int)userAsTeacherId-95], teacherLastNames[(int)userAsTeacherId-95]);
+        for (int i = 0; i < teacherNames.length; i++) {
+            User user = userRepository.findByFirstNameAndLastName(teacherNames[i], teacherLastNames[i]);
 
             Set<Role> roles = user.getRoles();
             roles.add(roleRepository.findByName(TEACHER_ROLE).orElse(null));
@@ -344,7 +341,8 @@ public class NotDefaultLoader implements CommandLineRunner {
             userRepository.save(user);
 
             teacherRepository.save(Teacher.builder()
-                    .user(userRepository.findByFirstNameAndLastName(teacherNames[(int)userAsTeacherId-95], teacherLastNames[(int)userAsTeacherId-95])).build());
+                    .user(user)
+                    .build());
         }
 
         log.debug("-------- Created teachers: " + teacherRepository.count());
@@ -520,13 +518,11 @@ public class NotDefaultLoader implements CommandLineRunner {
 
 
     private void createClasses() {
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < classNames.length; i++) {
             classRepository.save(Class.builder()
                     .name(classNames[i])
                     .teacher(teacherRepository.findByUserId(userRepository
                             .findByFirstNameAndLastName(teacherNames[i], teacherLastNames[i]).getId()))
-//                    .parentCouncil(parentCouncilRepository.findAll().get(i))
-//                    .studentCouncil(studentCouncilRepository.findAll().get(i))
                     .build());
 
             User user = userRepository.findByFirstNameAndLastName(teacherNames[i], teacherLastNames[i]);
@@ -543,7 +539,8 @@ public class NotDefaultLoader implements CommandLineRunner {
 
     private void createSubjects() {
         //indexes of teachers associated with given subjects
-        int[] teacherSubjectIndexes = {0, 2, 0, 3, 4, 5, 2, 1, 1, 3};
+        int[] teacherSubjectIndexes = {0, 2, 0, 3, 4, 5, 2, 1, 1, 3,
+                1, 0, 2, 3, 0, 0, 1, 2, 0};
 
         for (int i = 0; i < subjectNames.length; i++) {
             subjectRepository.save(Subject.builder()
@@ -555,7 +552,7 @@ public class NotDefaultLoader implements CommandLineRunner {
         //Adding teachers to subjects
         List<Subject> savedSubjects = subjectRepository.findAll();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < subjectNames.length; i++) {
             savedSubjects.get(i).setTeacher(
                     teacherRepository.findByUserId(userRepository
                             .findByFirstNameAndLastName(
@@ -784,7 +781,7 @@ public class NotDefaultLoader implements CommandLineRunner {
 
             LocalDateTime dateToConvert = LocalDate.now().atStartOfDay().plusMinutes(400 + i);
 
-            Date date = new Date(java.util.Date
+            Date date = new java.sql.Date(java.util.Date
                     .from(dateToConvert.atZone(ZoneId.systemDefault())
                             .toInstant()).getTime());
 
@@ -948,7 +945,4 @@ public class NotDefaultLoader implements CommandLineRunner {
     }
 
 }
-
-
-
 
