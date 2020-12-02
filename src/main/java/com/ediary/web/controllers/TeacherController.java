@@ -78,7 +78,6 @@ public class TeacherController {
         return "/teacher/index";
     }
 
-    //Start
     @TeacherPermission
     @GetMapping("/{teacherId}/event")
     public String getAllEvents(@PathVariable Long teacherId,
@@ -165,7 +164,6 @@ public class TeacherController {
         }
     }
 
-    //end
 
     @TeacherPermission
     @GetMapping("/{teacherId}/classes")

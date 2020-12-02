@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
@@ -58,27 +59,19 @@ class StudentControllerTest {
 
     @Test
     void getAllGrades() throws Exception {
-        when(studentService.listGrades(studentId)).thenReturn(Arrays.asList(
-                GradeDto.builder().id(1L).value("1").build(),
-                GradeDto.builder().id(2L).value("2").build()
-        ));
+        when(studentService.getBehaviorGrade(studentId)).thenReturn(GradeDto.builder().build());
 
-        when(studentService.listSubjects(studentId)).thenReturn(Arrays.asList(
-                SubjectDto.builder().id(1L).build(),
-                SubjectDto.builder().id(2L).build(),
-                SubjectDto.builder().id(3L).build()
-        ));
+        when(studentService.listSubjectsGrades(studentId)).thenReturn(new HashMap<>());
 
         mockMvc.perform(get("/student/" + studentId + "/grade"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("subjects"))
-                .andExpect(model().attributeExists("grades"))
+                .andExpect(model().attributeExists("subjectsGrades"))
                 .andExpect(view().name("student/allGrades"));
 
-        verify(studentService).listGrades(studentId);
-        verify(studentService).listSubjects(studentId);
-        assertEquals(2, studentService.listGrades(studentId).size());
-        assertEquals(3, studentService.listSubjects(studentId).size());
+        verify(studentService).listSubjectsGrades(any());
+        verify(studentService).getBehaviorGrade(studentId);
+        assertEquals(0, studentService.listSubjectsGrades(studentId).size());
+        assertNotNull(studentService.getBehaviorGrade(studentId));
     }
 
     @Test
@@ -139,7 +132,7 @@ class StudentControllerTest {
     @Test
     void getAllEvents() throws Exception {
 
-        when(studentService.listEvents(studentId, 1, 2)).thenReturn(Arrays.asList(
+        when(studentService.listEvents(studentId, 1, 2, false)).thenReturn(Arrays.asList(
                 EventDto.builder().id(1L).build(),
                 EventDto.builder().id(2L).build()
         ));
@@ -149,7 +142,7 @@ class StudentControllerTest {
                 .andExpect(model().attributeExists("events"))
                 .andExpect(view().name("student/allEvents"));
 
-        assertEquals(2, studentService.listEvents(studentId, 1, 2).size());
+        assertEquals(2, studentService.listEvents(studentId, 1, 2, false).size());
     }
 
     @Test

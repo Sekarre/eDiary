@@ -661,11 +661,9 @@ public class TeacherServiceImpl implements TeacherService {
             return null;
         }
 
-
         if (eventDto.getId() == null) {
             return eventRepository.save(eventDtoToEvent.convert(eventDto));
         }
-
 
         return eventDtoToEvent.convert(updatePatchEvent(eventDto));
 

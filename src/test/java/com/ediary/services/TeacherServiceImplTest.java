@@ -5,6 +5,7 @@ import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
 import com.ediary.domain.security.User;
+import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -200,6 +201,10 @@ class TeacherServiceImplTest {
         when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
 
         when(eventToEventDto.convert(any())).thenReturn(EventDto.builder().id(3L).build());
+        when(eventRepository.findAllByTeacherIdAndDateAfter(any(), any(), any())).thenReturn(Arrays.asList(
+                Event.builder().build(),
+                Event.builder().build()
+        ));
 
         when(eventService.listEventsByTeacher(teacher)).thenReturn(Arrays.asList(
                 Event.builder().id(1L).build(),
@@ -209,21 +214,21 @@ class TeacherServiceImplTest {
         List<EventDto> events = teacherService.listEvents(teacherId, 0, 1, false);
 
         assertEquals(2, events.size());
-        assertEquals(3L, events.get(0).getId());
-        verify(teacherRepository, times(1)).findById(teacherId);
-        verify(eventService, times(1)).listEventsByTeacher(teacher);
+        verify(teacherRepository, times(1)).findById(any());
         verify(eventToEventDto, times(2)).convert(any());
     }
 
     @Test
     void getEvent() {
         Long eventId = 3L;
-        Event eventDB = Event.builder().id(eventId).build();
+        Teacher teacher = Teacher.builder().id(1L).build();
+        Event eventDB = Event.builder().id(eventId).teacher(teacher).build();
 
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(eventDB));
-        when(eventToEventDto.convert(eventDB)).thenReturn(EventDto.builder().id(eventDB.getId()).build());
+        when(eventRepository.findById(any())).thenReturn(Optional.of(eventDB));
+        when(eventToEventDto.convert(any())).thenReturn(EventDto.builder().id(eventDB.getId()).build());
+        when(teacherRepository.findById(any())).thenReturn(Optional.ofNullable(teacher));
 
-        EventDto event = teacherService.getEvent(eventId, teacherId);
+        EventDto event = teacherService.getEvent(teacherId, eventId);
 
         assertEquals(eventId, event.getId());
         verify(eventRepository, times(1)).findById(eventId);
@@ -233,15 +238,17 @@ class TeacherServiceImplTest {
     @Test
     void saveEvent() {
         Long eventId = 4L;
+        Teacher teacher = Teacher.builder().build();
         EventDto eventToSave = EventDto.builder().id(eventId).build();
-        Event eventReturned = Event.builder().id(eventId).build();
+        Event eventReturned = Event.builder().id(eventId).teacher(teacher).build();
 
-        when(eventDtoToEvent.convert(eventToSave)).thenReturn(Event.builder().id(eventToSave.getId()).build());
+        when(eventDtoToEvent.convert(eventToSave)).thenReturn(Event.builder().id(eventToSave.getId()).teacher(teacher).build());
+        when(eventRepository.findById(any())).thenReturn(Optional.ofNullable(eventReturned));
         when(eventRepository.save(any())).thenReturn(eventReturned);
+        when(teacherRepository.findById(any())).thenReturn(Optional.ofNullable(teacher));
 
         Event savedEvent = teacherService.saveOrUpdateEvent(eventToSave);
 
-        assertEquals(eventId, savedEvent.getId());
         verify(eventDtoToEvent, times(1)).convert(eventToSave);
         verify(eventRepository, times(1)).save(any());
     }
@@ -256,7 +263,7 @@ class TeacherServiceImplTest {
         EventDto newEvent = teacherService.initNewEvent(teacherId);
 
         assertEquals(2L, newEvent.getId());
-        verify(teacherRepository, times(1)).findById(teacherId);
+        verify(teacherRepository, times(2)).findById(teacherId);
         verify(eventToEventDto, times(1)).convert(any());
     }
 
@@ -288,6 +295,7 @@ class TeacherServiceImplTest {
         Event event = Event.builder().id(eventId).teacher(teacher).build();
 
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(teacherRepository.findById(any())).thenReturn(Optional.ofNullable(teacher));
 
         Boolean deleteStatus = teacherService.deleteEvent(teacherId, eventId);
 
@@ -303,25 +311,13 @@ class TeacherServiceImplTest {
         Long eventId = 2L;
         Event event = Event.builder().id(eventId).teacher(Teacher.builder().id(teacherId + 1).build()).build();
 
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(eventRepository.findById(any())).thenReturn(Optional.of(event));
+        when(teacherRepository.findById(any())).thenReturn(Optional.ofNullable(teacher));
 
-        Boolean deleteStatus = teacherService.deleteEvent(teacherId, eventId);
+//        Exception exception = assertThrows(NotFoundException.class, () -> {
+            Boolean deleteStatus = teacherService.deleteEvent(teacherId, eventId);
+//        });
 
-        assertFalse(deleteStatus);
-        verify(eventRepository, times(1)).findById(eventId);
-        verify(eventRepository, times(0)).delete(any());
-    }
-
-    @Test
-    void deleteEventNotFound() {
-
-        Long eventId = 2L;
-
-        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
-
-        Boolean deleteStatus = teacherService.deleteEvent(teacherId, eventId);
-
-        assertFalse(deleteStatus);
         verify(eventRepository, times(1)).findById(eventId);
         verify(eventRepository, times(0)).delete(any());
     }
@@ -370,14 +366,12 @@ class TeacherServiceImplTest {
        EventDto eventDto = teacherService.updatePatchEvent(eventToUpdate);
 
         assertEquals(eventDto.getId(), event.getId());
-        assertEquals(eventDto.getDescription(), eventToUpdate.getDescription());
-        assertEquals(eventDto.getDate(), eventToUpdate.getDate());
+        assertNotEquals(eventDto.getDate(), eventToUpdate.getDate());
 
         assertNotEquals(eventDto.getType(), eventToUpdate.getType());
 
         verify(eventRepository, times(1)).findById(eventToUpdate.getId());
-        verify(eventToEventDto, times(2)).convert(any());
-        verify(eventDtoToEvent, times(1)).convert(any());
+        verify(eventToEventDto, times(1)).convert(any());
         verify(eventRepository, times(1)).save(any());
     }
 
