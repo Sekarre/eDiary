@@ -109,7 +109,6 @@ public class UserController {
     public String processNewMessage(@Valid @ModelAttribute MessageDto message, BindingResult result,
                                     @PathVariable Long userId, Model model) {
         if (result.hasErrors()){
-//            return "redirect:/user/" + userId + "/newMessages";
             model.addAttribute("readers", userService.listUsers());
             return "user/newMessages";
         } else {
@@ -125,7 +124,7 @@ public class UserController {
                                      @ModelAttribute MessageDto message,
                                      Model model) {
         model.addAttribute("readers", userService.listUsers());
-        model.addAttribute("message", userService.addReaderToMessage(message, readerId));
+        model.addAttribute("messageDto", userService.addReaderToMessage(message, readerId));
         return "user/newMessages";
 
     }
@@ -146,7 +145,7 @@ public class UserController {
                                    Model model) {
 
         model.addAttribute("readers", userService.listUsers());
-        model.addAttribute("message", userService.replyMessage(userId, messageDto));
+        model.addAttribute("messageDto", userService.replyMessage(userId, messageDto));
         return "/user/newMessages";
     }
 
@@ -182,10 +181,9 @@ public class UserController {
     @NoticePermission
     @PostMapping("/{userId}/newNotice")
     public String processNewNotice(@PathVariable Long userId,
-                                   @Valid @ModelAttribute NoticeDto notice, BindingResult result) {
+                                   @Valid @ModelAttribute("notice") NoticeDto notice, BindingResult result) {
         if (result.hasErrors()){
-            //TODO
-            return "/";
+            return "user/newNotice";
         } else {
             userService.addNotice(notice);
             return "redirect:/user/" + userId + "/readNotices";
@@ -206,10 +204,10 @@ public class UserController {
     @PostMapping("/{userId}/updateNotice/{noticeId}")
     public String updatePatchNotice(@PathVariable Long userId,
                                     @PathVariable Long noticeId,
-                                    @Valid @ModelAttribute NoticeDto notice, BindingResult result) {
+                                    @Valid @ModelAttribute("notice") NoticeDto notice, BindingResult result) {
         if (result.hasErrors()){
-            //TODO
-            return "/";
+            notice.setId(noticeId);
+            return "user/editNotice";
         } else {
             userService.updatePatchNotice(notice, noticeId);
             return "redirect:/user/" + userId + "/readNotices";

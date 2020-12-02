@@ -1,17 +1,20 @@
 package com.ediary.web.controllers;
 
 
+import com.ediary.DTO.BehaviorDto;
 import com.ediary.DTO.MessageDto;
 import com.ediary.DTO.NoticeDto;
 import com.ediary.DTO.UserDto;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.Message;
 import com.ediary.domain.Notice;
+import com.ediary.domain.security.User;
 import com.ediary.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -117,7 +120,7 @@ class UserControllerTest {
         mockMvc.perform(get("/user/"+ userId +"/newMessages"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("readers"))
-                .andExpect(model().attributeExists("message"))
+                .andExpect(model().attributeExists("messageDto"))
                 .andExpect(view().name("user/newMessages"));
 
         verify(userService, times(1)).initNewMessage(userId);
@@ -125,13 +128,12 @@ class UserControllerTest {
     }
 
     @Test
-    void processNewMessage() throws Exception {
+    void processNewMessageNoValid() throws Exception {
         when(userService.sendMessage(any())).thenReturn(Message.builder().build());
 
         mockMvc.perform(post("/user/"+ userId +"/newMessages"))
-                .andExpect(status().is3xxRedirection());
-
-        verify(userService).sendMessage(any());
+                .andExpect(status().isOk())
+        .andExpect(view().name("user/newMessages"));
     }
 
     @Test
@@ -144,7 +146,7 @@ class UserControllerTest {
         mockMvc.perform(post("/user/"+ userId +"/newMessages/addReader/" + readerId))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("readers"))
-                .andExpect(model().attributeExists("message"))
+                .andExpect(model().attributeExists("messageDto"))
                 .andExpect(view().name("user/newMessages"));
 
         verify(userService, times(1)).listUsers();
@@ -176,7 +178,7 @@ class UserControllerTest {
         mockMvc.perform(post("/user/"+ userId +"/readMessages/" + messageId))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("readers"))
-                .andExpect(model().attributeExists("message"))
+                .andExpect(model().attributeExists("messageDto"))
                 .andExpect(view().name("/user/newMessages"));
 
         verify(userService, times(1)).listUsers();
