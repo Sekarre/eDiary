@@ -131,9 +131,10 @@ class UserControllerTest {
     void processNewMessageNoValid() throws Exception {
         when(userService.sendMessage(any())).thenReturn(Message.builder().build());
 
-        mockMvc.perform(post("/user/"+ userId +"/newMessages"))
-                .andExpect(status().isOk())
-        .andExpect(view().name("user/newMessages"));
+        mockMvc.perform(post("/user/"+ userId +"/newMessages")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AbstractAsJsonControllerTest.asJsonString(MessageDto.builder().sendersId(1L).build())))
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
