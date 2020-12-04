@@ -18,15 +18,12 @@ import java.util.Date;
 public class GradeDto {
 
     private Long id;
-
+    
     @NotNull
-    @Min(1)
-    @Max(6)
     private String value;
 
     @NotNull
-    @Min(0)
-    @Max(99)
+    @Min(value = 0)
     private Integer weight;
 
     @Size(max = 255)

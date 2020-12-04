@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -235,7 +236,7 @@ public class TeacherController {
         }
     }
 
-    @TeacherPermission //todo: hmm
+    @TeacherPermission
     @PostMapping("/{teacherId}/behavior/{behaviorId}")
     public String deleteBehavior(@PathVariable Long teacherId, @PathVariable Long behaviorId) {
 
@@ -418,6 +419,7 @@ public class TeacherController {
 
 
     @TeacherPermission
+
     @PostMapping("{teacherId}/grade/subject/{subjectId}/newFinalGrade")
     public String processNewFinalGrade(@PathVariable Long teacherId,
                                        @PathVariable Long subjectId,

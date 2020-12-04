@@ -201,7 +201,8 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="gradeDate">
                                                         <div class="form-group">
                                                             <label class="bmd-label-floating">Data</label>
-                                                            <input  id="gradeDateVal" class="form-control" type="text" th:value="${grade.date}" disabled/>
+                                                            <input  id="gradeDateValDisplay" class="form-control" type="text" th:value="${#dates.format(grade.date , 'dd-MM-yyyy HH:mm:ss')}" disabled/>
+                                                            <input type="hidden" id="gradeDateVal" th:value="${#dates.format(grade.date , 'yyyy-MM-dd HH:mm:ss')}">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -279,7 +280,9 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="gradeDateEdit">
                                                         <div class="form-group">
                                                             <label class="bmd-label-static" th:text="'Data'"></label>
-                                                            <input  id="gradeDateValEdit" class="form-control" type="text" th:value="${grade.date}" disabled/>
+                                                            <input  id="gradeDateValEditDisplay" class="form-control" type="text" th:value="${#dates.format(grade.date , 'dd-MM-yyyy HH:mm:ss')}" disabled/>
+                                                            <input type="hidden" id="gradeDateValEdit" th:value="${#dates.format(grade.date , 'yyyy-MM-dd HH:mm:ss')}">
+
                                                         </div>
                                                     </td>
                                                 </tr>
