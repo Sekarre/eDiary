@@ -324,8 +324,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                                 <td id="gradeWeightF">
                                                                     <div class="form-group">
                                                                         <label class="bmd-label-floating " th:text="'Waga'" disabled></label>
-                                                                        <input type="text" id="gradeWeightValFinalDisplay" class="form-control" th:value="${finalGrade.weight}"  disabled/>
-                                                                        <input type="hidden" id="gradeWeightValFinal" th:value="${finalGrade.weight}"/>
+                                                                        <input type="text" id="gradeWeightValFinal" name="gradeWeightValFinal" class="form-control" th:value="${finalGrade.weight}" disabled />
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -404,7 +403,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                                 <td id="gradeFWeightEdit">
                                                                     <div class="form-group">
                                                                         <label class="bmd-label-static" th:text="'Waga'" disabled></label>
-                                                                        <input  type="text" id="gradeFWeightValEdit" class="form-control" disabled/>
+                                                                        <input  type="text" id="gradeFWeightValEdit" name="gradeFWeightValEdit" class="form-control" disabled/>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -971,6 +970,12 @@ The above copyright notice and this permission notice shall be included in all c
                     number: true,
                     min: 1,
                     max: 6
+                },
+                gradeWeightValFinal: {
+                    required: true,
+                    number: true,
+                    min: 100,
+                    max: 100
                 }
             },
 
@@ -979,6 +984,12 @@ The above copyright notice and this permission notice shall be included in all c
                     required: "Nie podano oceny",
                     min: "Wartość nie może być mniejsza od 0",
                     max: "Wartość nie może być większa od 6",
+                    number: "Wartość musi być liczbą"
+                },
+                gradeWeightValFinal: {
+                    required: "Nie podano oceny",
+                    min: "Wartość musi być równa 100",
+                    max: "Wartość musi być równa 100",
                     number: "Wartość musi być liczbą"
                 }
             }
@@ -1109,6 +1120,12 @@ The above copyright notice and this permission notice shall be included in all c
                     number: true,
                     min: 1,
                     max: 6
+                },
+                gradeFWeightValEdit: {
+                    required: true,
+                    number: true,
+                    min: 100,
+                    max: 100
                 }
             },
 
@@ -1117,6 +1134,12 @@ The above copyright notice and this permission notice shall be included in all c
                     required: "Nie podano oceny",
                     min: "Wartość nie może być mniejsza od 0",
                     max: "Wartość nie może być większa od 6",
+                    number: "Wartość musi być liczbą"
+                },
+                gradeFWeightValEdit: {
+                    required: "Nie podano oceny",
+                    min: "Wartość musi być równa 100",
+                    max: "Wartość musi być równa 100",
                     number: "Wartość musi być liczbą"
                 }
             }

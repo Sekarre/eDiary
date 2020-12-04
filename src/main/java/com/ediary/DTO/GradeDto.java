@@ -18,7 +18,8 @@ import java.util.Date;
 public class GradeDto {
 
     private Long id;
-    
+
+    //todo: annotation for values (max 6 for normal, enum for behavior grade)
     @NotNull
     private String value;
 
@@ -40,7 +41,6 @@ public class GradeDto {
     private String teacherName;
 
     //Subject
-    @NotNull
     private Long subjectId;
     private String subjectName;
 

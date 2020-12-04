@@ -31,7 +31,7 @@ public class PdfServiceImpl implements PdfService {
     @Override
     public Boolean createStudentCardPdf(HttpServletResponse response,
                                         Map<String, List<Grade>> gradesWithSubjects, Student student,
-                                        Map<String, Long> attendanceNumber, String timeInterval) throws Exception {
+                                        Map<String, Long> attendanceNumber, String timeInterval, String behaviorGrade) throws Exception {
         PdfWriter writer = new PdfWriter(response.getOutputStream());
         PdfDocument pdf = new PdfDocument(writer);
         Document doc = new Document(pdf);
@@ -107,7 +107,7 @@ public class PdfServiceImpl implements PdfService {
         //Behavior
         table = getNewTable(new float[]{40, 60});
         table.addCell(getCell("Zachowanie: ", TextAlignment.CENTER, 12f, normalTextFont));
-        table.addCell(getCell("*Ocena z wartoscia 9000*", TextAlignment.RIGHT, 12f, normalTextFont));
+        table.addCell(getCell(behaviorGrade, TextAlignment.RIGHT, 12f, normalTextFont));
         doc.add(table);
 
         //Attendances

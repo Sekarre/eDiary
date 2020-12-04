@@ -261,9 +261,14 @@ public class FormTutorServiceImpl implements FormTutorService {
         //same here
         Date correctedStartTime = Date.valueOf(startTime.toLocalDate().minusDays(1));
 
+        Grade behaviorGrade = gradeRepository.findByStudentIdAndWeight(studentId, GradeWeight.BEHAVIOR_GRADE.getWeight());
+        String behaviorGradeValue = "nie wystawiono";
+        if (behaviorGrade != null && behaviorGrade.getValue() != null) {
+            behaviorGradeValue = behaviorGrade.getValue();
+        }
 
         return pdfService.createStudentCardPdf(response, getStudentsGradesWithSubjects(student, correctedStartTime, correctedEndTime),
-                student, getAttendancesNumber(student, correctedStartTime, correctedEndTime), timeInterval);
+                student, getAttendancesNumber(student, correctedStartTime, correctedEndTime), timeInterval, behaviorGradeValue);
     }
 
     @Override

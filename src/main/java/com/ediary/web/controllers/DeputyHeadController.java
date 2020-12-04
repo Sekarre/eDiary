@@ -81,7 +81,8 @@ public class DeputyHeadController {
     public String processNewClassName(@Valid @ModelAttribute ClassDto schoolClass, BindingResult result) {
 
         if (result.hasErrors()) {
-            return "";
+            //todo
+            return "deputyHead/newClassName";
         }
 
         deputyHeadService.saveClass(schoolClass);

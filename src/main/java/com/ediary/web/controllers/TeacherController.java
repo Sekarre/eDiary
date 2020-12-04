@@ -379,8 +379,7 @@ public class TeacherController {
                                   BindingResult result) {
 
         if (result.hasErrors()) {
-            //todo: view path
-            return "";
+            return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
         }
 
         Grade grade = teacherService.saveOrUpdateGrade(gradeDto);
@@ -396,8 +395,7 @@ public class TeacherController {
                               BindingResult result) {
 
         if (result.hasErrors()) {
-            //todo: view path
-            return "";
+            return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
         }
 
         Grade grade = teacherService.saveOrUpdateGrade(gradeDto);
@@ -427,8 +425,7 @@ public class TeacherController {
                                        BindingResult result) {
 
         if (result.hasErrors()) {
-            //todo: view path
-            return "";
+            return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
         }
 
         Grade grade = teacherService.saveOrUpdateFinalGrade(gradeDto);
@@ -444,7 +441,7 @@ public class TeacherController {
                                    @Valid @RequestBody GradeDto gradeDto,
                                    BindingResult result) {
         if (result.hasErrors()) {
-            return "";
+            return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
         }
 
         teacherService.saveOrUpdateFinalGrade(gradeDto);
@@ -465,7 +462,6 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId;
 
     }
-    //end
 
 
     @TeacherPermission
@@ -1060,8 +1056,7 @@ public class TeacherController {
                                                BindingResult result) {
 
         if (result.hasErrors()) {
-            //todo: view path
-            return "";
+            return "redirect:/teacher/" + teacherId + "/formTutor/behaviorGrade";
         }
         Grade grade = formTutorService.saveBehaviorGrade(teacherId, gradeDto);
 
@@ -1076,8 +1071,7 @@ public class TeacherController {
                                            BindingResult result) {
 
         if (result.hasErrors()) {
-            //todo: view path
-            return "";
+            return "redirect:/teacher/" + teacherId + "/formTutor/behaviorGrade";
         }
         Grade grade = formTutorService.saveBehaviorGrade(teacherId, gradeDto);
 

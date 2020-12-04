@@ -118,10 +118,9 @@ class TeacherControllerTest {
         mockMvc.perform(post("/teacher/" + teacherId + "/event/newEvent")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(EventDto.builder().build())))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/event"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("/teacher/event/newEvent"));
 
-        verify(teacherService, times(1)).saveOrUpdateEvent(any());
     }
 
     @Test
@@ -149,10 +148,9 @@ class TeacherControllerTest {
         mockMvc.perform(post("/teacher/" + teacherId + "/event/update/" + eventId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(eventDto)))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/event"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("/teacher/event/updateEvent"));
 
-        verify(teacherService, times(1)).saveOrUpdateEvent((any()));
     }
 
     @Test
@@ -347,7 +345,6 @@ class TeacherControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/grade/subject/" + subjectId));
 
-        verify(teacherService, times(1)).saveOrUpdateGrade(any());
     }
 
     @Test
@@ -431,11 +428,10 @@ class TeacherControllerTest {
         mockMvc.perform(post("/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/new")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(BehaviorDto.builder().build())))
-                .andExpect(status().is3xxRedirection())
+                .andExpect(status().isOk())
                 .andExpect(view().name(
-                        "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId));
+                        "/teacher/lesson/newLesson"));
 
-        verify(teacherService, times(1)).saveLesson(any());
     }
 
 
@@ -461,14 +457,10 @@ class TeacherControllerTest {
                 + "/" + classId + "/" + lessonId))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("studentsWithGrades"))
-                .andExpect(model().attributeExists("studentsWithAttendances"))
                 .andExpect(model().attributeExists("grade"))
-                .andExpect(model().attributeExists("attendance"))
                 .andExpect(view().name("/teacher/lesson/lesson"));
 
-        verify(teacherService, times(1)).listStudentsLessonAttendances(teacherId, lessonId);
         verify(teacherService, times(1)).listStudentsLessonGrades(teacherId, lessonId);
-        verify(teacherService, times(1)).initNewLessonAttendance(teacherId, subjectId, lessonId);
         verify(teacherService, times(1)).initNewLessonGrade(teacherId, subjectId, lessonId);
         assertNotNull(teacherService.getLesson(classId));
     }
@@ -494,8 +486,6 @@ class TeacherControllerTest {
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" +
                         attendance.getLesson().getSchoolClass().getId() + "/" + lessonId));
 
-
-        verify(teacherService, times(1)).saveAttendance(any());
     }
 
     @Test
@@ -514,10 +504,9 @@ class TeacherControllerTest {
                         + "/" + lessonId + "/newGrade")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(GradeDto.builder().id(1L).build())))
-                .andExpect(status().is3xxRedirection())
+                .andExpect(status().isOk())
                 .andExpect(view().name(
-                        "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + classId + "/" +
-                                lessonId));
+                        "/teacher/lesson/lesson"));
 
         assertNotNull(teacherService.saveOrUpdateGrade(any()));
     }
@@ -553,11 +542,10 @@ class TeacherControllerTest {
                 "/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/newEvent")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(BehaviorDto.builder().build())))
-                .andExpect(status().is3xxRedirection())
+                .andExpect(status().isOk())
                 .andExpect(view().name(
-                        "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/events"));
+                        "/teacher/lesson/newEvent"));
 
-        verify(teacherService, times(1)).saveOrUpdateEvent(any());
     }
 
 
@@ -941,8 +929,6 @@ class TeacherControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/formTutor/behaviorGrade"));
 
-        verify(formTutorService, times(1)).saveBehaviorGrade(any(), any());
-        assertNotNull(formTutorService.saveBehaviorGrade(any(), any()));
     }
 
     @Test
