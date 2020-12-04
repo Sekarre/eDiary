@@ -157,12 +157,11 @@ public class AdminController {
     @PostMapping("/school/{schoolId}/{addressId}/update")
     public String updateSchool(@PathVariable Long schoolId,
                                @PathVariable Long addressId,
-                               @Valid @ModelAttribute SchoolDto schoolDto,
+                               @Valid @ModelAttribute("school") SchoolDto schoolDto,
                                BindingResult result) {
 
         if (result.hasErrors()) {
-            //todo: path
-            return "";
+            return "admin/school";
         }
         schoolDto.setId(schoolId);
         schoolDto.getAddressDto().setId(addressId);

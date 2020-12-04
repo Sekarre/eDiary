@@ -83,6 +83,11 @@ The above copyright notice and this permission notice shall be included in all c
                                             <div class="form-group">
                                                 <label class="bmd-label-floating">Nazwa szkoły</label>
                                                 <input type="text" class="form-control" id="name" name="name" th:field="${school.name}">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('name')}">
+                                                  <ul>
+                                                      <li th:each="err : ${#fields.errors('name')}" th:text="${err}"/>
+                                                  </ul>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -97,9 +102,19 @@ The above copyright notice and this permission notice shall be included in all c
                                             <div class="form-group">
                                                 <label class="bmd-label-floating">Dyrektor</label>
                                                 <input type="text" class="form-control" id="headmasterName" name="headmasterName" th:value="${school.headmasterName}">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('headmasterName')}">
+                                                  <ul>
+                                                      <li th:each="err : ${#fields.errors('headmasterName')}" th:text="${err}"/>
+                                                  </ul>
+                                                </span>
                                             </div>
                                             <div class="form-group">
                                                 <input type="text" class="form-control" id="headmasterLastName" name="headmasterLastName" th:value="${school.headmasterLastName}">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('headmasterLastName')}">
+                                                  <ul>
+                                                      <li th:each="err : ${#fields.errors('headmasterLastName')}" th:text="${err}"/>
+                                                  </ul>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -113,7 +128,12 @@ The above copyright notice and this permission notice shall be included in all c
                                         <div class="col-md-11">
                                             <div class="form-group">
                                                 <label class="bmd-label-floating">E-mail</label>
-                                                <input type="text" class="form-control" id="email" name="email" th:value="${school.email}">
+                                                <input type="email" class="form-control" id="email" name="email" th:value="${school.email}">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('email')}">
+                                                  <ul>
+                                                      <li th:each="err : ${#fields.errors('email')}" th:text="${err}"/>
+                                                  </ul>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -128,6 +148,11 @@ The above copyright notice and this permission notice shall be included in all c
                                             <div class="form-group">
                                                 <label class="bmd-label-floating">Sekretariat</label>
                                                 <input type="text" class="form-control" id="schoolOffice" name="schoolOffice" th:value="${school.schoolOffice}">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('schoolOffice')}">
+                                                  <ul>
+                                                      <li th:each="err : ${#fields.errors('schoolOffice')}" th:text="${err}"/>
+                                                  </ul>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -152,6 +177,11 @@ The above copyright notice and this permission notice shall be included in all c
                                             <div class="form-group">
                                                 <label class="bmd-label-floating">Ulica</label>
                                                 <input type="text" class="form-control" id="street" name="addressDto.street" th:value="${school.addressDto.street}">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('addressDto.street')}">
+                                                  <ul>
+                                                      <li th:each="err : ${#fields.errors('addressDto.street')}" th:text="${err}"/>
+                                                  </ul>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -166,6 +196,11 @@ The above copyright notice and this permission notice shall be included in all c
                                             <div class="form-group">
                                                 <label class="bmd-label-floating">Miasto</label>
                                                 <input type="text" class="form-control" id="city" name="addressDto.city" th:value="${school.addressDto.city}">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('addressDto.city')}">
+                                                  <ul>
+                                                      <li th:each="err : ${#fields.errors('addressDto.city')}" th:text="${err}"/>
+                                                  </ul>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -180,6 +215,11 @@ The above copyright notice and this permission notice shall be included in all c
                                             <div class="form-group">
                                                 <label class="bmd-label-floating">Województwo</label>
                                                 <input type="text" class="form-control" id="state" name="addressDto.state" th:value="${school.addressDto.state}">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('addressDto.state')}">
+                                                  <ul>
+                                                      <li th:each="err : ${#fields.errors('addressDto.state')}" th:text="${err}"/>
+                                                  </ul>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -194,6 +234,11 @@ The above copyright notice and this permission notice shall be included in all c
                                             <div class="form-group">
                                                 <label class="bmd-label-floating">Kod pocztowy</label>
                                                 <input type="text" class="form-control" id="zip" name="addressDto.zip" th:value="${school.addressDto.zip}">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('addressDto.zip')}">
+                                                  <ul>
+                                                      <li th:each="err : ${#fields.errors('addressDto.zip')}" th:text="${err}"/>
+                                                  </ul>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -208,6 +253,11 @@ The above copyright notice and this permission notice shall be included in all c
                                             <div class="form-group">
                                                 <label class="bmd-label-floating">Numer telefonu</label>
                                                 <input type="tel" class="form-control" id="phoneNumber" name="addressDto.phoneNumber" th:value="${school.addressDto.phoneNumber}">
+                                                <span class="text-danger" th:if="${#fields.hasErrors('addressDto.phoneNumber')}">
+                                                  <ul>
+                                                      <li th:each="err : ${#fields.errors('addressDto.phoneNumber')}" th:text="${err}"/>
+                                                  </ul>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
