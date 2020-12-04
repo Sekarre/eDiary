@@ -588,13 +588,8 @@ public class TeacherController {
                             Model model) {
 
         model.addAttribute("studentsWithGrades", teacherService.listStudentsLessonGrades(teacherId, lessonId));
-        model.addAttribute("studentsWithAttendances", teacherService.listStudentsLessonAttendances(teacherId, lessonId));
         model.addAttribute("maxGrades", teacherService.maxGradesCount(teacherId, lessonId));
-        model.addAttribute("subjectId", subjectId);
-        model.addAttribute("lessonId", lessonId);
-        model.addAttribute("classId", classId);
         model.addAttribute("grade", teacherService.initNewLessonGrade(teacherId, subjectId, lessonId));
-        model.addAttribute("attendance", teacherService.initNewLessonAttendance(teacherId, subjectId, lessonId));
 
         return "/teacher/lesson/lesson";
     }
@@ -609,9 +604,6 @@ public class TeacherController {
                                Model model) {
 
         model.addAttribute("studentsWithAttendances", teacherService.listStudentsLessonAttendances(teacherId, lessonId));
-//        model.addAttribute("subjectId", subjectId);
-//        model.addAttribute("lessonId", lessonId);
-//        model.addAttribute("classId", classId);
         model.addAttribute("attendance", teacherService.initNewLessonAttendance(teacherId, subjectId, lessonId));
 
         return "/teacher/lesson/lessonAttendances";
@@ -654,8 +646,13 @@ public class TeacherController {
                                                @PathVariable Long subjectId,
                                                @PathVariable Long classId,
                                                @PathVariable Long lessonId,
-                                               @Valid @RequestBody AttendanceDto attendanceDto) {
-
+                                               @Valid @RequestBody AttendanceDto attendanceDto,
+                                               BindingResult result) {
+        if (result.hasErrors()) {
+            //Shouldnt happen, so just redirect with no error info
+            return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + classId + "/" +
+                    lessonId;
+        }
 
         List<Attendance> attendance = teacherService.saveAttendancesForClass(attendanceDto, classId, teacherId);
         return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + classId + "/" +
@@ -668,11 +665,14 @@ public class TeacherController {
                                         @PathVariable Long subjectId,
                                         @PathVariable Long lessonId,
                                         @Valid @RequestBody GradeDto gradeDto,
-                                        BindingResult result) {
+                                        BindingResult result, Model model) {
 
         if (result.hasErrors()) {
-            //todo: view path
-            return "";
+            model.addAttribute("studentsWithGrades", teacherService.listStudentsLessonGrades(teacherId, lessonId));
+            model.addAttribute("maxGrades", teacherService.maxGradesCount(teacherId, lessonId));
+            model.addAttribute("grade", teacherService.initNewLessonGrade(teacherId, subjectId, lessonId));
+
+            return "/teacher/lesson/lesson";
         }
 
         Grade grade = teacherService.saveOrUpdateGrade(gradeDto);

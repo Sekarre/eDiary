@@ -24,11 +24,19 @@ The above copyright notice and this permission notice shall be included in all c
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.14.0/jquery.validate.min.js"></script>
     <!-- CSS Files -->
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
 </head>
+
+<style>
+    label.error{
+        color:red;
+    }
+</style>
 
 <body class="">
 <div class="wrapper ">
@@ -63,6 +71,12 @@ The above copyright notice and this permission notice shall be included in all c
             <div th:if="${studentsWithGrades == null}" class="navbar-wrapper">
                 <div class="d-flex justify-content-center">
                     <h2 class="navbar-brand">Nie znaleziono żadnych studentów</h2>
+                    <div th:if="${#fields.hasErrors()}" class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>Holy guacamole!</strong> Coś poszło nie tak.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             <!--Tabs-->
@@ -82,10 +96,7 @@ The above copyright notice and this permission notice shall be included in all c
                 <!--end tabs-->
                 <div class="card " >
                     <div class="">
-
                         <!-- Grades -->
-
-
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table">
@@ -129,10 +140,7 @@ The above copyright notice and this permission notice shall be included in all c
                                     </table>
                                 </div>
                             </div>
-
-
                         <!-- end grades -->
-
                     </div>
                 </div>
             </div>
@@ -150,7 +158,7 @@ The above copyright notice and this permission notice shall be included in all c
                         </button>
                     </div>
 
-                    <form id="addGradeForm" method="post" >
+                    <form id="addGradeForm" class=" gradeFormToValid" method="post">
                         <div class="modal-body">
                             <div class="content">
                                 <div class="container-fluid">
@@ -160,7 +168,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                 <tr>
                                                     <td id="gradeStudent">
                                                         <div class="form-group">
-                                                            <label class="bmd-label-floating">Uczeń: </label>
+                                                            <label class="bmd-label-floating" disabled="">Uczeń: </label>
                                                             <input  id="studentNameVal" type="text" class="form-control" disabled>
                                                         </div>
                                                     </td>
@@ -169,7 +177,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="gradeValue">
                                                         <div class="form-group">
                                                             <label class="bmd-label-floating">Ocena: </label>
-                                                            <input  id="gradeValueVal" type="number" min="0" max="6" step="0.5" class="form-control">
+                                                            <input  id="gradeValueVal" name="gradeValueVal" type="text" class="form-control">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -177,7 +185,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="gradeWeight">
                                                         <div class="form-group">
                                                             <label class="bmd-label-floating">Waga</label>
-                                                            <input  id="gradeWeightVal" class="form-control" min="0" type="number"/>
+                                                            <input  id="gradeWeightVal"  name="gradeWeightVal" class="form-control" type="text"/>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -185,7 +193,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="gradeDescription">
                                                         <div class="form-group">
                                                             <label class="bmd-label-floating">Opis</label>
-                                                            <textarea  id="gradeDescVal" class="form-control" rows="3"></textarea>
+                                                            <textarea  id="gradeDescVal" name="gradeDescVal" class="form-control" rows="3" maxlength="255"></textarea>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -228,7 +236,7 @@ The above copyright notice and this permission notice shall be included in all c
                         </button>
                     </div>
 
-                    <form id="editGradeForm" method="post" >
+                    <form id="editGradeForm"  method="post" >
                         <div class="modal-body">
                             <div class="content">
                                 <div class="container-fluid">
@@ -247,7 +255,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="gradeValueEdit">
                                                         <div class="form-group">
                                                             <label class="bmd-label-static" th:text="'Ocena'"> </label>
-                                                            <input  id="gradeValueValEdit" type="number" min="0" max="6" step="0.5" class="form-control">
+                                                            <input  id="gradeValueValEdit" name="gradeValueValEdit" type="text" class="form-control">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -255,7 +263,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="gradeWeightEdit">
                                                         <div class="form-group">
                                                             <label class="bmd-label-static" th:text="'Waga'"></label>
-                                                            <input  id="gradeWeightValEdit" class="form-control" min="0" type="number"/>
+                                                            <input  id="gradeWeightValEdit" name="gradeWeightValEdit" class="form-control"  type="text"/>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -263,7 +271,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="gradeDescriptionEdit">
                                                         <div class="form-group">
                                                             <label class="bmd-label-static" th:text="'Opis'"></label>
-                                                            <textarea  id="gradeDescValEdit" class="form-control" rows="3"></textarea>
+                                                            <textarea  id="gradeDescValEdit" name="gradeDescValEdit" class="form-control" rows="3" maxlength="255"></textarea>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -568,48 +576,94 @@ The above copyright notice and this permission notice shall be included in all c
 
 <script>
     $(document).on("click", "#sendGrade", function () {
-        var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
-        var studentIdVal = document.getElementById("studentIdVal").value;
-        var lessonIdVal = $("#lessonIdVal").val();
-        var classIdVal = $("#classIdVal").val();
+
+        var addForm = $("#addGradeForm");
+
+        addForm.validate({
+            rules: {
+                gradeValueVal: {
+                    required: true,
+                    number: true,
+                    min: 1,
+                    max: 6
+                },
+                gradeWeightVal: {
+                    required: true,
+                    number: true,
+                    min: 1,
+                    max: 99
+                },
+                gradeDescVal: {
+                    required: false,
+                    maxlength: 255
+                }
+            },
+
+            messages: {
+                gradeValueVal: {
+                    required: "Nie podano oceny",
+                    min: "Wartosc nie moze być mniejsza od 0",
+                    number: "Wartość musi być liczbą",
+                    max: "Wartość nie może być większa od 6"
+                },
+                gradeWeightVal: {
+                    required: "Nie podano wagi",
+                    min: "Wartość nie może być mniejsza od 0",
+                    number: "Wartość musi być liczbą",
+                    max: "Wartość nie może być większa od 99"
+                },
+                gradeDescVal: {
+                    maxlength: "Opis nie może przekroczyć 255 znaków"
+                }
+            }
+
+        });
+
+        if(addForm.valid()) {
+
+            var csrf = $("#csrfVal").val();
+            var subjectIdVal = $("#subjectIdVal").val();
+            var teacherIdVal = $("#teacherIdVal").val();
+            var studentIdVal = document.getElementById("studentIdVal").value;
+            var lessonIdVal = $("#lessonIdVal").val();
+            var classIdVal = $("#classIdVal").val();
 
 
-        var gradeDto = {
-            id: "",
-            value: $("#gradeValueVal").val(),
-            weight: $("#gradeWeightVal").val(),
-            description: $("#gradeDescVal").val(),
-            date: $("#gradeDateVal").val(),
-            teacherId: teacherIdVal,
-            subjectId: subjectIdVal,
-            studentId: studentIdVal,
-        };
+            var gradeDto = {
+                id: "",
+                value: $("#gradeValueVal").val(),
+                weight: $("#gradeWeightVal").val(),
+                description: $("#gradeDescVal").val(),
+                date: $("#gradeDateVal").val(),
+                teacherId: teacherIdVal,
+                subjectId: subjectIdVal,
+                studentId: studentIdVal,
+            };
 
-        // Creating a XHR object
-        let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/newGrade";
+            // Creating a XHR object
+            let xhr = new XMLHttpRequest();
+            let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/newGrade";
 
-        // open a connection
-        xhr.open("POST", url, true);
+            // open a connection
+            xhr.open("POST", url, true);
 
-        // Set the request header i.e. which type of content you are sending
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.setRequestHeader("_csrf", csrf);
-        xhr.setRequestHeader('x-csrf-token', csrf);
+            // Set the request header i.e. which type of content you are sending
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("_csrf", csrf);
+            xhr.setRequestHeader('x-csrf-token', csrf);
 
-        // Create a state change callback
-        xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
-        };
+            // Create a state change callback
+            xhr.onreadystatechange = function () {
+                location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
+            };
 
 
-        // Converting JSON data to string
-        var data = JSON.stringify(gradeDto);
+            // Converting JSON data to string
+            var data = JSON.stringify(gradeDto);
 
-        // Sending data with the request
-        xhr.send(data);
+            // Sending data with the request
+            xhr.send(data);
+        }
     });
 </script>
 
@@ -647,49 +701,95 @@ The above copyright notice and this permission notice shall be included in all c
 
 <script>
     $(document).on("click", "#editGrade", function () {
-        var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
-        var studentIdVal = document.getElementById("studentIdValEdit").value;
-        var lessonIdVal = $("#lessonIdVal").val();
-        var classIdVal = $("#classIdVal").val();
-        var gradeIdVal = $("#gradeIdValue").val();
+
+        var editForm = $("#editGradeForm");
+
+        editForm.validate({
+            rules: {
+                gradeValueValEdit: {
+                    required: true,
+                    number: true,
+                    min: 1,
+                    max: 6
+                },
+                gradeWeightValEdit: {
+                    required: true,
+                    number: true,
+                    min: 1,
+                    max: 99
+                },
+                gradeDescValEdit: {
+                    required: false,
+                    maxlength: 255
+                }
+            },
+
+            messages: {
+                gradeValueValEdit: {
+                    required: "Nie podano oceny",
+                    min: "Wartość nie może być mniejsza od 0",
+                    max: "Wartość nie może być większa od 6",
+                    number: "Wartość musi być liczbą"
+                },
+                gradeWeightValEdit: {
+                    required: "Nie podano wagi",
+                    number: "Wartość musi być liczbą",
+                    min: "Wartość nie może być mniejsza od 0",
+                    max: "Wartość nie może być większa od 99"
+                },
+                gradeDescValEdit: {
+                    maxlength: "Opis nie może przekroczyć 255 znaków"
+                }
+            }
+
+        });
+
+        if(editForm.valid()) {
+
+            var csrf = $("#csrfVal").val();
+            var subjectIdVal = $("#subjectIdVal").val();
+            var teacherIdVal = $("#teacherIdVal").val();
+            var studentIdVal = document.getElementById("studentIdValEdit").value;
+            var lessonIdVal = $("#lessonIdVal").val();
+            var classIdVal = $("#classIdVal").val();
+            var gradeIdVal = $("#gradeIdValue").val();
 
 
-        var gradeDto = {
-            id: gradeIdVal,
-            value: $("#gradeValueValEdit").val(),
-            weight: $("#gradeWeightValEdit").val(),
-            description: $("#gradeDescValEdit").val(),
-            date: $("#gradeDateValEdit").val(),
-            teacherId: teacherIdVal,
-            subjectId: subjectIdVal,
-            studentId: studentIdVal,
-        };
+            var gradeDto = {
+                id: gradeIdVal,
+                value: $("#gradeValueValEdit").val(),
+                weight: $("#gradeWeightValEdit").val(),
+                description: $("#gradeDescValEdit").val(),
+                date: $("#gradeDateValEdit").val(),
+                teacherId: teacherIdVal,
+                subjectId: subjectIdVal,
+                studentId: studentIdVal,
+            };
 
-        // Creating a XHR object
-        let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/newGrade";
+            // Creating a XHR object
+            let xhr = new XMLHttpRequest();
+            let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/newGrade";
 
-        // open a connection
-        xhr.open("POST", url, true);
+            // open a connection
+            xhr.open("POST", url, true);
 
-        // Set the request header i.e. which type of content you are sending
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.setRequestHeader("_csrf", csrf);
-        xhr.setRequestHeader('x-csrf-token', csrf);
+            // Set the request header i.e. which type of content you are sending
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("_csrf", csrf);
+            xhr.setRequestHeader('x-csrf-token', csrf);
 
-        // Create a state change callback
-        xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
-        };
+            // Create a state change callback
+            xhr.onreadystatechange = function () {
+                location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
+            };
 
 
-        // Converting JSON data to string
-        var data = JSON.stringify(gradeDto);
+            // Converting JSON data to string
+            var data = JSON.stringify(gradeDto);
 
-        // Sending data with the request
-        xhr.send(data);
+            // Sending data with the request
+            xhr.send(data);
+        }
     });
 </script>
 
@@ -752,7 +852,6 @@ The above copyright notice and this permission notice shall be included in all c
             + "/" + lessonId + "/delete");
     });
 </script>
-
 
 </body>
 
