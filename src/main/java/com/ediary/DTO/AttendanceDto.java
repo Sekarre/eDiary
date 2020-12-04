@@ -4,6 +4,7 @@ import com.ediary.domain.Attendance;
 import com.ediary.domain.Extenuation;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Setter
@@ -15,10 +16,13 @@ public class AttendanceDto {
 
     private Long id;
 
+    @NotNull
     private Attendance.Status status;
 
     //Lesson
     private LessonDto lessonDto;
+
+    @NotNull
     private Long lessonId;
 
     //Student

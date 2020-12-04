@@ -60,21 +60,21 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <div th:if="${studentsWithGrades == null}" class="navbar-wrapper">
+            <div th:if="${studentsWithAttendances == null}" class="navbar-wrapper">
                 <div class="d-flex justify-content-center">
                     <h2 class="navbar-brand">Nie znaleziono żadnych studentów</h2>
                 </div>
             </div>
             <!--Tabs-->
-            <div class="container-fluid" th:if="${studentsWithGrades != null}">
+            <div class="container-fluid" th:if="${studentsWithAttendances != null}">
                 <div class="justify-content-center">
-                    <ul class="nav tab nav-pills-primary tab-links">
-                        <li class="active">
+                    <ul class="nav tab nav-pills-primary tab-links" >
+                        <li>
                             <a class="nav-link" th:text="'Oceny'"  th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}(teacherId=${teacherId}, subjectId=${subjectId}, classId=${classId}, lessonId=${lessonId})}"
-                              aria-selected="true">Home</a>
+                                aria-selected="true">Home</a>
                         </li>
-                        <li >
-                            <a class="nav-link" th:text="'Frekwencja'"   th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/attendances(teacherId=${teacherId}, subjectId=${subjectId}, classId=${classId}, lessonId=${lessonId})}"
+                        <li class="active">
+                            <a class="nav-link" th:text="'Frekwencja'" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/attendances(teacherId=${teacherId}, subjectId=${subjectId}, classId=${classId}, lessonId=${lessonId})}"
                                 aria-selected="false">Profile</a>
                         </li>
                     </ul>
@@ -82,20 +82,35 @@ The above copyright notice and this permission notice shall be included in all c
                 <!--end tabs-->
                 <div class="card " >
                     <div class="">
-
-                        <!-- Grades -->
-
-
+                        <!-- Attendances -->
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class=" text-primary">
                                         <th class="col-lg-1">Nr. </th>
                                         <th class="col-lg-2">Imie</th>
-                                        <th  class="text-center col-lg-9" th:colspan="${maxGrades.size() + 1}">Oceny</th>
+                                        <th class="col-lg-3 text-center">Status</th>
+                                        <th class="col-lg-2">
+                                            <button  id="allPresent" th:onclick="'javascript:sendAllAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + 'present' + '\');'" class="btn btn-fab-mini btn-round">
+                                                <i class="material-icons">add_task</i>&nbsp;
+                                            </button>
+                                        </th>
+                                        <th class="col-lg-2">
+                                            <button  id="allAbsent" th:onclick="'javascript:sendAllAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + 'absent' + '\');'" class="btn btn-fab-mini btn-round">
+                                                <i class="material-icons">unpublished</i>&nbsp;
+                                            </button>
+                                        </th>
+                                        <th class="col-lg-2">
+                                            <button  id="allLate" th:onclick="'javascript:sendAllAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + 'late' + '\');'" class="btn btn-fab-mini btn-round">
+                                                <i class="material-icons">watch_later</i>&nbsp;
+                                            </button>
+                                        </th>
                                         </thead>
                                         <tbody>
-                                        <tr th:each="student : ${studentsWithGrades.keySet()}" >
+                                        <tr th:each="student : ${studentsWithAttendances?.keySet()}" >
                                             <td th:text="${studentStat.index + 1}">
                                                 Nr.
                                             </td>
@@ -103,204 +118,48 @@ The above copyright notice and this permission notice shall be included in all c
                                                 Imie
                                             </td>
 
-                                            <td th:each="grade : ${studentsWithGrades?.get(student)}">
-                                                <a data-toggle="modal" id="open-gradeDialogModal-editGrade" class="open-gradeDialogModal btn btn-sm" href="#editGradeModal"
-                                                   th:attr="data-date=''+${grade.date}+'', data-target='#editGradeModal', data-value=''+${grade.value}+'', data-weight=''+${grade.weight}+'',
-                                                       data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+'', data-id=''+${student.id}+'', data-grade=''+${grade.id}+''"
-                                                   th:text="${grade?.value}">
-                                                </a>
+                                            <td class="text-center border-right" th:text="${studentsWithAttendances?.get(student)?.status?.translatedName}"
+                                                th:style="${studentsWithAttendances?.get(student)?.status?.name() eq 'PRESENT' || studentsWithAttendances?.get(student)?.status?.name() eq 'EXCUSED'} ? 'color: green' : ''"
+                                                th:styleappend="${studentsWithAttendances?.get(student)?.status?.name() eq 'ABSENT' || studentsWithAttendances?.get(student)?.status?.name() eq 'UNEXCUSED'} ? 'color: red' : ''" >
+                                                Status
                                             </td>
-                                            <th:block th:each="field : ${maxGrades}">
-                                                <td th:if="${fieldStat.index} < ${maxGrades.size() - studentsWithGrades?.get(student).size()}" th:text="' '">
-
-                                                </td>
-                                            </th:block>
                                             <td>
-                                                <a id="open-gradeDialogModal" data-toggle="modal" class="open-gradeDialogModal" href="#addGradeModal"
-                                                   th:attr="data-id=''+${student.id}+'', data-target='#addGradeModal', data-name=''+${student.userName}+''">
-                                                    <button class="btn btn-fab-mini btn-round">
-                                                        <i class="material-icons">add_circle</i>&nbsp;Dodaj
-                                                    </button>
-                                                </a>
+                                                <button  id="present" th:onclick="'javascript:sendAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + ${student.id} + '\',\'' + 'present' + '\');'" class="btn btn-fab-mini btn-round"
+                                                         th:classappend="${studentsWithAttendances?.get(student)?.status == null || studentsWithAttendances?.get(student)?.status?.name() != 'PRESENT'} ? '' : 'disabled'">
+                                                    <i class="material-icons">add_task</i>&nbsp;Obecny
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button  id="absent" th:onclick="'javascript:sendAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + ${student.id} + '\',\'' + 'absent' + '\');'" class="btn btn-fab-mini btn-round"
+                                                         th:classappend="${studentsWithAttendances?.get(student)?.status == null || studentsWithAttendances?.get(student)?.status?.name() != 'ABSENT'} ? '' : 'disabled'">
+                                                    <i class="material-icons">unpublished</i>&nbsp;Nieobecny
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button id="late" th:onclick="'javascript:sendAtt(\'' + ${teacherId} + '\',\'' + ${subjectId}
+                                                    + '\',\'' + ${classId} + '\',\'' + ${lessonId} + '\',\'' + ${student.id} + '\',\'' + 'late' + '\');'" class="btn btn-fab-mini btn-round"
+                                                        th:classappend="${studentsWithAttendances?.get(student)?.status == null || studentsWithAttendances?.get(student)?.status?.name() != 'LATE'} ? '' : 'disabled'">
+                                                    <i class="material-icons">watch_later</i>&nbsp;Spóźniony
+                                                </button>
                                             </td>
                                         </tr>
-
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-
-
-                        <!-- end grades -->
-
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- end attendances -->
 
-        <!-- Modal add grade -->
-        <div class="modal fade" id="addGradeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Dodaj Ocene: </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    <form id="addGradeForm" method="post" >
-                        <div class="modal-body">
-                            <div class="content">
-                                <div class="container-fluid">
-                                    <div class="card">
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <tr>
-                                                    <td id="gradeStudent">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-floating">Uczeń: </label>
-                                                            <input  id="studentNameVal" type="text" class="form-control" disabled>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td id="gradeValue">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-floating">Ocena: </label>
-                                                            <input  id="gradeValueVal" type="number" min="0" max="6" step="0.5" class="form-control">
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td id="gradeWeight">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-floating">Waga</label>
-                                                            <input  id="gradeWeightVal" class="form-control" min="0" type="number"/>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td id="gradeDescription">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-floating">Opis</label>
-                                                            <textarea  id="gradeDescVal" class="form-control" rows="3"></textarea>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td id="gradeDate">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-floating">Data</label>
-                                                            <input  id="gradeDateVal" class="form-control" type="text" th:value="${grade.date}" disabled/>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <input id="studentIdVal" type="hidden"/>
-
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-                            <button id="sendGrade" type="button" class="btn btn-success" >Dodaj</button>
-                            <input id="csrfVal" type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-        </div>
-        <!-- end of add grade modal -->
-
-        <!-- Modal edit grade -->
-        <div class="modal fade" id="editGradeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Ocena: </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    <form id="editGradeForm" method="post" >
-                        <div class="modal-body">
-                            <div class="content">
-                                <div class="container-fluid">
-                                    <div class="card">
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <tr>
-                                                    <td id="gradeStudentEdit">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-static " th:text="'Uczeń'" disabled> </label>
-                                                            <input  id="studentNameValEdit" type="text" class="form-control" disabled>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td id="gradeValueEdit">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-static" th:text="'Ocena'"> </label>
-                                                            <input  id="gradeValueValEdit" type="number" min="0" max="6" step="0.5" class="form-control">
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td id="gradeWeightEdit">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-static" th:text="'Waga'"></label>
-                                                            <input  id="gradeWeightValEdit" class="form-control" min="0" type="number"/>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td id="gradeDescriptionEdit">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-static" th:text="'Opis'"></label>
-                                                            <textarea  id="gradeDescValEdit" class="form-control" rows="3"></textarea>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td id="gradeDateEdit">
-                                                        <div class="form-group">
-                                                            <label class="bmd-label-static" th:text="'Data'"></label>
-                                                            <input  id="gradeDateValEdit" class="form-control" type="text" th:value="${grade.date}" disabled/>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <input id="studentIdValEdit" type="hidden"/>
-
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-                            <input id="gradeIdValue" type="hidden"/>
-                            <button id="deleteGrade" type="button" class="btn btn-danger ">Usuń</button>
-                            <button id="editGrade" type="button" class="btn btn-success" >Zapisz</button>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-        </div>
-        <!-- end edit grade -->
-        <input id="subjectIdVal" type="hidden" th:value="${grade.subjectId}"/>
-        <input id="teacherIdVal" type="hidden" th:value="${grade.teacherId}"/>
         <input id="lessonIdVal" type="hidden" th:value="${lessonId}"/>
         <input id="classIdVal" type="hidden" th:value="${classId}"/>
 
-<!--        Modal delete lesson-->
+        <!--        Modal delete lesson-->
         <div class="modal fade" id="deleteLessonModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -317,13 +176,13 @@ The above copyright notice and this permission notice shall be included in all c
                         <form id="deleteFormLesson" method="post">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
                             <button type="submit" class="btn btn-danger" >Usuń</button>
-                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                            <input id="csrfVal" type="hidden" name="_csrf" th:value="${_csrf.token}"/>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-<!--        end modal delete lesson -->
+        <!--        end modal delete lesson -->
     </div>
 </div>
 
@@ -547,49 +406,24 @@ The above copyright notice and this permission notice shall be included in all c
     });
 </script>
 
-<!--New grade modal-->
-
+<
+<!--new Attendance-->
 <script>
-    $(document).on("click", ".open-gradeDialogModal", function () {
+    function sendAtt(teacherIdVal, subjectIdVal, classIdVal, lessonIdVal, studentIdVal, status) {
 
-        var studentId = $(this).data('id');
-        var studentName = $(this).data('name');
 
-        var gradeStudentElem = document.getElementById("gradeStudent");
-        var gradeStudentId = document.getElementById("studentIdVal");
-
-        gradeStudentElem.innerHTML = studentName;
-        gradeStudentId.value = studentId;
-
-    });
-</script>
-
-<!--New grade-->
-
-<script>
-    $(document).on("click", "#sendGrade", function () {
         var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
-        var studentIdVal = document.getElementById("studentIdVal").value;
-        var lessonIdVal = $("#lessonIdVal").val();
-        var classIdVal = $("#classIdVal").val();
 
-
-        var gradeDto = {
+        var attendanceDto = {
             id: "",
-            value: $("#gradeValueVal").val(),
-            weight: $("#gradeWeightVal").val(),
-            description: $("#gradeDescVal").val(),
-            date: $("#gradeDateVal").val(),
-            teacherId: teacherIdVal,
-            subjectId: subjectIdVal,
+            status: status,
+            lessonId: lessonIdVal,
             studentId: studentIdVal,
         };
 
         // Creating a XHR object
         let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/newGrade";
+        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" +classIdVal + "/" + lessonIdVal + "/newAttendance";
 
         // open a connection
         xhr.open("POST", url, true);
@@ -601,75 +435,33 @@ The above copyright notice and this permission notice shall be included in all c
 
         // Create a state change callback
         xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
+            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal + "/attendances";
         };
 
 
         // Converting JSON data to string
-        var data = JSON.stringify(gradeDto);
+        var data = JSON.stringify(attendanceDto);
 
         // Sending data with the request
         xhr.send(data);
-    });
+    }
 </script>
 
-<!--Edit grade modal-->
+<!--New attendances for whole class-->
 <script>
-    $(document).on("click", "#open-gradeDialogModal-editGrade", function () {
+    function sendAllAtt(teacherIdVal, subjectIdVal, classIdVal, lessonIdVal, status) {
 
-        var studentId = $(this).data('id');
-        var studentName = $(this).data('student');
-        var value = $(this).data('value');
-        var weight = $(this).data('weight');
-        var desc = $(this).data('desc');
-        var date = $(this).data('date');
-        var gradeId = $(this).data('grade');
-
-        if (desc == null) {
-            desc = "";
-        }
-
-        var gradeStudentId = document.getElementById("studentIdValEdit");
-
-        gradeStudentId.value = studentId;
-
-        document.getElementById("gradeIdValue").value = gradeId;
-        document.getElementById("studentNameValEdit").value = studentName;
-        document.getElementById("gradeWeightValEdit").value = weight;
-        document.getElementById("gradeValueValEdit").value = value;
-        document.getElementById("gradeDescValEdit").value = desc;
-        document.getElementById("gradeDateValEdit").value = date;
-
-    });
-</script>
-
-<!--Edit grade-->
-
-<script>
-    $(document).on("click", "#editGrade", function () {
         var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
-        var studentIdVal = document.getElementById("studentIdValEdit").value;
-        var lessonIdVal = $("#lessonIdVal").val();
-        var classIdVal = $("#classIdVal").val();
-        var gradeIdVal = $("#gradeIdValue").val();
 
-
-        var gradeDto = {
-            id: gradeIdVal,
-            value: $("#gradeValueValEdit").val(),
-            weight: $("#gradeWeightValEdit").val(),
-            description: $("#gradeDescValEdit").val(),
-            date: $("#gradeDateValEdit").val(),
-            teacherId: teacherIdVal,
-            subjectId: subjectIdVal,
-            studentId: studentIdVal,
+        var attendanceDto = {
+            id: "",
+            status: status,
+            lessonId: lessonIdVal,
         };
 
         // Creating a XHR object
         let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/newGrade";
+        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" +classIdVal + "/" + lessonIdVal + "/newAttendancesClass";
 
         // open a connection
         xhr.open("POST", url, true);
@@ -681,56 +473,17 @@ The above copyright notice and this permission notice shall be included in all c
 
         // Create a state change callback
         xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
+            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal + "/attendances";
         };
 
 
         // Converting JSON data to string
-        var data = JSON.stringify(gradeDto);
+        var data = JSON.stringify(attendanceDto);
 
         // Sending data with the request
         xhr.send(data);
-    });
+    }
 </script>
-
-<!--Delete grade-->
-
-<script>
-    $(document).on("click", "#deleteGrade", function () {
-        var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
-        var studentIdVal = document.getElementById("studentIdValEdit").value;
-        var lessonIdVal = $("#lessonIdVal").val();
-        var classIdVal = $("#classIdVal").val();
-        var gradeIdVal = $("#gradeIdValue").val();
-
-
-
-        // Creating a XHR object
-        let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + lessonIdVal + "/" + classIdVal
-            + "/" + studentIdVal + "/" + gradeIdVal + "/delete";
-
-        // open a connection
-        xhr.open("POST", url, true);
-
-        // Set the request header i.e. which type of content you are sending
-        xhr.setRequestHeader("_csrf", csrf);
-        xhr.setRequestHeader('x-csrf-token', csrf);
-
-        // Create a state change callback
-        xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/lesson/subject/" + subjectIdVal + "/" + classIdVal + "/" + lessonIdVal;
-        };
-
-
-        // Sending data with the request
-        xhr.send();
-    });
-</script>
-
-
 
 <!--Delete lesson modal action-->
 <script>
@@ -752,6 +505,7 @@ The above copyright notice and this permission notice shall be included in all c
             + "/" + lessonId + "/delete");
     });
 </script>
+
 
 
 </body>

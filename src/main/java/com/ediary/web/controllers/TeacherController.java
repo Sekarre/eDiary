@@ -345,7 +345,6 @@ public class TeacherController {
     }
 
 
-    //start
     @TeacherPermission
     @GetMapping("/{teacherId}/grade/subject")
     public String getAllSubjectsGrade(@PathVariable Long teacherId, Model model) {
@@ -366,7 +365,6 @@ public class TeacherController {
         model.addAttribute("grade", teacherService.initNewGrade(teacherId, subjectId));
         model.addAttribute("finalGrade", teacherService.initNewFinalGrade(teacherId, subjectId));
 
-        System.out.println("");
 
         return "/teacher/grades/allGrades";
     }
@@ -571,7 +569,6 @@ public class TeacherController {
                                        @Valid @ModelAttribute("newEvent") EventDto newEvent,
                                        BindingResult result) {
 
-
         if (result.hasErrors()) {
             return "/teacher/lesson/newEvent";
         }
@@ -602,6 +599,24 @@ public class TeacherController {
         return "/teacher/lesson/lesson";
     }
 
+
+    @TeacherPermission
+    @GetMapping("/{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/attendances")
+    public String getLessonAtt(@PathVariable Long teacherId,
+                               @PathVariable Long subjectId,
+                               @PathVariable Long classId,
+                               @PathVariable Long lessonId,
+                               Model model) {
+
+        model.addAttribute("studentsWithAttendances", teacherService.listStudentsLessonAttendances(teacherId, lessonId));
+//        model.addAttribute("subjectId", subjectId);
+//        model.addAttribute("lessonId", lessonId);
+//        model.addAttribute("classId", classId);
+        model.addAttribute("attendance", teacherService.initNewLessonAttendance(teacherId, subjectId, lessonId));
+
+        return "/teacher/lesson/lessonAttendances";
+    }
+
     @TeacherPermission
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/delete")
     public String deleteLesson(@PathVariable Long teacherId,
@@ -620,8 +635,13 @@ public class TeacherController {
                                       @PathVariable Long subjectId,
                                       @PathVariable Long classId,
                                       @PathVariable Long lessonId,
-                                      @Valid @RequestBody AttendanceDto attendanceDto) {
+                                      @Valid @RequestBody AttendanceDto attendanceDto, BindingResult result) {
 
+        if (result.hasErrors()) {
+            //Shouldnt happen, so just redirect with no error info
+            return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + classId + "/" +
+                    lessonId;
+        }
 
         Attendance attendance = teacherService.saveAttendance(attendanceDto);
         return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/" + classId + "/" +
