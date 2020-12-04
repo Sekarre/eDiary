@@ -115,11 +115,11 @@ public class TeacherController {
     @TeacherPermission
     @PostMapping("/{teacherId}/event/newEvent")
     public String processNewEvent(@PathVariable Long teacherId,
-                                  @Valid @ModelAttribute EventDto newEvent,
-                                  BindingResult result) {
+                                  @Valid @ModelAttribute("newEvent") EventDto newEvent,
+                                  BindingResult result, Model model) {
         if (result.hasErrors()) {
-            //TODO
-            return "/";
+            model.addAttribute("schoolClasses", teacherService.listClassByTeacher(teacherId));
+            return "/teacher/event/newEvent";
         } else {
             teacherService.saveOrUpdateEvent(newEvent);
 
@@ -151,11 +151,12 @@ public class TeacherController {
     @PostMapping("/{teacherId}/event/update/{eventId}")
     public String processUpdateEvent(@PathVariable Long teacherId,
                                      @PathVariable Long eventId,
-                                  @Valid @ModelAttribute EventDto newEvent,
-                                  BindingResult result) {
+                                     @Valid @ModelAttribute("newEvent") EventDto newEvent,
+                                     BindingResult result, Model model) {
         if (result.hasErrors()) {
-            //TODO
-            return "/";
+            newEvent.setId(eventId);
+            model.addAttribute("schoolClasses", teacherService.listClassByTeacher(teacherId));
+            return "/teacher/event/updateEvent";
         } else {
             newEvent.setId(eventId);
             teacherService.saveOrUpdateEvent(newEvent);
@@ -195,7 +196,7 @@ public class TeacherController {
     @TeacherPermission
     @GetMapping("/{teacherId}/behavior/new/class/{classId}")
     public String newBehaviorWithClass(@PathVariable Long teacherId,
-                                         @PathVariable Long classId, Model model) {
+                                       @PathVariable Long classId, Model model) {
 
         model.addAttribute("behavior", teacherService.initNewBehavior(teacherId));
         model.addAttribute("schoolClasses", teacherService.listAllClasses());
@@ -567,8 +568,13 @@ public class TeacherController {
     @PostMapping("{teacherId}/lesson/subject/{subjectId}/newEvent")
     public String processNewClassEvent(@PathVariable Long teacherId,
                                        @PathVariable Long subjectId,
-                                       @ModelAttribute EventDto newEvent) {
+                                       @Valid @ModelAttribute("newEvent") EventDto newEvent,
+                                       BindingResult result) {
 
+
+        if (result.hasErrors()) {
+            return "/teacher/lesson/newEvent";
+        }
 
         Event event = teacherService.saveOrUpdateEvent(newEvent);
         return "redirect:/teacher/" + teacherId + "/lesson/subject/" + subjectId + "/events";
@@ -1044,8 +1050,8 @@ public class TeacherController {
     @FormTutorPermission
     @PostMapping("/{teacherId}/formTutor/behaviorGrade/updateBehaviorGrade")
     public String updateClassBehaviorGrade(@PathVariable Long teacherId,
-                                               @Valid @RequestBody GradeDto gradeDto,
-                                               BindingResult result) {
+                                           @Valid @RequestBody GradeDto gradeDto,
+                                           BindingResult result) {
 
         if (result.hasErrors()) {
             //todo: view path
@@ -1059,8 +1065,8 @@ public class TeacherController {
     @FormTutorPermission
     @PostMapping("{teacherId}/formTutor/behaviorGrade/{studentId}/{gradeId}/deleteBehaviorGrade")
     public String deleteBehaviorGrade(@PathVariable Long teacherId,
-                                   @PathVariable Long gradeId,
-                                   @PathVariable Long studentId) {
+                                      @PathVariable Long gradeId,
+                                      @PathVariable Long studentId) {
 
         teacherService.deleteGrade(studentId, gradeId);
 

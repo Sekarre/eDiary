@@ -86,38 +86,48 @@ The above copyright notice and this permission notice shall be included in all c
                                               <i class="material-icons">person_search</i>
                                           </span>
                                         </div>
-                                        <div class="form-group">
-                                            <label>Klasa</label>
+                                        <div class="col-md-8">
                                             <div class="form-group">
-                                                <select id="selectClass" class="selectpicker" data-live-search="true"
-                                                        th:field="*{classId}">
-                                                    <option th:each="class : ${schoolClasses}"
-                                                            th:value="${class.id}"
-                                                            th:text="${class.name}"
-                                                            th:selected="${classStat.index == 0} ? 'selected' : ''">
-                                                        Klasa
-                                                    </option>
-                                                </select>
-
+                                                <label>Klasa</label>
+                                                <div class="form-group">
+                                                    <select id="selectClass" class="selectpicker" data-live-search="true"
+                                                            th:field="*{classId}">
+                                                        <option th:each="class : ${schoolClasses}"
+                                                                th:value="${class.id}"
+                                                                th:text="${class.name}"
+                                                                th:selected="${classStat.index == 0} ? 'selected' : ''">
+                                                            Klasa
+                                                        </option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group"></div>
                                     <div class="row">
-                                        <div class="col-md-1">
+                                        <div class="col-md-1"
+                                             th:class="${#fields.hasErrors('date')} ? 'col-md-1 has-error' : 'col-md-1'">
                                           <span class="input-group-text">
                                               <i class="material-icons">calendar_today</i>
                                           </span>
                                         </div>
-                                        <label for="todate">Data: </label>
-                                        <div class="form-group">
-                                            <div class='input-group date' id='todate'>
-                                                <input type='text' class="form-control" name="endTime"
-                                                       th:field="*{date}"/>
-                                                <input type="hidden" id="dateValue" th:value="${newEvent.date}">
-                                                <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
+                                        <div class="col-md-8">
+                                            <label for="todate">Data: </label>
+                                            <div class="form-group">
+                                                <div class='input-group date' id='todate'>
+                                                    <input type='text' class="form-control" name="endTime"
+                                                           th:field="*{date}"/>
+                                                    <input type="hidden" id="dateValue" th:value="${newEvent.date}">
+                                                    <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                                </div>
+                                                <span class="help-block text-danger"
+                                                      th:if="${#fields.hasErrors('date')}">
+                                                    <ul>
+                                                        <li th:each="err : ${#fields.errors('date')}" th:text="${err}"/>
+                                                    </ul>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -128,33 +138,45 @@ The above copyright notice and this permission notice shall be included in all c
                                               <i class="material-icons">dns</i>
                                           </span>
                                         </div>
-                                        <div class="form-group">
-                                            <label>Typ wydarzenia</label>
+                                        <div class="col-md-8">
                                             <div class="form-group">
-                                                <select id="selectType" class="selectpicker" data-live-search="true"
-                                                        th:field="*{type}">
-                                                    <option th:each="type : ${T(com.ediary.domain.Event$Type).values()}"
-                                                            th:value="${type}"
-                                                            th:text="${type.translatedName}"
-                                                            th:selected="${typeStat.index == 0} ? 'selected' : ''">Typ
-                                                    </option>
-                                                </select>
+                                                <label>Typ wydarzenia</label>
+                                                <div class="form-group">
+                                                    <select id="selectType" class="selectpicker" data-live-search="true"
+                                                            th:field="*{type}">
+                                                        <option th:each="type : ${T(com.ediary.domain.Event$Type).values()}"
+                                                                th:value="${type}"
+                                                                th:text="${type.translatedName}"
+                                                                th:selected="${typeStat.index == 0} ? 'selected' : ''">Typ
+                                                        </option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group"></div>
                                     <div class="row">
-                                        <div class="col-md-1">
+                                        <div class="col-md-1"
+                                             th:class="${#fields.hasErrors('description')} ? 'col-md-1 has-error' : 'col-md-1'">
                                           <span class="input-group-text">
                                               <i class="material-icons">history_edu</i>
                                           </span>
                                         </div>
-                                        <div class="form-group">
-                                            <label class="bmd-label-floating">Opis</label>
-                                            <textarea class="form-control" th:field="*{description}" rows="3"
-                                                      maxlength="500"></textarea>
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating">Opis</label>
+                                                <textarea class="form-control" th:field="*{description}" rows="3"
+                                                          maxlength="255"></textarea>
+                                            </div>
+                                            <span class="help-block text-danger"
+                                                  th:if="${#fields.hasErrors('description')}">
+                                                <ul>
+                                                    <li th:each="err : ${#fields.errors('description')}" th:text="${err}"/>
+                                                </ul>
+                                            </span>
                                         </div>
                                     </div>
+
                                     <div class="form-group"></div>
                                     <div class="row">
                                         <div class="col-md-1">
@@ -162,15 +184,17 @@ The above copyright notice and this permission notice shall be included in all c
                                               <i class="material-icons">date_range</i>
                                           </span>
                                         </div>
+                                        <div class="col-md-8">
                                         <label>Data utworzenia: </label>
-                                        <div class="form-group">
-                                            <div class='input-group date' id="d">
-                                                <input type="text" class="form-control"
-                                                       th:value="${#dates.format(newEvent.createDate    , 'dd-MM-yyyy HH:mm')}"
-                                                       disabled/>
-                                                <input type="hidden" class="form-control" th:field="*{createDate}">
-                                                <span class="input-group-addon">
-                                            </span>
+                                            <div class="form-group">
+                                                <div class='input-group date' id="d">
+                                                    <input type="text" class="form-control"
+                                                           th:value="${#dates.format(newEvent.createDate    , 'dd-MM-yyyy HH:mm')}"
+                                                           disabled/>
+                                                    <input type="hidden" class="form-control" th:field="*{createDate}">
+                                                    <span class="input-group-addon">
+                                                </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -432,7 +456,8 @@ The above copyright notice and this permission notice shall be included in all c
         var dateValue = $('#dateValue').val();
 
         $('#todate').datetimepicker({
-            date: new Date(dateValue)
+            date: new Date(dateValue),
+            format: 'MM/DD/YYYY HH:mm'
         });
     });
 </script>

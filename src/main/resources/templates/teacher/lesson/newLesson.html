@@ -132,10 +132,10 @@ The above copyright notice and this permission notice shall be included in all c
                                                 <input type="text" class="form-control" th:field="*{name}">
                                                 <span class="help-block text-danger"
                                                       th:if="${#fields.hasErrors('name')}">
-                                                <ul>
-                                                    <li th:each="err : ${#fields.errors('name')}" th:text="${err}"/>
-                                                </ul>
-                                            </span>
+                                                    <ul>
+                                                        <li th:each="err : ${#fields.errors('name')}" th:text="${err}"/>
+                                                    </ul>
+                                                 </span>
                                             </div>
                                         </div>
                                     </div>
