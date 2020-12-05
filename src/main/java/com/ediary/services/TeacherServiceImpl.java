@@ -960,6 +960,12 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public ClassDto getSchoolClass(Long classId) {
+        return classToClassDto.convert(classRepository
+                .findById(classId).orElseThrow(() -> new NotFoundException("School class not found")));
+    }
+
+    @Override
     public List<ExtenuationDto> listExtenuations(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
 

@@ -80,6 +80,7 @@ public interface TeacherService {
     ClassDto getSchoolClassByTeacherAndSubject(Long classId, Long subjectId, Long teacherId);
     Boolean subjectHasSchoolClass(Long subjectId, Long teacherId);
     List<ClassDto> listClassByTeacher(Long teacherId);
+    ClassDto getSchoolClass(Long classId);
 
 
     List<ExtenuationDto> listExtenuations(Long teacherId);

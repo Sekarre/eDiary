@@ -202,6 +202,7 @@ public class TeacherController {
         model.addAttribute("behavior", teacherService.initNewBehavior(teacherId));
         model.addAttribute("schoolClasses", teacherService.listAllClasses());
         model.addAttribute("students", teacherService.listStudentsBySchoolClassId(classId));
+        model.addAttribute("selectedClass", teacherService.getSchoolClass(classId));
 
         return "/teacher/newBehavior";
     }
@@ -224,12 +225,12 @@ public class TeacherController {
     @TeacherPermission
     @PostMapping("/{teacherId}/behavior/new")
     public String processNewBehavior(@PathVariable Long teacherId,
-                                     @Valid @ModelAttribute BehaviorDto behaviorDto,
-                                     BindingResult result) {
+                                     @Valid @ModelAttribute("behavior") BehaviorDto behaviorDto,
+                                     BindingResult result, Model model) {
 
         if (result.hasErrors()) {
-            //TODO
-            return "/";
+            model.addAttribute("schoolClasses", teacherService.listAllClasses());
+            return "/teacher/newBehavior";
         } else {
             teacherService.saveBehavior(behaviorDto);
             return "redirect:/teacher/" + teacherId + "/behavior";
