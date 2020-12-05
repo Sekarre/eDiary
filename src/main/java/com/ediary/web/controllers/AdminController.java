@@ -125,12 +125,15 @@ public class AdminController {
     public String updateUser(@PathVariable Long userId,
                              @RequestParam(name = "selectedRoles", required = false) List<Long> rolesId,
                              @RequestParam(name = "selectedStudents", required = false) List<Long> selectedStudentsForParent,
-                             @Valid @ModelAttribute UserDto userDto,
-                             BindingResult result) {
+                             @Valid @ModelAttribute("editUser") UserDto userDto,
+                             BindingResult result, Model model) {
 
         if (result.hasErrors()) {
-            //todo: view path
-            return "";
+            model.addAttribute("roles", adminService.getAllRoles());
+            model.addAttribute("ownedRoles", adminService.getUser(userId).getRoles().stream().map(RoleDto::getName).collect(Collectors.toList()));
+            model.addAttribute("students", adminService.getAllStudentsWithoutParent());
+            userDto.setId(userId);
+            return "admin/editUser";
         }
 
         userDto.setId(userId);

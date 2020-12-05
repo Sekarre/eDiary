@@ -115,24 +115,6 @@ public class AdminControllerTest {
         assertTrue(adminService.deleteUser(userId));
     }
 
-    //TODO
-//    @Test
-//    void updateUser() throws Exception {
-//        Long userId = 1L;
-//
-//        UserDto userDto = UserDto.builder().id(userId).build();
-//        when(adminService.updateUser(any(), any(), anyList())).thenReturn(userDto);
-//
-//        mockMvc.perform(post("/admin/users/" + userId + "/update")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(AbstractAsJsonControllerTest.asJsonString(userDto))
-//                .param("roleId", "1")
-//                .param("selectedStudents", "1"))
-//                .andExpect(status().is3xxRedirection())
-//                .andExpect(view().name("redirect:/admin/users/"));
-//
-//        assertNotNull(adminService.updateUser(any(), any(), anyList()));
-//    }
 
     @Test
     void deleteRole() throws Exception {
