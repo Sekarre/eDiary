@@ -33,19 +33,19 @@ public class Student {
     private Parent parent;
 
     @Singular
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "Student_has_StudentCouncil",
             joinColumns = {@JoinColumn(name = "student_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "studentCouncil_id", referencedColumnName = "id")})
     private Set<StudentCouncil> studentCouncils;
 
-    @OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
     private Set<Attendance> attendance;
 
-    @OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
     private Set<Grade> grades;
 
-    @OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
     private Set<Behavior> behaviors;
 
 

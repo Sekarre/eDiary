@@ -18,7 +18,7 @@ public class StudentCouncil {
     private Long id;
 
     @Singular
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "Student_has_StudentCouncil",
             joinColumns = {@JoinColumn(name = "studentCouncil_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "student_id", referencedColumnName = "id")})

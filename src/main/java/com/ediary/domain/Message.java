@@ -33,7 +33,7 @@ public class Message {
 
 
     @Singular
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "Message_has_User",
             joinColumns = {@JoinColumn(name = "Message_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "User_id", referencedColumnName = "id")})

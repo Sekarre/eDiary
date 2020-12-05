@@ -23,31 +23,31 @@ public class Teacher {
     private User user;
 
 
-    @OneToOne(mappedBy = "teacher", fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "teacher", fetch = FetchType.LAZY)
     private Class schoolClass;
 
-    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
     private Set<Grade> grades;
 
-    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
     private Set<Subject> subjects;
 
-    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
     private Set<Event> events;
 
-    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
     private Set<SchoolPeriod> schoolPeriods;
 
-    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
     private Set<StudentCard> studentCards;
 
-    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
     private Set<Behavior> behaviors;
 
-    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
     private Set<Report> teacherReports;
 
-    @OneToMany(mappedBy = "headmaster", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "headmaster", fetch = FetchType.LAZY)
     private Set<Report> headmasterReports;
 
 }

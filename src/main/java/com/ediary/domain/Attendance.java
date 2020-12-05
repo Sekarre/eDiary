@@ -55,7 +55,7 @@ public class Attendance {
     private Student student;
 
     @Singular
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name = "Extenuation_has_Attendance",
             joinColumns = {@JoinColumn(name = "Attendance_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "Extenuation_id", referencedColumnName = "id")})

@@ -23,14 +23,14 @@ public class Parent {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private Set<Student> students;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private Set<Extenuation> extenuations;
 
     @Singular
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "ParentCouncil_has_Parent",
             joinColumns = {@JoinColumn(name = "Parent_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "ParentCouncil_id", referencedColumnName = "id")})

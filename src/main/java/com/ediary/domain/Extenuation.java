@@ -31,7 +31,7 @@ public class Extenuation {
     private Parent parent;
 
     @Singular
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name = "Extenuation_has_Attendance",
             joinColumns = {@JoinColumn(name = "Extenuation_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "Attendance_id", referencedColumnName = "id")})

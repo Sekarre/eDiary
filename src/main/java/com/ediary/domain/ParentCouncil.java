@@ -21,7 +21,7 @@ public class ParentCouncil {
     private Class schoolClass;
 
     @Singular
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "ParentCouncil_has_Parent",
             joinColumns = {@JoinColumn(name = "ParentCouncil_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "Parent_id", referencedColumnName = "id")})

@@ -31,18 +31,18 @@ public class Class {
     @JoinColumn(name = "parentCouncil_id")
     private ParentCouncil parentCouncil;
 
-    @OneToMany(mappedBy = "schoolClass", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "schoolClass", fetch = FetchType.LAZY)
     private Set<Student> students;
 
-    @OneToMany(mappedBy = "schoolClass", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "schoolClass", fetch = FetchType.LAZY)
     private Set<Event> events;
 
-    @OneToMany(mappedBy = "schoolClass", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "schoolClass", fetch = FetchType.LAZY)
     private Set<SchoolPeriod> schoolPeriods;
 
-    @OneToMany(mappedBy = "schoolClass", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "schoolClass", fetch = FetchType.LAZY)
     private Set<Subject> subjects;
 
-    @OneToMany(mappedBy = "schoolClass", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "schoolClass", fetch = FetchType.LAZY)
     private Set<Lesson> lessons;
 }
