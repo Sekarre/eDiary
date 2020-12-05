@@ -16,7 +16,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -181,7 +180,7 @@ public class TeacherController {
     public String getAllBehaviorsByTeacher(@PathVariable Long teacherId, Model model) {
 
         model.addAttribute("behaviors", teacherService.listBehaviors(teacherId));
-        return "/teacher/behavior";
+        return "/teacher/behavior/behavior";
     }
 
     @TeacherPermission
@@ -191,7 +190,7 @@ public class TeacherController {
         model.addAttribute("behavior", teacherService.initNewBehavior(teacherId));
         model.addAttribute("schoolClasses", teacherService.listAllClasses());
 
-        return "/teacher/newBehavior";
+        return "/teacher/behavior/newBehavior";
     }
 
     @TeacherPermission
@@ -204,7 +203,7 @@ public class TeacherController {
         model.addAttribute("students", teacherService.listStudentsBySchoolClassId(classId));
         model.addAttribute("selectedClass", teacherService.getSchoolClass(classId));
 
-        return "/teacher/newBehavior";
+        return "/teacher/behavior/newBehavior";
     }
 
     @TeacherPermission
@@ -218,7 +217,7 @@ public class TeacherController {
         model.addAttribute("schoolClasses", teacherService.listAllClasses());
         model.addAttribute("students", teacherService.listStudentsBySchoolClassId(classId));
 
-        return "/teacher/newBehavior";
+        return "/teacher/behavior/newBehavior";
     }
 
 
@@ -230,7 +229,7 @@ public class TeacherController {
 
         if (result.hasErrors()) {
             model.addAttribute("schoolClasses", teacherService.listAllClasses());
-            return "/teacher/newBehavior";
+            return "/teacher/behavior/newBehavior";
         } else {
             teacherService.saveBehavior(behaviorDto);
             return "redirect:/teacher/" + teacherId + "/behavior";
@@ -258,6 +257,7 @@ public class TeacherController {
         }
     }
 
+    //no needed
     @TeacherPermission
     @PostMapping("/{teacherId}/behavior/update")
     public String updatePatchBehavior(@PathVariable Long teacherId,

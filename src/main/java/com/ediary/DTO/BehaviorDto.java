@@ -19,7 +19,7 @@ public class BehaviorDto {
 
     private Date date;
 
-    @Size(max = 255)
+    @Size(max = 400)
     private String content;
 
     @NotNull

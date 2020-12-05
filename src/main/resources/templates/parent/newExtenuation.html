@@ -61,7 +61,7 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <form method="POST"  th:action="@{/parent/{parentId}/{studentId}/attendance/extenuation/save(parentId=${parent.id}, studentId=${studentId})}">
+            <form method="POST" th:object="${extenuation}" th:action="@{/parent/{parentId}/{studentId}/attendance/extenuation/save(parentId=${parent.id}, studentId=${studentId})}">
                 <div class="container-fluid">
                     <div class="card">
                         <div class="card">
@@ -71,9 +71,15 @@ The above copyright notice and this permission notice shall be included in all c
                             <div class="form-group">
                                 <div class="col-md-12">
                                     <label for="exampleFormControlTextarea1">Wyjaśnienie: </label>
-                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" th:field="*{extenuation.description}"></textarea>
+                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"  th:field="*{description}"></textarea>
                                 </div>
                             </div>
+                            <span class="help-block text-danger"
+                                  th:if="${error == true}">
+                                <ul>
+                                    <li th:text="'Treść nie może być dłuższa niż 400 znaków.'"/>
+                                </ul>
+                             </span>
 
                             <div class="card-body">
                                 <h4>Wybrane nieobecności: </h4>
@@ -115,7 +121,6 @@ The above copyright notice and this permission notice shall be included in all c
     </div>
 </div>
 
-<!--<form method="post" th:object="${attendances}" th:action="@{/parent/{parentId}/{studentId}/attendance/save(parentId=${parent.id}, studentId=${attendances?.get(0).studentId}}">-->
 
 <!--   Core JS Files   -->
 <script th:src="@{/js/core/jquery.min.js}"></script>
