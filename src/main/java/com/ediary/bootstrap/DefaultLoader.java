@@ -33,7 +33,7 @@ import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
-//@Component
+@Component
 public class DefaultLoader implements CommandLineRunner {
 
     private final AddressRepository addressRepository;
@@ -684,7 +684,7 @@ public class DefaultLoader implements CommandLineRunner {
     private void createLessons() {
         String[] lessonNames = {"Dodawanie", "Dzielenie", "Mnożenie", "Odejmowanie"};
         int[] schoolClassIndexes = {0, 0, 0, 0};
-        Attendance.Status status[] = {Attendance.Status.PRESENT, Attendance.Status.PRESENT, Attendance.Status.LATE, Attendance.Status.UNEXCUSED};
+        Attendance.Status status[] = {Attendance.Status.PRESENT, Attendance.Status.ABSENT, Attendance.Status.ABSENT, Attendance.Status.UNEXCUSED};
 
         Long studentId = studentRepository
                 .findByUserId(userRepository.findByFirstNameAndLastName(studentNames[0], studentLastNames[0]).getId()).getId();

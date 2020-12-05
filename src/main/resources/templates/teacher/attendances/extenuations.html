@@ -72,7 +72,7 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="card">
                             <div class="card-header card-header-text card-header-primary">
                                 <div class="card-text">
-                                    <h4 class="card-title" th:text="'Status:&nbsp;&nbsp;&nbsp;' + ${extenuation?.status}"></h4>
+                                    <h4 class="card-title" th:text="'Status:&nbsp;&nbsp;&nbsp;' + ${extenuation?.status?.getTranslatedName()}"></h4>
                                     <form th:action="@{'/teacher/' + ${teacher.id} + '/attendances/extenuation'}" method="post">
                                             <button class="submit btn btn-primary  btn-round" name="reject">
                                                 <i class="material-icons">highlight_off</i>

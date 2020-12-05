@@ -18,9 +18,22 @@ public class Extenuation {
     private Long id;
 
     public enum Status {
-        SENT, ACCEPT, REJECT
+        SENT("Wysłane"),
+        ACCEPT("Zaakceptowane"),
+        REJECT("Odrzucone");
+
+        private final String translatedName;
+
+        Status(String translatedName) {
+            this.translatedName = translatedName;
+        }
+
+        public String getTranslatedName() {
+            return translatedName;
+        }
     }
 
+    @Lob
     private String description;
 
     @Enumerated(value = EnumType.STRING)

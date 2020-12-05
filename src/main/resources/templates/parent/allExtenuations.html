@@ -68,7 +68,7 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="card">
                             <div class="card-header card-header-text card-header-primary">
                                 <div class="card-text">
-                                    <h4 class="card-title" th:text="'Status:&nbsp;&nbsp;&nbsp;' + ${extenuation?.status}"></h4>
+                                    <h4 class="card-title" th:text="'Status:&nbsp;&nbsp;&nbsp;' + ${extenuation?.status?.getTranslatedName()}"></h4>
                                 </div>
                             </div>
                             <div class="card-body">
