@@ -60,8 +60,12 @@ The above copyright notice and this permission notice shall be included in all c
         <!-- End Navbar -->
 
         <div class="content">
-
-                <div class="col-md-12">
+            <div th:if="${schoolClassPresent == false}" class="navbar-wrapper">
+                <div class="d-flex justify-content-center">
+                    <h2 class="navbar-brand">Przedmiot nie został przypisany do żadnej klasy.</h2>
+                </div>
+            </div>
+                <div class="col-md-12" th:if="${schoolClassPresent == true}">
                     <div class="card">
                         <a th:href="@{'/teacher/' + ${teacherId} + '/lesson/subject/' + ${subjectId} + '/events'}">
                         <div class="card-header card-header-icon card-header-rose">
@@ -71,13 +75,12 @@ The above copyright notice and this permission notice shall be included in all c
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">Terminarz klasy</h3>
-<!--                            Można dać opis-->
                         </div>
                         </a>
                     </div>
                 </div>
 
-            <div th:if="${lessons == null || lessons?.size() == 0}" class="navbar-wrapper">
+            <div th:if="${lessons == null || lessons?.size() == 0 && schoolClassPresent == true}" class="navbar-wrapper">
                 <div class="d-flex justify-content-center">
                     <h2 class="navbar-brand">Nie znaleziono żadnych lekcji</h2>
                         <a th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/new(teacherId=${teacherId}, subjectId=${subjectId})}">
@@ -87,7 +90,7 @@ The above copyright notice and this permission notice shall be included in all c
                         </a>
                 </div>
             </div>
-            <div class="container-fluid" th:if="${lessons != null && lessons?.size() > 0}">
+            <div class="container-fluid" th:if="${lessons != null && lessons?.size() > 0 && schoolClassPresent == true}">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <div class="float-left">

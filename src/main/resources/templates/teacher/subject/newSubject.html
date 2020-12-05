@@ -62,49 +62,67 @@ The above copyright notice and this permission notice shall be included in all c
       <div class="container-fluid">
         <div class="row justify-content-md-center">
           <div class="col-lg-10 col-md-10 col-sm-12">
-
             <div class="card">
               <div class="card-header card-header-primary">
                 <h4 class="card-title">Dodaj przedmiot</h4>
               </div>
               <div class="card-body">
                   <form th:object="${subject}" th:action="@{'/teacher/' + ${teacher.id} + '/subject/new'}" method="post">
-              </div>
+                    <div class="form-group"></div>
+
               <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-1"
+                     th:class="${#fields.hasErrors('name')} ? 'col-md-1 has-error' : 'col-md-1'">
+                    <span class="input-group-text">
+                        <i class="material-icons">history_edu</i>
+                    </span>
+                </div>
+                <div class="col-md-8">
                   <div class="form-group">
                     <label class="bmd-label-floating">Nazwa</label>
-                    <input type="text" class="form-control" th:field="*{subject.name}">
+                    <input type="text" class="form-control" th:field="*{name}">
+                    <span class="help-block text-danger"
+                          th:if="${#fields.hasErrors('name')}">
+                        <ul>
+                            <li th:each="err : ${#fields.errors('name')}" th:text="${err}"/>
+                        </ul>
+                     </span>
                   </div>
                 </div>
               </div>
 
+              <div class="form-group"></div>
+
               <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-1">
+                    <span class="input-group-text">
+                        <i class="material-icons">person_search</i>
+                    </span>
+                </div>
+                <div class="col-md-8">
                   <div class="form-group">
                     <label>Klasa</label>
                     <div class="form-group">
-                      <select id="selectClass" class="selectpicker" data-live-search="true">
-                        <option>BRAK</option>
+                      <select id="selectClass" class="selectpicker" data-live-search="true" th:field="*{classId}">
+                        <option th:value="${null}">BRAK</option>
                         <option th:each="schoolClass : ${schoolClasses}"
                                 th:value="${schoolClass.id}"
-                                th:text="${schoolClass.name}">Klasa</option>
+                                th:text="${schoolClass.name}" th:selected="${schoolClassStat.index == 0}">Klasa</option>
                       </select>
                     </div>
                   </div>
                 </div>
               </div>
-              </br>
-              </br>
+             <div class="form-group"></div>
 
-              <input type="hidden" th:field="*{subject.id}" />
-              <input type="hidden" th:field="*{subject.teacherId}" />
-              <input type="hidden" id="classIdInput" th:field="*{subject.classId}" />
+              <input type="hidden" th:field="*{id}" />
+              <input type="hidden" th:field="*{teacherId}" />
 
-              <button type="submit" class="btn btn-primary pull-right">Wyślij</button>
+              <button type="submit" class="btn btn-primary pull-right">Stwórz</button>
               <div class="clearfix"></div>
               </form>
 
+            </div>
             </div>
           </div>
         </div>
@@ -341,7 +359,6 @@ The above copyright notice and this permission notice shall be included in all c
     $('#selectClass').on('change', function(){
       var selected = $(this).find("option:selected").val();
 
-      $('#classIdInput').val(selected);
       $('#selectClass').selectpicker("refresh");
     });
 

@@ -67,7 +67,7 @@ public class DeputyHeadController {
 
     @DeputyHeadHeadmasterPermission
     @PostMapping("/newClass/formTutor")
-    public String processNewClass(@Valid @ModelAttribute ClassDto schoolClass, Model model,
+    public String processNewClass(@ModelAttribute ClassDto schoolClass, Model model,
                                   @RequestParam(name = "page", required = false) Optional<Integer> page) {
 
         model.addAttribute("page", page);
@@ -78,14 +78,19 @@ public class DeputyHeadController {
 
     @DeputyHeadHeadmasterPermission
     @PostMapping("/newClass/name")
-    public String processNewClassName(@Valid @ModelAttribute ClassDto schoolClass, BindingResult result) {
+    public String processNewClassName(@Valid @ModelAttribute("schoolClass") ClassDto schoolClass, BindingResult result,
+                                      Model model) {
 
         if (result.hasErrors()) {
-            //todo
             return "deputyHead/newClassName";
         }
 
-        deputyHeadService.saveClass(schoolClass);
+        if (deputyHeadService.schoolClassNameIsUnique(schoolClass.getName())) {
+            deputyHeadService.saveClass(schoolClass);
+        } else {
+            model.addAttribute("uniqueName", Boolean.FALSE);
+            return "deputyHead/newClassName";
+        }
 
         return "redirect:/deputyHead/classes";
     }

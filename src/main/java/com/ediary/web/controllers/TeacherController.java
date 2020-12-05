@@ -16,7 +16,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -181,7 +180,7 @@ public class TeacherController {
     public String getAllBehaviorsByTeacher(@PathVariable Long teacherId, Model model) {
 
         model.addAttribute("behaviors", teacherService.listBehaviors(teacherId));
-        return "/teacher/behavior";
+        return "/teacher/behavior/behavior";
     }
 
     @TeacherPermission
@@ -191,7 +190,7 @@ public class TeacherController {
         model.addAttribute("behavior", teacherService.initNewBehavior(teacherId));
         model.addAttribute("schoolClasses", teacherService.listAllClasses());
 
-        return "/teacher/newBehavior";
+        return "/teacher/behavior/newBehavior";
     }
 
     @TeacherPermission
@@ -202,8 +201,9 @@ public class TeacherController {
         model.addAttribute("behavior", teacherService.initNewBehavior(teacherId));
         model.addAttribute("schoolClasses", teacherService.listAllClasses());
         model.addAttribute("students", teacherService.listStudentsBySchoolClassId(classId));
+        model.addAttribute("selectedClass", teacherService.getSchoolClass(classId));
 
-        return "/teacher/newBehavior";
+        return "/teacher/behavior/newBehavior";
     }
 
     @TeacherPermission
@@ -217,19 +217,19 @@ public class TeacherController {
         model.addAttribute("schoolClasses", teacherService.listAllClasses());
         model.addAttribute("students", teacherService.listStudentsBySchoolClassId(classId));
 
-        return "/teacher/newBehavior";
+        return "/teacher/behavior/newBehavior";
     }
 
 
     @TeacherPermission
     @PostMapping("/{teacherId}/behavior/new")
     public String processNewBehavior(@PathVariable Long teacherId,
-                                     @Valid @ModelAttribute BehaviorDto behaviorDto,
-                                     BindingResult result) {
+                                     @Valid @ModelAttribute("behavior") BehaviorDto behaviorDto,
+                                     BindingResult result, Model model) {
 
         if (result.hasErrors()) {
-            //TODO
-            return "/";
+            model.addAttribute("schoolClasses", teacherService.listAllClasses());
+            return "/teacher/behavior/newBehavior";
         } else {
             teacherService.saveBehavior(behaviorDto);
             return "redirect:/teacher/" + teacherId + "/behavior";
@@ -244,21 +244,21 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/behavior";
     }
 
+    //no needed
     @PutMapping("/{teacherId}/behavior/update")
     public String updatePutBehavior(@PathVariable Long teacherId,
                                     @Valid @RequestBody BehaviorDto behaviorDto, BindingResult result) {
         if (result.hasErrors()) {
-            //TODO
             return "/";
         } else {
             BehaviorDto behavior = teacherService.updatePutBehavior(behaviorDto);
-            //TODO zalezy od widoku
             //return "/" + teacherId + "/behavior/" + behavior.getId();
             return "/teacher/" + teacherId + "/behavior";
         }
     }
 
-    @TeacherPermission //todo: hmm
+    //no needed
+    @TeacherPermission
     @PostMapping("/{teacherId}/behavior/update")
     public String updatePatchBehavior(@PathVariable Long teacherId,
                                       @Valid @RequestBody BehaviorDto behaviorDto, BindingResult result) {
@@ -491,6 +491,7 @@ public class TeacherController {
         model.addAttribute("page", page);
         model.addAttribute("lessons", teacherService.listLessons(page.orElse(0), pageSize, teacherId, subjectId));
         model.addAttribute("subjectId", subjectId);
+        model.addAttribute("schoolClassPresent", teacherService.subjectHasSchoolClass(subjectId, teacherId));
 
         return "/teacher/lesson/allLessons";
     }
@@ -530,6 +531,8 @@ public class TeacherController {
         model.addAttribute("events", teacherService.listClassEvents(teacherId, subjectId, page.orElse(0), 10, false));
         model.addAttribute("subjectId", subjectId);
         model.addAttribute("page", page);
+        model.addAttribute("schoolClassPresent", teacherService.subjectHasSchoolClass(subjectId, teacherId));
+
 
         return "/teacher/lesson/events";
     }
@@ -725,11 +728,11 @@ public class TeacherController {
     @TeacherPermission
     @PostMapping("/{teacherId}/subject/new")
     public String processNewSubject(@PathVariable Long teacherId,
-                                    @Valid @ModelAttribute SubjectDto subject,
-                                    BindingResult result) {
+                                    @Valid @ModelAttribute("subject") SubjectDto subject,
+                                    BindingResult result, Model model) {
         if (result.hasErrors()) {
-            //TODO
-            return "/";
+            model.addAttribute("schoolClasses", teacherService.listAllClasses());
+            return "/teacher/subject/newSubject";
         } else {
             teacherService.saveOrUpdateSubject(subject);
             return "redirect:/teacher/" + teacherId + "/subject";
@@ -755,16 +758,15 @@ public class TeacherController {
 
     }
 
+    //no needed
     @TeacherPermission
     @PutMapping("/{teacherId}/subject/update")
     public String updatePutSubject(@PathVariable Long teacherId,
                                    @Valid @RequestBody SubjectDto subjectDto, BindingResult result) {
         if (result.hasErrors()) {
-            //TODO
             return "/";
         } else {
             Subject subject = teacherService.saveOrUpdateSubject(subjectDto);
-            //TODO zalezy od widoku
             return "redirect:/teacher/" + teacherId + "/subject";
         }
     }
@@ -773,15 +775,16 @@ public class TeacherController {
     @PostMapping("/{teacherId}/subject/{subjectId}/update")
     public String updatePatchSubject(@PathVariable Long teacherId,
                                      @PathVariable Long subjectId,
-                                     @Valid @ModelAttribute SubjectDto subjectDto,
-                                     BindingResult result) {
+                                     @Valid @ModelAttribute("subject") SubjectDto subjectDto,
+                                     BindingResult result, Model model) {
         if (result.hasErrors()) {
-            //TODO
-            return "/";
+            model.addAttribute("schoolClasses", teacherService.listAllClasses());
+            return "/teacher/subject/updateSubject";
+
         } else {
             subjectDto.setId(subjectId);
             SubjectDto subject = teacherService.updatePatchSubject(subjectDto);
-            //TODO zalezy od widoku
+
             return "redirect:/teacher/" + teacherId + "/subject";
         }
     }
@@ -812,12 +815,12 @@ public class TeacherController {
                                   @Valid @RequestBody TopicDto topicDto,
                                   BindingResult result) {
         if (result.hasErrors()) {
-            //TODO
-            return "/";
-        } else {
-            teacherService.saveTopic(topicDto);
             return "redirect:/teacher/" + teacherId + "/subject";
         }
+
+        teacherService.saveTopic(topicDto);
+        return "redirect:/teacher/" + teacherId + "/subject";
+
     }
 
     @TeacherPermission
@@ -830,6 +833,7 @@ public class TeacherController {
         return "redirect:/teacher/" + teacherId + "/subject/" + subjectId;
     }
 
+    //no needed
     @TeacherPermission
     @PutMapping("/{teacherId}/subject/{subjectId}/topic/{topicId}")
     public String updatePutTopic(@PathVariable Long teacherId,
@@ -855,13 +859,14 @@ public class TeacherController {
                                    BindingResult result) {
 
         if (result.hasErrors()) {
-            //TODO
-            return "/";
-        } else {
-            topicDto.setId(topicId);
-            TopicDto topic = teacherService.updatePatchTopic(topicDto);
             return "redirect:/teacher/" + teacherId + "/subject/" + subjectId;
+
         }
+
+        topicDto.setId(topicId);
+        TopicDto topic = teacherService.updatePatchTopic(topicDto);
+        return "redirect:/teacher/" + teacherId + "/subject/" + subjectId;
+
     }
 
     //FormTutor
@@ -956,8 +961,7 @@ public class TeacherController {
                                            @Valid @ModelAttribute(name = "studentCouncil") StudentCouncilDto studentCouncil,
                                            BindingResult result) {
         if (result.hasErrors()) {
-            //todo: path to view
-            return "";
+            return "redirect:/teacher/" + teacherId + "/formTutor/studentCouncil";
         }
 
         StudentCouncil savedStudentCouncil = formTutorService.saveStudentCouncil(teacherId, studentCouncil, studentsId);
@@ -970,8 +974,7 @@ public class TeacherController {
     @PostMapping("/{teacherId}/formTutor/studentCouncil/remove/{studentId}")
     public String removeStudentFromCouncil(@PathVariable Long teacherId,
                                            @PathVariable Long studentId,
-                                           @ModelAttribute StudentCouncilDto studentCouncilDto,
-                                           BindingResult result) {
+                                           @ModelAttribute StudentCouncilDto studentCouncilDto) {
 
         formTutorService.removeStudentFromCouncil(studentCouncilDto, teacherId, studentId);
 
@@ -1014,8 +1017,7 @@ public class TeacherController {
                                           @Valid @ModelAttribute ParentCouncilDto parentCouncil,
                                           BindingResult result) {
         if (result.hasErrors()) {
-            //todo: path to view
-            return "";
+            return "redirect:/teacher/" + teacherId + "/formTutor/parentCouncil";
         }
 
         ParentCouncil savedParentCouncil = formTutorService.saveParentCouncil(teacherId, parentCouncil, parentsId);
@@ -1028,8 +1030,7 @@ public class TeacherController {
     @PostMapping("/{teacherId}/formTutor/parentCouncil/remove/{parentId}")
     public String removeParentFromCouncil(@PathVariable Long teacherId,
                                           @PathVariable Long parentId,
-                                          @ModelAttribute ParentCouncilDto parentCouncilDto,
-                                          BindingResult result) {
+                                          @ModelAttribute ParentCouncilDto parentCouncilDto) {
 
         formTutorService.removeParentFromCouncil(parentCouncilDto, teacherId, parentId);
 

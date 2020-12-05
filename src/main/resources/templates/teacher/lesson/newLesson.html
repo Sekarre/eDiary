@@ -68,7 +68,12 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <div class="container-fluid">
+            <div th:if="${newLesson == null}" class="navbar-wrapper">
+                <div class="d-flex justify-content-center">
+                    <h2 class="navbar-brand">Przedmiot nie został przypisany do żadnej klasy.</h2>
+                </div>
+            </div>
+            <div class="container-fluid" th:if="${newLesson != null}">
                 <div class="row justify-content-md-center">
 
                     <div class="col-lg-10">
@@ -116,6 +121,8 @@ The above copyright notice and this permission notice shall be included in all c
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="form-group"></div>
+
                                     <div class="row">
                                         <div class="col-md-1"
                                              th:class="${#fields.hasErrors('name')} ? 'col-md-1 has-error' : 'col-md-1'">
@@ -123,9 +130,6 @@ The above copyright notice and this permission notice shall be included in all c
                                               <i class="material-icons">history_edu</i>
                                           </span>
                                         </div>
-                                        <div class="form-group"></div>
-                                        <div class="form-group"></div>
-
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label class="bmd-label-floating">Nazwa</label>
@@ -142,7 +146,8 @@ The above copyright notice and this permission notice shall be included in all c
                                     <div class="form-group"></div>
 
                                     <div class="row">
-                                        <div class="col-md-1">
+                                        <div class="col-md-1"
+                                             th:class="${#fields.hasErrors('name')} ? 'col-md-1 has-error' : 'col-md-1'">
                                           <span class="input-group-text">
                                               <i class="material-icons">chrome_reader_mode</i>
                                           </span>
@@ -161,6 +166,12 @@ The above copyright notice and this permission notice shall be included in all c
                                                             Temat
                                                         </option>
                                                     </select>
+                                                    <span class="help-block text-danger"
+                                                          th:if="${#fields.hasErrors('topicId')}">
+                                                    <ul>
+                                                        <li th:each="err : ${#fields.errors('topicId')}" th:text="${err}"/>
+                                                    </ul>
+                                                 </span>
                                                 </div>
                                             </div>
                                         </div>

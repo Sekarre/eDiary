@@ -166,13 +166,14 @@ public class ParentController {
     @ParentReadStudentPermission
     @PostMapping("/{studentId}/attendance/extenuation/save")
     public String processNewExtenuation(@PathVariable Long studentId, @PathVariable Long parentId,
-                                        @Valid @ModelAttribute ExtenuationDto extenuation,
-                                        @RequestParam(name = "attId", required = false) List<Long> ids,
-                                        BindingResult result) {
+                                        @Valid @ModelAttribute("extenuation") ExtenuationDto extenuation,
+                                        BindingResult result,
+                                        @RequestParam(name = "attId", required = false) List<Long> ids, Model model) {
 
         if (result.hasErrors()) {
-            //todo:
-            return "";
+            model.addAttribute("extenuation", parentService.initNewExtenuation(ids, extenuation, parentId));
+            model.addAttribute("error", Boolean.TRUE);
+            return "parent/newExtenuation";
         }
 
         Extenuation ext = parentService.saveExtenuation(extenuation, parentId, ids);

@@ -106,6 +106,10 @@ public class TeacherServiceImpl implements TeacherService {
                 .findFirst()
                 .orElse(null);
 
+        if (schoolClass == null) {
+            return null;
+        }
+
         return lessonToLessonDto.convert(Lesson.builder()
                 .subject(subject)
                 .schoolClass(schoolClass)
@@ -752,6 +756,10 @@ public class TeacherServiceImpl implements TeacherService {
             throw new AccessDeniedException("Teacher -> Subject");
         }
 
+        if (subject.getSchoolClass() == null) {
+            return null;
+        }
+
         if (includeHistory) {
             pageable = PageRequest.of(page, size, Sort.by("date").descending());
             return eventRepository.findAllByTeacherIdAndSchoolClassIdAndDateBefore(teacherId, subject.getSchoolClass().getId(),
@@ -930,6 +938,13 @@ public class TeacherServiceImpl implements TeacherService {
                 .findById(classId).orElseThrow(() -> new NotFoundException("Class not found")));
     }
 
+    @Override
+    public Boolean subjectHasSchoolClass(Long subjectId, Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+        Subject subject = getSubjectById(subjectId);
+
+        return subject.getSchoolClass() != null;
+    }
 
     @Override
     public List<ClassDto> listClassByTeacher(Long teacherId) {
@@ -942,6 +957,12 @@ public class TeacherServiceImpl implements TeacherService {
                 .map(classToClassDto::convert)
                 .collect(Collectors.toList());
 
+    }
+
+    @Override
+    public ClassDto getSchoolClass(Long classId) {
+        return classToClassDto.convert(classRepository
+                .findById(classId).orElseThrow(() -> new NotFoundException("School class not found")));
     }
 
     @Override

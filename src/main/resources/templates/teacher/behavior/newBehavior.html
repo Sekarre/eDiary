@@ -70,24 +70,22 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                             <div class="card-body">
                                 <form th:object="${behavior}" th:action="@{'/teacher/' + ${teacherId} + '/behavior/new'}" method="post">
-                            </div>
-
-                            <div class="card-body">
-
+                            <div class="form-group"></div>
                             <div class="row">
-                                <div class="col-md-1">
+                                <div class="col-md-1"
+                                     th:class="${#fields.hasErrors('studentId')} ? 'col-md-1 has-error' : 'col-md-1'">
                                   <span class="input-group-text">
                                       <i class="material-icons">person_search</i>
                                   </span>
                                 </div>
-                                <div class="col-md-11">
+                                <div class="col-md-8">
                                     <div class="form-group">
-                                        <label class="bmd-label-floating">Wybierz [KLASA / UCZEŃ]</label>
+                                        <label class="bmd-label-static">Wybierz [KLASA / UCZEŃ]</label>
                                         <select id="selectClass" class="selectpicker" data-live-search="true">
                                             <option>Klasa</option>
                                             <option th:each="schoolClass : ${schoolClasses}"
                                                     th:value="${schoolClass.id}"
-                                                    th:text="${schoolClass.name}">Klasa</option>
+                                                    th:text="${schoolClass.name}" th:selected="${selectedClass != null && (schoolClass.id == selectedClass?.id)}">Klasa</option>
                                         </select>
                                         <select id="selectStudent" class="selectpicker" data-live-search="true">
                                             <option>Uczeń</option>
@@ -100,16 +98,24 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                             </br>
                             <div class="row">
-                                <div class="col-md-1">
+                                <div class="col-md-1"
+                                     th:class="${#fields.hasErrors('studentId')} ? 'col-md-1 has-error' : 'col-md-1'">
                                   <span class="input-group-text">
                                       <i class="material-icons">how_to_reg</i>
                                   </span>
                                 </div>
-                                <div class="col-md-11">
+                                <div class="col-md-8">
                                     <div class="form-group">
                                         <label class="bmd-label-floating">Uczeń</label>
-                                        <input disabled type="text" class="form-control" th:value="*{behavior.studentName}">
+                                        <input disabled type="text" class="form-control"  th:value="${behavior.studentName}"/>
+                                        <input type="hidden" class="form-control"  th:field="*{studentName}"/>
                                     </div>
+                                    <span class="help-block text-danger"
+                                          th:if="${#fields.hasErrors('studentId')}">
+                                        <ul>
+                                            <li th:each="err : ${#fields.errors('studentId')}" th:text="${err}"/>
+                                        </ul>
+                                     </span>
                                 </div>
                             </div>
                             </br>
@@ -125,7 +131,7 @@ The above copyright notice and this permission notice shall be included in all c
                                         <label class="bmd-label-floating">Typ Uwagi</label>
                                         <div class="form-check form-check-radio">
                                             <label class="form-check-label">
-                                                <input type="radio"  name="behaviorType" value="true" th:field="*{behavior.positive}" class="form-check-input">Pozytywna</input>
+                                                <input type="radio"  name="behaviorType" value="true" th:field="*{positive}" class="form-check-input">Pozytywna</input>
                                                 <span class="circle">
                                                     <span class="check"></span>
                                                 </span>
@@ -133,7 +139,7 @@ The above copyright notice and this permission notice shall be included in all c
                                         </div>
                                         <div class="form-check form-check-radio">
                                             <label class="form-check-label">
-                                                <input type="radio"  name="behaviorType" value="false" th:field="*{behavior.positive}" class="form-check-input">Negatywna</input>
+                                                <input type="radio"  name="behaviorType" value="false" th:field="*{positive}" class="form-check-input">Negatywna</input>
                                                 <span class="circle">
                                                 <span class="check"></span>
                                             </span>
@@ -144,28 +150,35 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                             </br>
                             <div class="row">
-                                <div class="col-md-1">
+                                <div class="col-md-1"
+                                     th:class="${#fields.hasErrors('content')} ? 'col-md-1 has-error' : 'col-md-1'">
                                   <span class="input-group-text">
                                       <i class="material-icons">history_edu</i>
                                   </span>
                                 </div>
-                                <div class="col-md-11">
+                                <div class="col-md-8">
                                     <div class="form-group">
                                         <label class="bmd-label-floating">Treść uwagi</label>
-                                        <textarea class="form-control" rows="5" th:field="*{behavior.content}"></textarea>
+                                        <textarea class="form-control" maxlength="400" rows="5" th:field="*{content}"></textarea>
+                                        <span class="help-block text-danger"
+                                              th:if="${#fields.hasErrors('content')}">
+                                            <ul>
+                                                <li th:each="err : ${#fields.errors('content')}" th:text="${err}"/>
+                                            </ul>
+                                         </span>
                                     </div>
                                 </div>
                             </div>
 
-                            <input type="hidden" th:field="*{behavior.id}" />
-                            <input type="hidden" th:field="*{behavior.positive}" />
-                            <input type="hidden" id="studentIdInput" th:field="*{behavior.studentId}" />
-                            <input type="hidden" id="teacherIdInput" th:field="*{behavior.teacherId}" />
+                            <input type="hidden" th:field="*{id}" />
+                            <input type="hidden" th:field="*{positive}" />
+                            <input type="hidden"  th:field="*{studentId}" />
+                            <input type="hidden" id="teacherIdInput" th:field="*{teacherId}" />
 
                             <button type="submit" class="btn btn-primary pull-right">Wystaw</button>
                             <div class="clearfix"></div>
-                            </form>
 
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -407,6 +420,8 @@ The above copyright notice and this permission notice shall be included in all c
             var studentId = $(this).find("option:selected").val();
             var classId = $(this).find("option:selected").val();
             var teacherId = $('#teacherIdInput').val();
+
+            $(this).find("studentId").val(studentId);
 
             location.href = "/teacher/" + teacherId + "/behavior/new/class/" + classId + "/student/" + studentId;
 

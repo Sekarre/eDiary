@@ -16,6 +16,8 @@ public interface DeputyHeadService {
     List<ClassDto> listAllClasses();
     ClassDto getSchoolClass(Long classId);
 
+    Boolean schoolClassNameIsUnique(String schoolClassName);
+
 
     ClassDto removeFormTutorFromClass(Long classId, Long teacherId);
     ClassDto removeStudentFromClass(Long classId, Long studentId);

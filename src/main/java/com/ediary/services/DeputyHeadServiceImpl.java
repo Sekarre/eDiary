@@ -71,9 +71,7 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
         if (schoolClass != null) {
             Teacher teacher = teacherRepository.findById(schoolClass.getTeacher().getId()).orElse(null);
 
-
-            if (classRepository.countAllByName(schoolClass.getName()).equals(0L)
-                    && teacher != null && teacher.getSchoolClass() == null) {
+            if (schoolClassNameIsUnique(schoolClass.getName()) && teacher != null && teacher.getSchoolClass() == null) {
 
                 User user = userRepository.findById(teacher.getUser().getId()).orElse(null);
                 Set<Role> roles = user.getRoles();
@@ -161,6 +159,11 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     @Override
     public ClassDto getSchoolClass(Long classId) {
         return classToClassDto.convert(getSchoolCLass(classId));
+    }
+
+    @Override
+    public Boolean schoolClassNameIsUnique(String schoolClassName) {
+        return classRepository.countAllByName(schoolClassName).equals(0L);
     }
 
     @Override
@@ -268,11 +271,17 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        return teacherRepository.findAllBySchoolClassIsNull(pageable)
-                .stream()
-                .sorted(Comparator.comparing(teacher -> teacher.getUser().getLastName()))
-                .map(teacherToTeacherDto::convert)
-                .collect(Collectors.toList());
+        List<Teacher> availableTeachers =
+                new ArrayList<>(teacherRepository.findAllBySchoolClassIsNullOrderByUser_LastName(pageable));
+
+        if (availableTeachers.size() != 0) {
+            return availableTeachers.stream()
+                    .map(teacherToTeacherDto::convert)
+                    .collect(Collectors.toList());
+
+        }
+
+        return null;
     }
 
     @Override

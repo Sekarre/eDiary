@@ -35,7 +35,6 @@ The above copyright notice and this permission notice shall be included in all c
 
     <div th:replace="fragments/sidebarTeacher :: sidebar"></div>
 
-
     <div class="main-panel">
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
@@ -57,13 +56,13 @@ The above copyright notice and this permission notice shall be included in all c
             <div class="container-fluid">
 
                         <div class="card">
-                            <div class="card-header card-header-primary float-left">
-                                <div class="card-header text-left float-left">
-                                    <h4 class="card-title ">Uwagi</h4>
+                            <div class="card-header card-header-primary">
+                                <div class="float-left">
+                                    <h3 class="card-title ">Uwagi</h3>
                                 </div>
-                                <div class="card-header text-right float-right">
-                                    <a class="text-right" th:href="@{'/teacher/' + ${teacher.id} + '/behavior/new'}">
-                                        <button rel="tooltip" class="btn btn-primary btn-success btn-fab-mini btn-round">
+                                <div class="float-right">
+                                    <a th:href="@{'/teacher/' + ${teacher.id} + '/behavior/new'}">
+                                        <button rel="tooltip" class="btn btn-success add btn-fab  btn-primary btn-round">
                                             <i class="material-icons">add</i>
                                         </button>
                                     </a>
@@ -96,7 +95,7 @@ The above copyright notice and this permission notice shall be included in all c
                                             <td th:text="${behavior?.positive} ? 'Pozytywna' : 'Negatywna' " >
                                                 Typ uwagi
                                             </td>
-                                            <td> <div th:id="@{'content' + ${behavior.id}}" class="textOverflowCustom" th:text="${behavior?.content}">
+                                            <td> <div th:id="'content' + ${behavior.id}" class="textOverflowCustom" th:text="${behavior?.content}">
                                                     </div>
                                             </td>
                                             <td class="text-right">
@@ -119,8 +118,6 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                         </div>
             </div>
-            <footer class="footer">
-            </footer>
 
             <!-- Modal -->
             <div class="modal fade" id="deleteBehaviorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -145,9 +142,9 @@ The above copyright notice and this permission notice shall be included in all c
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
+</div>
 
     <!--   Core JS Files   -->
     <script th:src="@{/js/core/jquery.min.js}"></script>

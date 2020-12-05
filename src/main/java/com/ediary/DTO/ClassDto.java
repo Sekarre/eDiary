@@ -1,7 +1,10 @@
 package com.ediary.DTO;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Setter
@@ -12,11 +15,15 @@ import java.util.List;
 public class ClassDto {
 
     private Long id;
+
+    @NotNull
+    @Size(min = 2, max = 20)
     private String name;
 
     private Long studentCouncilId;
 
     private String teacherName;
+    @NotNull
     private Long teacherId;
 
     private Long parentCouncilId;

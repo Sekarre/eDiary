@@ -88,7 +88,7 @@ The above copyright notice and this permission notice shall be included in all c
             <div th:if="${events == null || events.size() == 0}" class="navbar-wrapper">
                 <div class="d-flex justify-content-center">
                     <h2 class="navbar-brand">Nie znaleziono żadnych nadchodzących wydarzeń&nbsp;&nbsp;
-                        <a th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/newEvent(teacherId=${teacherId}, subjectId=${subjectId})}">
+                        <a th:if="${schoolClassPresent == true}" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/newEvent(teacherId=${teacherId}, subjectId=${subjectId})}">
                             <button rel="tooltip" class="btn btn-success add btn-fab btn-fab-mini btn-primary btn-round">
                                 <i class="material-icons">add</i>
                             </button>
