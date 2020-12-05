@@ -69,21 +69,26 @@ The above copyright notice and this permission notice shall be included in all c
                 <h4 class="card-title">Dodaj użytkownika</h4>
               </div>
               <div class="card-body">
-                  <form th:object="${newUser}" th:action="@{'/admin/newUser'}" method="post">
+                  <form th:id="submitForm" th:object="${newUser}" th:action="@{'/admin/newUser'}" method="post">
               </div>
               <div class="card-body">
 
-              <div class="row">
-                <div class="col-md-1">
-                  <span class="input-group-text">
-                      <i class="material-icons">person</i>
-                  </span>
+            <div class="row">
+              <div class="col-md-1">
+                <span class="input-group-text">
+                    <i class="material-icons">person</i>
+                </span>
+              </div>
+              <div class="col-md-11">
+                <div class="form-group">
+                  <label class="bmd-label-floating">Imię i nazwisko</label>
+                  <input type="text" class="form-control" th:field="*{newUser.name}">
+                  <span class="text-danger" th:if="${#fields.hasErrors('newUser.Name')}">
+                  <ul>
+                      <li th:each="err : ${#fields.errors('newUser.Name')}" th:text="${err}"/>
+                  </ul>
+                </span>
                 </div>
-                <div class="col-md-11">
-                  <div class="form-group">
-                    <label class="bmd-label-floating">Imię i nazwisko</label>
-                    <input type="text" class="form-control" th:field="*{newUser.name}">
-                  </div>
                 </div>
               </div>
 
@@ -97,6 +102,11 @@ The above copyright notice and this permission notice shall be included in all c
                   <div class="form-group">
                     <label class="bmd-label-floating">Nazwa użytkownika</label>
                     <input type="text" class="form-control" th:field="*{newUser.username}">
+                    <span class="text-danger" th:if="${#fields.hasErrors('newUser.username')}">
+                      <ul>
+                          <li th:each="err : ${#fields.errors('newUser.username')}" th:text="${err}"/>
+                      </ul>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -110,6 +120,11 @@ The above copyright notice and this permission notice shall be included in all c
                   <div class="form-group">
                     <label class="bmd-label-floating">Hasło</label>
                     <input type="password" class="form-control" th:field="*{newUser.password}">
+                    <span class="text-danger" th:if="${#fields.hasErrors('newUser.password')}">
+                      <ul>
+                          <li th:each="err : ${#fields.errors('newUser.password')}" th:text="${err}"/>
+                      </ul>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -166,7 +181,14 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
               </div>
 
-              <div class="row"><div class="col-md-12"></br></div></div>
+              <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-12">
+                <span id="noRolesError" class="text-danger">
+                  <p>Nie wybrano roli</p>
+                </span>
+                </br></div>
+              </div>
 
               <div class="row">
                 <div class="col-md-12">
@@ -188,6 +210,11 @@ The above copyright notice and this permission notice shall be included in all c
                   <div class="form-group">
                     <label class="bmd-label-floating">Ulica</label>
                     <input type="text" class="form-control" id="street" name="address.street" th:value="*{newUser.address.street}">
+                    <span class="text-danger" th:if="${#fields.hasErrors('newUser.address.street')}">
+                      <ul>
+                          <li th:each="err : ${#fields.errors('newUser.address.street')}" th:text="${err}"/>
+                      </ul>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -202,6 +229,11 @@ The above copyright notice and this permission notice shall be included in all c
                   <div class="form-group">
                     <label class="bmd-label-floating">Miasto</label>
                     <input type="text" class="form-control" id="city" name="address.city" th:value="*{newUser.address.city}">
+                    <span class="text-danger" th:if="${#fields.hasErrors('newUser.address.city')}">
+                      <ul>
+                          <li th:each="err : ${#fields.errors('newUser.address.city')}" th:text="${err}"/>
+                      </ul>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -216,6 +248,11 @@ The above copyright notice and this permission notice shall be included in all c
                   <div class="form-group">
                     <label class="bmd-label-floating">Województwo</label>
                     <input type="text" class="form-control" id="state" name="address.state" th:value="*{newUser.address.state}">
+                    <span class="text-danger" th:if="${#fields.hasErrors('newUser.address.state')}">
+                      <ul>
+                          <li th:each="err : ${#fields.errors('newUser.address.state')}" th:text="${err}"/>
+                      </ul>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -230,6 +267,11 @@ The above copyright notice and this permission notice shall be included in all c
                   <div class="form-group">
                     <label class="bmd-label-floating">Kod pocztowy</label>
                     <input type="text" class="form-control" id="zip" name="address.zip" th:value="*{newUser.address.zip}">
+                    <span class="text-danger" th:if="${#fields.hasErrors('newUser.address.zip')}">
+                      <ul>
+                          <li th:each="err : ${#fields.errors('newUser.address.zip')}" th:text="${err}"/>
+                      </ul>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -244,8 +286,14 @@ The above copyright notice and this permission notice shall be included in all c
                   <div class="form-group">
                     <label class="bmd-label-floating">Numer telefonu</label>
                     <input type="tel" class="form-control" id="phoneNumber" name="address.phoneNumber" th:value="*{newUser.address.phoneNumber}">
+                    <span class="text-danger" th:if="${#fields.hasErrors('newUser.address.phoneNumber')}">
+                      <ul>
+                          <li th:each="err : ${#fields.errors('newUser.address.phoneNumber')}" th:text="${err}"/>
+                      </ul>
+                    </span>
                   </div>
                 </div>
+              </div>
               </div>
 
               <button id="submitButton"type="submit" class="btn btn-primary pull-right">Dodaj</button>
@@ -482,6 +530,7 @@ The above copyright notice and this permission notice shall be included in all c
 <script>
   $(document).ready(function() {
     $('#addStudent').hide();
+    $('#noRolesError').hide();
   });
 </script>
 <script>
@@ -507,10 +556,19 @@ The above copyright notice and this permission notice shall be included in all c
   });
 
   $( "#submitButton" ).click(function() {
-    $( "#selectStudents option:selected" ).each(function() {
-      var chkStudent = 'chkStudent_' + $(this).val();
-      document.getElementById(chkStudent).checked = true;
-    });
+
+    var $roles = $('input[name=selectedRoles]:checked');
+
+    if($roles.length == 0) {
+      $("#noRolesError").show();
+      return false;
+    } else {
+      $("#selectStudents option:selected").each(function () {
+        var chkStudent = 'chkStudent_' + $(this).val();
+        document.getElementById(chkStudent).checked = true;
+      });
+    }
+
   });
 </script>
 

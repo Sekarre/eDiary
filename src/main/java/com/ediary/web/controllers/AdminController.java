@@ -61,14 +61,17 @@ public class AdminController {
 
     @AdminPermission
     @PostMapping("/newUser")
-    public String processNewUser(@Valid @ModelAttribute UserDto userDto,
+    public String processNewUser(@Valid @ModelAttribute("newUser") UserDto userDto,
+                                 BindingResult result,
                                  @RequestParam(name = "selectedRoles") List<Long> rolesId,
                                  @RequestParam(name = "selectedStudents", required = false) List<Long> selectedStudentsForParent,
-                                 BindingResult result) {
+                                 Model model) {
 
         if (result.hasErrors()) {
-            //todo: path
-            return "";
+            model.addAttribute("roles", adminService.getAllRoles());
+            model.addAttribute("students", adminService.getAllStudentsWithoutParent());
+
+            return "admin/newUser";
         }
 
         User user = adminService.saveUser(userDto, rolesId, selectedStudentsForParent);
