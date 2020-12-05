@@ -35,11 +35,11 @@ The above copyright notice and this permission notice shall be included in all c
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet"/>
 
     <link th:href="@{/demo/demo.css}" rel="stylesheet"/>
-    <!--    <style>-->
-    <!--        tr:hover td{-->
-    <!--            background-color:#f5f5f5;;-->
-    <!--        }-->
-    <!--    </style>-->
+    <style>
+        label.error{
+            color:red;
+        }
+    </style>
 </head>
 
 <body class="">
@@ -72,25 +72,41 @@ The above copyright notice and this permission notice shall be included in all c
                     <div class="card-header card-header-primary">
                         <h3 class="card-title" th:text="'Nazwa klasy'">Nazwa: </h3>
                     </div>
-                    <form method="post" th:action="@{'/deputyHead/newClass/name'}">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text">
-                                  <i class="material-icons">article</i>
-                              </span>
+                    <form method="post" id="newClassFom" th:object="${schoolClass}" th:action="@{'/deputyHead/newClass/name'}">
+                        <div class="card-body">
+                            <div class="form-group"></div>
+
+                            <div class="row">
+                                <div class="col-md-1"
+                                     th:class="${uniqueName != null && uniqueName == false} ? 'col-md-1 has-error' : 'col-md-1'">
+                                  <span class="input-group-text">
+                                      <i class="material-icons">person_search</i>
+                                  </span>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label class="bmd-label-floating">Klasa</label>
+                                        <input th:name="'name'" th:id="'name'" class="form-control">
+                                        <span class="help-block text-danger"
+                                              th:if="${uniqueName != null && uniqueName == false}">
+                                                    <ul>
+                                                        <li  th:text="'Nazwa musi być unikalna.'"/>
+                                                    </ul>
+                                                 </span>
+                                        <input type="hidden"
+                                               th:name="'teacherId'" th:value="${schoolClass.teacherId}" th:id="'teacherId'"
+                                               class="form-control">
+                                    </div>
+                                </div>
                             </div>
-                            <input th:name="'name'" th:id="'className'" class="form-control" placeholder="Nazwa klasy">
-                            <input type="hidden"
-                                   th:name="'teacherId'" th:value="${schoolClass.teacherId}" th:id="'teacherId'"
-                                   class="form-control" placeholder="Nazwa klasy">
+                            <ul class="pagination justify-content-center">
+                                <li>
+                                    <button type="submit" class="btn btn-primary btn-round btn-link">
+                                        Stwórz
+                                    </button>
+                                </li>
+                            </ul>
                         </div>
-                        <ul class="pagination justify-content-center">
-                            <li>
-                                <button class="submit btn btn-primary btn-round btn-link">
-                                    Stwórz
-                                </button>
-                            </li>
-                        </ul>
                     </form>
                 </div>
             </div>
@@ -318,7 +334,31 @@ The above copyright notice and this permission notice shall be included in all c
         md.initFormExtendedDatetimepickers();
     });
 </script>
+<script>
+    $(function() {
+        var newClassFom = $("#newClassFom");
 
+        newClassFom.validate({
+            rules: {
+                name: {
+                    required: true,
+                    maxlength: 20,
+                    minlength: 2
+                }
+            },
+            messages: {
+                name: {
+                    required: "Nie podano nazwy klasy",
+                    maxlength: "Opis nie może przekroczyć 20 znaków",
+                    minlength: "Opis musi mieć conajmniej 2 znaki"
+                }
+            },
+            submitHandler: function(form) {
+                form.submit();
+            }
+        });
+    });
+</script>
 </body>
 
 </html>

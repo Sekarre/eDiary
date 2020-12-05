@@ -16,5 +16,5 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     Optional<Teacher> findByIdAndSchoolClassId(Long id, Long schoolClassId);
     Teacher findBySchoolClass(Class schoolClass);
     Optional<Teacher> findByUser(User user);
-    Page<Teacher> findAllBySchoolClassIsNull(Pageable pageable);
+    List<Teacher> findAllBySchoolClassIsNullOrderByUser_LastName(Pageable pageable);
 }

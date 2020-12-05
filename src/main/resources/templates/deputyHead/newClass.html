@@ -62,8 +62,12 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-
-            <div class="container-fluid">
+            <div th:if="${teachers == null}" class="navbar-wrapper">
+                <div class="d-flex justify-content-center">
+                    <h2 class="navbar-brand">Nie znaleziono żadnych dostępnych nauczycieli.</h2>
+                </div>
+            </div>
+            <div class="container-fluid" th:if="${teachers != null && teachers.size() > 0}">
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h3 class="card-title" th:text="'Wybierz wychowawce: '">Nazwa: </h3>

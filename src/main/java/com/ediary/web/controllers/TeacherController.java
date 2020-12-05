@@ -956,8 +956,7 @@ public class TeacherController {
                                            @Valid @ModelAttribute(name = "studentCouncil") StudentCouncilDto studentCouncil,
                                            BindingResult result) {
         if (result.hasErrors()) {
-            //todo: path to view
-            return "";
+            return "redirect:/teacher/" + teacherId + "/formTutor/studentCouncil";
         }
 
         StudentCouncil savedStudentCouncil = formTutorService.saveStudentCouncil(teacherId, studentCouncil, studentsId);
@@ -970,8 +969,7 @@ public class TeacherController {
     @PostMapping("/{teacherId}/formTutor/studentCouncil/remove/{studentId}")
     public String removeStudentFromCouncil(@PathVariable Long teacherId,
                                            @PathVariable Long studentId,
-                                           @ModelAttribute StudentCouncilDto studentCouncilDto,
-                                           BindingResult result) {
+                                           @ModelAttribute StudentCouncilDto studentCouncilDto) {
 
         formTutorService.removeStudentFromCouncil(studentCouncilDto, teacherId, studentId);
 
@@ -1014,8 +1012,7 @@ public class TeacherController {
                                           @Valid @ModelAttribute ParentCouncilDto parentCouncil,
                                           BindingResult result) {
         if (result.hasErrors()) {
-            //todo: path to view
-            return "";
+            return "redirect:/teacher/" + teacherId + "/formTutor/parentCouncil";
         }
 
         ParentCouncil savedParentCouncil = formTutorService.saveParentCouncil(teacherId, parentCouncil, parentsId);
@@ -1028,8 +1025,7 @@ public class TeacherController {
     @PostMapping("/{teacherId}/formTutor/parentCouncil/remove/{parentId}")
     public String removeParentFromCouncil(@PathVariable Long teacherId,
                                           @PathVariable Long parentId,
-                                          @ModelAttribute ParentCouncilDto parentCouncilDto,
-                                          BindingResult result) {
+                                          @ModelAttribute ParentCouncilDto parentCouncilDto) {
 
         formTutorService.removeParentFromCouncil(parentCouncilDto, teacherId, parentId);
 

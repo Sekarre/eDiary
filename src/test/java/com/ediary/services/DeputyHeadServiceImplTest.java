@@ -267,13 +267,13 @@ public class DeputyHeadServiceImplTest {
 
         Page<Teacher> page = new PageImpl<>(teachersPage);
 
-        when(teacherRepository.findAllBySchoolClassIsNull(any())).thenReturn(page);
+        when(teacherRepository.findAllBySchoolClassIsNullOrderByUser_LastName(any())).thenReturn(teachersPage);
         when(teacherToTeacherDto.convert(any())).thenReturn(teacherDto);
 
         List<TeacherDto> teachers = deputyHeadService.listAllTeachersWithoutClass(0, 1);
 
         assertNotNull(teachers);
-        verify(teacherRepository, times(1)).findAllBySchoolClassIsNull(any());
+        verify(teacherRepository, times(1)).findAllBySchoolClassIsNullOrderByUser_LastName(any());
     }
 
 
