@@ -78,6 +78,7 @@ public interface TeacherService {
     List<ClassDto> listAllClasses();
     List<ClassDto> listClassesByTeacherAndSubject(Long teacherId, Long subjectId);
     ClassDto getSchoolClassByTeacherAndSubject(Long classId, Long subjectId, Long teacherId);
+    Boolean subjectHasSchoolClass(Long subjectId, Long teacherId);
     List<ClassDto> listClassByTeacher(Long teacherId);
 
 

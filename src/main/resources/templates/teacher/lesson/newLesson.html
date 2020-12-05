@@ -146,7 +146,8 @@ The above copyright notice and this permission notice shall be included in all c
                                     <div class="form-group"></div>
 
                                     <div class="row">
-                                        <div class="col-md-1">
+                                        <div class="col-md-1"
+                                             th:class="${#fields.hasErrors('name')} ? 'col-md-1 has-error' : 'col-md-1'">
                                           <span class="input-group-text">
                                               <i class="material-icons">chrome_reader_mode</i>
                                           </span>
@@ -165,6 +166,12 @@ The above copyright notice and this permission notice shall be included in all c
                                                             Temat
                                                         </option>
                                                     </select>
+                                                    <span class="help-block text-danger"
+                                                          th:if="${#fields.hasErrors('topicId')}">
+                                                    <ul>
+                                                        <li th:each="err : ${#fields.errors('topicId')}" th:text="${err}"/>
+                                                    </ul>
+                                                 </span>
                                                 </div>
                                             </div>
                                         </div>

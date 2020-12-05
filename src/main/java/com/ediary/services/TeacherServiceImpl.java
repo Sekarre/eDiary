@@ -938,6 +938,13 @@ public class TeacherServiceImpl implements TeacherService {
                 .findById(classId).orElseThrow(() -> new NotFoundException("Class not found")));
     }
 
+    @Override
+    public Boolean subjectHasSchoolClass(Long subjectId, Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+        Subject subject = getSubjectById(subjectId);
+
+        return subject.getSchoolClass() != null;
+    }
 
     @Override
     public List<ClassDto> listClassByTeacher(Long teacherId) {

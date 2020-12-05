@@ -28,6 +28,12 @@ The above copyright notice and this permission notice shall be included in all c
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
+
+    <style>
+        label.error{
+            color:red;
+        }
+    </style>
 </head>
 
 <body class="">
@@ -113,7 +119,6 @@ The above copyright notice and this permission notice shall be included in all c
                                 <th></th>
                                 </thead>
                                 <tbody>
-                                <!--/*@thymesVar id="subjects" type="com.ediary.DTO.BehaviorDto"*/-->
                                 <tr th:each="topic : ${topics}">
                                     <td th:text="${topic.number}">numer</td>
                                     <td th:text="${topic.name}">nazwa</td>
@@ -218,7 +223,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="topicNumber">
                                                         <div class="form-group">
                                                             <label class="bmd-label-floating">Numer</label>
-                                                            <input  id="topicNumberVal" type="number" min="0" class="form-control" value="0">
+                                                            <input  id="topicNumberVal" name="topicNumberVal" type="text"  class="form-control" value="0">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -226,7 +231,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="topicName">
                                                         <div class="form-group">
                                                             <label class="bmd-label-floating">Nazwa</label>
-                                                            <input  id="topicNameVal" type="text" maxlength="40" class="form-control">
+                                                            <input  id="topicNameVal" name="topicNameVal" type="text" maxlength="60" class="form-control">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -234,7 +239,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="topicDescription">
                                                         <div class="form-group">
                                                             <label class="bmd-label-floating">Opis</label>
-                                                            <textarea  id="topicDescVal" class="form-control" maxlength="250" rows="5"></textarea>
+                                                            <textarea  id="topicDescVal" name="topicDescVal" class="form-control" maxlength="255" rows="5"></textarea>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -268,7 +273,7 @@ The above copyright notice and this permission notice shall be included in all c
                         </button>
                     </div>
 
-
+                    <form id="editTopicForm" method="post" >
                         <div class="modal-body">
                             <div class="content">
                                 <div class="container-fluid">
@@ -279,7 +284,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="topicEditNumber">
                                                         <div class="form-group">
                                                             <label class="bmd-label-static">Numer</label>
-                                                            <input  id="topicEditNumberVal" type="number" min="0" class="form-control" value="0">
+                                                            <input  id="topicEditNumberVal" name="topicEditNumberVal" type="text" class="form-control" value="0">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -287,7 +292,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="topicEditName">
                                                         <div class="form-group">
                                                             <label class="bmd-label-static">Nazwa</label>
-                                                            <input  id="topicEditNameVal" type="text" maxlength="40" class="form-control">
+                                                            <input  id="topicEditNameVal" name="topicEditNameVal" type="text" maxlength="40" class="form-control">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -295,7 +300,7 @@ The above copyright notice and this permission notice shall be included in all c
                                                     <td id="topicEditDescription">
                                                         <div class="form-group">
                                                             <label class="bmd-label-static">Opis</label>
-                                                            <textarea  id="topicEditDescVal" class="form-control" maxlength="250" rows="5"></textarea>
+                                                            <textarea  id="topicEditDescVal" name="topicEditDescVal" class="form-control" maxlength="250" rows="5"></textarea>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -311,6 +316,7 @@ The above copyright notice and this permission notice shall be included in all c
                             <button id="editTopic" type="button" class="btn btn-warning" >Zapisz</button>
 
                         </div>
+                    </form>
                 </div>
 
             </div>
@@ -585,6 +591,10 @@ The above copyright notice and this permission notice shall be included in all c
         var name = $(this).data('name');
         var desc = $(this).data('desc');
 
+        if (desc == null) {
+            desc = "";
+        }
+
         document.getElementById("topicEditIdVal").value = id;
         document.getElementById("topicEditNumberVal").value = number;
         document.getElementById("topicEditNameVal").value = name;
@@ -595,81 +605,165 @@ The above copyright notice and this permission notice shall be included in all c
 
 <script>
     $(document).on("click", "#sendTopic", function () {
-        var csrf= $("#csrfVal").val();
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
 
-        var topicDto = {
-            id: "",
-            number: $("#topicNumberVal").val(),
-            name: $("#topicNameVal").val(),
-            description: $("#topicDescVal").val(),
-            subjectId: subjectIdVal,
-        };
+        var addForm = $("#addTopicForm");
 
-        // Creating a XHR object
-        let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal + "/topic/new";
+        addForm.validate({
+            rules: {
+                topicNumberVal: {
+                    required: true,
+                    number: true,
+                    min: 0
+                },
+                topicNameVal: {
+                    required: true,
+                    minlength: 5,
+                    maxlength: 60
+                },
+                topicDescVal: {
+                    required: false,
+                    maxlength: 255
+                }
+            },
 
-        // open a connection
-        xhr.open("POST", url, true);
+            messages: {
+                topicNumberVal: {
+                    required: "Nie podano numeru",
+                    min: "Wartosc nie moze być mniejsza od 0",
+                    number: "Wartość musi być liczbą",
+                },
+                topicNameVal: {
+                    required: "Nie podano nazwy tematu",
+                    minlength: "Nazwa musi mieć conajmniej 5 znaków",
+                    maxlength: "Nazwa nie może przekroczyć 255 znaków"
+                },
+                topicDescVal: {
+                    maxlength: "Opis nie może przekroczyć 255 znaków"
+                }
+            }
 
-        // Set the request header i.e. which type of content you are sending
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.setRequestHeader("_csrf", csrf);
-        xhr.setRequestHeader('x-csrf-token', csrf);
+        });
 
-        // Create a state change callback
-        xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal;
-        };
+        if(addForm.valid()) {
 
-        // Converting JSON data to string
-        var data = JSON.stringify(topicDto);
+            var csrf = $("#csrfVal").val();
+            var subjectIdVal = $("#subjectIdVal").val();
+            var teacherIdVal = $("#teacherIdVal").val();
 
-        // Sending data with the request
-        xhr.send(data);
+            var topicDto = {
+                id: "",
+                number: $("#topicNumberVal").val(),
+                name: $("#topicNameVal").val(),
+                description: $("#topicDescVal").val(),
+                subjectId: subjectIdVal,
+            };
+
+            // Creating a XHR object
+            let xhr = new XMLHttpRequest();
+            let url = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal + "/topic/new";
+
+            // open a connection
+            xhr.open("POST", url, true);
+
+            // Set the request header i.e. which type of content you are sending
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("_csrf", csrf);
+            xhr.setRequestHeader('x-csrf-token', csrf);
+
+            // Create a state change callback
+            xhr.onreadystatechange = function () {
+                location.href = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal;
+            };
+
+            // Converting JSON data to string
+            var data = JSON.stringify(topicDto);
+
+            // Sending data with the request
+            xhr.send(data);
+        }
     });
 </script>
 
 <script>
     $(document).on("click", "#editTopic", function () {
-        var csrf= $("#csrfVal").val();
+        var addForm = $("#editTopicForm");
 
-        var subjectIdVal = $("#subjectIdVal").val();
-        var teacherIdVal = $("#teacherIdVal").val();
-        var topicIdIdVal = $("#topicEditIdVal").val();
+        addForm.validate({
+            rules: {
+                topicEditNumberVal: {
+                    required: true,
+                    number: true,
+                    min: 0
+                },
+                topicEditNameVal: {
+                    required: true,
+                    minlength: 5,
+                    maxlength: 60
+                },
+                topicEditDescVal: {
+                    required: false,
+                    maxlength: 255
+                }
+            },
 
-        var topicDto = {
-            id: "",
-            number: $("#topicEditNumberVal").val(),
-            name: $("#topicEditNameVal").val(),
-            description: $("#topicEditDescVal").val(),
-            subjectId: subjectIdVal,
-        };
+            messages: {
+                topicEditNumberVal: {
+                    required: "Nie podano numeru",
+                    min: "Wartosc nie moze być mniejsza od 0",
+                    number: "Wartość musi być liczbą",
+                },
+                topicEditNameVal: {
+                    required: "Nie podano nazwy tematu",
+                    minlength: "Nazwa musi mieć conajmniej 5 znaków",
+                    maxlength: "Nazwa nie może przekroczyć 255 znaków"
+                },
+                topicEditDescVal: {
+                    maxlength: "Opis nie może przekroczyć 255 znaków"
+                }
+            }
 
-        // Creating a XHR object
-        let xhr = new XMLHttpRequest();
-        let url = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal + "/topic/edit/" + topicIdIdVal;
+        });
 
-        // open a connection
-        xhr.open("POST", url, true);
+        if(addForm.valid()) {
 
-        // Set the request header i.e. which type of content you are sending
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.setRequestHeader("_csrf", csrf);
-        xhr.setRequestHeader('x-csrf-token', csrf);
 
-        // Create a state change callback
-        xhr.onreadystatechange = function () {
-            location.href = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal;
-        };
+            var csrf = $("#csrfVal").val();
 
-        // Converting JSON data to string
-        var data = JSON.stringify(topicDto);
+            var subjectIdVal = $("#subjectIdVal").val();
+            var teacherIdVal = $("#teacherIdVal").val();
+            var topicIdIdVal = $("#topicEditIdVal").val();
 
-        // Sending data with the request
-        xhr.send(data);
+            var topicDto = {
+                id: "",
+                number: $("#topicEditNumberVal").val(),
+                name: $("#topicEditNameVal").val(),
+                description: $("#topicEditDescVal").val(),
+                subjectId: subjectIdVal,
+            };
+
+            // Creating a XHR object
+            let xhr = new XMLHttpRequest();
+            let url = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal + "/topic/edit/" + topicIdIdVal;
+
+            // open a connection
+            xhr.open("POST", url, true);
+
+            // Set the request header i.e. which type of content you are sending
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("_csrf", csrf);
+            xhr.setRequestHeader('x-csrf-token', csrf);
+
+            // Create a state change callback
+            xhr.onreadystatechange = function () {
+                location.href = "/teacher/" + teacherIdVal + "/subject/" + subjectIdVal;
+            };
+
+            // Converting JSON data to string
+            var data = JSON.stringify(topicDto);
+
+            // Sending data with the request
+            xhr.send(data);
+        }
     });
 </script>
 
