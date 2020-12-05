@@ -2,6 +2,8 @@ package com.ediary.DTO;
 
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Setter
@@ -12,9 +14,12 @@ import java.util.List;
 public class SubjectDto {
 
     private Long id;
+    @NotNull
+    @Size(min = 1, max = 100)
     private String name;
 
     private String teacherName;
+    @NotNull
     private Long teacherId;
 
     private String className;

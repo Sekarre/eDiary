@@ -68,7 +68,12 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <div class="container-fluid">
+            <div th:if="${newLesson == null}" class="navbar-wrapper">
+                <div class="d-flex justify-content-center">
+                    <h2 class="navbar-brand">Przedmiot nie został przypisany do żadnej klasy.</h2>
+                </div>
+            </div>
+            <div class="container-fluid" th:if="${newLesson != null}">
                 <div class="row justify-content-md-center">
 
                     <div class="col-lg-10">

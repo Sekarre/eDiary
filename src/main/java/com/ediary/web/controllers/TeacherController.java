@@ -725,11 +725,11 @@ public class TeacherController {
     @TeacherPermission
     @PostMapping("/{teacherId}/subject/new")
     public String processNewSubject(@PathVariable Long teacherId,
-                                    @Valid @ModelAttribute SubjectDto subject,
-                                    BindingResult result) {
+                                    @Valid @ModelAttribute("subject") SubjectDto subject,
+                                    BindingResult result, Model model) {
         if (result.hasErrors()) {
-            //TODO
-            return "/";
+            model.addAttribute("schoolClasses", teacherService.listAllClasses());
+            return "/teacher/subject/newSubject";
         } else {
             teacherService.saveOrUpdateSubject(subject);
             return "redirect:/teacher/" + teacherId + "/subject";
@@ -755,16 +755,15 @@ public class TeacherController {
 
     }
 
+    //no needed
     @TeacherPermission
     @PutMapping("/{teacherId}/subject/update")
     public String updatePutSubject(@PathVariable Long teacherId,
                                    @Valid @RequestBody SubjectDto subjectDto, BindingResult result) {
         if (result.hasErrors()) {
-            //TODO
             return "/";
         } else {
             Subject subject = teacherService.saveOrUpdateSubject(subjectDto);
-            //TODO zalezy od widoku
             return "redirect:/teacher/" + teacherId + "/subject";
         }
     }
@@ -773,15 +772,16 @@ public class TeacherController {
     @PostMapping("/{teacherId}/subject/{subjectId}/update")
     public String updatePatchSubject(@PathVariable Long teacherId,
                                      @PathVariable Long subjectId,
-                                     @Valid @ModelAttribute SubjectDto subjectDto,
-                                     BindingResult result) {
+                                     @Valid @ModelAttribute("subject") SubjectDto subjectDto,
+                                     BindingResult result, Model model) {
         if (result.hasErrors()) {
-            //TODO
-            return "/";
+            model.addAttribute("schoolClasses", teacherService.listAllClasses());
+            return "/teacher/subject/updateSubject";
+
         } else {
             subjectDto.setId(subjectId);
             SubjectDto subject = teacherService.updatePatchSubject(subjectDto);
-            //TODO zalezy od widoku
+
             return "redirect:/teacher/" + teacherId + "/subject";
         }
     }

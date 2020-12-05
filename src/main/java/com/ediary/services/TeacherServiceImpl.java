@@ -106,6 +106,10 @@ public class TeacherServiceImpl implements TeacherService {
                 .findFirst()
                 .orElse(null);
 
+        if (schoolClass == null) {
+            return null;
+        }
+
         return lessonToLessonDto.convert(Lesson.builder()
                 .subject(subject)
                 .schoolClass(schoolClass)
@@ -750,6 +754,10 @@ public class TeacherServiceImpl implements TeacherService {
 
         if (!subject.getTeacher().equals(teacher)) {
             throw new AccessDeniedException("Teacher -> Subject");
+        }
+
+        if (subject.getSchoolClass() == null) {
+            return null;
         }
 
         if (includeHistory) {
