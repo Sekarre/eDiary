@@ -182,7 +182,7 @@ class TeacherControllerTest {
         mockMvc.perform(get("/teacher/" + teacherId + "/behavior"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("behaviors"))
-                .andExpect(view().name("/teacher/behavior"));
+                .andExpect(view().name("/teacher/behavior/behavior"));
 
 
         verify(teacherService, times(1)).listBehaviors(teacherId);
@@ -196,7 +196,7 @@ class TeacherControllerTest {
         mockMvc.perform(get("/teacher/" + teacherId + "/behavior/new"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("behavior"))
-                .andExpect(view().name("/teacher/newBehavior"));
+                .andExpect(view().name("/teacher/behavior/newBehavior"));
 
         verify(teacherService, times(1)).initNewBehavior(teacherId);
     }
@@ -216,7 +216,7 @@ class TeacherControllerTest {
                 .andExpect(model().attributeExists("behavior"))
                 .andExpect(model().attributeExists("schoolClasses"))
                 .andExpect(model().attributeExists("students"))
-                .andExpect(view().name("/teacher/newBehavior"));
+                .andExpect(view().name("/teacher/behavior/newBehavior"));
 
         verify(teacherService, times(1)).initNewBehavior(teacherId);
         verify(teacherService, times(1)).listAllClasses();
@@ -239,7 +239,7 @@ class TeacherControllerTest {
                 .andExpect(model().attributeExists("behavior"))
                 .andExpect(model().attributeExists("schoolClasses"))
                 .andExpect(model().attributeExists("students"))
-                .andExpect(view().name("/teacher/newBehavior"));
+                .andExpect(view().name("/teacher/behavior/newBehavior"));
 
         verify(teacherService, times(1)).initNewBehavior(teacherId, studentId);
         verify(teacherService, times(1)).listAllClasses();
@@ -253,10 +253,9 @@ class TeacherControllerTest {
         mockMvc.perform(post("/teacher/" + teacherId + "/behavior/new")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(BehaviorDto.builder().build())))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/behavior"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("/teacher/behavior/newBehavior"));
 
-        verify(teacherService, times(1)).saveBehavior(any());
     }
 
     @Test
@@ -281,9 +280,8 @@ class TeacherControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(behaviorDto)))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/teacher/" + teacherId + "/behavior"));
+                .andExpect(view().name("/"));
 
-        verify(teacherService, times(1)).updatePutBehavior(any());
     }
 
     @Test
@@ -296,10 +294,9 @@ class TeacherControllerTest {
         mockMvc.perform(post("/teacher/" + teacherId + "/behavior/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(behaviorDto)))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/behavior"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("/"));
 
-        verify(teacherService, times(1)).updatePatchBehavior(any());
     }
 
 
@@ -609,10 +606,9 @@ class TeacherControllerTest {
         mockMvc.perform(post("/teacher/" + teacherId + "/subject/new")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(SubjectDto.builder().build())))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("/teacher/subject/newSubject"));
 
-        verify(teacherService, times(1)).saveOrUpdateSubject(any());
     }
 
     @Test
@@ -652,10 +648,9 @@ class TeacherControllerTest {
         mockMvc.perform(put("/teacher/" + teacherId + "/subject/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(SubjectDto.builder().build())))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("/"));
 
-        verify(teacherService, times(1)).saveOrUpdateSubject(any());
     }
 
     @Test
@@ -667,10 +662,9 @@ class TeacherControllerTest {
         mockMvc.perform(post("/teacher/" + teacherId + "/subject/" + subjectId + "/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(SubjectDto.builder().id(subjectId).build())))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("/teacher/subject/updateSubject"));
 
-        verify(teacherService, times(1)).updatePatchSubject(any());
     }
 
     @Test
@@ -720,7 +714,6 @@ class TeacherControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject"));
 
-        verify(teacherService, times(1)).saveTopic(any());
     }
 
     @Test
@@ -747,10 +740,9 @@ class TeacherControllerTest {
         mockMvc.perform(put("/teacher/" + teacherId + "/subject/" + subjectId + "/topic/" + topicId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(AbstractAsJsonControllerTest.asJsonString(TopicDto.builder().build())))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId + "/topic"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("/"));
 
-        verify(teacherService, times(1)).updateTopic(any());
     }
 
     @Test
@@ -767,7 +759,6 @@ class TeacherControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId));
 
-        verify(teacherService, times(1)).updatePatchTopic(any());
     }
 
     @Test

@@ -842,7 +842,6 @@ public class TeacherController {
                                  BindingResult result) {
 
         if (result.hasErrors()) {
-            //TODO
             return "/";
         } else {
             teacherService.updateTopic(topicDto);

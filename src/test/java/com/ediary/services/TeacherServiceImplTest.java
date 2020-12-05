@@ -182,6 +182,7 @@ class TeacherServiceImplTest {
                 .subjectId(1L)
                 .build();
 
+        when(classRepository.findAllBySubjects(any())).thenReturn(Collections.singletonList(Class.builder().build()));
         when(subjectRepository.findById(any())).thenReturn(Optional.ofNullable(Subject.builder().id(subjectId).build()));
         when(lessonToLessonDto.convert(any())).thenReturn(lessonDto);
 

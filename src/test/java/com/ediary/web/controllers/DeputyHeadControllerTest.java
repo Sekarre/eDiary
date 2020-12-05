@@ -81,10 +81,9 @@ public class DeputyHeadControllerTest {
         mockMvc.perform(post("/deputyHead/newClass/name")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AbstractAsJsonControllerTest.asJsonString(ClassDto.builder().build())))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/deputyHead/classes"));
+                .andExpect(status().isOk())
+                .andExpect(view().name( "deputyHead/newClassName"));
 
-        verify(deputyHeadService, times(1)).saveClass(any());
     }
 
     @Test
