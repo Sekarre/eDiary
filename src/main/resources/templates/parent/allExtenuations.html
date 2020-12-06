@@ -41,7 +41,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" th:href="@{/parent/{id}/students(id=${parent.id})}">Usprawiedliwienia:</a>
+                    <a class="navbar-brand" th:href="@{/parent/{parentId}/{studentId}/attendance/extenuations(parentId=${parentId}, studentId=${studentId})}" th:text="${'Usprawiedliwienia'}">Usprawiedliwienia</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>

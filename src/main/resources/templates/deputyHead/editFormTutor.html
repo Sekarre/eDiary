@@ -49,7 +49,12 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <h3  th:text="'Klasa  ' + ${schoolClass.name} + ': Zmiana wychowawcy'"></h3>
+                    <a class="navbar-brand" th:href="@{/deputyHead/classes}" >Klasy</a>
+                    <a th:text="'>'"></a>
+                    <a class="navbar-brand" th:href="@{/deputyHead/classes/{classId}(classId=${classId})}" th:text="'Klasa ' + ${schoolClass.name}">klasa</a>
+                    <a th:text="'>'"></a>
+                    <a class="navbar-brand" th:href="@{/deputyHead/classes/{classId}/changeTeacher/{teacherId}(classId=${classId}, teacherId=${currentTeacher.id})}" th:text="'Zmiana wychowawcy'">klasa</a>
+
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>

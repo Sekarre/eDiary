@@ -291,6 +291,13 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     }
 
     @Override
+    public String findTeacher(Long teacherId) {
+        Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(() -> new NotFoundException("Teacher not found"));
+
+        return teacher.getUser().getFirstName() + " " + teacher.getUser().getLastName();
+    }
+
+    @Override
     public Integer countStudentsWithoutClass() {
         return studentRepository.countStudentBySchoolClassIsNull().intValue();
     }

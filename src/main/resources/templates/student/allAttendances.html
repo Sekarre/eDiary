@@ -44,20 +44,9 @@ The above copyright notice and this permission notice shall be included in all c
 
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand">Frekwencja:</a>
+                    <a class="navbar-brand" th:href="@{/student/{studentId}/attendance(studentId=${studentId})}">Frekwencja</a>
                 </div>
-                <nav aria-label="Page navigation example" th:if="${weeklyAttendances != null}">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item">
-                            <a class="btn btn-primary btn-round"
-                               th:href="@{/student/{studentId}/attendance/{direction}/{dateValue}(studentId=${studentId}, direction='previous', dateValue = ${weeklyAttendances?.attendances?.keySet()?.stream()?.findFirst()?.toString()?.substring(9, 19)})}">Poprzednia</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="btn btn-primary btn-round"
-                               th:href="@{/student/{studentId}/attendance/{direction}/{dateValue}(studentId=${studentId}, direction='next', dateValue = ${weeklyAttendances?.attendances?.keySet()?.stream()?.findFirst()?.toString()?.substring(9, 19)})}">Następna</a>
-                        </li>
-                    </ul>
-                </nav>
+
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -70,6 +59,16 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
+            <ul class="pagination justify-content-center"th:if="${weeklyAttendances != null}">
+                <li class="page-item">
+                    <a class="btn btn-primary btn-round"
+                       th:href="@{/student/{studentId}/attendance/{direction}/{dateValue}(studentId=${studentId}, direction='previous', dateValue = ${weeklyAttendances?.attendances?.keySet()?.stream()?.findFirst()?.toString()?.substring(9, 19)})}">Poprzednia</a>
+                </li>
+                <li class="page-item">
+                    <a class="btn btn-primary btn-round"
+                       th:href="@{/student/{studentId}/attendance/{direction}/{dateValue}(studentId=${studentId}, direction='next', dateValue = ${weeklyAttendances?.attendances?.keySet()?.stream()?.findFirst()?.toString()?.substring(9, 19)})}">Następna</a>
+                </li>
+            </ul>
             <div th:if="${weeklyAttendances == null}" class="navbar-wrapper">
                 <div class="d-flex justify-content-center">
                     <h2 class="navbar-brand">Nie znaleziono frekwencji</h2>
