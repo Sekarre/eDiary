@@ -279,11 +279,11 @@ public class FormTutorServiceImpl implements FormTutorService {
 
             Class schoolClass = teacher.getSchoolClass();
 
-            Map<StudentDto, GradeDto> studentBehaviorGradeListMap = new TreeMap<>(
-                    ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
-                            .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
+            Map<StudentDto, GradeDto> studentBehaviorGradeListMap = new LinkedHashMap<>();
 
-            schoolClass.getStudents().forEach(student -> {
+            List<Student> students = studentRepository.findAllBySchoolClassIdOrderByUserLastName(schoolClass.getId());
+
+            students.forEach(student -> {
                 studentBehaviorGradeListMap.put(studentToStudentDto.convert(student),
                         gradeToGradeDto.convert(gradeRepository
                                 .findByStudentIdAndWeight(student.getId(), GradeWeight.BEHAVIOR_GRADE.getWeight())));
@@ -375,6 +375,20 @@ public class FormTutorServiceImpl implements FormTutorService {
         Teacher teacher = getTeacherById(teacherId);
 
         if (teacher.getSchoolClass() != null) {
+            return studentRepository.findAllBySchoolClassIdOrderByUserLastName(teacher.getSchoolClass().getId())
+                    .stream()
+                    .map(studentToStudentDto::convert)
+                    .collect(Collectors.toList());
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<StudentDto> listClassStudentsStudentCouncil(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        if (teacher.getSchoolClass() != null) {
             StudentCouncil studentCouncil = studentCouncilRepository.findBySchoolClassId(teacher.getSchoolClass().getId());
 
             if (studentCouncil == null) {
@@ -395,8 +409,10 @@ public class FormTutorServiceImpl implements FormTutorService {
         return null;
     }
 
+
+
     @Override
-    public List<ParentDto> listClassParents(Long teacherId) {
+    public List<ParentDto> listClassParentsParentCouncil(Long teacherId) {
         Teacher teacher = getTeacherById(teacherId);
 
         if (teacher.getSchoolClass() != null) {
@@ -464,11 +480,11 @@ public class FormTutorServiceImpl implements FormTutorService {
 
         if (teacher.getSchoolClass() != null && schoolClass.equals(teacher.getSchoolClass())) {
 
-            Map<StudentDto, List<GradeDto>> studentGradesListMap = new TreeMap<>(
-                    ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
-                            .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
+            Map<StudentDto, List<GradeDto>> studentGradesListMap = new LinkedHashMap<>();
 
-            schoolClass.getStudents().forEach(student -> {
+            List<Student> students = studentRepository.findAllBySchoolClassIdOrderByUserLastName(schoolClass.getId());
+
+            students.forEach(student -> {
                 studentGradesListMap.put(studentToStudentDto.convert(student),
                         gradeRepository.findAllByTeacherIdAndSubjectIdAndStudentIdAndWeightNotIn(teacherId, subjectId,
                                 student.getId(), Arrays.asList(GradeWeight.FINAL_GRADE.getWeight(), GradeWeight.BEHAVIOR_GRADE.getWeight()))
@@ -500,11 +516,11 @@ public class FormTutorServiceImpl implements FormTutorService {
 
         if (teacher.getSchoolClass() != null && schoolClass.equals(teacher.getSchoolClass())) {
 
-            Map<StudentDto, GradeDto> studentFinalGradesListMap = new TreeMap<>(
-                    ((o1, o2) -> Arrays.stream(o1.getUserName().split(" ")).skip(1).findFirst().get()
-                            .compareToIgnoreCase(Arrays.stream(o2.getUserName().split(" ")).skip(1).findFirst().get())));
+            Map<StudentDto, GradeDto> studentFinalGradesListMap = new LinkedHashMap<>();
 
-            schoolClass.getStudents().forEach(student -> {
+            List<Student> students = studentRepository.findAllBySchoolClassIdOrderByUserLastName(schoolClass.getId());
+
+            students.forEach(student -> {
                 studentFinalGradesListMap.put(studentToStudentDto.convert(student),
                         gradeToGradeDto.convert(gradeRepository
                                 .findByTeacherIdAndSubjectIdAndStudentIdAndWeight(teacherId, subjectId, student.getId(), GradeWeight.FINAL_GRADE.getWeight())));

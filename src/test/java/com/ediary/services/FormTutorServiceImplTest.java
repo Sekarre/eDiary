@@ -4,7 +4,6 @@ import com.ediary.DTO.*;
 import com.ediary.converters.*;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
-import com.ediary.domain.helpers.GradeWeight;
 import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.repositories.*;
 import com.ediary.services.pdf.PdfService;
@@ -349,7 +348,7 @@ public class FormTutorServiceImplTest {
         when(studentRepository.findAllBySchoolClassId(any())).thenReturn(Collections.singletonList(student));
 
 
-        List<StudentDto> studentDtoList = formTutorService.listClassStudents(teacherId);
+        List<StudentDto> studentDtoList = formTutorService.listClassStudentsStudentCouncil(teacherId);
 
         assertNotNull(studentDtoList);
         verify(teacherRepository, times(1)).findById(teacherId);
@@ -371,7 +370,7 @@ public class FormTutorServiceImplTest {
         when(studentRepository.findAllBySchoolClassId(any())).thenReturn(Collections.singletonList(Student.builder().build()));
 
 
-        List<ParentDto> parentDtoList = formTutorService.listClassParents(teacherId);
+        List<ParentDto> parentDtoList = formTutorService.listClassParentsParentCouncil(teacherId);
 
         assertNotNull(parentDtoList);
         verify(teacherRepository, times(1)).findById(teacherId);

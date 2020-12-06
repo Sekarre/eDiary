@@ -100,73 +100,75 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="table-responsive">
 
                             <span th:each="grade : ${subjectsGrades?.get(subjectKey)}">
-                                <a data-toggle="modal" class="open-gradeDialogModal btn btn-info" href="#gradeModal"
+                                <a data-toggle="modal" class="open-gradeDialogModal btn " href="#gradeModal"
                                    th:attr="data-date=''+${grade.date}+'', data-target='#gradeModal', data-value=''+${grade.value}+'', data-weight=''+${grade.weight}+'',
                                         data-subject=''+${grade.subjectName}+'', data-teacher=''+${grade.teacherName}+'',data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+''"
-                                   th:text="${grade?.value}">
+                                   th:text="${grade?.value}" th:classappend="${grade.weight == T(com.ediary.domain.helpers.GradeWeight).FINAL_GRADE.weight ? 'btn-danger' : 'btn-info'}">
                                 </a>
                             </span>
 
 
-                            <div class="modal fade" id="gradeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="gradeModalTitle">Informacje: </h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="content">
-                                                <div class="container-fluid">
-                                                    <div class="card">
 
-                                                        <div class="table-responsive">
-                                                            <table class="table">
-                                                                <tr>
-                                                                    <td>Ocena: </td>
-                                                                    <td id="gradeValue"></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Waga: </td>
-                                                                    <td id="gradeWeight"></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Przedmiot: </td>
-                                                                    <td id="gradeSubject"></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Nauczyciel: </td>
-                                                                    <td id="gradeTeacher"> </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Student: </td>
-                                                                    <td id="gradeStudent"> </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Data: </td>
-                                                                    <td id="gradeDate"></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Opis: </td>
-                                                                    <td id="gradeDesc"></td>
-                                                                </tr>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group"></div>
+            </div>
+
+            <div class="modal fade" id="gradeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="gradeModalTitle">Informacje: </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="content">
+                                <div class="container-fluid">
+                                    <div class="card">
+
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <tr>
+                                                    <td>Ocena: </td>
+                                                    <td id="gradeValue"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Waga: </td>
+                                                    <td id="gradeWeight"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Przedmiot: </td>
+                                                    <td id="gradeSubject"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Nauczyciel: </td>
+                                                    <td id="gradeTeacher"> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Student: </td>
+                                                    <td id="gradeStudent"> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Data: </td>
+                                                    <td id="gradeDate"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Opis: </td>
+                                                    <td id="gradeDesc"></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
         </div>
     </div>

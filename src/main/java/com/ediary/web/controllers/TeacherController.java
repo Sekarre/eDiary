@@ -948,7 +948,7 @@ public class TeacherController {
             model.addAttribute("studentCouncil", formTutorService.initNewStudentCouncil(teacherId));
         }
 
-        model.addAttribute("students", formTutorService.listClassStudents(teacherId));
+        model.addAttribute("students", formTutorService.listClassStudentsStudentCouncil(teacherId));
 
         return "teacher/formTutor/studentCouncilNew";
     }
@@ -1004,7 +1004,7 @@ public class TeacherController {
             model.addAttribute("parentCouncil", formTutorService.initNewParentCouncil(teacherId));
         }
 
-        model.addAttribute("parents", formTutorService.listClassParents(teacherId));
+        model.addAttribute("parents", formTutorService.listClassParentsParentCouncil(teacherId));
 
         return "teacher/formTutor/parentCouncilNew";
     }

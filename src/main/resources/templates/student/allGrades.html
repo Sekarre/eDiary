@@ -77,7 +77,7 @@ The above copyright notice and this permission notice shall be included in all c
                                 <a th:if="${behaviorGrade != null}" data-toggle="modal" class="open-gradeDialogModal btn btn-info" href="#gradeModal"
                                    th:attr="data-date=''+${behaviorGrade?.date}+'', data-target='#gradeModal', data-value=''+${behaviorGrade?.value}+'', data-weight=''+${behaviorGrade?.weight}+'',
                                         data-subject=''+${behaviorGrade?.subjectName}+'', data-teacher=''+${behaviorGrade?.teacherName}+'',data-student=''+${behaviorGrade?.studentName}+'', data-desc=''+${behaviorGrade?.description}+''"
-                                   th:text="${behaviorGrade?.value}">
+                                   th:text="${behaviorGrade?.value}" >
                                 </a>
                             </span>
                         </div>
@@ -86,12 +86,13 @@ The above copyright notice and this permission notice shall be included in all c
             </div>
             <div class="form-group"></div>
 
-            <div th:each="subjectKey : ${subjectsGrades.keySet()}" class="container-fluid">
+            <div  th:each="subjectKey : ${subjectsGrades.keySet()}"  class="container-fluid ">
                 <div class="card">
                     <div class="card-header card-header-text card-header-primary">
                         <div class="card-text col-md-3" >
                             <h4 class="card-title">
                                 <a th:href="@{/student/{studentId}/grade/subject/{subjectId}(studentId=${studentId}, subjectId=${subjectKey.id})}"  th:text="${subjectKey.name}"></a>
+                                <p class="averageGrade"></p>
                             </h4>
                         </div>
                     </div>
@@ -101,8 +102,8 @@ The above copyright notice and this permission notice shall be included in all c
                             <span th:each="grade : ${subjectsGrades?.get(subjectKey)}">
                                 <a data-toggle="modal" class="open-gradeDialogModal btn btn-info" href="#gradeModal"
                                    th:attr="data-date=''+${grade.date}+'', data-target='#gradeModal', data-value=''+${grade.value}+'', data-weight=''+${grade.weight}+'',
-                                        data-subject=''+${grade.subjectName}+'', data-teacher=''+${grade.teacherName}+'',data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+''"
-                                   th:text="${grade?.value}">
+                                        data-subject=''+${grade.subjectName}+'', data-teacher=''+${grade.teacherName}+'',  data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+''"
+                                   th:text="${grade?.value} " th:classappend="${grade.weight == T(com.ediary.domain.helpers.GradeWeight).FINAL_GRADE.weight ? 'btn-danger' : 'btn-info'}">
                                 </a>
                             </span>
 

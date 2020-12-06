@@ -107,7 +107,7 @@ public class PdfServiceImpl implements PdfService {
         //Behavior
         table = getNewTable(new float[]{40, 60});
         table.addCell(getCell("Zachowanie: ", TextAlignment.CENTER, 12f, normalTextFont));
-        table.addCell(getCell(behaviorGrade, TextAlignment.RIGHT, 12f, normalTextFont));
+        table.addCell(getCell(behaviorGrade, TextAlignment.CENTER, 12f, normalTextFont));
         doc.add(table);
 
         //Attendances

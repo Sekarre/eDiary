@@ -139,10 +139,11 @@ public class StudentServiceImpl implements StudentService {
     public Map<SubjectDto, List<GradeDto>> listSubjectsGrades(Long studentId) {
         Student student = getStudentById(studentId);
 
-        Map<SubjectDto, List<GradeDto>> studentGradesListMap = new TreeMap<>(
-                ((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName())));
+        Map<SubjectDto, List<GradeDto>> studentGradesListMap = new LinkedHashMap<>();
 
-        student.getSchoolClass().getSubjects().forEach(subject -> {
+        List<Subject> subjects = subjectRepository.findAllBySchoolClassIdOrderByName(student.getSchoolClass().getId());
+
+        subjects.forEach(subject -> {
             studentGradesListMap.put(subjectToSubjectDto.convert(subject),
                     gradeRepository.findAllByStudentIdAndSubjectId(student.getId(), subject.getId())
                             .stream()

@@ -781,7 +781,7 @@ class TeacherControllerTest {
 
         when(formTutorService.findStudentCouncil(teacherId)).thenReturn(null);
         when(formTutorService.initNewStudentCouncil(teacherId)).thenReturn(StudentCouncilDto.builder().build());
-        when(formTutorService.listClassStudents(teacherId)).thenReturn(Arrays.asList(
+        when(formTutorService.listClassStudentsStudentCouncil(teacherId)).thenReturn(Arrays.asList(
                 StudentDto.builder().id(1L).build(),
                 StudentDto.builder().id(2L).build()
         ));
@@ -793,7 +793,7 @@ class TeacherControllerTest {
 
         verify(formTutorService, times(1)).findStudentCouncil(teacherId);
         verify(formTutorService, times(1)).initNewStudentCouncil(teacherId);
-        assertEquals(2, formTutorService.listClassStudents(teacherId).size());
+        assertEquals(2, formTutorService.listClassStudentsStudentCouncil(teacherId).size());
     }
 
     @Test
@@ -821,7 +821,7 @@ class TeacherControllerTest {
 
         when(formTutorService.removeStudentFromCouncil(any(), any(), any()))
                 .thenReturn(StudentCouncilDto.builder().build());
-        when(formTutorService.listClassStudents(teacherId)).thenReturn(Arrays.asList(
+        when(formTutorService.listClassStudentsStudentCouncil(teacherId)).thenReturn(Arrays.asList(
                 StudentDto.builder().id(1L).build(),
                 StudentDto.builder().id(2L).build()
         ));
@@ -832,7 +832,7 @@ class TeacherControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/formTutor/studentCouncil"));
 
-        assertEquals(2, formTutorService.listClassStudents(teacherId).size());
+        assertEquals(2, formTutorService.listClassStudentsStudentCouncil(teacherId).size());
     }
 
 
@@ -876,7 +876,7 @@ class TeacherControllerTest {
 
         when(formTutorService.removeParentFromCouncil(any(), any(), any()))
                 .thenReturn(parentCouncilDto);
-        when(formTutorService.listClassParents(teacherId)).thenReturn(Arrays.asList(
+        when(formTutorService.listClassParentsParentCouncil(teacherId)).thenReturn(Arrays.asList(
                 ParentDto.builder().id(1L).build(),
                 ParentDto.builder().id(2L).build()
         ));
@@ -887,7 +887,7 @@ class TeacherControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/formTutor/parentCouncil"));
 
-        assertEquals(2, formTutorService.listClassParents(teacherId).size());
+        assertEquals(2, formTutorService.listClassParentsParentCouncil(teacherId).size());
     }
 
     @Test
@@ -927,7 +927,7 @@ class TeacherControllerTest {
         Long teacherId = 1L;
         Long studentId = 1L;
 
-        when(formTutorService.listClassStudents(teacherId)).thenReturn(Arrays.asList(
+        when(formTutorService.listClassStudentsStudentCouncil(teacherId)).thenReturn(Arrays.asList(
                 StudentDto.builder().id(1L).build(),
                 StudentDto.builder().id(2L).build()
         ));
@@ -937,14 +937,14 @@ class TeacherControllerTest {
                 .andExpect(model().attributeExists("students"))
                 .andExpect(view().name("teacher/formTutor/studentCards"));
 
-        assertEquals(2, formTutorService.listClassStudents(teacherId).size());
+        assertEquals(2, formTutorService.listClassStudentsStudentCouncil(teacherId).size());
     }
 
     @Test
     void processNewTimeInterval() throws Exception {
         Long teacherId = 1L;
 
-        when(formTutorService.listClassStudents(any())).thenReturn(Arrays.asList(
+        when(formTutorService.listClassStudentsStudentCouncil(any())).thenReturn(Arrays.asList(
                 StudentDto.builder().id(1L).build(),
                 StudentDto.builder().id(2L).build()
         ));
@@ -959,7 +959,7 @@ class TeacherControllerTest {
                 .andExpect(model().attributeExists("timeInterval"))
                 .andExpect(view().name("teacher/formTutor/studentCards"));
 
-        assertEquals(2, formTutorService.listClassStudents(teacherId).size());
+        assertEquals(2, formTutorService.listClassStudentsStudentCouncil(teacherId).size());
     }
 
 

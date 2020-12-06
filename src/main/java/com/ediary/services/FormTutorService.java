@@ -33,8 +33,9 @@ public interface FormTutorService {
     Grade saveBehaviorGrade(Long teacher, GradeDto gradeDto);
 
     List<StudentDto> listClassStudents(Long teacherId);
+    List<StudentDto> listClassStudentsStudentCouncil(Long teacherId);
+    List<ParentDto> listClassParentsParentCouncil(Long teacherId);
 
-    List<ParentDto> listClassParents(Long teacherId);
 
     TimeInterval initNewTimeInterval();
     TimeInterval setTimeInterval(LocalDate startTime, LocalDate endTime);
