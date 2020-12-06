@@ -186,13 +186,12 @@ The above copyright notice and this permission notice shall be included in all c
                                           </span>
                                         </div>
                                         <div class="col-md-8">
-                                            <label for="todate">Data: </label>
+                                            <label>Data: </label>
                                             <div class="form-group">
-                                                <div class='input-group date' id='todate'>
-                                                    <input type='text' class="form-control" name="endTime"
-                                                           th:field="*{date}"/>
-                                                    <span class="input-group-addon">
-                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                <div class='input-group'>
+                                                    <input hidden id="finalDate" type='text' name="endTime" th:field="*{date}"/>
+                                                    <input required id="dateC" type='date' />
+                                                    <input required id="timeC" type='time' />
                                                 </span>
 
                                                 </div>
@@ -207,7 +206,7 @@ The above copyright notice and this permission notice shall be included in all c
                                     </div>
                                     <div class="form-group"></div>
 
-                                    <button class="submit btn btn-primary pull-right">Stwórz</button>
+                                    <button id="submit" class="submit btn btn-primary pull-right">Stwórz</button>
                                 </div>
                             </form>
                         </div>
@@ -441,16 +440,18 @@ The above copyright notice and this permission notice shall be included in all c
             $('#selectTopic').selectpicker("refresh");
         });
 
+
+        $( "#submit" ).click(function() {
+
+            date = new Date($('#dateC').val());
+            var time =  $('#timeC').val();
+            var final = (date.getMonth() + +1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + time;
+            $('#finalDate').val(final);
+        });
+
     });
 </script>
 
-<script type="text/javascript">
-    $(function () {
-        $('#todate').datetimepicker({
-            format: 'MM/DD/YYYY HH:mm'
-        });
-    });
-</script>
 
 </body>
 
