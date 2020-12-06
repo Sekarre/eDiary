@@ -20,12 +20,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests(authorize -> {
             authorize
                     .mvcMatchers("/h2-console/**").permitAll()
-                    .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll();
+                    .antMatchers("/webjars/**", "/login", "/resources/**").permitAll();
         })
                 .authorizeRequests()
-                .anyRequest().authenticated()
+                    .anyRequest().authenticated()
                 .and()
-                .formLogin().and()
+                .formLogin()
+                    .loginPage("/login")
+                .and()
+                .logout()
+                    .logoutSuccessUrl("/login?logout")
+                .and()
                 .httpBasic()
                 .and().csrf().ignoringAntMatchers("/h2-console/**", "/api/**");
 

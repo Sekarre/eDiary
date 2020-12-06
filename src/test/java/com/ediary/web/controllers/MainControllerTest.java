@@ -2,6 +2,7 @@ package com.ediary.web.controllers;
 
 import com.ediary.DTO.UserDto;
 import com.ediary.converters.UserToUserDto;
+import com.ediary.services.AdminService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -15,8 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class MainControllerTest {
 
-    @Mock
-    UserToUserDto userToUserDto;
+    @Mock UserToUserDto userToUserDto;
+    @Mock AdminService adminService;
 
     MockMvc mockMvc;
 
@@ -25,7 +26,7 @@ class MainControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        mainController = new MainController(userToUserDto);
+        mainController = new MainController(userToUserDto, adminService);
         mockMvc = MockMvcBuilders.standaloneSetup(mainController).build();
     }
 
