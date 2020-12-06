@@ -48,9 +48,9 @@ The above copyright notice and this permission notice shall be included in all c
                     <a th:text="'>'"></a>
                     <a class="navbar-brand" th:href="@{/teacher/{teacherId}/attendances/class(teacherId=${teacherId})}">Klasy</a>
                     <a th:text="'>'"></a>
-                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/attendances/class/{classId}(teacherId=${teacherId}, classId=${classId})}">Uczniowie</a>
+                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/attendances/class/{classId}(teacherId=${teacherId}, classId=${classId})}" th:text="'Uczniowie - ' + ${className}">Uczniowie</a>
                     <a th:text="'>'"></a>
-                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/attendances/class/{classId}/{studentId}(teacherId=${teacherId}, classId=${classId}, studentId=${studentId})}">Frekwencja ucznia</a>
+                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/attendances/class/{classId}/{studentId}(teacherId=${teacherId}, classId=${classId}, studentId=${studentId})}" th:text="${studentName}">Frekwencja ucznia</a>
                 </div>
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index"

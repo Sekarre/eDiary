@@ -44,7 +44,7 @@ The above copyright notice and this permission notice shall be included in all c
                     <a th:text="'>'"></a>
                     <a class="navbar-brand" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}(teacherId=${teacherId}, subjectId=${subjectId})}">Lekcje</a>
                     <a th:text="'>'"></a>
-                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/attendances(teacherId=${teacherId}, subjectId=${subjectId}, classId=${classId}, lessonId=${lessonId})}">Wybrana lekcja</a>
+                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/attendances(teacherId=${teacherId}, subjectId=${subjectId}, classId=${classId}, lessonId=${lessonId})}" th:text="${#strings.abbreviate(lessonName, 20)}">Wybrana lekcja</a>
 
 
                 </div>
