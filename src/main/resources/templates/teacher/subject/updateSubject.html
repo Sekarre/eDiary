@@ -46,7 +46,12 @@ The above copyright notice and this permission notice shall be included in all c
     <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
       <div class="container-fluid">
         <div class="navbar-wrapper">
-          <a class="navbar-brand" th:href="@{'/teacher/' + ${teacherId} + '/subject'}">Przedmioty</a>
+          <a class="navbar-brand" th:href="@{/teacher/{teacherId}/subject(teacherId=${teacherId})}">Przedmioty</a>
+          <a th:text="'>'"></a>
+          <a class="navbar-brand" th:href="@{/teacher/{teacherId}/subject/{subjectId}(teacherId=${teacherId}, subjectId=${subjectId})}" th:text="${subject.name}">Wybrany przedmiot</a>
+          <a th:text="'>'"></a>
+          <a class="navbar-brand" th:href="@{/teacher/{teacherId}/subject/{subjectId}/update(teacherId=${teacherId}, subjectId=${subjectId})}">Edytuj</a>
+
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
           <span class="sr-only">Toggle navigation</span>

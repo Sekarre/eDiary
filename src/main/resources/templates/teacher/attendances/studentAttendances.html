@@ -44,23 +44,15 @@ The above copyright notice and this permission notice shall be included in all c
 
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand">Frekwencja:</a>
+                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/attendances(teacherId=${teacherId})}">Frekwencja</a>
+                    <a th:text="'>'"></a>
+                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/attendances/class(teacherId=${teacherId})}">Klasy</a>
+                    <a th:text="'>'"></a>
+                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/attendances/class/{classId}(teacherId=${teacherId}, classId=${classId})}">Uczniowie</a>
+                    <a th:text="'>'"></a>
+                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/attendances/class/{classId}/{studentId}(teacherId=${teacherId}, classId=${classId}, studentId=${studentId})}">Frekwencja ucznia</a>
                 </div>
-                <nav aria-label="Page navigation example" th:if="${weeklyAttendances != null}">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item">
-                            <a class="btn btn-primary btn-round"
-                               th:href="@{/teacher/{teacherId}/attendances/class/{classId}/{studentId}/{direction}/{dateValue}(studentId=${studentId}, teacherId=${teacherId}, classId=${classId},
-                                direction='previous',
-                                dateValue = ${weeklyAttendances?.attendances?.keySet()?.stream()?.findFirst()?.toString()?.substring(9, 19)})}">Poprzednia</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="btn btn-primary btn-round"
-                               th:href="@{/teacher/{teacherId}/attendances/class/{classId}/{studentId}/{direction}/{dateValue}(studentId=${studentId}, teacherId=${teacherId}, classId=${classId},
-                                direction='next', dateValue = ${weeklyAttendances?.attendances?.keySet()?.stream()?.findFirst()?.toString()?.substring(9, 19)})}">Następna</a>
-                        </li>
-                    </ul>
-                </nav>
+
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -73,6 +65,19 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
+            <ul class="pagination justify-content-center" th:if="${weeklyAttendances != null}">
+                <li class="page-item">
+                    <a class="btn btn-primary btn-round"
+                       th:href="@{/teacher/{teacherId}/attendances/class/{classId}/{studentId}/{direction}/{dateValue}(studentId=${studentId}, teacherId=${teacherId}, classId=${classId},
+                                direction='previous',
+                                dateValue = ${weeklyAttendances?.attendances?.keySet()?.stream()?.findFirst()?.toString()?.substring(9, 19)})}">Poprzednia</a>
+                </li>
+                <li class="page-item">
+                    <a class="btn btn-primary btn-round"
+                       th:href="@{/teacher/{teacherId}/attendances/class/{classId}/{studentId}/{direction}/{dateValue}(studentId=${studentId}, teacherId=${teacherId}, classId=${classId},
+                                direction='next', dateValue = ${weeklyAttendances?.attendances?.keySet()?.stream()?.findFirst()?.toString()?.substring(9, 19)})}">Następna</a>
+                </li>
+            </ul>
             <form method="post" th:action="@{/teacher/{teacherId}/attendances/class/{classId}/{studentId}/excuse(teacherId=${teacherId}, studentId=${studentId}, classId=${classId})}">
             <div th:if="${weeklyAttendances == null}" class="navbar-wrapper">
                 <div class="d-flex justify-content-center">

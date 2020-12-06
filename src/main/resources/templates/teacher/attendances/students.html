@@ -45,7 +45,11 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand">Uczniowie:</a>
+                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/attendances(teacherId=${teacherId})}">Frekwencja</a>
+                    <a th:text="'>'"></a>
+                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/attendances/class(teacherId=${teacherId})}">Klasy</a>
+                    <a th:text="'>'"></a>
+                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/attendances/class/{classId}(teacherId=${teacherId}, classId=${classId})}">Uczniowie</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -76,7 +80,6 @@ The above copyright notice and this permission notice shall be included in all c
                                 <th>Klasa</th>
                                 </thead>
                                 <tbody>
-                                <!--/*@thymesVar id="students" type="com.ediary.DTO.StudentDto"*/-->
                                 <tr th:each="student : ${students}" style="cursor: pointer"
                                     th:onclick="'javascript:rowClicked(\'' + ${teacherId} + '\',\'' + ${classId} + '\',\'' + ${student.id} + '\');'">
                                     <td th:text="${student.userName}">

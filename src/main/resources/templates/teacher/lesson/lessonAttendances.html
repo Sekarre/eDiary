@@ -40,15 +40,21 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand">Lekcja:</a>
-                    <a data-toggle="modal" class="open-gradeDialogModalLessonDelete" href="#deleteLessonModal"
-                       th:attr="data-lesson=''+${lessonId}+'', data-teacher=''+${teacherId}+'',data-subject=''+${subjectId}+'',
-                        data-class=''+${classId}+'', data-target='#deleteLessonModal'">
-                        <button rel="tooltip" class="submit btn  btn-link btn-lg btn-danger">
-                            <i class="material-icons">delete</i>
-                        </button>
-                    </a>
+                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/lesson/subject(teacherId=${teacherId})}">Przedmioty</a>
+                    <a th:text="'>'"></a>
+                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}(teacherId=${teacherId}, subjectId=${subjectId})}">Lekcje</a>
+                    <a th:text="'>'"></a>
+                    <a class="navbar-brand" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/attendances(teacherId=${teacherId}, subjectId=${subjectId}, classId=${classId}, lessonId=${lessonId})}">Wybrana lekcja</a>
+
+
                 </div>
+                <a data-toggle="modal" class="open-gradeDialogModalLessonDelete" href="#deleteLessonModal"
+                   th:attr="data-lesson=''+${lessonId}+'', data-teacher=''+${teacherId}+'',data-subject=''+${subjectId}+'',
+                        data-class=''+${classId}+'', data-target='#deleteLessonModal'">
+                    <button class="submit btn  btn-link btn-lg btn-danger">
+                        <i class="material-icons">delete</i>
+                    </button>
+                </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="navbar-toggler-icon icon-bar"></span>

@@ -165,7 +165,7 @@ public class TeacherController {
         }
     }
 
-
+    //no needed
     @TeacherPermission
     @GetMapping("/{teacherId}/classes")
     public String getAllClasses(@PathVariable Long teacherId, Model model) {
