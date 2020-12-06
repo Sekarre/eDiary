@@ -32,11 +32,7 @@ The above copyright notice and this permission notice shall be included in all c
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
 
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
-    <!--    <style>-->
-    <!--        tr:hover td{-->
-    <!--            background-color:#f5f5f5;;-->
-    <!--        }-->
-    <!--    </style>-->
+
 </head>
 
 <body class="">
@@ -49,8 +45,16 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <h3  th:text="'Klasa  ' + ${schoolClass.name}"></h3>
+                    <a class="navbar-brand" th:href="@{/deputyHead/classes}" >Klasy</a>
+                    <a th:text="'>'"></a>
+                    <a class="navbar-brand" th:href="@{/deputyHead/classes/{classId}(classId=${classId})}" th:text="'Klasa ' + ${schoolClass.name}">klasa</a>
                 </div>
+                <a data-toggle="modal" class="open-gradeDialogModalClass" href="#deleteClassModal"
+                   th:attr="data-class=''+${schoolClass.id}+'', data-target='#deleteClassModal'">
+                    <button rel="tooltip" class="submit btn  btn-link btn-lg btn-danger">
+                        <i class="material-icons">delete</i>
+                    </button>
+                </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="navbar-toggler-icon icon-bar"></span>
@@ -62,21 +66,6 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-            <ul class="pagination justify-content-center">
-                <li>
-<!--                    <form  th:action="@{'/deputyHead/classes/' + ${schoolClass.id}}" th:method="delete">-->
-<!--                        <button class="submit btn btn-primary btn-link">-->
-<!--                            <i class="material-icons">delete</i>-->
-<!--                        </button>-->
-<!--                    </form>-->
-                    <a data-toggle="modal" class="open-gradeDialogModalClass" href="#deleteClassModal"
-                       th:attr="data-class=''+${schoolClass.id}+'', data-target='#deleteClassModal'">
-                        <button rel="tooltip" class="submit btn  btn-link btn-lg btn-danger">
-                            <i class="material-icons">delete</i>
-                        </button>
-                    </a>
-                </li>
-            </ul>
 
             <div class="container-fluid">
                 <div class="card">

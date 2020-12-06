@@ -165,7 +165,7 @@ public class TeacherController {
         }
     }
 
-
+    //no needed
     @TeacherPermission
     @GetMapping("/{teacherId}/classes")
     public String getAllClasses(@PathVariable Long teacherId, Model model) {
@@ -292,7 +292,7 @@ public class TeacherController {
     public String getAttendancesClassStudent(@PathVariable Long teacherId, @PathVariable Long classId, Model model) {
 
         model.addAttribute("students", teacherService.listClassStudents(teacherId, classId));
-        model.addAttribute("classId", classId);
+        model.addAttribute("className", teacherService.getSchoolClass(classId).getName());
 
         return "teacher/attendances/students";
     }
@@ -307,6 +307,8 @@ public class TeacherController {
         model.addAttribute("weeklyAttendances",
                 weeklyAttendancesService.getAttendancesByWeek(studentId, 7, Date.valueOf(LocalDate.now().minusDays(6))));
         model.addAttribute("isFormTutor", teacherService.isFormTutor(teacherId, classId));
+        model.addAttribute("studentName", teacherService.getStudent(studentId).getUserName());
+        model.addAttribute("className", teacherService.getSchoolClass(classId).getName());
 
         return "teacher/attendances/studentAttendances";
     }
@@ -328,9 +330,9 @@ public class TeacherController {
 
         model.addAttribute("weeklyAttendances",
                 weeklyAttendancesService.getAttendancesByWeek(studentId, 7, date));
-        model.addAttribute("studentId", studentId);
-        model.addAttribute("classId", classId);
+        model.addAttribute("studentName", teacherService.getStudent(studentId).getUserName());
         model.addAttribute("isFormTutor", teacherService.isFormTutor(teacherId, classId));
+        model.addAttribute("className", teacherService.getSchoolClass(classId).getName());
 
 
         return "teacher/attendances/studentAttendances";
@@ -591,6 +593,7 @@ public class TeacherController {
         model.addAttribute("studentsWithGrades", teacherService.listStudentsLessonGrades(teacherId, lessonId));
         model.addAttribute("maxGrades", teacherService.maxGradesCount(teacherId, lessonId));
         model.addAttribute("grade", teacherService.initNewLessonGrade(teacherId, subjectId, lessonId));
+        model.addAttribute("lessonName", teacherService.getLesson(lessonId).getTopicName());
 
         return "/teacher/lesson/lesson";
     }
@@ -606,6 +609,7 @@ public class TeacherController {
 
         model.addAttribute("studentsWithAttendances", teacherService.listStudentsLessonAttendances(teacherId, lessonId));
         model.addAttribute("attendance", teacherService.initNewLessonAttendance(teacherId, subjectId, lessonId));
+        model.addAttribute("lessonName", teacherService.getLesson(lessonId).getTopicName());
 
         return "/teacher/lesson/lessonAttendances";
     }

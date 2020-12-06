@@ -55,7 +55,7 @@ The above copyright notice and this permission notice shall be included in all c
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand">Plan zajęć</a>
+                    <a class="navbar-brand" th:href="@{/parent/{parentId}/{studentId}/timetable(parentId=${parentId}, studentId=${studentId})}" th:text="${student.userName + ' - Plan lekcji'}">Plan lekcji</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -76,7 +76,7 @@ The above copyright notice and this permission notice shall be included in all c
             <div class="container-fluid" th:if="${timetable != null}">
                         <div class="card">
                             <div class="card-header card-header-primary">
-                                <h4 class="card-title ">Plan zajęć</h4>
+                                <h4 class="card-title ">Plan lekcji</h4>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">

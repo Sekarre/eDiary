@@ -28,6 +28,7 @@ public interface DeputyHeadService {
 
     List<TeacherDto> listAllTeachersWithoutClass(Integer page, Integer size);
     TeacherDto findTeacher(Long teacherId, Long classId);
+    String findTeacher(Long teacherId);
 
     Integer countStudentsWithoutClass();
 }

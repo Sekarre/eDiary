@@ -1018,11 +1018,16 @@ public class TeacherServiceImpl implements TeacherService {
         Class schoolClass = getClassById(classId);
 
 
-        return studentRepository.findAllBySchoolClassId(schoolClass.getId())
+        return studentRepository.findAllBySchoolClassIdOrderByUserLastName(schoolClass.getId())
                 .stream()
                 .map(studentToStudentDto::convert)
                 .collect(Collectors.toList());
 
+    }
+
+    @Override
+    public StudentDto getStudent(Long studentId) {
+        return studentToStudentDto.convert(getStudentById(studentId));
     }
 
     @Override

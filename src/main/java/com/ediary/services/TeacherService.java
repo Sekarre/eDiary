@@ -88,6 +88,7 @@ public interface TeacherService {
     Boolean rejectExtenuation(Long extenuationId);
 
     List<StudentDto> listClassStudents(Long teacherId, Long classId);
+    StudentDto getStudent(Long studentId);
 
     Boolean isFormTutor(Long teacherId, Long classId);
 

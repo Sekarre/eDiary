@@ -72,6 +72,7 @@ public class DeputyHeadController {
 
         model.addAttribute("page", page);
         model.addAttribute("schoolClass", schoolClass);
+        model.addAttribute("selectedTeacherName", deputyHeadService.findTeacher(schoolClass.getTeacherId()));
 
         return "deputyHead/newClassName";
     }
@@ -89,6 +90,8 @@ public class DeputyHeadController {
             deputyHeadService.saveClass(schoolClass);
         } else {
             model.addAttribute("uniqueName", Boolean.FALSE);
+            model.addAttribute("selectedTeacherName", deputyHeadService.findTeacher(schoolClass.getTeacherId()));
+
             return "deputyHead/newClassName";
         }
 

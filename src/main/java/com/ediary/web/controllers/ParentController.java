@@ -3,6 +3,7 @@ package com.ediary.web.controllers;
 import com.ediary.DTO.*;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.Extenuation;
+import com.ediary.domain.Student;
 import com.ediary.domain.security.User;
 import com.ediary.security.perms.ParentReadStudentPermission;
 import com.ediary.security.perms.StudentPermission;
@@ -47,8 +48,8 @@ public class ParentController {
 
         try {
             Long studentId = Long.parseLong(studentIdCookie);
-            parentService.findStudent(user, studentId);
-            model.addAttribute("student", StudentDto.builder().id(studentId).build());
+            StudentDto student = parentService.findStudent(user, studentId);
+            model.addAttribute("student", student);
         } catch (Exception e) {
 
         }
