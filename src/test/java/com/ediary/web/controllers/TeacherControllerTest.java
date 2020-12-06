@@ -174,7 +174,7 @@ class TeacherControllerTest {
     @Test
     void getAllBehaviorsByTeacher() throws Exception {
 
-        when(teacherService.listBehaviors(teacherId)).thenReturn(Arrays.asList(
+        when(teacherService.listBehaviors(any(), any(), any())).thenReturn(Arrays.asList(
                 BehaviorDto.builder().id(1L).build(),
                 BehaviorDto.builder().id(2L).build()
         ));
@@ -185,8 +185,8 @@ class TeacherControllerTest {
                 .andExpect(view().name("/teacher/behavior/behavior"));
 
 
-        verify(teacherService, times(1)).listBehaviors(teacherId);
-        assertEquals(2, teacherService.listBehaviors(teacherId).size());
+        verify(teacherService, times(1)).listBehaviors(teacherId, 0, 2);
+        assertEquals(2, teacherService.listBehaviors(teacherId,0, 2).size());
     }
 
     @Test

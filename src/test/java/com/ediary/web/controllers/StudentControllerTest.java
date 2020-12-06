@@ -115,7 +115,7 @@ class StudentControllerTest {
     @Test
     void getAllBehaviors() throws Exception {
 
-        when(studentService.listBehaviors(studentId)).thenReturn(Arrays.asList(
+        when(studentService.listBehaviors(any(), any(), any())).thenReturn(Arrays.asList(
                 BehaviorDto.builder().id(1L).build(),
                 BehaviorDto.builder().id(2L).build()
         ));
@@ -125,8 +125,8 @@ class StudentControllerTest {
                 .andExpect(model().attributeExists("behaviors"))
                 .andExpect(view().name("student/allBehaviors"));
 
-        verify(studentService, times(1)).listBehaviors(studentId);
-        assertEquals(2, studentService.listBehaviors(studentId).size());
+        verify(studentService, times(1)).listBehaviors(studentId, 0, 10);
+        assertEquals(2, studentService.listBehaviors(studentId, 0, 10).size());
     }
 
     @Test

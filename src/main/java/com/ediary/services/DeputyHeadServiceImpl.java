@@ -10,6 +10,7 @@ import com.ediary.converters.StudentToStudentDto;
 import com.ediary.converters.TeacherToTeacherDto;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
+import com.ediary.domain.helpers.GradeWeight;
 import com.ediary.domain.security.Role;
 import com.ediary.domain.security.User;
 import com.ediary.exceptions.NotFoundException;
@@ -39,6 +40,7 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
     private final SubjectRepository subjectRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final GradeRepository gradeRepository;
 
     private final StudentToStudentDto studentToStudentDto;
     private final TeacherToTeacherDto teacherToTeacherDto;
@@ -190,6 +192,13 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
                     .collect(Collectors.toSet()));
 
             studentToRemove.setSchoolClass(null);
+            Grade behaviorGrade = gradeRepository.findByStudentIdAndWeight(studentToRemove.getId(), GradeWeight.BEHAVIOR_GRADE.getWeight());
+
+            if (behaviorGrade != null) {
+                behaviorGrade.setStudent(null);
+                gradeRepository.save(behaviorGrade);
+            }
+
             studentRepository.save(studentToRemove);
 
             classRepository.save(schoolClass);

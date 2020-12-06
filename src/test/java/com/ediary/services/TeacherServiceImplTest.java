@@ -404,7 +404,7 @@ class TeacherServiceImplTest {
 
         when(behaviorToBehaviorDto.convert(any(Behavior.class))).thenReturn(BehaviorDto.builder().id(2L).build());
 
-        List<BehaviorDto> behaviors = teacherService.listBehaviors(teacherId);
+        List<BehaviorDto> behaviors = teacherService.listBehaviors(teacherId, 0, 2);
 
         assertEquals(2, behaviors.size());
         assertEquals(2L, behaviors.get(1).getId());

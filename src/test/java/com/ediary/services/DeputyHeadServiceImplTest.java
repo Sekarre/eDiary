@@ -54,6 +54,8 @@ public class DeputyHeadServiceImplTest {
     UserRepository userRepository;
     @Mock
     RoleRepository roleRepository;
+    @Mock
+    GradeRepository gradeRepository;
 
     @Mock
     StudentToStudentDto studentToStudentDto;
@@ -71,7 +73,7 @@ public class DeputyHeadServiceImplTest {
         MockitoAnnotations.initMocks(this);
         deputyHeadService = new DeputyHeadServiceImpl(classRepository, studentRepository, teacherRepository, lessonRepository,
                 schoolPeriodRepository, studentCouncilRepository, parentCouncilRepository, eventRepository, subjectRepository,userRepository, roleRepository,
-                studentToStudentDto, teacherToTeacherDto, classToClassDto, classDtoToClass);
+                gradeRepository, studentToStudentDto, teacherToTeacherDto, classToClassDto, classDtoToClass);
     }
 
 

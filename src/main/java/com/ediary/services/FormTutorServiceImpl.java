@@ -486,7 +486,7 @@ public class FormTutorServiceImpl implements FormTutorService {
 
             students.forEach(student -> {
                 studentGradesListMap.put(studentToStudentDto.convert(student),
-                        gradeRepository.findAllByTeacherIdAndSubjectIdAndStudentIdAndWeightNotIn(teacherId, subjectId,
+                        gradeRepository.findAllBySubjectIdAndStudentIdAndWeightNotIn(subjectId,
                                 student.getId(), Arrays.asList(GradeWeight.FINAL_GRADE.getWeight(), GradeWeight.BEHAVIOR_GRADE.getWeight()))
                                 .stream()
                                 .map(gradeToGradeDto::convert)
@@ -505,7 +505,7 @@ public class FormTutorServiceImpl implements FormTutorService {
     }
 
     @Override
-    public Map<StudentDto, GradeDto> listStudentsFinalGrades(Long teacherId, Long subjectId) {
+    public Map<Long, GradeDto> listStudentsFinalGrades(Long teacherId, Long subjectId) {
         Teacher teacher = getTeacherById(teacherId);
 
         Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new NotFoundException("Subject not found"));
@@ -516,14 +516,14 @@ public class FormTutorServiceImpl implements FormTutorService {
 
         if (teacher.getSchoolClass() != null && schoolClass.equals(teacher.getSchoolClass())) {
 
-            Map<StudentDto, GradeDto> studentFinalGradesListMap = new LinkedHashMap<>();
+            Map<Long, GradeDto> studentFinalGradesListMap = new LinkedHashMap<>();
 
             List<Student> students = studentRepository.findAllBySchoolClassIdOrderByUserLastName(schoolClass.getId());
 
             students.forEach(student -> {
-                studentFinalGradesListMap.put(studentToStudentDto.convert(student),
+                studentFinalGradesListMap.put(student.getId(),
                         gradeToGradeDto.convert(gradeRepository
-                                .findByTeacherIdAndSubjectIdAndStudentIdAndWeight(teacherId, subjectId, student.getId(), GradeWeight.FINAL_GRADE.getWeight())));
+                                .findBySubjectIdAndStudentIdAndWeight(subjectId, student.getId(), GradeWeight.FINAL_GRADE.getWeight())));
             });
 
             if (studentFinalGradesListMap.keySet().isEmpty()) {
@@ -546,6 +546,26 @@ public class FormTutorServiceImpl implements FormTutorService {
             add("Poprawne");
             add("Nieodpowiednie");
             add("Naganne");
+        }};
+    }
+
+    @Override
+    public List<Long> maxGradesCountBySubject(Long teacherId, Long subjectId) {
+        Long[] maxCount = {Long.MIN_VALUE};
+
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new NotFoundException("Subject not found"));
+        Class schoolClass = subject.getSchoolClass();
+
+        schoolClass.getStudents().forEach(student -> {
+            Long count = gradeRepository.countAllBySubjectIdAndStudentId(subjectId, student.getId());
+            if (count > maxCount[0])
+                maxCount[0] = count;
+        });
+
+        return new ArrayList<>() {{
+            for (int i = 0; i < maxCount[0]; i++) {
+                add(null);
+            }
         }};
     }
 

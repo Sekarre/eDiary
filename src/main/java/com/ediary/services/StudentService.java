@@ -13,7 +13,7 @@ public interface StudentService {
     List<GradeDto> listGrades(Long studentId, Long subjectId);
     List<SubjectDto> listSubjects(Long studentId);
     List<AttendanceDto> listAttendances(Long studentId);
-    List<BehaviorDto> listBehaviors(Long studentId);
+    List<BehaviorDto> listBehaviors(Long studentId, Integer page, Integer size);
     List<EventDto> listEvents(Long studentId, Integer page, Integer size, Boolean includeHistory);
     Timetable getTimetableByStudentId(Long studentId);
     StudentDto findByUser(User user);

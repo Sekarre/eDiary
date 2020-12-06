@@ -66,7 +66,7 @@ public interface TeacherService {
     EventDto getEvent(Long teacherId, Long eventId);
 
     Behavior saveBehavior(BehaviorDto behaviorDto);
-    List<BehaviorDto> listBehaviors(Long teacherId);
+    List<BehaviorDto> listBehaviors(Long teacherId, Integer page, Integer size);
     List<BehaviorDto> listBehaviors(Long teacherId, Long studentId);
     BehaviorDto initNewBehavior(Long teacherId);
     BehaviorDto initNewBehavior(Long teacherId, Long studentId);

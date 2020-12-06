@@ -222,7 +222,7 @@ class ParentControllerTest {
     @Test
     void getAllBehaviors() throws Exception {
 
-        when(studentService.listBehaviors(studentId)).thenReturn(Arrays.asList(
+        when(studentService.listBehaviors(any(), any(), any())).thenReturn(Arrays.asList(
                 BehaviorDto.builder().id(1L).build(),
                 BehaviorDto.builder().id(2L).build()
         ));
@@ -232,8 +232,8 @@ class ParentControllerTest {
                 .andExpect(model().attributeExists("behaviors"))
                 .andExpect(view().name("parent/allBehaviors"));
 
-        verify(studentService, times(1)).listBehaviors(studentId);
-        assertEquals(2, studentService.listBehaviors(studentId).size());
+        verify(studentService, times(1)).listBehaviors(studentId, 0, 10);
+        assertEquals(2, studentService.listBehaviors(studentId, 0, 10).size());
     }
 
     @Test

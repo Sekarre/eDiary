@@ -64,7 +64,7 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
             </div>
 
-            <div class="container-fluid">
+            <div class="container-fluid" th:if="${subjectsGrades != null}">
                 <div class="card" >
                     <div class="card-header card-header-text card-header-primary">
                         <div class="card-text col-md-3" >
@@ -85,7 +85,7 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
             </div>
             <div class="form-group"></div>
-
+            <th:block th:if="${subjectsGrades != null}">
             <div  th:each="subjectKey : ${subjectsGrades.keySet()}"  class="container-fluid ">
                 <div class="card">
                     <div class="card-header card-header-text card-header-primary">
@@ -166,6 +166,7 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
                 <div class="form-group"></div>
             </div>
+        </th:block>
         </div>
     </div>
 </div>

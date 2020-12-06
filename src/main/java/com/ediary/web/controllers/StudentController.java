@@ -109,9 +109,12 @@ public class StudentController {
 
     @StudentPermission
     @GetMapping("/{studentId}/behavior")
-    public String getAllBehaviors(@PathVariable Long studentId, Model model) {
+    public String getAllBehaviors(@PathVariable Long studentId,
+                                  @RequestParam(name = "page", required = false) Optional<Integer> page,
+                                  Model model) {
 
-        model.addAttribute("behaviors", studentService.listBehaviors(studentId));
+        model.addAttribute("page", page);
+        model.addAttribute("behaviors", studentService.listBehaviors(studentId,  page.orElse(0), 10));
         return "student/allBehaviors";
     }
 

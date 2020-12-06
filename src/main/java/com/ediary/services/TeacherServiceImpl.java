@@ -823,11 +823,13 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<BehaviorDto> listBehaviors(Long teacherId) {
+    public List<BehaviorDto> listBehaviors(Long teacherId, Integer page, Integer size) {
 
         Teacher teacher = getTeacherById(teacherId);
 
-        return behaviorRepository.findAllByTeacherOrderByDateDesc(teacher)
+        Pageable pageable = PageRequest.of(page, size);
+
+        return behaviorRepository.findAllByTeacherOrderByDateDesc(teacher, pageable)
                 .stream()
                 .map(behaviorToBehaviorDto::convert)
                 .collect(Collectors.toList());

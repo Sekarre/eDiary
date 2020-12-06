@@ -177,9 +177,12 @@ public class TeacherController {
 
     @TeacherPermission
     @GetMapping("/{teacherId}/behavior")
-    public String getAllBehaviorsByTeacher(@PathVariable Long teacherId, Model model) {
+    public String getAllBehaviorsByTeacher(@PathVariable Long teacherId,
+                                           @RequestParam(name = "page", required = false) Optional<Integer> page,
+                                           Model model) {
 
-        model.addAttribute("behaviors", teacherService.listBehaviors(teacherId));
+        model.addAttribute("page", page);
+        model.addAttribute("behaviors", teacherService.listBehaviors(teacherId, page.orElse(0), 10));
         return "/teacher/behavior/behavior";
     }
 
@@ -887,7 +890,7 @@ public class TeacherController {
 
         model.addAttribute("studentsWithGrades", formTutorService.listStudentsGrades(teacherId, subjectId));
         model.addAttribute("studentsWithFinalGrades", formTutorService.listStudentsFinalGrades(teacherId, subjectId));
-        model.addAttribute("maxGrades", teacherService.maxGradesCountBySubject(teacherId, subjectId));
+        model.addAttribute("maxGrades", formTutorService.maxGradesCountBySubject(teacherId, subjectId));
 
         return "/teacher/grades/allGradesFormTutor";
     }

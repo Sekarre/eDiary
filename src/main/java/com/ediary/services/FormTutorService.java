@@ -42,8 +42,9 @@ public interface FormTutorService {
 
     List<SubjectDto> listAllSubjectsByClass(Long teacherId);
     Map<StudentDto, List<GradeDto>> listStudentsGrades(Long teacherId, Long subjectId);
-    Map<StudentDto, GradeDto> listStudentsFinalGrades(Long teacherId, Long subjectId);
+    Map<Long, GradeDto> listStudentsFinalGrades(Long teacherId, Long subjectId);
 
     List<String> getBehaviorGradeValues();
 
+    List<Long> maxGradesCountBySubject(Long teacherId, Long subjectId);
 }

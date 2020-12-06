@@ -78,8 +78,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<BehaviorDto> listBehaviors(Long studentId) {
-        return behaviorRepository.findAllByStudentId(studentId)
+    public List<BehaviorDto> listBehaviors(Long studentId, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+
+        return behaviorRepository.findAllByStudentIdOrderByDateDesc(studentId, pageable)
                 .stream()
                 .map(behaviorToBehaviorDto::convert)
                 .collect(Collectors.toList());
@@ -140,6 +143,10 @@ public class StudentServiceImpl implements StudentService {
         Student student = getStudentById(studentId);
 
         Map<SubjectDto, List<GradeDto>> studentGradesListMap = new LinkedHashMap<>();
+
+        if (student.getSchoolClass() == null) {
+            return null;
+        }
 
         List<Subject> subjects = subjectRepository.findAllBySchoolClassIdOrderByName(student.getSchoolClass().getId());
 

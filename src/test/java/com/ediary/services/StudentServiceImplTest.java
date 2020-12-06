@@ -155,7 +155,7 @@ class StudentServiceImplTest {
 
         when(behaviorToBehaviorDto.convert(any())).thenReturn(BehaviorDto.builder().id(3L).build());
 
-        List<BehaviorDto> behaviors = studentService.listBehaviors(studentId);
+        List<BehaviorDto> behaviors = studentService.listBehaviors(studentId, 0, 2);
 
         assertEquals(2, behaviors.size());
         assertEquals(3L, behaviors.get(0).getId());
