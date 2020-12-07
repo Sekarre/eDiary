@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -148,7 +150,8 @@ class StudentServiceImplTest {
 
     @Test
     void listBehaviors() {
-        when(behaviorRepository.findAllByStudentId(studentId)).thenReturn(Arrays.asList(
+
+        when(behaviorRepository.findAllByStudentIdOrderByDateDesc(any(), any())).thenReturn(Arrays.asList(
                 Behavior.builder().id(1L).build(),
                 Behavior.builder().id(2L).build()
         ));
@@ -159,7 +162,7 @@ class StudentServiceImplTest {
 
         assertEquals(2, behaviors.size());
         assertEquals(3L, behaviors.get(0).getId());
-        verify(behaviorRepository, times(1)).findAllByStudentId(anyLong());
+        verify(behaviorRepository, times(1)).findAllByStudentIdOrderByDateDesc(any(), any());
         verify(behaviorToBehaviorDto, times(2)).convert(any());
     }
 

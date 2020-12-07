@@ -185,7 +185,7 @@ class TeacherControllerTest {
                 .andExpect(view().name("/teacher/behavior/behavior"));
 
 
-        verify(teacherService, times(1)).listBehaviors(teacherId, 0, 2);
+        verify(teacherService, times(1)).listBehaviors(any(), any(), any());
         assertEquals(2, teacherService.listBehaviors(teacherId,0, 2).size());
     }
 

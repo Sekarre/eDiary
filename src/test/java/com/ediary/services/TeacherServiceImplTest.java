@@ -397,7 +397,7 @@ class TeacherServiceImplTest {
         Teacher teacher = Teacher.builder().id(1L).build();
         when(teacherRepository.findById(teacherId)).thenReturn(Optional.of(teacher));
 
-        when(behaviorRepository.findAllByTeacherOrderByDateDesc(teacher)).thenReturn(Arrays.asList(
+        when(behaviorRepository.findAllByTeacherOrderByDateDesc(any(), any())).thenReturn(Arrays.asList(
                 Behavior.builder().id(1L).teacher(teacher).build(),
                 Behavior.builder().id(2L).teacher(teacher).build()
         ));
@@ -409,7 +409,7 @@ class TeacherServiceImplTest {
         assertEquals(2, behaviors.size());
         assertEquals(2L, behaviors.get(1).getId());
         verify(teacherRepository,times(1)).findById(teacherId);
-        verify(behaviorRepository, times(1)).findAllByTeacherOrderByDateDesc(teacher);
+        verify(behaviorRepository, times(1)).findAllByTeacherOrderByDateDesc(any(), any());
         verify(behaviorToBehaviorDto, times(2)).convert(any());
     }
 
