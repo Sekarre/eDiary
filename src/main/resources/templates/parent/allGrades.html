@@ -88,19 +88,20 @@ The above copyright notice and this permission notice shall be included in all c
             <div class="form-group"></div>
             <th:block th:if="${subjectsGrades != null}">
 
-            <div th:each="subjectKey : ${subjectsGrades.keySet()}" class="container-fluid" >
+            <div th:id="'subject' + ${subjectKey.id}" th:each="subjectKey : ${subjectsGrades.keySet()}" class="container-fluid subjects" >
                 <div class="card">
                     <div class="card-header card-header-text card-header-primary">
                         <div class="card-text col-md-3" >
                             <h4 class="card-title">
                                 <a th:href="@{/parent/{parentId}/{studentId}/grade/subject/{subjectId}(parentId=${parent.id}, studentId=${studentId}, subjectId=${subjectKey.id})}"  th:text="${subjectKey.name}"></a>
+                                <p class="averageGrade pull-right"></p>
                             </h4>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-
-                            <span th:each="grade : ${subjectsGrades?.get(subjectKey)}">
+                            <span th:each="grade : ${subjectsGrades?.get(subjectKey)}" class="grades" th:value="${grade.value}">
+                                <input type="hidden" th:value="${grade?.weight}">
                                 <a data-toggle="modal" class="open-gradeDialogModal btn " href="#gradeModal"
                                    th:attr="data-date=''+${grade.date}+'', data-target='#gradeModal', data-value=''+${grade.value}+'', data-weight=''+${grade.weight}+'',
                                         data-subject=''+${grade.subjectName}+'', data-teacher=''+${grade.teacherName}+'',data-student=''+${grade.studentName}+'', data-desc=''+${grade.description}+''"
@@ -423,6 +424,37 @@ The above copyright notice and this permission notice shall be included in all c
         gradeDateElem.innerHTML = gradeDate;
         gradeDescElem.innerHTML = gradeDesc;
 
+    });
+</script>
+
+<!--average grade-->
+<!--Weighted arithmetic mean-->
+<script>
+    var sum = 0.0;
+    var weightSum = 0;
+    var average = 0.0;
+
+    $( ".subjects" ).each(function() {
+        sum = 0.0;
+        weightSum = 0;
+        average = 0.0;
+
+        var grades  = "#" + $(this).attr("id") + " span.grades";
+        $(grades.toString()).each(function() {
+            var value = $(this).attr("value");
+            var weight = $(this).find("input").attr("value");
+            if (weight < 99) {
+                sum = +sum + +(value*weight);
+                weightSum = +weightSum + +weight;
+            }
+        });
+
+        average = (sum / weightSum);
+
+        if (!isNaN(average)) {
+            var averageGrade = "#" + $(this).attr("id") + " p.averageGrade";
+            $(averageGrade.toString()).html(average.toPrecision(3).toString());
+        }
     });
 </script>
 
