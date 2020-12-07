@@ -13,9 +13,9 @@ import java.sql.Date;
 @Builder
 public class TimeInterval {
 
-    @DateTimeFormat(pattern = "MM/yyyy")
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date startTime;
 
-    @DateTimeFormat(pattern = "MM/yyyy")
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date endTime;
 }

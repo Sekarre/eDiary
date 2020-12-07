@@ -19,8 +19,11 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +47,7 @@ public class HeadmasterServiceImpl implements HeadmasterService {
     @Override
     public List<TeacherDto> listAllTeachers(Integer page, Integer size) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "User.firstName"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "User.lastName"));
 
         Page<Teacher> teachers = teacherRepository.findAll(pageable);
 
@@ -92,22 +95,26 @@ public class HeadmasterServiceImpl implements HeadmasterService {
 
         String timeInterval = simpleDateFormat.format(startTime) + " - " + simpleDateFormat.format(endTime);
 
+        LocalDate localStartTime = startTime.toLocalDate();
+
+        java.util.Date startOfDayDate;
+
 
         //+1 day, cuz dateBefore in repos doesnt count that day in select query
         //simpler was '<', now is '<='
         Date correctedEndTime = Date.valueOf(endTime.toLocalDate().plusDays(1));
 
         //same here
-        Date correctedStartTime = Date.valueOf(startTime.toLocalDate().minusDays(1));
+        startOfDayDate = new java.util.Date(Timestamp.valueOf(LocalDateTime.of(localStartTime, LocalTime.MIDNIGHT)).getTime());
 
 
         return pdfService.createReportPdf(response, teacher, timeInterval,
-                getTeacherLessonsNumber(teacher, correctedStartTime, correctedEndTime).intValue(),
-                getTeacherSubjectsNames(teacher), getTeacherGradesNumber(teacher, correctedStartTime, correctedEndTime),
-                getTeacherEventsNumber(teacher, correctedStartTime, correctedEndTime));
+                getTeacherLessonsNumber(teacher, startOfDayDate, correctedEndTime).intValue(),
+                getTeacherSubjectsNames(teacher), getTeacherGradesNumber(teacher, startOfDayDate, correctedEndTime),
+                getTeacherEventsNumber(teacher, startOfDayDate, correctedEndTime));
     }
 
-    private Long getTeacherLessonsNumber(Teacher teacher, Date startTime, Date endTime) {
+    private Long getTeacherLessonsNumber(Teacher teacher, java.util.Date startTime, Date endTime) {
         Long[] sumOfLessons = {0L};
 
         List<List<Lesson>> lessons = teacher.getSubjects().
@@ -127,17 +134,20 @@ public class HeadmasterServiceImpl implements HeadmasterService {
 
         teacher.getSubjects()
                 .forEach(subject -> subjectsNames.append(subject.getName()).append(", "));
-        subjectsNames.delete(subjectsNames.length() - 2, subjectsNames.length() - 1);
+
+        if (subjectsNames.length() != 0) {
+            subjectsNames.delete(subjectsNames.length() - 2, subjectsNames.length() - 1);
+        }
 
         return subjectsNames.toString();
     }
 
-    private Long getTeacherGradesNumber(Teacher teacher, Date startTime, Date endTime) {
+    private Long getTeacherGradesNumber(Teacher teacher, java.util.Date startTime, Date endTime) {
         return gradeRepository.findAllByTeacherIdAndDateAfterAndDateBefore(teacher.getId(), startTime, endTime)
                 .stream().count();
     }
 
-    private Long getTeacherEventsNumber(Teacher teacher, Date startTime, Date endTime) {
+    private Long getTeacherEventsNumber(Teacher teacher, java.util.Date startTime, Date endTime) {
         return eventRepository.findAllByTeacherIdAndDateAfterAndDateBefore(teacher.getId(), startTime, endTime)
                 .stream().count();
     }

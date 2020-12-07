@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -254,12 +255,16 @@ public class FormTutorServiceImpl implements FormTutorService {
 
         String timeInterval = simpleDateFormat.format(startTime) + " - " + simpleDateFormat.format(endTime);
 
+        LocalDate localStartTime = startTime.toLocalDate();
+        java.util.Date startOfDayDate;
+
+
         //+1 day, cuz dateBefore in repos doesnt count that day in select query
         //simpler was '<', now is '<='
         Date correctedEndTime = Date.valueOf(endTime.toLocalDate().plusDays(1));
 
         //same here
-        Date correctedStartTime = Date.valueOf(startTime.toLocalDate().minusDays(1));
+        startOfDayDate = new java.util.Date(Timestamp.valueOf(LocalDateTime.of(localStartTime, LocalTime.MIDNIGHT)).getTime());
 
         Grade behaviorGrade = gradeRepository.findByStudentIdAndWeight(studentId, GradeWeight.BEHAVIOR_GRADE.getWeight());
         String behaviorGradeValue = "nie wystawiono";
@@ -267,8 +272,8 @@ public class FormTutorServiceImpl implements FormTutorService {
             behaviorGradeValue = behaviorGrade.getValue();
         }
 
-        return pdfService.createStudentCardPdf(response, getStudentsGradesWithSubjects(student, correctedStartTime, correctedEndTime),
-                student, getAttendancesNumber(student, correctedStartTime, correctedEndTime), timeInterval, behaviorGradeValue);
+        return pdfService.createStudentCardPdf(response, getStudentsGradesWithSubjects(student, startOfDayDate, correctedEndTime),
+                student, getAttendancesNumber(student, startOfDayDate, correctedEndTime), timeInterval, behaviorGradeValue);
     }
 
     @Override
@@ -574,7 +579,7 @@ public class FormTutorServiceImpl implements FormTutorService {
                 .findById(teacherId).orElseThrow(() -> new NotFoundException("Teacher not found"));
     }
 
-    private Map<String, List<Grade>> getStudentsGradesWithSubjects(Student student, Date startTime, Date endTime) {
+    private Map<String, List<Grade>> getStudentsGradesWithSubjects(Student student, java.util.Date startTime, Date endTime) {
 
         Map<String, List<Grade>> gradesWithSubjects = new TreeMap<>();
 
@@ -586,7 +591,7 @@ public class FormTutorServiceImpl implements FormTutorService {
         return gradesWithSubjects;
     }
 
-    private Map<String, Long> getAttendancesNumber(Student student, Date startTime, Date endTime) {
+    private Map<String, Long> getAttendancesNumber(Student student, java.util.Date startTime, Date endTime) {
 
         Map<String, Long> attendancesNumber = new HashMap<>();
 

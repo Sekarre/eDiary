@@ -76,11 +76,19 @@ public class HeadmasterController {
     @PostMapping("/teacherReport")
     public String processNewTimeInterval(Model model,
                                          @RequestParam(name = "page", required = false) Optional<Integer> page,
-                                         @RequestParam(name = "startTime") @DateTimeFormat(pattern = "MM/yyyy") LocalDate startTime,
-                                         @RequestParam(name = "endTime") @DateTimeFormat(pattern = "MM/yyyy") LocalDate endTime) {
+                                         @RequestParam(name = "startTime") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate startTime,
+                                         @RequestParam(name = "endTime") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate endTime) {
 
         model.addAttribute("teachers", headmasterService.listAllTeachers(page.orElse(0), 20));
         model.addAttribute("page", page);
+
+        if (startTime.isAfter(endTime)) {
+            model.addAttribute("timeInterval", headmasterService.initNewTimeInterval());
+            model.addAttribute("invalidDates", Boolean.TRUE);
+
+            return "headmaster/teacherReport";
+        }
+
         model.addAttribute("timeInterval", headmasterService.setTimeInterval(startTime, endTime));
 
         return "headmaster/teacherReport";

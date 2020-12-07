@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -171,8 +172,12 @@ public class PdfServiceImpl implements PdfService {
 
         //New Table for teacher info
         table = getNewTable(new float[]{45, 55});
-        String address = teacher.getUser().getAddress().getStreet() + "\n" +
-                teacher.getUser().getAddress().getZip() + " " + teacher.getUser().getAddress().getCity() + "\n";
+
+        String address = "";
+        if (teacher.getUser().getAddress() != null) {
+            address = teacher.getUser().getAddress().getStreet() + "\n" +
+                    teacher.getUser().getAddress().getZip() + " " + teacher.getUser().getAddress().getCity() + "\n";
+        }
 
 
         //Teacher Address
