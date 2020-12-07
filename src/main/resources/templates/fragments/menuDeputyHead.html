@@ -26,27 +26,10 @@
 
     <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="card card-stats">
-            <a th:href="@{'/deputyHead/classes'}">
-                <div class="card-header card-header-primary card-header-icon">
-                    <div class="card-icon">
-                        <i class="material-icons">notifications</i>
-                    </div>
-                    <h3 class="card-title">Zarządzanie klasami</h3>
-                </div>
-            </a>
-            <div class="card-footer">
-                <div class="stats">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6 col-sm-6">
-        <div class="card card-stats">
             <a th:href="@{'/deputyHead/newClass/formTutor'}">
                 <div class="card-header card-header-primary card-header-icon">
                     <div class="card-icon">
-                        <i class="material-icons">notifications</i>
+                        <i class="material-icons">post_add</i>
                     </div>
                     <h3 class="card-title">Tworzenie klas</h3>
                 </div>
@@ -60,7 +43,25 @@
 
     <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="card card-stats">
-            <a sec:authorize="hasRole('HEADMASTER')" th:href="@{'/headmaster/teacherReport'}">
+            <a th:href="@{'/deputyHead/classes'}">
+                <div class="card-header card-header-primary card-header-icon">
+                    <div class="card-icon">
+                        <i class="material-icons">room_preferences</i>
+                    </div>
+                    <h3 class="card-title">Zarządzanie klasami</h3>
+                </div>
+            </a>
+            <div class="card-footer">
+                <div class="stats">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div sec:authorize="hasRole('HEADMASTER')" class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <a  th:href="@{'/headmaster/teacherReport'}">
                 <div class="card-header card-header-primary card-header-icon">
                     <div class="card-icon">
                         <i class="material-icons">assignment_ind</i>
