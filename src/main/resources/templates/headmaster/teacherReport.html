@@ -359,13 +359,13 @@ The above copyright notice and this permission notice shall be included in all c
         fromDate = new Date($('#fromdate').val());
         toDate = new Date($('#todate').val());
 
-        if (fromDate.getMonth() < 10){
+        if (fromDate.getMonth() < 9){
             var finalFromDate = "0" + (fromDate.getMonth() + +1) + "/" + fromDate.getFullYear();
         } else {
             var finalFromDate = (fromDate.getMonth() + +1) + "/" + fromDate.getFullYear();
         }
 
-        if (toDate.getMonth() < 10){
+        if (toDate.getMonth() < 9){
             var finaltoDate = "0" + (toDate.getMonth() + +1) + "/" + toDate.getFullYear();
         } else {
             var finaltoDate = (toDate.getMonth() + +1) + "/" + toDate.getFullYear();
