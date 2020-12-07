@@ -747,6 +747,11 @@ The above copyright notice and this permission notice shall be included in all c
             var teacherIdVal = $("#teacherIdVal").val();
             var studentIdVal = document.getElementById("studentIdVal").value;
 
+            var btn = $('#sendGrade');
+            btn.prop('disabled', true);
+            setTimeout(function(){
+                btn.prop('disabled', false);
+            }, 700);
 
             var gradeDto = {
                 id: "",
@@ -782,6 +787,8 @@ The above copyright notice and this permission notice shall be included in all c
 
             // Sending data with the request
             xhr.send(data);
+
+
         }
     });
 </script>
@@ -1005,6 +1012,11 @@ The above copyright notice and this permission notice shall be included in all c
             var teacherIdVal = $("#teacherIdVal").val();
             var studentIdVal = document.getElementById("studentIdValFinal").value;
 
+            var btn = $('#addFinalGrade');
+            btn.prop('disabled', true);
+            setTimeout(function(){
+                btn.prop('disabled', false);
+            }, 700);
 
             var gradeDto = {
                 id: "",

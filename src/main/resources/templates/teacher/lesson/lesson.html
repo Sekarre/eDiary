@@ -635,6 +635,12 @@ The above copyright notice and this permission notice shall be included in all c
             var lessonIdVal = $("#lessonIdVal").val();
             var classIdVal = $("#classIdVal").val();
 
+            var btn = $('#sendGrade');
+            btn.prop('disabled', true);
+            setTimeout(function(){
+                btn.prop('disabled', false);
+            }, 700);
+
 
             var gradeDto = {
                 id: "",
