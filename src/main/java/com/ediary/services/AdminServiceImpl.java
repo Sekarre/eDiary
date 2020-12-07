@@ -223,6 +223,12 @@ public class AdminServiceImpl implements AdminService {
             case DefaultLoader.PARENT_ROLE:
                 Parent parent = parentRepository.findByUser(user).orElse(null);
                 if (parent != null) {
+                    if (parent.getStudents() != null) {
+                        parent.getStudents().forEach(parentsStudent -> {
+                            parentsStudent.setParent(null);
+                            studentRepository.save(parentsStudent);
+                        });
+                    }
                     User newUser = userRepository.save(User.builder()
                             .firstName(user.getFirstName())
                             .lastName(user.getLastName())
