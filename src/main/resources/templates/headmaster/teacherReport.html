@@ -74,26 +74,22 @@ The above copyright notice and this permission notice shall be included in all c
                             <div class='col-md-5'>
                                 <label for="fromDate">Od: </label>
                                 <div class="form-group">
-                                    <div class='input-group date' id='fromdate'>
-                                        <input type='text' class="form-control" name = "startTime" th:field="*{startTime}"/>
-                                        <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
+                                    <div class='input-group date'>
+                                        <input hidden id="finalfromdate" type='text' name = "startTime" th:field="*{startTime}"/>
+                                        <input required id="fromdate" type='date' />
                                     </div>
                                 </div>
                             </div>
                             <div class='col-md-5'>
                                 <label for="todate">Do: </label>
                                 <div class="form-group">
-                                    <div class='input-group date' id='todate'>
-                                        <input type='text' class="form-control" name = "endTime" th:field="*{endTime}"/>
-                                        <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
+                                    <div class='input-group date'>
+                                        <input hidden id="finaltodate" type='text' name = "endTime" th:field="*{endTime}"/>
+                                        <input required id="todate" type='date' />
                                     </div>
                                 </div>
                             </div>
-                            <button class="btn btn-primary" type="submit">Zmień przedział</button>
+                            <button id="submit" class="btn btn-primary" type="submit">Zmień przedział</button>
 
                         </div>
                     </form>
@@ -362,19 +358,26 @@ The above copyright notice and this permission notice shall be included in all c
 </script>
 
 <script type="text/javascript">
-    $(function () {
-        $('#fromdate').datetimepicker({
-            format: "MM/YYYY"
-        });
-        $('#todate').datetimepicker({
-            format: "MM/YYYY"
-        });
-        $("#fromdate").on("dp.change", function (e) {
-            $('#todate').data("DateTimePicker").minDate(e.date);
-        });
-        $("#todate").on("dp.change", function (e) {
-            $('#fromdate').data("DateTimePicker").maxDate(e.date);
-        });
+    $( "#submit" ).click(function() {
+
+        fromDate = new Date($('#fromdate').val());
+        toDate = new Date($('#todate').val());
+
+        if (fromDate.getMonth() < 10){
+            var finalFromDate = "0" + (fromDate.getMonth() + +1) + "/" + fromDate.getFullYear();
+        } else {
+            var finalFromDate = (fromDate.getMonth() + +1) + "/" + fromDate.getFullYear();
+        }
+
+        if (toDate.getMonth() < 10){
+            var finaltoDate = "0" + (toDate.getMonth() + +1) + "/" + toDate.getFullYear();
+        } else {
+            var finaltoDate = (toDate.getMonth() + +1) + "/" + toDate.getFullYear();
+        }
+
+        $('#finalfromdate').val(finalFromDate);
+        $('#finaltodate').val(finaltoDate);
+
     });
 </script>
 </body>
