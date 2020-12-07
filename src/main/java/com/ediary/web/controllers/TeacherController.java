@@ -1111,10 +1111,18 @@ public class TeacherController {
     @FormTutorPermission
     @PostMapping("/{teacherId}/formTutor/studentCard")
     public String processNewTimeInterval(@PathVariable Long teacherId, Model model,
-                                         @RequestParam(name = "startTime") @DateTimeFormat(pattern = "MM/yyyy") LocalDate startTime,
-                                         @RequestParam(name = "endTime") @DateTimeFormat(pattern = "MM/yyyy") LocalDate endTime) {
+                                         @RequestParam(name = "startTime") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate startTime,
+                                         @RequestParam(name = "endTime") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate endTime) {
 
         model.addAttribute("students", formTutorService.listClassStudents(teacherId));
+
+        if (startTime.isAfter(endTime)) {
+            model.addAttribute("timeInterval", formTutorService.initNewTimeInterval());
+            model.addAttribute("invalidDates", Boolean.TRUE);
+
+            return "teacher/formTutor/studentCards";
+        }
+
         model.addAttribute("timeInterval", formTutorService.setTimeInterval(startTime, endTime));
 
         return "teacher/formTutor/studentCards";
