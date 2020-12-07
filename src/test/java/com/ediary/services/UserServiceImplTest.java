@@ -203,6 +203,7 @@ class UserServiceImplTest {
     @Test
     void replyMessage() {
         User user = User.builder().id(userId).build();
+        String date = "01-01-01 01:01:01";
 
         Long messageId = 1L;
         MessageDto messageDtoToSend = MessageDto.builder().id(messageId).sendersId(user.getId()).build();
@@ -215,7 +216,7 @@ class UserServiceImplTest {
                 .sendersId(userId)
                 .build());
 
-        MessageDto message = userService.replyMessage(userId, messageDtoToSend);
+        MessageDto message = userService.replyMessage(userId, messageDtoToSend, date);
 
         assertEquals(message.getSendersId(), user.getId());
         assertEquals(message.getReadersId().get(0), messageDtoToSend.getSendersId());

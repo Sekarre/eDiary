@@ -142,10 +142,11 @@ public class UserController {
     public String replyReadMessage(@PathVariable Long userId,
                                    @PathVariable Long messageId,
                                    @ModelAttribute MessageDto messageDto,
+                                   @RequestParam(name = "messageDate", required = false) String date,
                                    Model model) {
 
         model.addAttribute("readers", userService.listUsers());
-        model.addAttribute("messageDto", userService.replyMessage(userId, messageDto));
+        model.addAttribute("messageDto", userService.replyMessage(userId, messageDto, date));
         return "/user/newMessages";
     }
 

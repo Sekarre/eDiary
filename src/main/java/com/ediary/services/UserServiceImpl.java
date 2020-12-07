@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public MessageDto replyMessage(Long userId, MessageDto messageDto) {
+    public MessageDto replyMessage(Long userId, MessageDto messageDto, String date) {
         User user = getUserById(userId);
         User messageAuthor = getUserById(messageDto.getSendersId());
 
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
         replyMessage.setContent("\n"
                 + "\nOd: " + source.getSenders().getFirstName() + " " + source.getSenders().getLastName()
                 + "\nDo: " + user.getFirstName() + " " + user.getLastName()
-                + "\nWysłane: " + messageDto.getSimpleDateFormat()
+                + "\nWysłane: " + date
                 + "\nTemat: " + source.getTitle()
                 + "\n\n" + source.getContent()
         );

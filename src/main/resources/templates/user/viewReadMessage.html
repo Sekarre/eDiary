@@ -126,6 +126,7 @@ The above copyright notice and this permission notice shall be included in all c
               <input type="hidden" th:field="*{message.status}" />
               <input type="hidden" th:field="*{message.readersId}" />
               <input type="hidden" th:field="*{message.sendersId}" />
+              <input type="hidden" name="messageDate" th:value="${#dates.format(message?.date, 'dd-MM-yyyy HH:mm:ss')}" />
               <button type="submit" class="btn btn-primary pull-right">Odpowiedz</button>
               <div class="clearfix"></div>
               </form>
