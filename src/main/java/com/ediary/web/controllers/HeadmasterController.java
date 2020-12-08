@@ -5,6 +5,7 @@ import com.ediary.domain.security.User;
 import com.ediary.security.perms.HeadmasterPermission;
 import com.ediary.services.HeadmasterService;
 import lombok.RequiredArgsConstructor;
+import org.bouncycastle.math.raw.Mod;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -115,10 +116,9 @@ public class HeadmasterController {
 
     @HeadmasterPermission
     @GetMapping("/closeYear")
-    public String closeYear() {
-        headmasterService.savePdfToDatabaseTest();
+    public String closeYear(Model model) {
 
-
+        model.addAttribute("result", headmasterService.savePdfToDatabaseTest());
 
         return "headmaster/closeYear";
     }
