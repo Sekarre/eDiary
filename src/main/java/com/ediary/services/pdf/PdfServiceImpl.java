@@ -290,6 +290,7 @@ public class PdfServiceImpl implements PdfService {
 
 
             //final grade
+            paragraph = new Paragraph();
             if (finalGrades.get(entry.getKey().getId()) != null ) {
                 paragraph.add(finalGrades.get(entry.getKey().getId()).toString());
             } else paragraph.add("");

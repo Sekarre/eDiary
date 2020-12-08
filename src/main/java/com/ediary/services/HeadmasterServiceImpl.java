@@ -190,7 +190,7 @@ public class HeadmasterServiceImpl implements HeadmasterService {
     @Override
     public Boolean savePdfToDatabaseTest() {
 
-        createEndYearReport(studentRepository.findById(90L).orElse(null));
+        createEndYearReport(studentRepository.findAll().get(0));
 
         return true;
     }
@@ -200,7 +200,7 @@ public class HeadmasterServiceImpl implements HeadmasterService {
         OutputStream out = response.getOutputStream();
         response.setContentType("application/pdf");
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=report_końowy" + System.currentTimeMillis() + ".pdf";
+        String headerValue = "attachment; filename=raport_koncowy" + System.currentTimeMillis() + ".pdf";
         response.setHeader(headerKey, headerValue);
 
     //todo
