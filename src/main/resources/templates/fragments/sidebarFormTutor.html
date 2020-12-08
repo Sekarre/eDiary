@@ -20,7 +20,7 @@
 </head>
 <body>
 
-<div th:fragment="sidebar" class="sidebar" data-color="purple" data-background-color="white">
+<div th:fragment="sidebar(activeTab)" class="sidebar" data-color="purple" data-background-color="white">
 
     <div class="logo"><a href="#" class="simple-text logo-normal">
         E-dziennik
@@ -31,26 +31,30 @@
             <span th:replace="fragments/sidebarUser :: userNav"></span>
 
 
-            <li class="nav-item " sec:authorize="hasRole('FORM_TUTOR')">
-                <a class="nav-link" th:href="@{'/teacher/'+ ${teacher.id} + '/formTutor/studentCard'}">
+            <li class="nav-item " sec:authorize="hasRole('FORM_TUTOR')"
+                th:classappend="${activeTab == 'studentCard' ? 'active':''}">
+            <a class="nav-link" th:href="@{'/teacher/'+ ${teacher.id} + '/formTutor/studentCard'}">
                     <i class="material-icons">contact_page</i>
                     <p>Karta ucznia</p>
                 </a>
             </li>
-            <li class="nav-item " sec:authorize="hasRole('FORM_TUTOR')">
-                <a class="nav-link" th:href="@{'/teacher/'+ ${teacher.id} + '/formTutor/studentCouncil'}">
+            <li class="nav-item " sec:authorize="hasRole('FORM_TUTOR')"
+                th:classappend="${activeTab == 'studentCouncil' ? 'active':''}">
+            <a class="nav-link" th:href="@{'/teacher/'+ ${teacher.id} + '/formTutor/studentCouncil'}">
                     <i class="material-icons">groups</i>
                     <p>Trójka klasowa</p>
                 </a>
             </li>
-            <li class="nav-item " sec:authorize="hasRole('FORM_TUTOR')">
-                <a class="nav-link" th:href="@{'/teacher/'+ ${teacher.id} + '/formTutor/parentCouncil'}">
+            <li class="nav-item " sec:authorize="hasRole('FORM_TUTOR')"
+                th:classappend="${activeTab == 'parentCouncil' ? 'active':''}">
+            <a class="nav-link" th:href="@{'/teacher/'+ ${teacher.id} + '/formTutor/parentCouncil'}">
                     <i class="material-icons">people_outline</i>
                     <p>Rada rodziców</p>
                 </a>
             </li>
-            <li class="nav-item " sec:authorize="hasRole('FORM_TUTOR')">
-                <a class="nav-link" th:href="@{'/teacher/'+ ${teacher.id} + '/formTutor/behaviorGrade'}">
+            <li class="nav-item " sec:authorize="hasRole('FORM_TUTOR')"
+                th:classappend="${activeTab == 'behaviors' ? 'active':''}">
+            <a class="nav-link" th:href="@{'/teacher/'+ ${teacher.id} + '/formTutor/behaviorGrade'}">
                     <i class="material-icons">rate_review</i>
                     <p style="text-transform: none">Oceny z zachowania</p>
                 </a>

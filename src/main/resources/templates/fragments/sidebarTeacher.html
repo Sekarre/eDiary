@@ -20,7 +20,7 @@
 </head>
 <body>
 
-    <div th:fragment="sidebar" class="sidebar" data-color="purple" data-background-color="white">
+    <div th:fragment="sidebar(activeTab)" class="sidebar" data-color="purple" data-background-color="white">
 
         <div class="logo"><a href="#" class="simple-text logo-normal">
             E-dziennik
@@ -31,43 +31,50 @@
                 <span th:replace="fragments/sidebarUser :: userNav"></span>
 
 
-                <li class="nav-item ">
+                <li  class="nav-item "
+                    th:classappend="${activeTab == 'subjects' ? 'active':''}">
                     <a class="nav-link" th:href="@{'/teacher/' + ${teacher.id} + '/subject'}">
                         <i class="material-icons">receipt_long</i>
                         <p>Przedmioty</p>
                     </a>
                 </li>
-                <li class="nav-item ">
+                <li class="nav-item "
+                    th:classappend="${activeTab == 'behaviors' ? 'active':''}">
                     <a class="nav-link" th:href="@{'/teacher/' + ${teacher.id} + '/behavior'}">
                         <i class="material-icons">error</i>
                         <p>Uwagi</p>
                     </a>
                 </li>
-                <li class="nav-item ">
+                <li class="nav-item "
+                    th:classappend="${activeTab == 'events' ? 'active':''}">
                     <a class="nav-link" th:href="@{'/teacher/' + ${teacher.id} + '/event'}">
                         <i class="material-icons">event</i>
                         <p>Terminarz</p>
                     </a>
                 </li>
-                <li class="nav-item ">
+                <li class="nav-item "
+                    th:classappend="${activeTab == 'attendances' ? 'active':''}">
                     <a class="nav-link" th:href="@{'/teacher/' + ${teacher.id} + '/attendances'}">
                         <i class="material-icons">fact_check</i>
                         <p>Frekwencja</p>
                     </a>
                 </li>
-                <li class="nav-item ">
+                <li class="nav-item "
+                    th:classappend="${activeTab == 'timetable' ? 'active':''}">
                     <a class="nav-link" th:href="@{'/teacher/' + ${teacher.id} + '/timetable'}">
                         <i class="material-icons">pending_actions</i>
                         <p>Plan zajęć</p>
                     </a>
                 </li>
-                <li class="nav-item ">
+                <li class="nav-item "
+                    th:classappend="${activeTab == 'lessons' ? 'active':''}">
                     <a class="nav-link" th:href="@{'/teacher/' + ${teacher.id} + '/lesson/subject'}">
                         <i class="material-icons">assessment</i>
                         <p>Lekcje</p>
                     </a>
                 </li>
-                <li class="nav-item ">
+                <li class="nav-item "
+                    th:classappend="${activeTab == 'grades' ? 'active':''}">
                     <a class="nav-link" th:href="@{'/teacher/' + ${teacher.id} + '/grade/subject'}">
                         <i class="material-icons">grade</i>
                         <p>Oceny</p>
