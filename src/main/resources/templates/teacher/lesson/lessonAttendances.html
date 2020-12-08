@@ -28,6 +28,8 @@ The above copyright notice and this permission notice shall be included in all c
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link th:href="@{/demo/demo.css}" rel="stylesheet" />
+
+
 </head>
 
 <body class="">
@@ -73,18 +75,16 @@ The above copyright notice and this permission notice shall be included in all c
             </div>
             <!--Tabs-->
             <div class="container-fluid" th:if="${studentsWithAttendances != null}">
-                <div class="justify-content-center">
-                    <ul class="nav tab nav-pills-primary tab-links" >
-                        <li>
+                    <ul class="nav  nav-pills card-header-pills" >
+                        <li class=" nav-item">
                             <a class="nav-link" th:text="'Oceny'"  th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}(teacherId=${teacherId}, subjectId=${subjectId}, classId=${classId}, lessonId=${lessonId})}"
                                 aria-selected="true">Home</a>
                         </li>
-                        <li class="active">
-                            <a class="nav-link" th:text="'Frekwencja'" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/attendances(teacherId=${teacherId}, subjectId=${subjectId}, classId=${classId}, lessonId=${lessonId})}"
+                        <li class=" nav-item">
+                            <a class="nav-link" style="background: #9c27b0;" th:classappend="'active'" th:text="'Frekwencja'" th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/attendances(teacherId=${teacherId}, subjectId=${subjectId}, classId=${classId}, lessonId=${lessonId})}"
                                 aria-selected="false">Profile</a>
                         </li>
                     </ul>
-                </div>
                 <!--end tabs-->
                 <div class="card " >
                     <div class="">

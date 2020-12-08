@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="utf-8">
@@ -11,7 +12,8 @@
     </title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport">
     <!--     Fonts and icons     -->
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons">
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <!-- CSS Files -->
     <link th:href="@{/css/material-dashboard.css}" rel="stylesheet">
@@ -20,7 +22,8 @@
 </head>
 <body>
 
-<div th:fragment="sidebar" class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg">
+<div th:fragment="sidebar(activeTab)" class="sidebar" data-color="purple" data-background-color="white"
+     data-image="../assets/img/sidebar-1.jpg">
 
     <div class="logo"><a href="#" class="simple-text logo-normal">
         E-dziennik
@@ -30,22 +33,25 @@
 
             <span th:replace="fragments/sidebarUser :: userNav"></span>
 
-            <li class="nav-item ">
+            <li class="nav-item "
+                th:classappend="${activeTab == 'newClass' ? 'active':''}">
                 <a class="nav-link" th:href="@{'/deputyHead/newClass/formTutor'}">
                     <i class="material-icons">post_add</i>
                     <p>Tworzenie klas</p>
                 </a>
             </li>
 
-            <li class="nav-item ">
+            <li class="nav-item "
+                th:classappend="${activeTab == 'classes' ? 'active':''}">
                 <a class="nav-link" th:href="@{'/deputyHead/classes'}">
                     <i class="material-icons">room_preferences</i>
                     <p>Zarządzanie klasami</p>
                 </a>
             </li>
 
-            <li sec:authorize="hasRole('HEADMASTER')" class="nav-item ">
-                <a  class="nav-link" th:href="@{'/headmaster/teacherReport'}">
+            <li sec:authorize="hasRole('HEADMASTER')" class="nav-item "
+                th:classappend="${activeTab == 'teacherReport' ? 'active':''}">
+                <a class="nav-link" th:href="@{'/headmaster/teacherReport'}">
                     <i class="material-icons">assignment_ind</i>
                     <p>Raport o nauczycielu</p>
                 </a>

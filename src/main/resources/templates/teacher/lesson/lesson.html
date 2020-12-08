@@ -85,18 +85,16 @@ The above copyright notice and this permission notice shall be included in all c
             </div>
             <!--Tabs-->
             <div class="container-fluid" th:if="${studentsWithGrades != null}">
-                <div class="justify-content-center">
-                    <ul class="nav tab nav-pills-primary tab-links">
-                        <li class="active">
-                            <a class="nav-link" th:text="'Oceny'"  th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}(teacherId=${teacherId}, subjectId=${subjectId}, classId=${classId}, lessonId=${lessonId})}"
-                              aria-selected="true">Home</a>
+                    <ul class="nav  nav-pills">
+                        <li class=" nav-item" >
+                            <a class="nav-link" style="background: #9c27b0;" th:classappend="'active'" th:text="'Oceny'"  th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}(teacherId=${teacherId}, subjectId=${subjectId}, classId=${classId}, lessonId=${lessonId})}"
+                              >Home</a>
                         </li>
-                        <li >
+                        <li class=" nav-item">
                             <a class="nav-link" th:text="'Frekwencja'"   th:href="@{/teacher/{teacherId}/lesson/subject/{subjectId}/{classId}/{lessonId}/attendances(teacherId=${teacherId}, subjectId=${subjectId}, classId=${classId}, lessonId=${lessonId})}"
-                                aria-selected="false">Profile</a>
+                                >Profile</a>
                         </li>
                     </ul>
-                </div>
                 <!--end tabs-->
                 <div class="card " >
                     <div class="">

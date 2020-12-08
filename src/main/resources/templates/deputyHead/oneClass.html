@@ -38,7 +38,7 @@ The above copyright notice and this permission notice shall be included in all c
 <body class="">
 <div class="wrapper ">
 
-    <div th:replace="fragments/sidebarDeputyHead :: sidebar"></div>
+    <div th:replace="fragments/sidebarDeputyHead :: sidebar('classes')"></div>
 
     <div class="main-panel">
         <!-- Navbar -->
@@ -99,16 +99,19 @@ The above copyright notice and this permission notice shall be included in all c
                         </div>
                 </div>
 
-
+                <div class="form-group"></div>
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h3 class="card-title" th:text="'Studenci: ' + ${schoolClass?.students?.size()}">Studenci :</h3>
-                        <a th:href="'/deputyHead/classes/' + ${schoolClass.id} + '/addStudents'" type="button" class="btn btn-primary btn-fab btn-fab-mini btn-round">
-                            <i class="material-icons">add</i>
-                        </a>
-
+                        <div class="float-left">
+                            <h3 class="card-title" th:text="'Studenci: ' + ${schoolClass?.students?.size()}">Studenci :</h3>
+                        </div>
+                        <div class="float-right">
+                            <a th:href="'/deputyHead/classes/' + ${schoolClass.id} + '/addStudents'" type="button" class="btn btn-default btn-fab btn-fab-mini btn-round">
+                                <i class="material-icons">add</i>
+                            </a>
+                        </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" th:if="${schoolClass?.students != null && schoolClass?.students?.size() > 0}">
                         <div class="table-responsive">
                             <table class="table">
                                 <thead class=" text-primary">

@@ -20,7 +20,7 @@
 </head>
 <body>
 
-    <div th:fragment="sidebar" class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg">
+    <div th:fragment="sidebar(activeTab)" class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg">
 
         <div class="logo"><a href="#" class="simple-text logo-normal">
             E-dziennik
@@ -32,7 +32,9 @@
 
 
                 <th:block th:fragment="parentUsersNav">
-                    <li class="nav-item ">
+                <li class="nav-item "
+                    th:classappend="${activeTab == 'studentSelect' ? 'active':''}">
+
                         <a class="nav-link" th:href="@{'/parent/' + ${parent.id} + '/students'}">
                             <i class="material-icons">group</i>
                             <p>Uczniowie</p>

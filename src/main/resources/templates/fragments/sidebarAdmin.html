@@ -20,7 +20,7 @@
 </head>
 <body>
 
-    <div th:fragment="sidebar" class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg">
+    <div th:fragment="sidebar(activeTab)" class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg">
 
         <div class="logo"><a href="#" class="simple-text logo-normal">
             E-dziennik
@@ -31,14 +31,16 @@
                 <span th:replace="fragments/sidebarUser :: userNav"></span>
 
 
-                <li class="nav-item ">
-                    <a class="nav-link" th:href="@{'/admin/users'}">
+                <li class="nav-item "
+                    th:classappend="${activeTab == 'users' ? 'active':''}">
+                <a class="nav-link" th:href="@{'/admin/users'}">
                         <i class="material-icons">account_box</i>
                         <p>Konta</p>
                     </a>
                 </li>
-                <li class="nav-item ">
-                    <a class="nav-link" th:href="@{'/admin/school'}">
+                <li class="nav-item "
+                    th:classappend="${activeTab == 'school' ? 'active':''}">
+                <a class="nav-link" th:href="@{'/admin/school'}">
                         <i class="material-icons">location_city</i>
                         <p>Szkoła</p>
                     </a>
