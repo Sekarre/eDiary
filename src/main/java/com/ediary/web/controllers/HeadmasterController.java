@@ -111,4 +111,38 @@ public class HeadmasterController {
     }
 
 
+    //Testing for now
+
+    @HeadmasterPermission
+    @GetMapping("/closeYear")
+    public String closeYear() {
+        headmasterService.savePdfToDatabaseTest();
+
+
+
+        return "headmaster/closeYear";
+    }
+
+
+    @HeadmasterPermission
+    @RequestMapping("/closeYear/show")
+    public void getPdfFromDbTest(HttpServletResponse response) throws Exception {
+
+
+        headmasterService.getPdf(response);
+
+    }
+
+
+    @HeadmasterPermission
+    @PostMapping("/closeYear")
+    public String processCloseYear() {
+
+//        headmasterService.performYearClosing();
+        headmasterService.savePdfToDatabaseTest();
+
+        return "headmaster/closeYear";
+    }
+
+
 }
