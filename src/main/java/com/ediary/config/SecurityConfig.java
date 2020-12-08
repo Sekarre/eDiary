@@ -30,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                     .logoutSuccessUrl("/login?logout")
+                    .deleteCookies("activeRole", "studentId")
                 .and()
                 .httpBasic()
                 .and().csrf().ignoringAntMatchers("/h2-console/**", "/api/**");
