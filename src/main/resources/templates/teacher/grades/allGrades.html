@@ -293,7 +293,7 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">Dodaj Ocene: </h5>
+                                    <h5 class="modal-title">Dodaj Ocene końcową: </h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -322,14 +322,9 @@ The above copyright notice and this permission notice shall be included in all c
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                            <tr>
-                                                                <td id="gradeWeightF">
-                                                                    <div class="form-group">
-                                                                        <label class="bmd-label-floating " th:text="'Waga'" disabled></label>
-                                                                        <input type="text" id="gradeWeightValFinal" name="gradeWeightValFinal" class="form-control" th:value="${finalGrade.weight}" disabled />
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
+
+                                                            <input type="hidden" id="gradeWeightValFinal" name="gradeWeightValFinal" class="form-control" th:value="${finalGrade.weight}" disabled />
+
                                                             <tr>
                                                                 <td id="gradeDescriptionF">
                                                                     <div class="form-group">
@@ -372,7 +367,7 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">Ocena: </h5>
+                                    <h5 class="modal-title">Ocena końcowa: </h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -401,14 +396,9 @@ The above copyright notice and this permission notice shall be included in all c
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                            <tr>
-                                                                <td id="gradeFWeightEdit">
-                                                                    <div class="form-group">
-                                                                        <label class="bmd-label-static" th:text="'Waga'" disabled></label>
-                                                                        <input  type="text" id="gradeFWeightValEdit" name="gradeFWeightValEdit" class="form-control" disabled/>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
+
+                                                            <input  type="hidden" id="gradeFWeightValEdit" name="gradeFWeightValEdit" class="form-control" disabled/>
+
                                                             <tr>
                                                                 <td id="gradeFDescriptionEdit">
                                                                     <div class="form-group">

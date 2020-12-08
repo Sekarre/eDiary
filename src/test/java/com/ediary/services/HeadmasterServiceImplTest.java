@@ -65,7 +65,7 @@ public class HeadmasterServiceImplTest {
                 .build();
 
 
-        when(teacherRepository.findAll(PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "User.firstName"))))
+        when(teacherRepository.findAll(PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "User.lastName"))))
                 .thenReturn(new PageImpl<>(Collections.singletonList(teacher)));
         when(teacherToTeacherDto.convert(any())).thenReturn(teacherDto);
 
@@ -73,7 +73,7 @@ public class HeadmasterServiceImplTest {
 
         assertNotNull(teacherDtos);
         verify(teacherRepository, times(1))
-                .findAll(PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "User.firstName")));
+                .findAll(PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "User.lastName")));
     }
 
 

@@ -161,15 +161,10 @@ The above copyright notice and this permission notice shall be included in all c
                                                                         </div>
                                                                     </td>
                                                                 </tr>
-                                                                <tr>
-                                                                    <td id="gradeWeightF">
-                                                                        <div class="form-group">
-                                                                            <label class="bmd-label-floating " th:text="'Waga'" disabled></label>
-                                                                            <input type="text" id="gradeWeightValFinalDisplay" class="form-control" th:value="${finalGrade.weight}"  disabled/>
-                                                                            <input type="hidden" id="gradeWeightValFinal" th:value="${finalGrade.weight}"/>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
+
+                                                                    <input type="hidden" id="gradeWeightValFinalDisplay" class="form-control" th:value="${finalGrade.weight}"  disabled/>
+                                                                    <input type="hidden" id="gradeWeightValFinal" th:value="${finalGrade.weight}"/>
+
                                                                 <tr>
                                                                     <td id="gradeDescriptionF">
                                                                         <div class="form-group">
@@ -246,16 +241,9 @@ The above copyright notice and this permission notice shall be included in all c
                                                                             <input  id="gradeFValueValEdit" type="hidden" class="form-control">
                                                                         </div>
                                                                     </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td id="gradeFWeightEdit">
-                                                                        <div class="form-group">
-                                                                            <label class="bmd-label-static" th:text="'Waga'" disabled></label>
 
-                                                                            <input  type="text" id="gradeFWeightValEdit" class="form-control" disabled/>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
+                                                                            <input  type="hidden" id="gradeFWeightValEdit" class="form-control" disabled/>
+
                                                                 <tr>
                                                                     <td id="gradeFDescriptionEdit">
                                                                         <div class="form-group">

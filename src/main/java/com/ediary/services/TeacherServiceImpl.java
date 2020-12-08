@@ -977,7 +977,7 @@ public class TeacherServiceImpl implements TeacherService {
             return null;
         }
 
-        List<Parent> parents = parentRepository.findAllByStudentsIn(teacher.getSchoolClass().getStudents());
+        Set<Parent> parents = new HashSet<>(parentRepository.findAllByStudentsIn(teacher.getSchoolClass().getStudents()));
 
         parents.forEach(parent -> extenuations
                 .addAll(extenuationRepository.findAllByParentIdAndStatus(parent.getId(), Extenuation.Status.SENT)));
