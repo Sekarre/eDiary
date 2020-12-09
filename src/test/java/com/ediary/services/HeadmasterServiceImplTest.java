@@ -25,24 +25,23 @@ import static org.mockito.Mockito.*;
 
 public class HeadmasterServiceImplTest {
 
-    @Mock
-    TeacherRepository teacherRepository;
-    @Mock
-    LessonRepository lessonRepository;
-    @Mock
-    GradeRepository gradeRepository;
-    @Mock
-    EventRepository eventRepository;
-    @Mock
-    ClassRepository classRepository;
-    @Mock
-    StudentRepository studentRepository;
-    @Mock
-    SubjectRepository subjectRepository;
-    @Mock
-    ExtenuationRepository extenuationRepository;
-    @Mock
-    EndYearReportRepository endYearReportRepository;
+    @Mock TeacherRepository teacherRepository;
+    @Mock LessonRepository lessonRepository;
+    @Mock GradeRepository gradeRepository;
+    @Mock EventRepository eventRepository;
+    @Mock ClassRepository classRepository;
+    @Mock StudentRepository studentRepository;
+    @Mock SubjectRepository subjectRepository;
+    @Mock ExtenuationRepository extenuationRepository;
+    @Mock EndYearReportRepository endYearReportRepository;
+    @Mock SchoolPeriodRepository schoolPeriodRepository;
+    @Mock StudentCouncilRepository studentCouncilRepository;
+    @Mock ParentCouncilRepository parentCouncilRepository;
+    @Mock TopicRepository topicRepository;
+    @Mock ParentRepository parentRepository;
+    @Mock AttendanceRepository attendanceRepository;
+    @Mock BehaviorRepository behaviorRepository;
+    @Mock NoticeRepository noticeRepository;
 
 
     @Mock
@@ -58,7 +57,8 @@ public class HeadmasterServiceImplTest {
         MockitoAnnotations.initMocks(this);
         headmasterService = new HeadmasterServiceImpl(teacherRepository, lessonRepository, gradeRepository, eventRepository,
                 classRepository, studentRepository, subjectRepository, extenuationRepository, endYearReportRepository,
-                teacherToTeacherDto, pdfService);
+                schoolPeriodRepository, studentCouncilRepository, parentCouncilRepository, topicRepository, parentRepository,
+                attendanceRepository, behaviorRepository, noticeRepository, teacherToTeacherDto, pdfService);
     }
 
     @Test

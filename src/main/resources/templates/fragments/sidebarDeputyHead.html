@@ -66,6 +66,13 @@
                 </a>
             </li>
 
+            <li sec:authorize="hasRole('HEADMASTER')" class="nav-item ">
+                <a  class="nav-link" th:href="@{'/headmaster/closeYear/delete'}">
+                    <i class="material-icons">assignment_ind</i>
+                    <p>Zamknij</p>
+                </a>
+            </li>
+
             <span th:replace="fragments/sidebarUser :: userRoleNav"></span>
 
         </ul>

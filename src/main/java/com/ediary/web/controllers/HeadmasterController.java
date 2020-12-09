@@ -135,11 +135,13 @@ public class HeadmasterController {
 
 
     @HeadmasterPermission
-    @PostMapping("/closeYear")
+    @GetMapping("/closeYear/delete")
     public String processCloseYear() {
 
-//        headmasterService.performYearClosing();
-        headmasterService.savePdfToDatabaseTest();
+
+//        headmasterService.savePdfToDatabaseTest();
+        headmasterService.performYearClosing();
+
 
         return "headmaster/closeYear";
     }

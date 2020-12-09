@@ -11,6 +11,7 @@ import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
 import com.ediary.services.pdf.PdfService;
+import com.mysql.cj.protocol.a.NativeUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.connector.Response;
 import org.springframework.data.domain.Page;
@@ -45,6 +46,14 @@ public class HeadmasterServiceImpl implements HeadmasterService {
     private final SubjectRepository subjectRepository;
     private final ExtenuationRepository extenuationRepository;
     private final EndYearReportRepository endYearReportRepository;
+    private final SchoolPeriodRepository schoolPeriodRepository;
+    private final StudentCouncilRepository studentCouncilRepository;
+    private final ParentCouncilRepository parentCouncilRepository;
+    private final TopicRepository topicRepository;
+    private final ParentRepository parentRepository;
+    private final AttendanceRepository attendanceRepository;
+    private final BehaviorRepository behaviorRepository;
+    private final NoticeRepository noticeRepository;
 
     private final TeacherToTeacherDto teacherToTeacherDto;
 
@@ -124,68 +133,6 @@ public class HeadmasterServiceImpl implements HeadmasterService {
                 getTeacherSubjectsNames(teacher), getTeacherGradesNumber(teacher, startOfDayDate, correctedEndTime),
                 getTeacherEventsNumber(teacher, startOfDayDate, correctedEndTime));
     }
-
-
-    /*
-    @Override
-    public Boolean performYearClosing() {
-
-        List<Class> schoolClasses = classRepository.findAll();
-
-
-        for (Class currentClass : schoolClasses) {
-            List<Student> students = studentRepository.findAllBySchoolClassId(currentClass.getId());
-
-            students.forEach(student -> {
-
-                //save endYearReport to db
-                createEndYearReport(student);
-
-
-                //remove behavior grade
-                Grade behaviorGrade = gradeRepository.findByStudentIdAndWeight(student.getId(), GradeWeight.BEHAVIOR_GRADE.getWeight());
-                if (behaviorGrade != null) {
-                    behaviorGrade.setStudent(null);
-                    gradeRepository.save(behaviorGrade);
-                }
-
-                //removing from class
-                student.setSchoolClass(null);
-                studentRepository.save(student);
-
-                student.setBehaviors(null);
-                studentRepository.save(student);
-
-            });
-
-            List<Subject> subjects = new ArrayList<>(currentClass.getSubjects());
-
-            for (Subject subject : subjects) {
-
-                //delete lessons
-                subject.getLessons().forEach(lesson -> {
-                    lesson.setTopic(null);
-                    lesson.setAttendances(null);
-                    lesson.setSchoolClass(null);
-                    lesson.setSubject(null);
-
-                    lessonRepository.save(lesson);
-                    lessonRepository.delete(lesson);
-                });
-
-                //delete subjects
-                subjectRepository.delete(subject);
-            }
-
-            //change class name
-            currentClass.setName(changeSchoolClassName(currentClass.getName()));
-            classRepository.save(currentClass);
-        }
-
-        return false;
-    }
-
-     */
 
     @Override
     public Boolean savePdfToDatabaseTest() {
@@ -375,4 +322,223 @@ public class HeadmasterServiceImpl implements HeadmasterService {
         return eventRepository.findAllByTeacherIdAndDateAfterAndDateBefore(teacher.getId(), startTime, endTime)
                 .stream().count();
     }
+
+    @Override
+    public Boolean performYearClosing() {
+
+        //GENERATING REPORT
+
+        //Classes
+        List<Class> classes = classRepository.findAll();
+        if (classes != null) {
+            classes.forEach(schoolClass -> deleteClass(schoolClass));
+        }
+
+        clearTeacher();
+        clearParent();
+        clearStudents();
+
+        //StudentCouncil
+        studentCouncilRepository.deleteAll();
+
+        //ParentCouncil
+        parentCouncilRepository.deleteAll();
+
+        //Events
+        List<Event> events = eventRepository.findAll();
+        if (events != null) {
+            eventRepository.deleteAll(events);
+        }
+
+        //Extenuations
+        List<Extenuation> extenuations = extenuationRepository.findAll();
+        if (extenuations != null) {
+            extenuations.forEach(extenuation -> deleteExtenuation(extenuation));
+        }
+
+        //Attendance
+        List<Attendance> attendances = attendanceRepository.findAll();
+        if (attendances != null) {
+            attendances.forEach(attendance -> deleteAttendance(attendance));
+        }
+
+        //Behaviors
+        List<Behavior> behaviors = behaviorRepository.findAll();
+        if (behaviors != null) {
+            behaviorRepository.deleteAll(behaviors);
+        }
+
+        //Grade
+        List<Grade> grades = gradeRepository.findAll();
+        if (grades != null) {
+            gradeRepository.deleteAll(grades);
+        }
+
+        //Lesson
+        List<Lesson> lessons = lessonRepository.findAll();
+        if (lessons != null) {
+            lessonRepository.deleteAll(lessons);
+        }
+
+        //SchoolPerion
+        List<SchoolPeriod> schoolPeriods = schoolPeriodRepository.findAll();
+        if (schoolPeriods != null) {
+            schoolPeriodRepository.deleteAll(schoolPeriods);
+        }
+
+        //Topics
+        List<Topic> topics = topicRepository.findAll();
+        if (topics != null) {
+            topics.forEach(topic -> deleteTopic(topic));
+        }
+
+        //Subjects
+        List<Subject> subjects = subjectRepository.findAll();
+        if (subjects != null) {
+            subjects.forEach(subject -> deleteSubject(subject));
+        }
+
+        //Notices
+        List<Notice> notices = noticeRepository.findAll();
+        if (notices != null) {
+            noticeRepository.deleteAll(notices);
+        }
+
+        return true;
+
+    }
+
+    public Boolean deleteClass(Class schoolClass ) {
+
+        //Students - null
+        List<Student> students = studentRepository.findAllById(schoolClass.getStudents()
+                .stream()
+                .map(Student::getId)
+                .collect(Collectors.toList()));
+        students.forEach(s -> s.setSchoolClass(null));
+        studentRepository.saveAll(students);
+
+
+        //Teacher - null
+        Teacher teacher = teacherRepository.findById(schoolClass.getTeacher().getId()).orElse(null);
+
+        if (teacher != null) {
+            teacher.setSchoolClass(null);
+            teacherRepository.save(teacher);
+        }
+
+        //Lessons
+        List<Lesson> lessons = lessonRepository.findAllBySchoolClassId(schoolClass.getId());
+        lessons.forEach(l -> l.setSchoolClass(null));
+        lessonRepository.saveAll(lessons);
+
+        //School periods
+        List<SchoolPeriod> schoolPeriods = schoolPeriodRepository.findAllBySchoolClassId(schoolClass.getId());
+        schoolPeriods.forEach(s -> s.setSchoolClass(null));
+        schoolPeriodRepository.saveAll(schoolPeriods);
+
+        //StudentCouncil - delete
+        StudentCouncil studentCouncil = studentCouncilRepository.findBySchoolClassId(schoolClass.getId());
+        if (studentCouncil != null) {
+            studentCouncil.setStudents(null);
+            studentCouncil.setSchoolClass(null);
+            studentCouncilRepository.save(studentCouncil);
+        }
+
+        //ParentCouncil - delete
+        ParentCouncil parentCouncil = parentCouncilRepository.findBySchoolClassId(schoolClass.getId());
+        if (parentCouncil != null) {
+            parentCouncil.setParents(null);
+            parentCouncil.setSchoolClass(null);
+            parentCouncilRepository.save(parentCouncil);
+        }
+
+        //Events - null
+        List<Event> events = eventRepository.findAllBySchoolClassId(schoolClass.getId());
+        events.forEach(event -> event.setSchoolClass(null));
+        eventRepository.saveAll(events);
+
+        //Subjects - null
+        List<Subject> subjects = subjectRepository.findAllBySchoolClassId(schoolClass.getId());
+        subjects.forEach(subject -> subject.setSchoolClass(null));
+        subjectRepository.saveAll(subjects);
+
+        schoolClass.setName(null);
+
+        classRepository.delete(schoolClass);
+
+        return true;
+    }
+
+    public Boolean deleteTopic(Topic topic) {
+        topic.setSubject(null);
+        topicRepository.save(topic);
+        topicRepository.delete(topic);
+        return true;
+    }
+
+    public Boolean deleteExtenuation(Extenuation extenuation) {
+        extenuation.setAttendances(null);
+        extenuationRepository.save(extenuation);
+        extenuationRepository.delete(extenuation);
+        return true;
+    }
+
+    public Boolean deleteAttendance(Attendance attendance) {
+        attendance.setLesson(null);
+        attendanceRepository.save(attendance);
+        attendanceRepository.delete(attendance);
+        return true;
+    }
+
+    public Boolean deleteSubject(Subject subject) {
+        subject.setTopics(null);
+        subject.setLessons(null);
+        subjectRepository.save(subject);
+        subjectRepository.delete(subject);
+        return true;
+    }
+
+    public Boolean clearTeacher() {
+        List<Teacher> teachers = teacherRepository.findAll();
+        if (teachers != null) {
+            for (Teacher teacher : teachers) {
+                teacher.setGrades(null);
+                teacher.setSubjects(null);
+                teacher.setSchoolPeriods(null);
+                teacher.setStudentCards(null);
+                teacher.setBehaviors(null);
+                teacher.setEvents(null);
+                teacherRepository.save(teacher);
+            }
+        }
+        return true;
+    }
+
+    public Boolean clearParent() {
+        List<Parent> parents = parentRepository.findAll();
+        if (parents != null) {
+            for (Parent parent : parents) {
+                parent.setParentCouncils(null);
+                parent.setExtenuations(null);
+                parentRepository.save(parent);
+            }
+        }
+        return true;
+    }
+
+    public Boolean clearStudents() {
+        List<Student> students = studentRepository.findAll();
+        if (students != null) {
+            for (Student student : students) {
+                student.setStudentCouncils(null);
+                student.setAttendance(null);
+                student.setGrades(null);
+                student.setBehaviors(null);
+                studentRepository.save(student);
+            }
+        }
+        return true;
+    }
+
 }

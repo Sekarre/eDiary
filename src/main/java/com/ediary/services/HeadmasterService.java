@@ -20,8 +20,7 @@ public interface HeadmasterService {
 
     Boolean createTeacherReport(HttpServletResponse response, Long teacherId, Date startTime, Date endTime) throws Exception;
 
-    //Better dont touch now
-//    Boolean performYearClosing();
+    Boolean performYearClosing();
 
     //Test
     Boolean savePdfToDatabaseTest();
