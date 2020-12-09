@@ -56,45 +56,57 @@
                 </span>
 
                 <span th:fragment="userRoleNav(role)">
-                    <li class="nav-item active-pro ">
-                        <a id="adminRoleL" sec:authorize="hasRole('ADMIN')" class="nav-link role" th:href="@{'/admin/home'}"
-                           th:classappend="${role == 'ADMIN' ? 'lightRole':''}"
-                            th:styleappend="${role == 'ADMIN' ?'background-color: #7a43b6 !important;color: white !important;' : ''}">
+                    <div class="col-md-12"><hr></div>
+                        <li>
+                            <a id="adminRoleL" sec:authorize="hasRole('ADMIN')" class="nav-link role" th:href="@{'/admin/home'}"
+                               th:classappend="${role == 'ADMIN' ? 'lightRole':''}"
+                                th:styleappend="${role == 'ADMIN' ?'background-color: #7a43b6 !important;color: white !important;' : ''}">
 
-                            <i class="material-icons">person</i>
-                            <p>Admin</p>
-                        </a>
+                                <i class="material-icons">person</i>
+                                <p>Admin</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a id="studentRoleL" sec:authorize="hasRole('STUDENT')" class="nav-link role" th:href="@{'/student/home'}"
+                               th:styleappend="${role == 'STUDENT' ?'background-color: #7a43b6 !important;color: white !important;' : ''}">
 
-                        <a id="studentRoleL" sec:authorize="hasRole('STUDENT')" class="nav-link role" th:href="@{'/student/home'}"
-                           th:styleappend="${role == 'STUDENT' ?'background-color: #7a43b6 !important;color: white !important;' : ''}">
-
-                            <i class="material-icons">person</i>
-                            <p>Uczeń</p>
-                        </a>
+                                <i class="material-icons">person</i>
+                                <p>Uczeń</p>
+                            </a>
+                        </li>
+                    <li>
                         <a id="parentRoleL" sec:authorize="hasRole('PARENT')" class="nav-link role" th:href="@{'/parent/ol/home'}"
                            th:styleappend="${role == 'PARENT' ?'background-color: #7a43b6 !important;color: white !important;' : ''}">
 
                             <i class="material-icons">person</i>
                             <p>Rodzic</p>
                         </a>
+                    </li>
+                    <li>
                         <a id="teacherRoleL"  sec:authorize="hasRole('TEACHER')" class="nav-link role" th:href="@{'/teacher/home'}"
                            th:styleappend="${role == 'TEACHER' ?'background-color: #7a43b6 !important;color: white !important;' : ''}">
 
                             <i class="material-icons">person</i>
                             <p>Nauczyciel</p>
                         </a>
+                    </li>
+                    <li>
                         <a id="deputyHeadRoleL" sec:authorize="hasRole('DEPUTY_HEAD')" class="nav-link role" th:href="@{'/deputyHead/home'}"
                            th:styleappend="${role == 'DEPUTY_HEAD' ?'background-color: #7a43b6 !important;color: white !important;' : ''}">
 
                             <i class="material-icons">person</i>
                             <p>Wicedyrektor</p>
                         </a>
+                    </li>
+                    <li>
                         <a id="headmasterRoleL" sec:authorize="hasRole('HEADMASTER')" class="nav-link role" th:href="@{'/deputyHead/home'}"
                            th:styleappend="${role == 'HEADMASTER' ?'background-color: #7a43b6 !important;color: white !important;' : ''}">
 
                             <i class="material-icons">person</i>
                             <p>Dyrektor</p>
                         </a>
+                    </li>
+                    <li>
                         <a id="formTutorRoleL" sec:authorize="hasRole('FORM_TUTOR')" class="nav-link role" th:href="@{'/teacher/formTutor/home'}"
                            th:styleappend="${role == 'FORM_TUTOR' ? 'background-color: #7a43b6 !important;color: white !important;' : ''}">
 
@@ -102,50 +114,6 @@
                             <p>Wychowawca</p>
                         </a>
                     </li>
-
-                    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
-<!--                    <style onload="showActiveRole()">-->
-<!--                        .lightRole{-->
-<!--                            background-color: #7a43b6 !important;-->
-<!--                            color: white !important;-->
-<!--                        }-->
-<!--                    </style>-->
-<!--                    <script>-->
-<!--                        function selectRole(role) {-->
-<!--                            Cookies.set('activeRole', role);-->
-<!--                        }-->
-
-<!--                        function showActiveRole() {-->
-<!--                            var role = Cookies.get('activeRole');-->
-
-<!--                            $(".role").removeClass("lightRole");-->
-
-<!--                            switch (role) {-->
-<!--                                case 'ADMIN':-->
-<!--                                    $("#adminRoleL").addClass("lightRole");-->
-<!--                                    break;-->
-<!--                                case 'STUDENT':-->
-<!--                                    $("#studentRoleL").addClass("lightRole");-->
-<!--                                    break;-->
-<!--                                case 'PARENT':-->
-<!--                                    $("#parentRoleL").addClass("lightRole");-->
-<!--                                    break;-->
-<!--                                case 'TEACHER':-->
-<!--                                    $("#teacherRoleL").addClass("lightRole");-->
-<!--                                    break;-->
-<!--                                case 'DEPUTY_HEAD':-->
-<!--                                    $("#deputyHeadRoleL").addClass("lightRole");-->
-<!--                                    break;-->
-<!--                                case 'HEADMASTER':-->
-<!--                                    $("#headmasterRoleL").addClass("lightRole");-->
-<!--                                    break;-->
-<!--                                case 'FORM_TUTOR':-->
-<!--                                    $("#formTutorRoleL").addClass("lightRole");-->
-<!--                                    break;-->
-<!--                                default:-->
-<!--                            }-->
-<!--                        }-->
-<!--                    </script>-->
                 </span>
             </ul>
         </div>
