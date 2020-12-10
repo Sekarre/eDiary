@@ -33,7 +33,7 @@ import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
-//@Component
+@Component
 public class DefaultLoader implements CommandLineRunner {
 
     private final AddressRepository addressRepository;

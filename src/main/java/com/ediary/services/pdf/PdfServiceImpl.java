@@ -2,6 +2,7 @@ package com.ediary.services.pdf;
 
 import com.ediary.domain.Grade;
 import com.ediary.domain.Student;
+import com.ediary.domain.Subject;
 import com.ediary.domain.Teacher;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -210,6 +212,116 @@ public class PdfServiceImpl implements PdfService {
         doc.close();
 
         return true;
+    }
+
+
+    @Override
+    public byte[] createEndYearReport(Map<Subject, List<Grade>> gradesWithSubjects,
+                                      Map<Long, Grade> finalGrades,
+                                      Student student,
+                                      Map<String, Long> attendanceNumber, String behaviorGrade) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document doc = new Document(pdf);
+
+
+        PdfFont normalTextFont;
+
+        try {
+            FontProgram fontProgram = FontProgramFactory.createFont();
+            normalTextFont = PdfFontFactory.createFont(fontProgram, "Cp1257");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        //Date
+        Table table = getNewTable(new float[]{100});
+        table.addCell(getCell(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), TextAlignment.RIGHT,
+                10f, normalTextFont));
+        doc.add(table);
+
+
+        //Separator
+        doc.add(new LineSeparator(new SolidLine(3)));
+
+
+        //Main title
+        String studentNameAndClass = student.getUser().getFirstName() + " " + student.getUser().getLastName() + "  " +
+                student.getSchoolClass().getName();
+        table = getNewTable(new float[]{100});
+
+        table.addCell(getCell("\n" + "Karta końcowo-roczna: " + studentNameAndClass,
+                TextAlignment.CENTER, 22f, normalTextFont));
+
+
+        doc.add(table);
+
+        //Grades
+        table = getNewTable(new float[]{30, 50, 20});
+        table.addCell(getHeaderCell("Przedmiot", TextAlignment.CENTER, 12f, normalTextFont));
+        table.addCell(getHeaderCell("Oceny", TextAlignment.CENTER, 12f, normalTextFont));
+        table.addCell(getHeaderCell("Ocena końcowa", TextAlignment.CENTER, 12f, normalTextFont));
+        Paragraph paragraph;
+
+        for (Map.Entry<Subject, List<Grade>> entry : gradesWithSubjects.entrySet()) {
+            StringBuilder gradesPerSubject = new StringBuilder();
+
+            //subject name
+            paragraph = new Paragraph(entry.getKey().getName());
+            paragraph.setFont(normalTextFont);
+            table.addCell(paragraph);
+
+            //all grades for subject
+            paragraph = new Paragraph();
+            for (Grade grade : entry.getValue()) {
+                if (grade != null) {
+                    gradesPerSubject.append(grade.getValue()).append(", ");
+                }
+            }
+
+            if (gradesPerSubject.length() != 0) {
+                gradesPerSubject.delete(gradesPerSubject.length() - 2, gradesPerSubject.length() - 1);
+            }
+
+            paragraph.add(gradesPerSubject.toString());
+            table.addCell(paragraph);
+
+
+            //final grade
+            paragraph = new Paragraph();
+            if (finalGrades.get(entry.getKey().getId()) != null ) {
+                paragraph.add(finalGrades.get(entry.getKey().getId()).toString());
+            } else paragraph.add("");
+
+            table.addCell(paragraph);
+        }
+
+        table.addCell(getCell("\n\n", TextAlignment.CENTER, 12f, normalTextFont));
+        doc.add(table);
+
+
+        //Behavior
+        table = getNewTable(new float[]{40, 60});
+        table.addCell(getCell("Zachowanie: ", TextAlignment.CENTER, 12f, normalTextFont));
+        table.addCell(getCell(behaviorGrade, TextAlignment.CENTER, 12f, normalTextFont));
+        doc.add(table);
+
+        //Attendances
+        table = getNewTable(new float[]{40, 60});
+        table.addCell(getCell("Nieobecności: ", TextAlignment.CENTER, 12f, normalTextFont));
+        table.addCell(getCell("- ogółem: " + attendanceNumber.get("total"), TextAlignment.CENTER, 12f, normalTextFont));
+        table.addCell(getCell("", TextAlignment.CENTER, 12f, normalTextFont));
+        table.addCell(getCell("- w tym usprawiedliwione: " + attendanceNumber.get("excused"),
+                TextAlignment.CENTER, 12f, normalTextFont));
+
+
+        doc.add(table);
+
+        doc.close();
+
+        return baos.toByteArray();
     }
 
     private Cell getCell(String text, TextAlignment alignment, Float fontSize, PdfFont normalTextFont) {

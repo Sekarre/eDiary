@@ -6,10 +6,7 @@ import com.ediary.converters.TeacherToTeacherDto;
 import com.ediary.domain.Teacher;
 import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.domain.security.User;
-import com.ediary.repositories.EventRepository;
-import com.ediary.repositories.GradeRepository;
-import com.ediary.repositories.LessonRepository;
-import com.ediary.repositories.TeacherRepository;
+import com.ediary.repositories.*;
 import com.ediary.services.pdf.PdfService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,14 +25,25 @@ import static org.mockito.Mockito.*;
 
 public class HeadmasterServiceImplTest {
 
-    @Mock
-    TeacherRepository teacherRepository;
-    @Mock
-    LessonRepository lessonRepository;
-    @Mock
-    GradeRepository gradeRepository;
-    @Mock
-    EventRepository eventRepository;
+    @Mock TeacherRepository teacherRepository;
+    @Mock LessonRepository lessonRepository;
+    @Mock GradeRepository gradeRepository;
+    @Mock EventRepository eventRepository;
+    @Mock ClassRepository classRepository;
+    @Mock StudentRepository studentRepository;
+    @Mock SubjectRepository subjectRepository;
+    @Mock ExtenuationRepository extenuationRepository;
+    @Mock EndYearReportRepository endYearReportRepository;
+    @Mock SchoolPeriodRepository schoolPeriodRepository;
+    @Mock StudentCouncilRepository studentCouncilRepository;
+    @Mock ParentCouncilRepository parentCouncilRepository;
+    @Mock TopicRepository topicRepository;
+    @Mock ParentRepository parentRepository;
+    @Mock AttendanceRepository attendanceRepository;
+    @Mock BehaviorRepository behaviorRepository;
+    @Mock NoticeRepository noticeRepository;
+
+
     @Mock
     TeacherToTeacherDto teacherToTeacherDto;
     @Mock
@@ -48,7 +56,9 @@ public class HeadmasterServiceImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         headmasterService = new HeadmasterServiceImpl(teacherRepository, lessonRepository, gradeRepository, eventRepository,
-                teacherToTeacherDto, pdfService);
+                classRepository, studentRepository, subjectRepository, extenuationRepository, endYearReportRepository,
+                schoolPeriodRepository, studentCouncilRepository, parentCouncilRepository, topicRepository, parentRepository,
+                attendanceRepository, behaviorRepository, noticeRepository, teacherToTeacherDto, pdfService);
     }
 
     @Test
