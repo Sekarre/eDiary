@@ -267,10 +267,11 @@ public class HeadmasterServiceImpl implements HeadmasterService {
         Map<Subject, List<Grade>> gradesWithSubjects = new HashMap<>();
 
 
-        student.getSchoolClass().getSubjects()
-                .forEach(subject -> gradesWithSubjects.put(subject,
-                        gradeRepository.findAllByStudentIdAndSubjectId(studentId, subject.getId())));
-
+        if (student.getSchoolClass() != null) {
+            student.getSchoolClass().getSubjects()
+                    .forEach(subject -> gradesWithSubjects.put(subject,
+                            gradeRepository.findAllByStudentIdAndSubjectId(studentId, subject.getId())));
+        }
 
         if (gradesWithSubjects.keySet().isEmpty()) {
             return null;
@@ -289,11 +290,12 @@ public class HeadmasterServiceImpl implements HeadmasterService {
 
         Map<Long, Grade> studentFinalGradesListMap = new LinkedHashMap<>();
 
-        student.getSchoolClass().getSubjects()
-                .forEach(subject -> studentFinalGradesListMap.put(subject.getId(),
-                        gradeRepository.findBySubjectIdAndStudentIdAndWeight(
-                                subject.getId(), student.getId(), GradeWeight.FINAL_GRADE.getWeight())));
-
+        if (student.getSchoolClass() != null) {
+            student.getSchoolClass().getSubjects()
+                    .forEach(subject -> studentFinalGradesListMap.put(subject.getId(),
+                            gradeRepository.findBySubjectIdAndStudentIdAndWeight(
+                                    subject.getId(), student.getId(), GradeWeight.FINAL_GRADE.getWeight())));
+        }
 
         if (studentFinalGradesListMap.keySet().isEmpty()) {
             return null;
@@ -408,6 +410,20 @@ public class HeadmasterServiceImpl implements HeadmasterService {
     public Boolean performYearClosing() {
 
         //GENERATING REPORT
+        Integer year =  LocalDate.now().atStartOfDay().getYear();
+
+        //Reports for each teacher
+        List<Teacher> teachers = teacherRepository.findAll();
+        if (teachers.size() > 0) {
+            teachers.forEach(teacher -> createEndYearReportTeacher(teacher, year));
+        }
+
+        //Reports for each student
+        List<Student> students = studentRepository.findAll();
+        if (students.size() > 0) {
+            students.forEach(student -> createEndYearReportStudent(student, year));
+        }
+
 
         //Classes
         List<Class> classes = classRepository.findAll();

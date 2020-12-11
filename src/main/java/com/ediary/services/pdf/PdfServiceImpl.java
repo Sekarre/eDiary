@@ -104,6 +104,7 @@ public class PdfServiceImpl implements PdfService {
         }
 
         table.addCell(getCell("\n\n", TextAlignment.CENTER, 12f, normalTextFont));
+        table.addCell(getCell("", TextAlignment.CENTER, 12f, normalTextFont));
         doc.add(table);
 
 
@@ -248,13 +249,20 @@ public class PdfServiceImpl implements PdfService {
 
 
         //Main title
-        String studentNameAndClass = student.getUser().getFirstName() + " " + student.getUser().getLastName() + "  " +
-                student.getSchoolClass().getName();
+        String studentNameAndClass;
+        if (student.getSchoolClass() == null) {
+            studentNameAndClass = student.getUser().getFirstName() + " " + student.getUser().getLastName();
+        } else {
+            studentNameAndClass = student.getUser().getFirstName() + " " + student.getUser().getLastName() + "  " +
+                    student.getSchoolClass().getName();
+        }
+
+
         table = getNewTable(new float[]{100});
 
         table.addCell(getCell("\n" + "Karta końcowo-roczna: " + studentNameAndClass,
                 TextAlignment.CENTER, 22f, normalTextFont));
-        table.addCell(getCell( "Rok: "  + year ,
+        table.addCell(getCell( "Rok: "  + year + "\n\n",
                 TextAlignment.CENTER, 22f, normalTextFont));
 
         doc.add(table);
@@ -266,40 +274,51 @@ public class PdfServiceImpl implements PdfService {
         table.addCell(getHeaderCell("Ocena końcowa", TextAlignment.CENTER, 12f, normalTextFont));
         Paragraph paragraph;
 
-        for (Map.Entry<Subject, List<Grade>> entry : gradesWithSubjects.entrySet()) {
-            StringBuilder gradesPerSubject = new StringBuilder();
+        if (gradesWithSubjects != null) {
+            for (Map.Entry<Subject, List<Grade>> entry : gradesWithSubjects.entrySet()) {
+                StringBuilder gradesPerSubject = new StringBuilder();
 
-            //subject name
-            paragraph = new Paragraph(entry.getKey().getName());
-            paragraph.setFont(normalTextFont);
-            table.addCell(paragraph);
+                //subject name
+                paragraph = new Paragraph(entry.getKey().getName());
+                paragraph.setFont(normalTextFont);
+                table.addCell(paragraph);
 
-            //all grades for subject
-            paragraph = new Paragraph();
-            for (Grade grade : entry.getValue()) {
-                if (grade != null) {
-                    gradesPerSubject.append(grade.getValue()).append(", ");
+                //all grades for subject
+                paragraph = new Paragraph();
+                for (Grade grade : entry.getValue()) {
+                    if (grade != null) {
+                        gradesPerSubject.append(grade.getValue()).append(", ");
+                    }
                 }
+
+                if (gradesPerSubject.length() != 0) {
+                    gradesPerSubject.delete(gradesPerSubject.length() - 2, gradesPerSubject.length() - 1);
+                }
+
+                paragraph.add(gradesPerSubject.toString());
+                table.addCell(paragraph);
+
+
+                //final grade
+                paragraph = new Paragraph();
+                if (finalGrades.get(entry.getKey().getId()) != null) {
+                    paragraph.add(finalGrades.get(entry.getKey().getId()).toString());
+                } else paragraph.add("");
+
+                table.addCell(paragraph);
             }
+        } else {
+            paragraph = new Paragraph("nie znaleziono");
+            paragraph.setFont(normalTextFont);
 
-            if (gradesPerSubject.length() != 0) {
-                gradesPerSubject.delete(gradesPerSubject.length() - 2, gradesPerSubject.length() - 1);
+            for (int i = 0; i < 3; i++) {
+                table.addCell(paragraph);
             }
-
-            paragraph.add(gradesPerSubject.toString());
-            table.addCell(paragraph);
-
-
-            //final grade
-            paragraph = new Paragraph();
-            if (finalGrades.get(entry.getKey().getId()) != null ) {
-                paragraph.add(finalGrades.get(entry.getKey().getId()).toString());
-            } else paragraph.add("");
-
-            table.addCell(paragraph);
         }
 
         table.addCell(getCell("\n\n", TextAlignment.CENTER, 12f, normalTextFont));
+        table.addCell(getCell("", TextAlignment.CENTER, 12f, normalTextFont));
+        table.addCell(getCell("", TextAlignment.CENTER, 12f, normalTextFont));
         doc.add(table);
 
 
