@@ -6,6 +6,7 @@ import com.ediary.security.perms.HeadmasterPermission;
 import com.ediary.services.HeadmasterService;
 import lombok.RequiredArgsConstructor;
 import org.bouncycastle.math.raw.Mod;
+import org.springframework.expression.spel.ast.BooleanLiteral;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -117,9 +118,7 @@ public class HeadmasterController {
     @HeadmasterPermission
     @GetMapping("/closeYear")
     public String closeYear(Model model) {
-
-        model.addAttribute("result", headmasterService.savePdfToDatabaseTest());
-
+//        model.addAttribute("result", headmasterService.savePdfToDatabaseTest());
         return "headmaster/closeYear";
     }
 
@@ -127,22 +126,18 @@ public class HeadmasterController {
     @HeadmasterPermission
     @RequestMapping("/closeYear/show")
     public void getPdfFromDbTest(HttpServletResponse response) throws Exception {
-
-
         headmasterService.getPdf(response);
-
     }
 
 
     @HeadmasterPermission
-    @GetMapping("/closeYear/delete")
-    public String processCloseYear() {
-
+    @PostMapping("/closeYear")
+    public String processCloseYear(Model model) {
 
 //        headmasterService.savePdfToDatabaseTest();
-        headmasterService.performYearClosing();
-
-
+        
+        Boolean result =  headmasterService.performYearClosing();
+        model.addAttribute("result", result);
         return "headmaster/closeYear";
     }
 
