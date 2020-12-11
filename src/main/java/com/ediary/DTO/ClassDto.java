@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class ClassDto {
 
     @NotNull
     @Size(min = 2, max = 20)
+    @Pattern(regexp = "^[0-9].*")
     private String name;
 
     private Long studentCouncilId;

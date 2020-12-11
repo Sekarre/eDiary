@@ -86,7 +86,7 @@ The above copyright notice and this permission notice shall be included in all c
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label class="bmd-label-floating">Klasa</label>
-                                        <input th:name="'name'" th:id="'name'" class="form-control">
+                                        <input th:name="'name'" th:id="'name'" class="form-control" pattern="^[0-9].*" title="Nazwa klasy musi zaczynać się od cyfry">
                                         <span class="help-block text-danger"
                                               th:if="${uniqueName != null && uniqueName == false}">
                                                     <ul>
@@ -355,12 +355,24 @@ The above copyright notice and this permission notice shall be included in all c
     $(function() {
         var newClassFom = $("#newClassFom");
 
+        jQuery.validator.addMethod(
+            "regex",
+            function(value, element, regexp) {
+                if (regexp.constructor != RegExp)
+                    regexp = new RegExp(regexp);
+                else if (regexp.global)
+                    regexp.lastIndex = 0;
+                return this.optional(element) || regexp.test(value);
+            },"Poprawny format to: numer klasy + nazwa"
+        );
+
         newClassFom.validate({
             rules: {
                 name: {
                     required: true,
                     maxlength: 20,
-                    minlength: 2
+                    minlength: 2,
+                    regex: "^[0-9].*"
                 }
             },
             messages: {
