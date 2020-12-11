@@ -36,7 +36,7 @@ public class EndYearReportToEndYearReportDto implements Converter<EndYearReport,
 
         if (source.getUserType() == EndYearReport.Type.STUDENT && source.getStudent() != null) {
             dto.setStudentId(source.getStudent().getId());
-            dto.setStudentName(source.getStudent().getUser().getFirstName() + " " + source.getStudent().getUser().getFirstName());
+            dto.setStudentName(source.getStudent().getUser().getFirstName() + " " + source.getStudent().getUser().getLastName());
         }
 
         return dto;
