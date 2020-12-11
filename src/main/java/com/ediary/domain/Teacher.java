@@ -50,4 +50,7 @@ public class Teacher {
     @OneToMany(mappedBy = "headmaster", fetch = FetchType.LAZY)
     private Set<Report> headmasterReports;
 
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
+    private Set<EndYearReport> endYearReports;
+
 }

@@ -48,5 +48,8 @@ public class Student {
     @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
     private Set<Behavior> behaviors;
 
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
+    private Set<EndYearReport> endYearReports;
+
 
 }
