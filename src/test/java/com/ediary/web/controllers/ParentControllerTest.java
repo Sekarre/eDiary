@@ -20,10 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.TreeMap;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -265,6 +262,23 @@ class ParentControllerTest {
                 .andExpect(view().name("parent/timetable"));
 
         verify(studentService, times(1)).getTimetableByStudentId(studentId);
+    }
+
+    @Test
+    void getAllEndYearReports() throws Exception {
+
+        when(studentService.listEndYearReports(studentId)).thenReturn(List.of(
+                EndYearReportDto.builder().build(),
+                EndYearReportDto.builder().build()
+        ));
+
+        mockMvc.perform(get("/parent/" + parentId + "/" + studentId + "/endYearReports"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("reports"))
+                .andExpect(view().name("parent/endYearReports"));
+
+        verify(studentService, times(1)).listEndYearReports(studentId);
+        assertEquals(2, studentService.listEndYearReports(studentId).size());
     }
 
 

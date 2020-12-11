@@ -235,5 +235,25 @@ public class ParentController {
         return "parent/timetable";
     }
 
+    @ParentReadStudentPermission
+    @GetMapping("/{studentId}/endYearReports")
+    public String getAllEndYearReports(@PathVariable Long studentId, Model model) {
+
+        model.addAttribute("reports", studentService.listEndYearReports(studentId));
+        return "parent/endYearReports";
+    }
+
+    @ParentReadStudentPermission
+    @GetMapping("/{studentId}/endYearReports/{reportId}")
+    public void getEndYearReport(@PathVariable Long parentId,
+                                 @PathVariable Long studentId,
+                                 @PathVariable Long reportId) {
+
+        //TODO
+        //download report
+
+    }
+
+
 
 }
