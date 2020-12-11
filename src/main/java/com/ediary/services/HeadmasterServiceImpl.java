@@ -1,7 +1,5 @@
 package com.ediary.services;
 
-import com.ediary.DTO.GradeDto;
-import com.ediary.DTO.StudentDto;
 import com.ediary.DTO.TeacherDto;
 import com.ediary.converters.TeacherToTeacherDto;
 import com.ediary.domain.*;
@@ -11,9 +9,7 @@ import com.ediary.domain.helpers.TimeInterval;
 import com.ediary.exceptions.NotFoundException;
 import com.ediary.repositories.*;
 import com.ediary.services.pdf.PdfService;
-import com.mysql.cj.protocol.a.NativeUtils;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.connector.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -137,7 +131,8 @@ public class HeadmasterServiceImpl implements HeadmasterService {
     @Override
     public Boolean savePdfToDatabaseTest() {
 
-        createEndYearReport(studentRepository.findAll().get(0));
+//        createEndYearReportStudent(studentRepository.findAll().get(0), LocalDate.now().atStartOfDay().getYear());
+        createEndYearReportTeacher(teacherRepository.findAll().get(0), LocalDate.now().atStartOfDay().getYear());
 
         return true;
     }
@@ -151,17 +146,23 @@ public class HeadmasterServiceImpl implements HeadmasterService {
         response.setHeader(headerKey, headerValue);
 
     //todo
-        out.write(endYearReportRepository.findAll().get(0).getEndYearPdf());
+        List<EndYearReport> reports = endYearReportRepository.findAll();
+        out.write(reports.get(reports.size() - 1).getEndYearPdf());
         out.close();
     }
 
-    private Boolean createEndYearReport(Student student) {
-        byte[] endYearReportInBytes = pdfService.createEndYearReport(listSubjectsGrades(student.getId()),
+    private Boolean createEndYearReportStudent(Student student, Integer year) {
+        byte[] endYearReportInBytes = pdfService.createEndYearReportStudent(listSubjectsGrades(student.getId()),
                 listSubjectsFinalGrades(student.getId()),
                 student, getAttendancesNumber(student.getId()),
-                getBehaviorGrade(student.getId()));
+                getBehaviorGrade(student.getId()), year);
 
-        EndYearReport endYearReport = EndYearReport.builder().endYearPdf(endYearReportInBytes).build();
+        EndYearReport endYearReport = EndYearReport.builder()
+                .endYearPdf(endYearReportInBytes)
+                .userType(EndYearReport.Type.STUDENT)
+                .year(year.toString())
+                .student(student)
+                .build();
 
         if (endYearReportInBytes.length != 0) {
 
@@ -173,7 +174,87 @@ public class HeadmasterServiceImpl implements HeadmasterService {
     }
 
 
+    private Boolean createEndYearReportTeacher(Teacher teacher, Integer year) {
+        byte[] endYearReportInBytes = pdfService.createEndYearReportTeacher(
+                listSubjectsStudentsWithGrades(teacher),
+                listSubjectsStudentsWithFinalGrade(teacher),
+                teacher, year);
 
+        EndYearReport endYearReport = EndYearReport.builder()
+                .endYearPdf(endYearReportInBytes)
+                .userType(EndYearReport.Type.TEACHER)
+                .year(year.toString())
+                .teacher(teacher)
+                .build();
+
+        if (endYearReportInBytes.length != 0) {
+
+            endYearReportRepository.save(endYearReport);
+            return true;
+        }
+
+        return false;
+
+    }
+
+    private Map<Subject, Map<Student, List<Grade>>> listSubjectsStudentsWithGrades(Teacher teacher) {
+
+        if (teacher == null) {
+            return null;
+        }
+
+        Map<Subject, Map<Student, List<Grade>>> subjectsStudentWithGrades = new LinkedHashMap<>();
+
+        if (teacher.getSubjects() != null) {
+
+            List<Subject> subjects = subjectRepository.findAllByTeacherIdOrderByName(teacher.getId());
+
+            subjects.forEach(subject -> {
+                Map<Student, List<Grade>> studentsWithGrades = new LinkedHashMap<>();
+
+                List<Student> students = studentRepository.findAllBySchoolClassIdOrderByUserLastName(subject.getSchoolClass().getId());
+
+                students.forEach(student -> {
+                    studentsWithGrades.put(student, gradeRepository.findAllByTeacherIdAndSubjectIdAndStudentIdAndWeightNotIn(
+                            teacher.getId(), subject.getId(), student.getId(),
+                            Arrays.asList(GradeWeight.BEHAVIOR_GRADE.getWeight(), GradeWeight.FINAL_GRADE.getWeight())
+                    ));
+
+                    subjectsStudentWithGrades.put(subject, studentsWithGrades);
+                });
+            });
+            return subjectsStudentWithGrades;
+        }
+
+        return null;
+    }
+
+
+    private Map<Long, Map<Student, Grade>> listSubjectsStudentsWithFinalGrade(Teacher teacher) {
+
+        if (teacher == null) {
+            return null;
+        }
+
+        Map<Long, Map<Student, Grade>> subjectsStudentWithFinalGrade = new HashMap<>();
+
+        if (teacher.getSubjects() != null) {
+            teacher.getSubjects().forEach(subject -> {
+                Map<Student, Grade> studentsWithGrades = new HashMap<>();
+                subject.getSchoolClass().getStudents().forEach(student -> {
+                    studentsWithGrades.put(student, gradeRepository.findBySubjectIdAndStudentIdAndWeight(
+                            subject.getId(), student.getId(),
+                            GradeWeight.FINAL_GRADE.getWeight()
+                    ));
+
+                    subjectsStudentWithFinalGrade.put(subject.getId(), studentsWithGrades);
+                });
+            });
+            return subjectsStudentWithFinalGrade;
+        }
+
+        return null;
+    }
 
     private Map<Subject, List<Grade>> listSubjectsGrades(Long studentId) {
         Student student = studentRepository.findById(studentId).orElse(null);

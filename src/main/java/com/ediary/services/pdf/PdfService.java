@@ -19,8 +19,12 @@ public interface PdfService {
     Boolean createReportPdf(HttpServletResponse response, Teacher teacher, String timeInterval, Integer lessonsNumber,
                             String subjectsNames, Long gradesNumber, Long eventsNumber) throws Exception;
 
-    byte[] createEndYearReport(Map<Subject, List<Grade>> gradesWithSubjects,
-                               Map<Long, Grade> finalGrades,
-                               Student student,
-                               Map<String, Long> attendanceNumber, String behaviorGrade);
+    byte[] createEndYearReportStudent(Map<Subject, List<Grade>> gradesWithSubjects,
+                                      Map<Long, Grade> finalGrades,
+                                      Student student,
+                                      Map<String, Long> attendanceNumber, String behaviorGrade, Integer year);
+
+    byte[] createEndYearReportTeacher(Map<Subject, Map<Student, List<Grade>>> listSubjectsStudentsWithGrades,
+                                      Map<Long, Map<Student, Grade>> finalGrades,
+                                      Teacher teacher, Integer year);
 }

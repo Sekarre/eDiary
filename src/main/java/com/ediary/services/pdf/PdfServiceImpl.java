@@ -216,10 +216,10 @@ public class PdfServiceImpl implements PdfService {
 
 
     @Override
-    public byte[] createEndYearReport(Map<Subject, List<Grade>> gradesWithSubjects,
-                                      Map<Long, Grade> finalGrades,
-                                      Student student,
-                                      Map<String, Long> attendanceNumber, String behaviorGrade) {
+    public byte[] createEndYearReportStudent(Map<Subject, List<Grade>> gradesWithSubjects,
+                                             Map<Long, Grade> finalGrades,
+                                             Student student,
+                                             Map<String, Long> attendanceNumber, String behaviorGrade, Integer year) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(baos);
         PdfDocument pdf = new PdfDocument(writer);
@@ -254,7 +254,8 @@ public class PdfServiceImpl implements PdfService {
 
         table.addCell(getCell("\n" + "Karta końcowo-roczna: " + studentNameAndClass,
                 TextAlignment.CENTER, 22f, normalTextFont));
-
+        table.addCell(getCell( "Rok: "  + year ,
+                TextAlignment.CENTER, 22f, normalTextFont));
 
         doc.add(table);
 
@@ -318,6 +319,124 @@ public class PdfServiceImpl implements PdfService {
 
 
         doc.add(table);
+
+        doc.close();
+
+        return baos.toByteArray();
+    }
+
+
+    @Override
+    public byte[] createEndYearReportTeacher(Map<Subject, Map<Student, List<Grade>>> listSubjectsStudentsWithGrades,
+                                             Map<Long, Map<Student, Grade>> finalGrades, Teacher teacher, Integer year) {
+
+
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document doc = new Document(pdf);
+
+
+        PdfFont normalTextFont;
+
+        try {
+            FontProgram fontProgram = FontProgramFactory.createFont();
+            normalTextFont = PdfFontFactory.createFont(fontProgram, "Cp1257");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        //Date
+        Table table = getNewTable(new float[]{100});
+        table.addCell(getCell(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")), TextAlignment.RIGHT,
+                10f, normalTextFont));
+        doc.add(table);
+
+
+        //Separator
+        doc.add(new LineSeparator(new SolidLine(3)));
+
+
+        //Main title
+        String teacherName = teacher.getUser().getFirstName() + " " + teacher.getUser().getLastName();
+        table = getNewTable(new float[]{100});
+
+        table.addCell(getCell("\n" + "Karta końcowo-roczna: "  + teacherName ,
+                TextAlignment.CENTER, 22f, normalTextFont));
+        table.addCell(getCell("Rok: "  + year ,
+                TextAlignment.CENTER, 22f, normalTextFont));
+
+        doc.add(table);
+
+        int currentPageIndex = 0;
+        for (Map.Entry<Subject, Map<Student, List<Grade>>> entry : listSubjectsStudentsWithGrades.entrySet()) {
+
+
+            //subject name
+            table = getNewTable(new float[]{100});
+
+            table.addCell(getCell("\n" + entry.getKey().getName() + "\n\n",
+                    TextAlignment.CENTER, 22f, normalTextFont));
+
+            doc.add(table);
+
+            //Grades
+            table = getNewTable(new float[]{30, 50, 20});
+            table.addCell(getHeaderCell("Uczeń", TextAlignment.CENTER, 12f, normalTextFont));
+            table.addCell(getHeaderCell("Oceny", TextAlignment.CENTER, 12f, normalTextFont));
+            table.addCell(getHeaderCell("Ocena końcowa", TextAlignment.CENTER, 12f, normalTextFont));
+            Paragraph paragraph;
+
+
+            for (Map.Entry<Student, List<Grade>> studentListEntry : entry.getValue().entrySet()) {
+                StringBuilder gradesPerSubject = new StringBuilder();
+
+                //student name
+                paragraph = new Paragraph(studentListEntry.getKey().getUser().getFirstName() +
+                        " " + studentListEntry.getKey().getUser().getLastName());
+                paragraph.setFont(normalTextFont);
+                table.addCell(paragraph);
+
+                //all grades for subject
+                paragraph = new Paragraph();
+                for (Grade grade : studentListEntry.getValue()) {
+                    if (grade != null) {
+                        gradesPerSubject.append(grade.getValue()).append(", ");
+                    }
+                }
+
+                if (gradesPerSubject.length() > 1) {
+                    gradesPerSubject.delete(gradesPerSubject.length() - 2, gradesPerSubject.length() - 1);
+                }
+
+                paragraph.add(gradesPerSubject.toString());
+                table.addCell(paragraph);
+
+
+                //final grade
+                paragraph = new Paragraph();
+                if (finalGrades.get(entry.getKey().getId()) != null &&
+                        finalGrades.get(entry.getKey().getId()).get(studentListEntry.getKey()) != null) {
+                    paragraph.add(finalGrades.get(entry.getKey().getId()).get(studentListEntry.getKey()).getValue());
+                } else paragraph.add("");
+
+                table.addCell(paragraph);
+            }
+
+
+            //add table
+            doc.add(table);
+            currentPageIndex++;
+
+            //if subject isnt last one, add new page
+            if (listSubjectsStudentsWithGrades.size() != currentPageIndex) {
+                doc.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+            }
+
+        }
+
 
         doc.close();
 
