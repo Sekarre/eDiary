@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface EndYearReportRepository  extends JpaRepository<EndYearReport, Long> {
 
-    List<EndYearReport> findAllByUserTypeOrderByYearAsc(EndYearReport.Type type);
+    List<EndYearReport> findAllByUserTypeOrderByYearDesc(EndYearReport.Type type);
     Optional<EndYearReport> findByIdAndStudent(Long reportId, Student student);
     Optional<EndYearReport> findByIdAndTeacher(Long reportId, Teacher teacher);
 

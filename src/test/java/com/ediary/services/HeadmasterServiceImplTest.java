@@ -2,6 +2,7 @@ package com.ediary.services;
 
 
 import com.ediary.DTO.TeacherDto;
+import com.ediary.converters.EndYearReportToEndYearReportDto;
 import com.ediary.converters.TeacherToTeacherDto;
 import com.ediary.domain.Teacher;
 import com.ediary.domain.helpers.TimeInterval;
@@ -47,6 +48,8 @@ public class HeadmasterServiceImplTest {
     @Mock
     TeacherToTeacherDto teacherToTeacherDto;
     @Mock
+    EndYearReportToEndYearReportDto endYearReportToEndYearReportDto;
+    @Mock
     PdfService pdfService;
 
 
@@ -58,7 +61,8 @@ public class HeadmasterServiceImplTest {
         headmasterService = new HeadmasterServiceImpl(teacherRepository, lessonRepository, gradeRepository, eventRepository,
                 classRepository, studentRepository, subjectRepository, extenuationRepository, endYearReportRepository,
                 schoolPeriodRepository, studentCouncilRepository, parentCouncilRepository, topicRepository, parentRepository,
-                attendanceRepository, behaviorRepository, noticeRepository, teacherToTeacherDto, pdfService);
+                attendanceRepository, behaviorRepository, noticeRepository, teacherToTeacherDto,endYearReportToEndYearReportDto,
+                pdfService);
     }
 
     @Test

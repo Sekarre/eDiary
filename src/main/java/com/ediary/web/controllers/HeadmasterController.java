@@ -3,10 +3,9 @@ package com.ediary.web.controllers;
 import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.security.User;
 import com.ediary.security.perms.HeadmasterPermission;
+import com.ediary.security.perms.StudentPermission;
 import com.ediary.services.HeadmasterService;
 import lombok.RequiredArgsConstructor;
-import org.bouncycastle.math.raw.Mod;
-import org.springframework.expression.spel.ast.BooleanLiteral;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -112,33 +111,51 @@ public class HeadmasterController {
 
     }
 
-
-    //Testing for now
-
     @HeadmasterPermission
     @GetMapping("/closeYear")
     public String closeYear(Model model) {
-//        model.addAttribute("result", headmasterService.savePdfToDatabaseTest());
         return "headmaster/closeYear";
     }
-
-
-    @HeadmasterPermission
-    @RequestMapping("/closeYear/show")
-    public void getPdfFromDbTest(HttpServletResponse response) throws Exception {
-        headmasterService.getPdf(response);
-    }
-
 
     @HeadmasterPermission
     @PostMapping("/closeYear")
     public String processCloseYear(Model model) {
 
-//        headmasterService.savePdfToDatabaseTest();
-        
         Boolean result =  headmasterService.performYearClosing();
         model.addAttribute("result", result);
         return "headmaster/closeYear";
+    }
+
+    @HeadmasterPermission
+    @GetMapping("/endYearReports")
+    public String getAllEndYearReports(Model model) {
+        return "headmaster/endYearReports";
+    }
+
+    @HeadmasterPermission
+    @GetMapping("/endYearReports/students")
+    public String getAllEndYearReportsStudents(Model model) {
+
+        model.addAttribute("reports", headmasterService.listEndYearStudentsReports());
+        return "headmaster/endYearReportsStudents";
+    }
+
+    @HeadmasterPermission
+    @GetMapping("/endYearReports/teachers")
+    public String getAllEndYearReportsTeachers(Model model) {
+
+        model.addAttribute("reports", headmasterService.listEndYearTeachersReports());
+        return "headmaster/endYearReportsTeachers";
+    }
+
+    @HeadmasterPermission
+    @RequestMapping("/endYearReports/{reportId}")
+    public void downloadEndYearReport(HttpServletResponse response, @PathVariable Long reportId) {
+        try {
+            headmasterService.getEndYearReportPdf(response, reportId);
+        } catch (Exception e) {
+
+        }
     }
 
 

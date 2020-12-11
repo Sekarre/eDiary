@@ -1,6 +1,8 @@
 package com.ediary.services;
 
+import com.ediary.DTO.EndYearReportDto;
 import com.ediary.DTO.TeacherDto;
+import com.ediary.converters.EndYearReportToEndYearReportDto;
 import com.ediary.converters.TeacherToTeacherDto;
 import com.ediary.domain.*;
 import com.ediary.domain.Class;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -50,6 +53,7 @@ public class HeadmasterServiceImpl implements HeadmasterService {
     private final NoticeRepository noticeRepository;
 
     private final TeacherToTeacherDto teacherToTeacherDto;
+    private final EndYearReportToEndYearReportDto endYearReportToEndYearReportDto;
 
     private final PdfService pdfService;
 
@@ -126,29 +130,6 @@ public class HeadmasterServiceImpl implements HeadmasterService {
                 getTeacherLessonsNumber(teacher, startOfDayDate, correctedEndTime).intValue(),
                 getTeacherSubjectsNames(teacher), getTeacherGradesNumber(teacher, startOfDayDate, correctedEndTime),
                 getTeacherEventsNumber(teacher, startOfDayDate, correctedEndTime));
-    }
-
-    @Override
-    public Boolean savePdfToDatabaseTest() {
-
-//        createEndYearReportStudent(studentRepository.findAll().get(0), LocalDate.now().atStartOfDay().getYear());
-        createEndYearReportTeacher(teacherRepository.findAll().get(0), LocalDate.now().atStartOfDay().getYear());
-
-        return true;
-    }
-
-    @Override
-    public void getPdf(HttpServletResponse response) throws Exception {
-        OutputStream out = response.getOutputStream();
-        response.setContentType("application/pdf");
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=raport_koncowy" + System.currentTimeMillis() + ".pdf";
-        response.setHeader(headerKey, headerValue);
-
-    //todo
-        List<EndYearReport> reports = endYearReportRepository.findAll();
-        out.write(reports.get(reports.size() - 1).getEndYearPdf());
-        out.close();
     }
 
     private Boolean createEndYearReportStudent(Student student, Integer year) {
@@ -500,6 +481,52 @@ public class HeadmasterServiceImpl implements HeadmasterService {
         return true;
 
     }
+
+    @Override
+    public List<EndYearReportDto> listEndYearStudentsReports() {
+        return endYearReportRepository.findAllByUserTypeOrderByYearDesc(EndYearReport.Type.STUDENT)
+                .stream()
+                .map(endYearReportToEndYearReportDto::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EndYearReportDto> listEndYearTeachersReports() {
+        return endYearReportRepository.findAllByUserTypeOrderByYearDesc(EndYearReport.Type.TEACHER)
+                .stream()
+                .map(endYearReportToEndYearReportDto::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean getEndYearReportPdf(HttpServletResponse response, Long reportId) throws IOException {
+
+        Optional<EndYearReport> reportOptional = endYearReportRepository.findById(reportId);
+        if (!reportOptional.isPresent()) {
+            return false;
+        }
+
+        EndYearReport report = reportOptional.get();
+
+        OutputStream out = response.getOutputStream();
+
+        response.setContentType("application/pdf");
+        String headerKey = "Content-Disposition";
+        String name = "";
+        if (report.getStudent() != null) {
+            name += report.getStudent().getUser().getFirstName() + "_" + report.getStudent().getUser().getLastName();
+        } else if (report.getTeacher() != null) {
+            name += report.getTeacher().getUser().getFirstName() + "_" + report.getTeacher().getUser().getLastName();
+        }
+        String headerValue = "attachment; filename=" + name + "_" + report.getYear() + ".pdf";
+        response.setHeader(headerKey, headerValue);
+
+        out.write(report.getEndYearPdf());
+        out.close();
+
+        return true;
+    }
+
 
 
 

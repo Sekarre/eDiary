@@ -93,6 +93,23 @@
         </div>
     </div>
 
+    <div sec:authorize="hasRole('HEADMASTER')" class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <a  th:href="@{'/headmaster/endYearReports'}">
+                <div class="card-header card-header-primary card-header-icon">
+                    <div class="card-icon">
+                        <i class="material-icons">preview</i>
+                    </div>
+                    <h3 class="card-title">Poprzednie lata</h3>
+                </div>
+            </a>
+            <div class="card-footer">
+                <div class="stats">
+                </div>
+            </div>
+        </div>
+    </div>
+
 </th:block>
 </body>
 </html>
