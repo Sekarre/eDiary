@@ -343,31 +343,6 @@ public class HeadmasterServiceImpl implements HeadmasterService {
         return behaviorGradeValue;
     }
 
-    private String changeSchoolClassName(String currentClassName) {
-
-        StringBuilder newClassName = new StringBuilder(currentClassName);
-        Integer classNumber = 1;
-
-
-        if (currentClassName.length() > 5) {
-            StringBuilder addition = new StringBuilder(newClassName.substring(currentClassName.length() - 5, currentClassName.length() - 1));
-
-            try {
-                classNumber = (int) addition.charAt(addition.length() - 1);
-            } catch (Exception exception) {
-                return null;
-            }
-
-            addition.deleteCharAt(addition.length() - 1).append(classNumber.toString());
-
-            return newClassName.replace(currentClassName.length() - 5,
-                    currentClassName.length() - 1, addition.toString()).toString();
-        }
-
-
-        return newClassName.append(" ").append(classNumber.toString()).toString();
-    }
-
     private Long getTeacherLessonsNumber(Teacher teacher, java.util.Date startTime, Date endTime) {
         Long[] sumOfLessons = {0L};
 
@@ -427,8 +402,23 @@ public class HeadmasterServiceImpl implements HeadmasterService {
 
         //Classes
         List<Class> classes = classRepository.findAll();
-        if (classes != null) {
-            classes.forEach(schoolClass -> deleteClass(schoolClass));
+        List<Class> classesToSave = new ArrayList<>();
+
+        if (classes.size() > 0) {
+            classes.forEach(schoolClass -> {
+
+                //creating new classes with same sklad
+                classesToSave.add(Class.builder()
+                        .name(changeSchoolClassName(schoolClass.getName()))
+                        .students(schoolClass.getStudents())
+                        .teacher(schoolClass.getTeacher())
+                        .build());
+
+                //deleting class
+                deleteClass(schoolClass);
+
+
+            });
         }
 
         clearTeacher();
@@ -501,9 +491,17 @@ public class HeadmasterServiceImpl implements HeadmasterService {
             noticeRepository.deleteAll(notices);
         }
 
+
+        //Saving newly created classes
+        classesToSave.forEach(schoolClass -> addStudentToClass(schoolClass, new ArrayList<>(schoolClass.getStudents())));
+
+        classRepository.saveAll(classesToSave);
+
         return true;
 
     }
+
+
 
     public Boolean deleteClass(Class schoolClass ) {
 
@@ -638,4 +636,26 @@ public class HeadmasterServiceImpl implements HeadmasterService {
         return true;
     }
 
+    private String changeSchoolClassName(String schoolClassName) {
+        StringBuilder newSchoolClassName = new StringBuilder();
+
+        try {
+            int schoolClassNumber = Character.getNumericValue(schoolClassName.charAt(0));
+            schoolClassNumber += 1;
+
+            newSchoolClassName.append(schoolClassNumber).append(schoolClassName, 1, schoolClassName.length());
+
+        } catch (Exception ex) {
+            //should not happen, but just in case
+            newSchoolClassName.append(newSchoolClassName).append(" - kolejny rok");
+        }
+
+
+        return newSchoolClassName.toString();
+    }
+
+
+    private void addStudentToClass(Class schoolClass, List<Student> students) {
+        students.forEach(student -> student.setSchoolClass(schoolClass));
+    }
 }
