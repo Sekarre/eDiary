@@ -57,27 +57,19 @@
                 </a>
             </li>
 
-            <li sec:authorize="hasRole('HEADMASTER')" class="nav-item ">
-            <a  class="nav-link" th:href="@{'/headmaster/closeYear'}">
-                    <i class="material-icons">assignment_ind</i>
-                    <p>Zapisz raport do bazy (do testu)</p>
-                </a>
-            </li>
-
-
-            <li sec:authorize="hasRole('HEADMASTER')" class="nav-item "
-                th:classappend="${activeTab == 'show' ? 'active':''}">
-            <a  class="nav-link" th:href="@{'/headmaster/closeYear/show'}">
-                    <i class="material-icons">assignment_ind</i>
-                    <p>Pobierz raport z bazy</p>
-                </a>
-            </li>
-
             <li sec:authorize="hasRole('HEADMASTER')" class="nav-item "
                 th:classappend="${activeTab == 'closeYear' ? 'active':''}">
             <a  class="nav-link" th:href="@{'/headmaster/closeYear'}">
                     <i class="material-icons">cancel</i>
                     <p>Zamknij rok</p>
+                </a>
+            </li>
+
+            <li sec:authorize="hasRole('HEADMASTER')" class="nav-item "
+                th:classappend="${activeTab == 'end_year' ? 'active':''}">
+                <a  class="nav-link" th:href="@{'/headmaster/endYearReports'}">
+                    <i class="material-icons">preview</i>
+                    <p>Poprzednie lata</p>
                 </a>
             </li>
 

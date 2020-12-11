@@ -1,5 +1,6 @@
 package com.ediary.web.controllers;
 
+import com.ediary.DTO.EndYearReportDto;
 import com.ediary.DTO.StudentDto;
 import com.ediary.DTO.TeacherDto;
 import com.ediary.converters.UserToUserDto;
@@ -89,10 +90,48 @@ public class HeadmasterControllerTest {
         assertEquals(2, headmasterService.listAllTeachers(page, 20).size());
     }
 
-    //todo
     @Test
-    void downloadStudentCardPdf(){
+    void getAllEndYearReports() throws Exception {
 
+        mockMvc.perform(get("/headmaster/endYearReports"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("headmaster/endYearReports"));
     }
+
+    @Test
+    void getAllEndYearReportsStudents() throws Exception {
+
+        when(headmasterService.listEndYearStudentsReports()).thenReturn(Arrays.asList(
+                EndYearReportDto.builder().build(),
+                EndYearReportDto.builder().build()
+        ));
+
+        mockMvc.perform(get("/headmaster/endYearReports/students"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("reports"))
+                .andExpect(view().name("headmaster/endYearReportsStudents"));
+
+        verify(headmasterService, times(1)).listEndYearStudentsReports();
+        assertEquals(2, headmasterService.listEndYearStudentsReports().size());
+    }
+
+    @Test
+    void getAllEndYearReportsTeachers() throws Exception {
+
+        when(headmasterService.listEndYearTeachersReports()).thenReturn(Arrays.asList(
+            EndYearReportDto.builder().build(),
+            EndYearReportDto.builder().build()
+        ));
+
+        mockMvc.perform(get("/headmaster/endYearReports/teachers"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("reports"))
+                .andExpect(view().name("headmaster/endYearReportsTeachers"));
+
+        verify(headmasterService, times(1)).listEndYearTeachersReports();
+        assertEquals(2, headmasterService.listEndYearTeachersReports().size());
+    }
+
+
 
 }

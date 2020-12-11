@@ -34,14 +34,14 @@ The above copyright notice and this permission notice shall be included in all c
 <body class="">
 <div class="wrapper ">
 
-    <div th:replace="fragments/sidebarDeputyHead :: sidebar('closeYear')"></div>
+    <div th:replace="fragments/sidebarDeputyHead :: sidebar('end_year')"></div>
 
     <div class="main-panel">
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" th:href="@{/headmaster/closeYear}" >Zamknij rok szkolny</a>
+                    <a class="navbar-brand" th:href="@{/headmaster/closeYear}" >Poprzednie lata</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="sr-only">Toggle navigation</span>
@@ -54,27 +54,16 @@ The above copyright notice and this permission notice shall be included in all c
         </nav>
         <!-- End Navbar -->
         <div class="content">
-
-            <div th:if="${result != null}" class="container-fluid" >
-                <div class="row pull-center">
-                    <div th:if="${result == false}" class="col-md-12">
-                        <div class="alert alert-danger text-center" role="alert">Nie udało się zamknąć roku szkolnego</div>
-                    </div>
-                    <div th:if="${result == true}"  class="col-md-12">
-                        <div class="alert alert-success text-center" role="alert">Zamknięto rok szkolny</div>
-                    </div>
-                </div>
-            </div>
-
             <div class="container-fluid">
                 <div class="row justify-content-md-center">
+
                     <div class="col-lg-10 col-md-10 col-sm-12">
-                        <a data-toggle="modal" href="#closeYearModal" class="card card-stats">
-                            <div class="card-header card-header-danger card-header-icon" >
+                        <a href="/headmaster/endYearReports/students" class="card card-stats">
+                            <div class="card-header card-header-primary card-header-icon" >
                                 <div class="card-icon">
-                                    <i class="material-icons">cancel</i>
+                                    <i class="material-icons">sentiment_very_satisfied</i>
                                 </div>
-                                <h2 class="card-title">Zamknij rok szkolny</h2>
+                                <h2 class="card-title">Uczniowie</h2>
                             </div>
                             <div class="card-footer">
                                 <div class="stats">
@@ -82,32 +71,22 @@ The above copyright notice and this permission notice shall be included in all c
                             </div>
                         </a>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Modal close year-->
-        <div class="modal fade" id="closeYearModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel"><i class="material-icons">cancel</i></h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                    <div class="col-lg-10 col-md-10 col-sm-12">
+                        <a href="/headmaster/endYearReports/teachers" class="card card-stats">
+                            <div class="card-header card-header-primary card-header-icon" >
+                                <div class="card-icon">
+                                    <i class="material-icons">school</i>
+                                </div>
+                                <h2 class="card-title">Nauczyciele</h2>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                    <div class="modal-body">
-                        <h3>Jesteś pewny, że chcesz zamknąć rok szkolny?</h3>
-                        <hr>
-                        <p>Dane dotyczące roku szkolnego zostaną zarchiwizowane w postaci dokumentów pdf.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <form action="/headmaster/closeYear" method="post">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Nie</button>
-                            <button type="submit" class="btn btn-danger" >Zamknij</button>
-                            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                        </form>
-                    </div>
+
                 </div>
             </div>
         </div>
