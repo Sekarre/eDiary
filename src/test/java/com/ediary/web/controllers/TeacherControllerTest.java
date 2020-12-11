@@ -18,10 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -758,6 +755,25 @@ class TeacherControllerTest {
                     .content(AbstractAsJsonControllerTest.asJsonString(TopicDto.builder().build())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/teacher/" + teacherId + "/subject/" + subjectId));
+
+    }
+
+    @Test
+    void getAllEndYearReports() throws Exception {
+
+        when(teacherService.listEndYearReports(teacherId)).thenReturn(List.of(
+                EndYearReportDto.builder().build(),
+                EndYearReportDto.builder().build()
+        ));
+
+        mockMvc.perform(get("/teacher/" + teacherId + "/endYearReports"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("reports"))
+                .andExpect(view().name("teacher/endYearReports"));
+
+        verify(teacherService, times(1)).listEndYearReports(teacherId);
+        assertEquals(2, teacherService.listEndYearReports(teacherId).size());
+
 
     }
 

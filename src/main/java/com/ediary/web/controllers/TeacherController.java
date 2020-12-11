@@ -5,6 +5,7 @@ import com.ediary.converters.UserToUserDto;
 import com.ediary.domain.*;
 import com.ediary.domain.security.User;
 import com.ediary.security.perms.FormTutorPermission;
+import com.ediary.security.perms.StudentPermission;
 import com.ediary.security.perms.TeacherPermission;
 import com.ediary.services.FormTutorService;
 import com.ediary.services.TeacherService;
@@ -873,6 +874,25 @@ public class TeacherController {
         TopicDto topic = teacherService.updatePatchTopic(topicDto);
         return "redirect:/teacher/" + teacherId + "/subject/" + subjectId;
 
+    }
+
+    @TeacherPermission
+    @GetMapping("/{teacherId}/endYearReports")
+    public String getAllEndYearReports(@PathVariable Long teacherId, Model model) {
+
+        model.addAttribute("reports", teacherService.listEndYearReports(teacherId));
+        return "teacher/endYearReports";
+    }
+
+    @TeacherPermission
+    @RequestMapping("/{teacherId}/endYearReports/{reportId}")
+    public void downloadEndYearReport(HttpServletResponse response, @PathVariable Long teacherId, @PathVariable Long reportId) {
+
+        try {
+            teacherService.getEndYearReportPdf(response, teacherId, reportId);
+        } catch (Exception e) {
+
+        }
     }
 
     //FormTutor

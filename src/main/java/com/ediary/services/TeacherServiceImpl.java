@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -41,6 +44,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final SchoolPeriodRepository schoolPeriodRepository;
     private final ExtenuationRepository extenuationRepository;
     private final ParentRepository parentRepository;
+    private final EndYearReportRepository endYearReportRepository;
 
     private final EventToEventDto eventToEventDto;
     private final EventDtoToEvent eventDtoToEvent;
@@ -61,6 +65,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final TopicDtoToTopic topicDtoToTopic;
     private final ExtenuationToExtenuationDto extenuationToExtenuationDto;
     private final ExtenuationDtoToExtenuation extenuationDtoToExtenuation;
+    private final EndYearReportToEndYearReportDto endYearReportToEndYearReportDto;
 
     private final TimetableService timetableService;
 
@@ -1233,6 +1238,42 @@ public class TeacherServiceImpl implements TeacherService {
                 add(null);
             }
         }};
+    }
+
+    @Override
+    public List<EndYearReportDto> listEndYearReports(Long teacherId) {
+        Teacher teacher = getTeacherById(teacherId);
+
+        return teacher.getEndYearReports()
+                .stream()
+                .map(endYearReportToEndYearReportDto::convert)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean getEndYearReportPdf(HttpServletResponse response, Long teacherId, Long reportId) throws IOException {
+
+        Teacher teacher = getTeacherById(teacherId);
+
+        Optional<EndYearReport> reportOptional = endYearReportRepository.findByIdAndTeacher(reportId, teacher);
+        if (!reportOptional.isPresent()) {
+            return false;
+        }
+
+        EndYearReport report = reportOptional.get();
+
+        OutputStream out = response.getOutputStream();
+
+        response.setContentType("application/pdf");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=" + teacher.getUser().getFirstName() + "_" + report.getYear() + ".pdf";
+        response.setHeader(headerKey, headerValue);
+
+
+        out.write(report.getEndYearPdf());
+        out.close();
+
+        return true;
     }
 
     private Subject getSubjectById(Long subjectId) {

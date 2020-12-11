@@ -7,6 +7,7 @@ import com.ediary.domain.security.User;
 import com.ediary.domain.timetable.Timetable;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -103,5 +104,8 @@ public interface TeacherService {
 
     List<Long> maxGradesCount(Long teacherId, Long lessonId);
     List<Long> maxGradesCountBySubject(Long teacherId, Long subjectId);
+
+    List<EndYearReportDto> listEndYearReports(Long teacherId);
+    boolean getEndYearReportPdf(HttpServletResponse response, Long teacherId, Long reportId) throws IOException;
 
 }
