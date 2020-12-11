@@ -148,4 +148,21 @@ public class StudentController {
         model.addAttribute("timetable", studentService.getTimetableByStudentId(studentId));
         return "student/timetable";
     }
+
+    @StudentPermission
+    @GetMapping("/{studentId}/endYearReports")
+    public String getAllEndYearReports(@PathVariable Long studentId, Model model) {
+
+        model.addAttribute("reports", studentService.listEndYearReports(studentId));
+        return "student/endYearReports";
+    }
+
+    @StudentPermission
+    @GetMapping("/{studentId}/endYearReports/{reportId}")
+    public void getEndYearReport(@PathVariable Long studentId, @PathVariable Long reportId) {
+
+        //TODO
+        //download report
+
+    }
 }

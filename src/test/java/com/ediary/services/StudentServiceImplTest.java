@@ -66,6 +66,8 @@ class StudentServiceImplTest {
     StudentToStudentDto studentToStudentDto;
     @Mock
     SubjectToSubjectDto subjectToSubjectDto;
+    @Mock
+    EndYearReportToEndYearReportDto endYearReportToEndYearReportDto;
 
     StudentService studentService;
 
@@ -76,7 +78,8 @@ class StudentServiceImplTest {
         MockitoAnnotations.initMocks(this);
         studentService = new StudentServiceImpl(timetableService,eventService, gradeRepository, attendanceRepository,
                 behaviorRepository, studentRepository, eventRepository,subjectRepository,
-                gradeToGradeDto, attendanceToAttendanceDto, behaviorToBehaviorDto, eventToEventDto, studentToStudentDto, subjectToSubjectDto);
+                gradeToGradeDto, attendanceToAttendanceDto, behaviorToBehaviorDto, eventToEventDto, studentToStudentDto, subjectToSubjectDto,
+                endYearReportToEndYearReportDto);
 
         gradeReturned = Grade.builder().id(gradeId).value(value).build();
     }

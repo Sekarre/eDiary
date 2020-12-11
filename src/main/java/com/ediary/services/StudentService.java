@@ -20,4 +20,7 @@ public interface StudentService {
 
     Map<SubjectDto, List<GradeDto>> listSubjectsGrades(Long studentId);
     GradeDto getBehaviorGrade(Long studentId);
+
+    List<EndYearReportDto> listEndYearReports(Long studentId);
+
 }

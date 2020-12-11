@@ -42,6 +42,7 @@ public class StudentServiceImpl implements StudentService {
     private final EventToEventDto eventToEventDto;
     private final StudentToStudentDto studentToStudentDto;
     private final SubjectToSubjectDto subjectToSubjectDto;
+    private final EndYearReportToEndYearReportDto endYearReportToEndYearReportDto;
 
 
     @Override
@@ -177,6 +178,16 @@ public class StudentServiceImpl implements StudentService {
         }
 
         return null;
+    }
+
+    @Override
+    public List<EndYearReportDto> listEndYearReports(Long studentId) {
+        Student student = getStudentById(studentId);
+
+        return student.getEndYearReports()
+                .stream()
+                .map(endYearReportToEndYearReportDto::convert)
+                .collect(Collectors.toList());
     }
 
     private Student getStudentById(Long studentId) {

@@ -69,6 +69,13 @@
                     <p>Terminarz</p>
                 </a>
             </li>
+            <li class="nav-item "
+                th:classappend="${activeTab == 'end_year' ? 'active':''}">
+                <a class="nav-link" th:href="@{'/student/' + ${student.id} + '/endYearReports'}">
+                    <i class="material-icons">preview</i>
+                    <p>Poprzednie lata</p>
+                </a>
+            </li>
 
             <span th:replace="fragments/sidebarUser :: userRoleNav('STUDENT')"></span>
 

@@ -22,6 +22,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
@@ -172,6 +173,23 @@ class StudentControllerTest {
 
         verify(userToUserDto, times(1)).convert(any());
         verify(studentService, times(1)).findByUser(any());
+    }
+
+    @Test
+    void getAllEndYearReports() throws Exception {
+
+        when(studentService.listEndYearReports(studentId)).thenReturn(List.of(
+                EndYearReportDto.builder().build(),
+                EndYearReportDto.builder().build()
+        ));
+
+        mockMvc.perform(get("/student/" + studentId + "/endYearReports"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("reports"))
+                .andExpect(view().name("student/endYearReports"));
+
+        verify(studentService, times(1)).listEndYearReports(studentId);
+        assertEquals(2, studentService.listEndYearReports(studentId).size());
     }
 
 
