@@ -118,7 +118,7 @@ public class HeadmasterController {
     @HeadmasterPermission
     @GetMapping("/closeYear")
     public String closeYear(Model model) {
-        model.addAttribute("result", headmasterService.savePdfToDatabaseTest());
+//        model.addAttribute("result", headmasterService.savePdfToDatabaseTest());
         return "headmaster/closeYear";
     }
 

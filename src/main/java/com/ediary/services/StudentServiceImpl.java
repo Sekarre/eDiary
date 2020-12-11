@@ -16,6 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,6 +38,7 @@ public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
     private final EventRepository eventRepository;
     private final SubjectRepository subjectRepository;
+    private final EndYearReportRepository endYearReportRepository;
 
     private final GradeToGradeDto gradeToGradeDto;
     private final AttendanceToAttendanceDto attendanceToAttendanceDto;
@@ -188,6 +192,32 @@ public class StudentServiceImpl implements StudentService {
                 .stream()
                 .map(endYearReportToEndYearReportDto::convert)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean getEndYearReportPdf(HttpServletResponse response, Long studentId, Long reportId) throws IOException {
+        Student student = getStudentById(studentId);
+
+        Optional<EndYearReport> reportOptional = endYearReportRepository.findByIdAndStudent(reportId, student);
+        if (!reportOptional.isPresent()) {
+            return false;
+        }
+
+        EndYearReport report = reportOptional.get();
+
+        OutputStream out = response.getOutputStream();
+
+        response.setContentType("application/pdf");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=" + student.getUser().getFirstName() + "_" + report.getYear() + ".pdf";
+        response.setHeader(headerKey, headerValue);
+
+
+
+        out.write(report.getEndYearPdf());
+        out.close();
+
+        return true;
     }
 
     private Student getStudentById(Long studentId) {

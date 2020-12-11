@@ -13,6 +13,7 @@ import com.ediary.services.StudentService;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyEditorSupport;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -158,11 +159,12 @@ public class StudentController {
     }
 
     @StudentPermission
-    @GetMapping("/{studentId}/endYearReports/{reportId}")
-    public void getEndYearReport(@PathVariable Long studentId, @PathVariable Long reportId) {
+    @RequestMapping("/{studentId}/endYearReports/{reportId}")
+    public void downloadEndYearReport(HttpServletResponse response, @PathVariable Long studentId, @PathVariable Long reportId) {
+        try {
+            studentService.getEndYearReportPdf(response, studentId, reportId);
+        } catch (Exception e) {
 
-        //TODO
-        //download report
-
+        }
     }
 }

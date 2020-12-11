@@ -1,9 +1,12 @@
 package com.ediary.services;
 
 import com.ediary.DTO.*;
+import com.ediary.domain.EndYearReport;
 import com.ediary.domain.security.User;
 import com.ediary.domain.timetable.Timetable;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -22,5 +25,6 @@ public interface StudentService {
     GradeDto getBehaviorGrade(Long studentId);
 
     List<EndYearReportDto> listEndYearReports(Long studentId);
+    boolean getEndYearReportPdf(HttpServletResponse response, Long studentId, Long reportId) throws IOException;
 
 }

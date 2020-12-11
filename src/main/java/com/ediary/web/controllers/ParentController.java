@@ -20,8 +20,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
+import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
@@ -244,13 +246,17 @@ public class ParentController {
     }
 
     @ParentReadStudentPermission
-    @GetMapping("/{studentId}/endYearReports/{reportId}")
-    public void getEndYearReport(@PathVariable Long parentId,
-                                 @PathVariable Long studentId,
-                                 @PathVariable Long reportId) {
+    @RequestMapping("/{studentId}/endYearReports/{reportId}")
+    public void downloadEndYearReport(HttpServletResponse response,
+                                      @PathVariable Long parentId,
+                                      @PathVariable Long studentId,
+                                      @PathVariable Long reportId) {
 
-        //TODO
-        //download report
+        try {
+            studentService.getEndYearReportPdf(response, studentId, reportId);
+        } catch (Exception e) {
+
+        }
 
     }
 
