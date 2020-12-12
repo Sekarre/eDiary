@@ -101,7 +101,7 @@ public class HeadmasterControllerTest {
     @Test
     void getAllEndYearReportsStudents() throws Exception {
 
-        when(headmasterService.listEndYearStudentsReports()).thenReturn(Arrays.asList(
+        when(headmasterService.listEndYearStudentsReports(any(), any())).thenReturn(Arrays.asList(
                 EndYearReportDto.builder().build(),
                 EndYearReportDto.builder().build()
         ));
@@ -111,14 +111,14 @@ public class HeadmasterControllerTest {
                 .andExpect(model().attributeExists("reports"))
                 .andExpect(view().name("headmaster/endYearReportsStudents"));
 
-        verify(headmasterService, times(1)).listEndYearStudentsReports();
-        assertEquals(2, headmasterService.listEndYearStudentsReports().size());
+        verify(headmasterService, times(1)).listEndYearStudentsReports(0, 15);
+        assertEquals(2, headmasterService.listEndYearStudentsReports(0, 15).size());
     }
 
     @Test
     void getAllEndYearReportsTeachers() throws Exception {
 
-        when(headmasterService.listEndYearTeachersReports()).thenReturn(Arrays.asList(
+        when(headmasterService.listEndYearTeachersReports(any(), any())).thenReturn(Arrays.asList(
             EndYearReportDto.builder().build(),
             EndYearReportDto.builder().build()
         ));
@@ -128,8 +128,8 @@ public class HeadmasterControllerTest {
                 .andExpect(model().attributeExists("reports"))
                 .andExpect(view().name("headmaster/endYearReportsTeachers"));
 
-        verify(headmasterService, times(1)).listEndYearTeachersReports();
-        assertEquals(2, headmasterService.listEndYearTeachersReports().size());
+        verify(headmasterService, times(1)).listEndYearTeachersReports(0, 15);
+        assertEquals(2, headmasterService.listEndYearTeachersReports(0, 15).size());
     }
 
 

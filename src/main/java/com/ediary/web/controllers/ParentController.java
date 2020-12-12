@@ -26,6 +26,7 @@ import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -139,11 +140,16 @@ public class ParentController {
                                             @PathVariable String direction,
                                             @PathVariable String dateValue,
                                             Model model) {
-        Date date;
-        if (direction.equals("next")) {
-            date = Date.valueOf(LocalDate.parse(dateValue).plusDays(7));
-        } else {
-            date = Date.valueOf(LocalDate.parse(dateValue).minusDays(7));
+
+        Date date = Date.valueOf(LocalDate.now().minusDays(6));
+        try {
+            if (direction.equals("next")) {
+                date = Date.valueOf(LocalDate.parse(dateValue).plusDays(7));
+            } else {
+                date = Date.valueOf(LocalDate.parse(dateValue).minusDays(7));
+            }
+        } catch (DateTimeParseException e) {
+
         }
 
         model.addAttribute("weeklyAttendances",

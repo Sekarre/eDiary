@@ -190,6 +190,9 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<LessonDto> listLessons(Integer page, Integer size, Long teacherId, Long subjectId) {
+        if (page < 0) {
+            return null;
+        }
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -728,6 +731,10 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<EventDto> listEvents(Long teacherId, Integer page, Integer size, Boolean includeHistory) {
+        if (page < 0) {
+            return null;
+        }
+
         Teacher teacher = getTeacherById(teacherId);
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("date"));
@@ -751,6 +758,9 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<EventDto> listClassEvents(Long teacherId, Long subjectId, Integer page, Integer size, Boolean includeHistory) {
+        if (page < 0) {
+            return null;
+        }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("date"));
 
@@ -829,6 +839,9 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<BehaviorDto> listBehaviors(Long teacherId, Integer page, Integer size) {
+        if (page < 0) {
+            return null;
+        }
 
         Teacher teacher = getTeacherById(teacherId);
 

@@ -121,7 +121,7 @@ public class HeadmasterController {
     @PostMapping("/closeYear")
     public String processCloseYear(Model model) {
 
-        Boolean result =  headmasterService.performYearClosing();
+        Boolean result = headmasterService.performYearClosing();
         model.addAttribute("result", result);
         return "headmaster/closeYear";
     }
@@ -134,17 +134,23 @@ public class HeadmasterController {
 
     @HeadmasterPermission
     @GetMapping("/endYearReports/students")
-    public String getAllEndYearReportsStudents(Model model) {
+    public String getAllEndYearReportsStudents(Model model,
+                                               @RequestParam(name = "page", required = false) Optional<Integer> page) {
 
-        model.addAttribute("reports", headmasterService.listEndYearStudentsReports());
+        model.addAttribute("page", page);
+        model.addAttribute("reports", headmasterService.listEndYearStudentsReports(page.orElse(0), 15));
+
         return "headmaster/endYearReportsStudents";
     }
 
     @HeadmasterPermission
     @GetMapping("/endYearReports/teachers")
-    public String getAllEndYearReportsTeachers(Model model) {
+    public String getAllEndYearReportsTeachers(Model model,
+                                               @RequestParam(name = "page", required = false) Optional<Integer> page) {
 
-        model.addAttribute("reports", headmasterService.listEndYearTeachersReports());
+        model.addAttribute("page", page);
+        model.addAttribute("reports", headmasterService.listEndYearTeachersReports(page.orElse(0), 15));
+
         return "headmaster/endYearReportsTeachers";
     }
 

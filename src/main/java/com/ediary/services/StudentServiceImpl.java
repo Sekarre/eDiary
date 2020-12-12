@@ -84,6 +84,10 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<BehaviorDto> listBehaviors(Long studentId, Integer page, Integer size) {
+        if (page < 0) {
+            return null;
+        }
+
         Pageable pageable = PageRequest.of(page, size);
 
 
@@ -98,7 +102,7 @@ public class StudentServiceImpl implements StudentService {
 
         Student student = getStudentById(studentId);
 
-        if (student.getSchoolClass() == null) {
+        if (student.getSchoolClass() == null || page < 0) {
             return null;
         }
 

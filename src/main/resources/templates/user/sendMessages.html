@@ -66,7 +66,12 @@ The above copyright notice and this permission notice shall be included in all c
                 </div>
 				
                 <div class="card-body">
-                  <div class="table-responsive">
+                  <div th:if="${sendMessages == null || sendMessages.size() == 0}" class="navbar-wrapper">
+                    <div class="d-flex justify-content-center">
+                      <h2 class="navbar-brand">Brak wysłanych wiadomości</h2>
+                    </div>
+                  </div>
+                  <div class="table-responsive" th:if="${sendMessages != null && sendMessages.size() > 0}">
                     <table class="table">
                       <thead class=" text-primary">
                         <th>
@@ -113,7 +118,7 @@ The above copyright notice and this permission notice shall be included in all c
                       <li class="page-item " th:classappend="${page.isPresent() && page.get() > 0} ? 'active' : 'disabled'">
                         <a class="page-link" th:href="@{/user/{userId}/sendMessages(userId = ${userId}, page = ${page.orElse(1) - 1})}" th:text="'Poprzednia'"></a>
                       </li>
-                      <li class="page-item" th:classappend="${sendMessages.size() < 15} ? 'disabled' : 'active'">
+                      <li class="page-item" th:classappend="${sendMessages?.size() < 15} ? 'disabled' : 'active'">
                         <a class="page-link" th:href="@{/user/{userId}/sendMessages(userId = ${userId}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
 
                       </li>

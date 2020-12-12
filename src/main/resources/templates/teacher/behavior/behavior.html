@@ -68,8 +68,13 @@ The above copyright notice and this permission notice shall be included in all c
                                     </a>
                                 </div>
                             </div>
-
-                            <div class="card-body">
+                            <div th:if="${behaviors == null || behaviors.size() == 0}" class="navbar-wrapper">
+                                <div class="form-group"></div>
+                                <div class="d-flex justify-content-center">
+                                    <h2 class="navbar-brand">Nie znaleziono uwag</h2>
+                                </div>
+                            </div>
+                            <div class="card-body" th:if="${behaviors != null && behaviors.size() > 0}">
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead class=" text-primary">
@@ -118,7 +123,7 @@ The above copyright notice and this permission notice shall be included in all c
                                         <li class="page-item " th:classappend="${page.isPresent() && page.get() > 0} ? 'active' : 'disabled'">
                                             <a class="page-link" th:href="@{/teacher/{teacherId}/behavior(teacherId = ${teacherId}, page = ${page.orElse(0) - 1})}" th:text="'Poprzednia'"></a>
                                         </li>
-                                        <li class="page-item" th:classappend="${behaviors.size() < 10} ? 'disabled' : 'active'">
+                                        <li class="page-item" th:classappend="${behaviors?.size() < 10} ? 'disabled' : 'active'">
                                             <a class="page-link" th:href="@{/teacher/{teacherId}/behavior(teacherId = ${teacherId}, page = ${page.orElse(0) + 1})}" th:text="'Następna'"></a>
 
                                         </li>

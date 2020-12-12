@@ -64,6 +64,9 @@ public class HeadmasterServiceImpl implements HeadmasterService {
 
     @Override
     public List<TeacherDto> listAllTeachers(Integer page, Integer size) {
+        if (page < 0) {
+            return null;
+        }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "User.lastName"));
 
@@ -483,16 +486,28 @@ public class HeadmasterServiceImpl implements HeadmasterService {
     }
 
     @Override
-    public List<EndYearReportDto> listEndYearStudentsReports() {
-        return endYearReportRepository.findAllByUserTypeOrderByYearDesc(EndYearReport.Type.STUDENT)
+    public List<EndYearReportDto> listEndYearStudentsReports(Integer page, Integer size) {
+        if (page < 0) {
+            return null;
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "Student.user.lastName");
+
+        return endYearReportRepository.findAllByUserTypeOrderByYearDesc(EndYearReport.Type.STUDENT, pageable)
                 .stream()
                 .map(endYearReportToEndYearReportDto::convert)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<EndYearReportDto> listEndYearTeachersReports() {
-        return endYearReportRepository.findAllByUserTypeOrderByYearDesc(EndYearReport.Type.TEACHER)
+    public List<EndYearReportDto> listEndYearTeachersReports(Integer page, Integer size) {
+        if (page < 0) {
+            return null;
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "Teacher.user.lastName");
+
+        return endYearReportRepository.findAllByUserTypeOrderByYearDesc(EndYearReport.Type.TEACHER, pageable)
                 .stream()
                 .map(endYearReportToEndYearReportDto::convert)
                 .collect(Collectors.toList());

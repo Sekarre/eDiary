@@ -277,6 +277,9 @@ public class DeputyHeadServiceImpl implements DeputyHeadService {
 
     @Override
     public List<TeacherDto> listAllTeachersWithoutClass(Integer page, Integer size) {
+        if (page < 0) {
+            return null;
+        }
 
         Pageable pageable = PageRequest.of(page, size);
 

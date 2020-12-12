@@ -23,7 +23,7 @@ public interface HeadmasterService {
     Boolean createTeacherReport(HttpServletResponse response, Long teacherId, Date startTime, Date endTime) throws Exception;
     Boolean performYearClosing();
 
-    List<EndYearReportDto> listEndYearStudentsReports();
-    List<EndYearReportDto> listEndYearTeachersReports();
+    List<EndYearReportDto> listEndYearStudentsReports(Integer page, Integer size);
+    List<EndYearReportDto> listEndYearTeachersReports(Integer page, Integer size);
     boolean getEndYearReportPdf(HttpServletResponse response, Long reportId) throws IOException;
 }

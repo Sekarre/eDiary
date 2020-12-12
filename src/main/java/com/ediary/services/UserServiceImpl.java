@@ -65,6 +65,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<MessageDto> listReadMessage(Integer page, Integer size, Long userId) {
+        if (page < 0) {
+            return null;
+        }
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -78,6 +81,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<MessageDto> listSendMessage(Integer page, Integer size, Long userId) {
+        if (page < 0) {
+            return null;
+        }
 
         Pageable pageable = PageRequest.of(page, size);
 
